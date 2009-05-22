@@ -10,10 +10,16 @@ try :
 except :
     # do it once
     hub_local_settings = True
+
+    # Patching the User class
+
     User.user_name = AliasOf('username')
     User.email = AliasOf('email_address')
     User._meta.db_table = 'tg_user'
-    print "Patched User class"
 
+
+    
+    print "Monkey Patched User Class ... gulp!"
+    # Finished the User Patch
 
     

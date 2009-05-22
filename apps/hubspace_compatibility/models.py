@@ -24,8 +24,12 @@ def to_db_encoding(s, encoding):
         s = s.encode(encoding)
     return s
 
-def encrypt_password(password) :
-    return hashlib.md5(password).hexdigest()
+
+class PasswordEncryptor :
+
+    def encrypt_password(self,password) :
+        return hashlib.md5(password).hexdigest()
+
 
 
 class HubspaceCompatibilityNotToBeSavedException(Exception) : 
@@ -59,11 +63,9 @@ class HubspaceAuthenticationBackend :
         try :
             u = self.findUser(username)
         except Exception, e:
-            print "XX %s" % e
             try :
                 u = self.createUser(username,password,email)
             except Exception, e:
-                print "YY %s" % e
                 u = None
         return u
 
@@ -79,8 +81,9 @@ class HubspaceAuthenticationBackend :
             if  hubspaceUser == None : 
                 print "there is no hubspace user called '%s'" % username
                 return None # Doesn't exist in Hubspace database
-            print "user password %s :: encrypt %s" % (hubspaceUser.password,encrypt_password(password))
-            if not (hubspaceUser.password == encrypt_password(password)) : return None # Password doesn't match
+            pe = PasswordEncryptor()
+            print "user password %s :: encrypt %s" % (hubspaceUser.password,pe.encrypt_password(password))
+            if not (hubspaceUser.password == pe.encrypt_password(password)) : return None # Password doesn't match
             djangoUser = self.getOrCreateUser(username,hubspaceUser.password)
             self.refresh(hubspaceUser,djangoUser)  # allow subclasses to over-ride the refresh 
             print "got %s" % djangoUser
