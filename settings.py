@@ -23,7 +23,7 @@ ADMINS = (
 MANAGERS = ADMINS
 
 DATABASE_ENGINE = 'postgresql_psycopg2'    # 'postgresql_psycopg2', 'postgresql', 'mysql', 'sqlite3' or 'ado_mssql'.
-DATABASE_NAME = 'plus'       # Or path to database file if using sqlite3.
+DATABASE_NAME = 'hubspace'       # Or path to database file if using sqlite3.
 DATABASE_USER = 'thehub'             # Not used with sqlite3.
 DATABASE_PASSWORD = 'pwfth'         # Not used with sqlite3.
 DATABASE_HOST = ''             # Set to empty string for localhost. Not used with sqlite3.
@@ -157,6 +157,9 @@ INSTALLED_APPS = (
     'uni_form',
     
     # internal (for now)
+    'about',
+    'hubspace_compatibility',
+
     'analytics',
     'profiles',
     'staticfiles',
@@ -176,6 +179,8 @@ ABSOLUTE_URL_OVERRIDES = {
 }
 
 AUTH_PROFILE_MODULE = 'profiles.Profile'
+
+
 NOTIFICATION_LANGUAGE_MODULE = 'account.Account'
 
 EMAIL_CONFIRMATION_DAYS = 2
@@ -206,6 +211,9 @@ LANGUAGES = (
 
 CACHE_BACKEND = "locmem:///?max_entries=3000"
 FEEDUTIL_SUMMARY_LEN = 60*7 # 7 hours
+
+AUTHENTICATION_BACKENDS = ('hubspace_compatibility.models.HubspaceAuthenticationBackend',)
+
 
 class NullStream(object):
     def write(*args, **kw):
