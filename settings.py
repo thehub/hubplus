@@ -159,6 +159,7 @@ INSTALLED_APPS = (
     # internal (for now)
     'about',
     'hubspace_compatibility',
+    'plus_permissions',
 
     'analytics',
     'profiles',

@@ -1,3 +1,5 @@
+**************
+Monkey Patched User Class ... gulp!
 # This is an auto-generated Django model module.
 # You'll have to do the following manually to clean this up:
 #     * Rearrange models' order
@@ -240,68 +242,6 @@ class UserPolicyGroup(models.Model):
     class Meta:
         db_table = u'user_policy_group'
 
-class TgUser(models.Model):
-    id = models.IntegerField(primary_key=True)
-    user_name = models.CharField(unique=True, max_length=255)
-    email_address = models.CharField(unique=True, max_length=255)
-    active = models.SmallIntegerField()
-    display_name = models.CharField(max_length=255)
-    first_name = models.CharField(max_length=255)
-    last_name = models.CharField(max_length=255)
-    title = models.CharField(max_length=255)
-    organisation = models.CharField(max_length=255)
-    mobile = models.CharField(max_length=30)
-    work = models.CharField(max_length=30)
-    home = models.CharField(max_length=30)
-    fax = models.CharField(max_length=30)
-    password = models.CharField(max_length=40)
-    created = models.DateTimeField()
-    email2 = models.CharField(max_length=255)
-    email3 = models.CharField(max_length=255)
-    address = models.TextField()
-    skype_id = models.TextField()
-    sip_id = models.TextField()
-    website = models.TextField()
-    homeplace = models.ForeignKey(Location)
-    cops = models.TextField() # This field type is a guess.
-    bristol_metadata = models.TextField() # This field type is a guess.
-    handset = models.TextField()
-    ext = models.TextField()
-    frank_pin = models.TextField()
-    gb_storage = models.TextField()
-    os = models.TextField()
-    storage_loc = models.TextField()
-    description = models.TextField()
-    billto = models.ForeignKey('self')
-    bill_to_profile = models.SmallIntegerField()
-    bill_to_company = models.TextField()
-    billingaddress = models.TextField()
-    bill_phone = models.TextField()
-    bill_fax = models.TextField()
-    bill_email = models.TextField()
-    bill_company_no = models.TextField()
-    bill_vat_no = models.TextField()
-    child_name = models.TextField()
-    mimetype = models.TextField()
-    unix_hash = models.CharField(max_length=50)
-    lanman_hash = models.CharField(max_length=50)
-    nt_hash = models.CharField(max_length=50)
-    outstanding = models.DecimalField(max_digits=10, decimal_places=2)
-    reminder_counter = models.IntegerField()
-    last_reminder = models.DateTimeField()
-    reminderkey = models.CharField(max_length=50)
-    image_mimetype = models.CharField(max_length=15)
-    welcome_sent = models.SmallIntegerField()
-    signedby = models.ForeignKey('self')
-    hostcontact = models.ForeignKey('self')
-    public_field = models.SmallIntegerField()
-    modified = models.DateTimeField()
-    rfid = models.CharField(max_length=40)
-    access_policies = models.TextField() # This field type is a guess.
-    disabled_policies = models.TextField() # This field type is a guess.
-    class Meta:
-        db_table = u'tg_user'
-
 class Alias(models.Model):
     id = models.IntegerField(primary_key=True)
     user = models.ForeignKey(TgUser)
@@ -413,14 +353,14 @@ class Resource(models.Model):
 
 class AuthMessage(models.Model):
     id = models.IntegerField(primary_key=True)
-    user = models.ForeignKey(AuthUser)
+    user = models.ForeignKey(TgUser)
     message = models.TextField()
     class Meta:
         db_table = u'auth_message'
 
 class NotificationNoticesetting(models.Model):
     id = models.IntegerField(primary_key=True)
-    user = models.ForeignKey(AuthUser)
+    user = models.ForeignKey(TgUser)
     notice_type = models.ForeignKey(NotificationNoticetype)
     medium = models.CharField(max_length=1)
     send = models.BooleanField()
@@ -429,7 +369,7 @@ class NotificationNoticesetting(models.Model):
 
 class NotificationNotice(models.Model):
     id = models.IntegerField(primary_key=True)
-    user = models.ForeignKey(AuthUser)
+    user = models.ForeignKey(TgUser)
     message = models.TextField()
     notice_type = models.ForeignKey(NotificationNoticetype)
     added = models.DateTimeField()
@@ -447,7 +387,7 @@ class NotificationNoticequeuebatch(models.Model):
 
 class NotificationObserveditem(models.Model):
     id = models.IntegerField(primary_key=True)
-    user = models.ForeignKey(AuthUser)
+    user = models.ForeignKey(TgUser)
     content_type = models.ForeignKey(DjangoContentType)
     object_id = models.IntegerField()
     notice_type = models.ForeignKey(NotificationNoticetype)
@@ -475,7 +415,7 @@ class EmailconfirmationEmailconfirmation(models.Model):
 
 class EmailconfirmationEmailaddress(models.Model):
     id = models.IntegerField(primary_key=True)
-    user = models.ForeignKey(AuthUser)
+    user = models.ForeignKey(TgUser)
     email = models.CharField(max_length=75)
     verified = models.BooleanField()
     primary = models.BooleanField()
@@ -484,15 +424,15 @@ class EmailconfirmationEmailaddress(models.Model):
 
 class FriendsFriendship(models.Model):
     id = models.IntegerField(primary_key=True)
-    to_user = models.ForeignKey(AuthUser)
-    from_user = models.ForeignKey(AuthUser)
+    to_user = models.ForeignKey(TgUser)
+    from_user = models.ForeignKey(TgUser)
     added = models.DateField()
     class Meta:
         db_table = u'friends_friendship'
 
 class FriendsJoininvitation(models.Model):
     id = models.IntegerField(primary_key=True)
-    from_user = models.ForeignKey(AuthUser)
+    from_user = models.ForeignKey(TgUser)
     contact = models.ForeignKey(FriendsContact)
     message = models.TextField()
     sent = models.DateField()
@@ -503,8 +443,8 @@ class FriendsJoininvitation(models.Model):
 
 class FriendsFriendshipinvitation(models.Model):
     id = models.IntegerField(primary_key=True)
-    from_user = models.ForeignKey(AuthUser)
-    to_user = models.ForeignKey(AuthUser)
+    from_user = models.ForeignKey(TgUser)
+    to_user = models.ForeignKey(TgUser)
     message = models.TextField()
     sent = models.DateField()
     status = models.CharField(max_length=1)
@@ -547,7 +487,7 @@ class AnnouncementsAnnouncement(models.Model):
     id = models.IntegerField(primary_key=True)
     title = models.CharField(max_length=50)
     content = models.TextField()
-    creator = models.ForeignKey(AuthUser)
+    creator = models.ForeignKey(TgUser)
     creation_date = models.DateTimeField()
     site_wide = models.BooleanField()
     members_only = models.BooleanField()
@@ -604,7 +544,7 @@ class ThreadedcommentsThreadedcomment(models.Model):
     content_type = models.ForeignKey(DjangoContentType)
     object_id = models.IntegerField()
     parent = models.ForeignKey('self')
-    user = models.ForeignKey(AuthUser)
+    user = models.ForeignKey(TgUser)
     date_submitted = models.DateTimeField()
     date_modified = models.DateTimeField()
     date_approved = models.DateTimeField()
@@ -649,7 +589,7 @@ class WikiArticle(models.Model):
     content = models.TextField()
     summary = models.CharField(max_length=150)
     markup = models.CharField(max_length=3)
-    creator = models.ForeignKey(AuthUser)
+    creator = models.ForeignKey(TgUser)
     creator_ip = models.IPAddressField()
     created_at = models.DateTimeField()
     last_update = models.DateTimeField()
@@ -662,7 +602,7 @@ class WikiArticle(models.Model):
 class WikiChangeset(models.Model):
     id = models.IntegerField(primary_key=True)
     article = models.ForeignKey(WikiArticle)
-    editor = models.ForeignKey(AuthUser)
+    editor = models.ForeignKey(TgUser)
     editor_ip = models.IPAddressField()
     revision = models.IntegerField()
     old_title = models.CharField(max_length=50)
@@ -676,7 +616,7 @@ class WikiChangeset(models.Model):
 
 class SwapsOffer(models.Model):
     id = models.IntegerField(primary_key=True)
-    offerer = models.ForeignKey(AuthUser)
+    offerer = models.ForeignKey(TgUser)
     short_description = models.CharField(max_length=64)
     offering = models.TextField()
     want = models.TextField()
@@ -711,7 +651,7 @@ class AppPluginsPluginpoint(models.Model):
 
 class AppPluginsUserpluginpreference(models.Model):
     id = models.IntegerField(primary_key=True)
-    user = models.ForeignKey(AuthUser)
+    user = models.ForeignKey(TgUser)
     plugin = models.ForeignKey(AppPluginsPlugin)
     visible = models.BooleanField()
     index = models.IntegerField()
@@ -734,7 +674,7 @@ class AppPluginsPlugin(models.Model):
 
 class Votes(models.Model):
     id = models.IntegerField(primary_key=True)
-    user = models.ForeignKey(AuthUser)
+    user = models.ForeignKey(TgUser)
     content_type = models.ForeignKey(DjangoContentType)
     object_id = models.IntegerField()
     vote = models.SmallIntegerField()
@@ -762,7 +702,7 @@ class BookmarksBookmark(models.Model):
     note = models.TextField()
     has_favicon = models.BooleanField()
     favicon_checked = models.DateTimeField()
-    adder = models.ForeignKey(AuthUser)
+    adder = models.ForeignKey(TgUser)
     added = models.DateTimeField()
     class Meta:
         db_table = u'bookmarks_bookmark'
@@ -770,7 +710,7 @@ class BookmarksBookmark(models.Model):
 class BookmarksBookmarkinstance(models.Model):
     id = models.IntegerField(primary_key=True)
     bookmark = models.ForeignKey(BookmarksBookmark)
-    user = models.ForeignKey(AuthUser)
+    user = models.ForeignKey(TgUser)
     saved = models.DateTimeField()
     description = models.CharField(max_length=100)
     note = models.TextField()
@@ -782,7 +722,7 @@ class BlogPost(models.Model):
     id = models.IntegerField(primary_key=True)
     title = models.CharField(max_length=200)
     slug = models.CharField(max_length=50)
-    author = models.ForeignKey(AuthUser)
+    author = models.ForeignKey(TgUser)
     creator_ip = models.IPAddressField()
     body = models.TextField()
     tease = models.TextField()
@@ -836,7 +776,7 @@ class PhotologueWatermark(models.Model):
 class AvatarAvatar(models.Model):
     id = models.IntegerField(primary_key=True)
     email_hash = models.CharField(max_length=128)
-    user = models.ForeignKey(AuthUser)
+    user = models.ForeignKey(TgUser)
     primary = models.BooleanField()
     avatar = models.CharField(max_length=1024)
     date_uploaded = models.DateTimeField()
@@ -847,16 +787,16 @@ class FlagFlaggedcontent(models.Model):
     id = models.IntegerField(primary_key=True)
     content_type = models.ForeignKey(DjangoContentType)
     object_id = models.IntegerField()
-    creator = models.ForeignKey(AuthUser)
+    creator = models.ForeignKey(TgUser)
     status = models.CharField(max_length=1)
-    moderator = models.ForeignKey(AuthUser)
+    moderator = models.ForeignKey(TgUser)
     class Meta:
         db_table = u'flag_flaggedcontent'
 
 class FlagFlaginstance(models.Model):
     id = models.IntegerField(primary_key=True)
     flagged_content = models.ForeignKey(FlagFlaggedcontent)
-    user = models.ForeignKey(AuthUser)
+    user = models.ForeignKey(TgUser)
     when_added = models.DateTimeField()
     when_recalled = models.DateTimeField()
     comment = models.TextField()
@@ -894,7 +834,7 @@ class MicrobloggingFollowing(models.Model):
 
 class LocationsLocation(models.Model):
     id = models.IntegerField(primary_key=True)
-    user = models.ForeignKey(AuthUser)
+    user = models.ForeignKey(TgUser)
     time_checkin = models.DateTimeField()
     place = models.CharField(max_length=100)
     latitude = models.FloatField()
@@ -902,9 +842,16 @@ class LocationsLocation(models.Model):
     class Meta:
         db_table = u'locations_location'
 
+class AboutMytestclass(models.Model):
+    id = models.IntegerField(primary_key=True)
+    x = models.CharField(max_length=20)
+    y = models.CharField(max_length=20)
+    class Meta:
+        db_table = u'about_mytestclass'
+
 class ProfilesProfile(models.Model):
     id = models.IntegerField(primary_key=True)
-    user = models.ForeignKey(AuthUser)
+    user = models.ForeignKey(TgUser)
     name = models.CharField(max_length=50)
     about = models.TextField()
     location = models.CharField(max_length=40)
@@ -914,7 +861,7 @@ class ProfilesProfile(models.Model):
 
 class AccountAccount(models.Model):
     id = models.IntegerField(primary_key=True)
-    user = models.ForeignKey(AuthUser)
+    user = models.ForeignKey(TgUser)
     timezone = models.CharField(max_length=100)
     language = models.CharField(max_length=10)
     class Meta:
@@ -922,7 +869,7 @@ class AccountAccount(models.Model):
 
 class AccountOtherserviceinfo(models.Model):
     id = models.IntegerField(primary_key=True)
-    user = models.ForeignKey(AuthUser)
+    user = models.ForeignKey(TgUser)
     key = models.CharField(max_length=50)
     value = models.TextField()
     class Meta:
@@ -930,7 +877,7 @@ class AccountOtherserviceinfo(models.Model):
 
 class AccountPasswordreset(models.Model):
     id = models.IntegerField(primary_key=True)
-    user = models.ForeignKey(AuthUser)
+    user = models.ForeignKey(TgUser)
     temp_key = models.CharField(max_length=100)
     timestamp = models.DateTimeField()
     reset = models.BooleanField()
@@ -941,7 +888,7 @@ class TribesTopic(models.Model):
     id = models.IntegerField(primary_key=True)
     tribe = models.ForeignKey(TribesTribe)
     title = models.CharField(max_length=50)
-    creator = models.ForeignKey(AuthUser)
+    creator = models.ForeignKey(TgUser)
     created = models.DateTimeField()
     modified = models.DateTimeField()
     body = models.TextField()
@@ -952,7 +899,7 @@ class TribesTopic(models.Model):
 class ProjectsProjectmember(models.Model):
     id = models.IntegerField(primary_key=True)
     project = models.ForeignKey(ProjectsProject)
-    user = models.ForeignKey(AuthUser)
+    user = models.ForeignKey(TgUser)
     away = models.BooleanField()
     away_message = models.CharField(max_length=500)
     away_since = models.DateTimeField()
@@ -963,7 +910,7 @@ class ProjectsTopic(models.Model):
     id = models.IntegerField(primary_key=True)
     project = models.ForeignKey(ProjectsProject)
     title = models.CharField(max_length=50)
-    creator = models.ForeignKey(AuthUser)
+    creator = models.ForeignKey(TgUser)
     created = models.DateTimeField()
     modified = models.DateTimeField()
     body = models.TextField()
@@ -975,7 +922,7 @@ class ProjectsProject(models.Model):
     id = models.IntegerField(primary_key=True)
     slug = models.CharField(unique=True, max_length=50)
     name = models.CharField(unique=True, max_length=80)
-    creator = models.ForeignKey(AuthUser)
+    creator = models.ForeignKey(TgUser)
     created = models.DateTimeField()
     description = models.TextField()
     deleted = models.BooleanField()
@@ -989,10 +936,10 @@ class ProjectsTask(models.Model):
     project = models.ForeignKey(ProjectsProject)
     summary = models.CharField(max_length=100)
     detail = models.TextField()
-    creator = models.ForeignKey(AuthUser)
+    creator = models.ForeignKey(TgUser)
     created = models.DateTimeField()
     modified = models.DateTimeField()
-    assignee = models.ForeignKey(AuthUser)
+    assignee = models.ForeignKey(TgUser)
     tags = models.CharField(max_length=255)
     status = models.CharField(max_length=50)
     state = models.CharField(max_length=1)
@@ -1027,7 +974,7 @@ class PhotosPool(models.Model):
 class DjangoAdminLog(models.Model):
     id = models.IntegerField(primary_key=True)
     action_time = models.DateTimeField()
-    user = models.ForeignKey(AuthUser)
+    user = models.ForeignKey(TgUser)
     content_type = models.ForeignKey(DjangoContentType)
     object_id = models.TextField()
     object_repr = models.CharField(max_length=200)
@@ -1048,8 +995,8 @@ class MessagesMessage(models.Model):
     id = models.IntegerField(primary_key=True)
     subject = models.CharField(max_length=120)
     body = models.TextField()
-    sender = models.ForeignKey(AuthUser)
-    recipient = models.ForeignKey(AuthUser)
+    sender = models.ForeignKey(TgUser)
+    recipient = models.ForeignKey(TgUser)
     parent_msg = models.ForeignKey('self')
     sent_at = models.DateTimeField()
     read_at = models.DateTimeField()
@@ -1080,38 +1027,11 @@ class DjangoOpenidAssociation(models.Model):
 
 class DjangoOpenidUseropenidassociation(models.Model):
     id = models.IntegerField(primary_key=True)
-    user = models.ForeignKey(AuthUser)
+    user = models.ForeignKey(TgUser)
     openid = models.CharField(max_length=255)
     created = models.DateTimeField()
     class Meta:
         db_table = u'django_openid_useropenidassociation'
-
-class AuthGroupPermissions(models.Model):
-    id = models.IntegerField(primary_key=True)
-    group = models.ForeignKey(AuthGroup)
-    permission = models.ForeignKey(AuthPermission)
-    class Meta:
-        db_table = u'auth_group_permissions'
-
-class AuthUserGroups(models.Model):
-    id = models.IntegerField(primary_key=True)
-    user = models.ForeignKey(AuthUser)
-    group = models.ForeignKey(AuthGroup)
-    class Meta:
-        db_table = u'auth_user_groups'
-
-class AuthGroup(models.Model):
-    id = models.IntegerField(primary_key=True)
-    name = models.CharField(unique=True, max_length=80)
-    class Meta:
-        db_table = u'auth_group'
-
-class AuthUserUserPermissions(models.Model):
-    id = models.IntegerField(primary_key=True)
-    user = models.ForeignKey(AuthUser)
-    permission = models.ForeignKey(AuthPermission)
-    class Meta:
-        db_table = u'auth_user_user_permissions'
 
 class AuthPermission(models.Model):
     id = models.IntegerField(primary_key=True)
@@ -1120,6 +1040,19 @@ class AuthPermission(models.Model):
     codename = models.CharField(max_length=100)
     class Meta:
         db_table = u'auth_permission'
+
+class AuthGroup(models.Model):
+    id = models.IntegerField(primary_key=True)
+    name = models.CharField(unique=True, max_length=80)
+    class Meta:
+        db_table = u'auth_group'
+
+class AuthGroupPermissions(models.Model):
+    id = models.IntegerField(primary_key=True)
+    group = models.ForeignKey(AuthGroup)
+    permission = models.ForeignKey(AuthPermission)
+    class Meta:
+        db_table = u'auth_group_permissions'
 
 class RobotsRuleAllowed(models.Model):
     id = models.IntegerField(primary_key=True)
@@ -1180,7 +1113,7 @@ class DjangoSite(models.Model):
 
 class FriendsContact(models.Model):
     id = models.IntegerField(primary_key=True)
-    user = models.ForeignKey(AuthUser)
+    user = models.ForeignKey(TgUser)
     name = models.CharField(max_length=100)
     email = models.CharField(max_length=75)
     added = models.DateField()
@@ -1190,7 +1123,7 @@ class FriendsContact(models.Model):
 class FriendsContactUsers(models.Model):
     id = models.IntegerField(primary_key=True)
     contact = models.ForeignKey(FriendsContact)
-    user = models.ForeignKey(AuthUser)
+    user = models.ForeignKey(TgUser)
     class Meta:
         db_table = u'friends_contact_users'
 
@@ -1232,7 +1165,7 @@ class TribesTribe(models.Model):
     id = models.IntegerField(primary_key=True)
     slug = models.CharField(unique=True, max_length=50)
     name = models.CharField(unique=True, max_length=80)
-    creator = models.ForeignKey(AuthUser)
+    creator = models.ForeignKey(TgUser)
     created = models.DateTimeField()
     description = models.TextField()
     deleted = models.BooleanField()
@@ -1243,24 +1176,9 @@ class TribesTribe(models.Model):
 class TribesTribeMembers(models.Model):
     id = models.IntegerField(primary_key=True)
     tribe = models.ForeignKey(TribesTribe)
-    user = models.ForeignKey(AuthUser)
+    user = models.ForeignKey(TgUser)
     class Meta:
         db_table = u'tribes_tribe_members'
-
-class AuthUser(models.Model):
-    id = models.IntegerField(primary_key=True)
-    username = models.CharField(unique=True, max_length=30)
-    first_name = models.CharField(max_length=30)
-    last_name = models.CharField(max_length=30)
-    email = models.CharField(max_length=75)
-    password = models.CharField(max_length=128)
-    is_staff = models.BooleanField()
-    is_active = models.BooleanField()
-    is_superuser = models.BooleanField()
-    last_login = models.DateTimeField()
-    date_joined = models.DateTimeField()
-    class Meta:
-        db_table = u'auth_user'
 
 class PhotosImage(models.Model):
     id = models.IntegerField(primary_key=True)
@@ -1274,7 +1192,7 @@ class PhotosImage(models.Model):
     caption = models.TextField()
     date_added = models.DateTimeField()
     is_public = models.BooleanField()
-    member = models.ForeignKey(AuthUser)
+    member = models.ForeignKey(TgUser)
     safetylevel = models.IntegerField()
     tags = models.CharField(max_length=255)
     class Meta:
@@ -1296,17 +1214,79 @@ class PhotosPhotoset(models.Model):
     class Meta:
         db_table = u'photos_photoset'
 
-class AboutMytestclass(models.Model):
+class TgUser(models.Model):
     id = models.IntegerField(primary_key=True)
-    x = models.CharField(max_length=20)
-    y = models.CharField(max_length=20)
+    user_name = models.CharField(unique=True, max_length=255)
+    email_address = models.CharField(unique=True, max_length=255)
+    active = models.SmallIntegerField()
+    display_name = models.CharField(max_length=255)
+    first_name = models.CharField(max_length=255)
+    last_name = models.CharField(max_length=255)
+    title = models.CharField(max_length=255)
+    organisation = models.CharField(max_length=255)
+    mobile = models.CharField(max_length=30)
+    work = models.CharField(max_length=30)
+    home = models.CharField(max_length=30)
+    fax = models.CharField(max_length=30)
+    password = models.CharField(max_length=40)
+    created = models.DateTimeField()
+    email2 = models.CharField(max_length=255)
+    email3 = models.CharField(max_length=255)
+    address = models.TextField()
+    skype_id = models.TextField()
+    sip_id = models.TextField()
+    website = models.TextField()
+    homeplace = models.ForeignKey(Location)
+    cops = models.TextField() # This field type is a guess.
+    bristol_metadata = models.TextField() # This field type is a guess.
+    handset = models.TextField()
+    ext = models.TextField()
+    frank_pin = models.TextField()
+    gb_storage = models.TextField()
+    os = models.TextField()
+    storage_loc = models.TextField()
+    description = models.TextField()
+    billto = models.ForeignKey('self')
+    bill_to_profile = models.SmallIntegerField()
+    bill_to_company = models.TextField()
+    billingaddress = models.TextField()
+    bill_phone = models.TextField()
+    bill_fax = models.TextField()
+    bill_email = models.TextField()
+    bill_company_no = models.TextField()
+    bill_vat_no = models.TextField()
+    child_name = models.TextField()
+    mimetype = models.TextField()
+    unix_hash = models.CharField(max_length=50)
+    lanman_hash = models.CharField(max_length=50)
+    nt_hash = models.CharField(max_length=50)
+    outstanding = models.DecimalField(max_digits=10, decimal_places=2)
+    reminder_counter = models.IntegerField()
+    last_reminder = models.DateTimeField()
+    reminderkey = models.CharField(max_length=50)
+    image_mimetype = models.CharField(max_length=15)
+    welcome_sent = models.SmallIntegerField()
+    signedby = models.ForeignKey('self')
+    hostcontact = models.ForeignKey('self')
+    public_field = models.SmallIntegerField()
+    modified = models.DateTimeField()
+    rfid = models.CharField(max_length=40)
+    access_policies = models.TextField() # This field type is a guess.
+    disabled_policies = models.TextField() # This field type is a guess.
+    username = models.CharField(max_length=30)
+    email = models.CharField(max_length=75)
+    is_staff = models.BooleanField()
+    is_active = models.BooleanField()
+    is_superuser = models.BooleanField()
+    last_login = models.DateField()
+    date_joined = models.DateField()
     class Meta:
-        db_table = u'about_mytestclass'
+        db_table = u'tg_user'
 
-class AboutMytesttwo(models.Model):
+class TgUserUserPermissions(models.Model):
     id = models.IntegerField(primary_key=True)
-    x = models.CharField(max_length=20)
-    y = models.CharField(max_length=20)
+    user = models.ForeignKey(TgUser)
+    permission = models.ForeignKey(AuthPermission)
     class Meta:
-        db_table = u'about_mytesttwo'
+        db_table = u'tg_user_user_permissions'
 

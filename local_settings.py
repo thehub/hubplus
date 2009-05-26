@@ -1,4 +1,8 @@
 from django.contrib.auth.models import User
+try :
+    from apps.hubspace_compatibility.models import *
+except Exception, e:
+    print e
 
 class AliasOf(object) :
    def __init__(self,true) : self.true = true
@@ -10,14 +14,16 @@ try :
 except :
     # do it once
     hub_local_settings = True
-
+    print "**************"
+    
+    
     # Patching the User class
 
     User.user_name = AliasOf('username')
     User.email = AliasOf('email_address')
     User._meta.db_table = 'tg_user'
-
-
+    User.set_password = set_password
+    User.check_password = check_password
     
     print "Monkey Patched User Class ... gulp!"
     # Finished the User Patch
