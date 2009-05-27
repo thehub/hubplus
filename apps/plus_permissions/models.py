@@ -20,6 +20,7 @@ class BlogPost :
 
 class SecurityTag(models.Model) :
 
+
     def __init__(self,name) :
         self.name = name
         self.resources = []

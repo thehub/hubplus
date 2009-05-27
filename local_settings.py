@@ -24,8 +24,10 @@ except :
     User._meta.db_table = 'tg_user'
     User.set_password = set_password
     User.check_password = check_password
+    User.isMemberOf = isMemberOf
+    User.isDirectMemberOf = isDirectMemberOf
+    User.getEnclosures = getEnclosures
+
     
     print "Monkey Patched User Class ... gulp!"
     # Finished the User Patch
-
-    

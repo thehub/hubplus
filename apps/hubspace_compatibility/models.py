@@ -2,13 +2,16 @@
 from django.db import models
 
 from django.contrib.auth.models import User, UserManager, check_password
+
+from django.contrib.contenttypes.models import ContentType
+from django.contrib.contenttypes import generic
+
 import hashlib
 
 def getHubspaceUser(username) :
     """ Returns the hubspace user. None if doesn't exist"""
     try :
         tu = User.objects.filter(username=username)[0]
-        print "got %s, %s" % (tu.username,tu.password)
         return  tu
     except Exception,e:
         print "Error in getHubspaceUser %s" % e
@@ -111,25 +114,70 @@ class HubspaceAuthenticationBackend :
             return None
 
 class Location(models.Model):
-    id = models.IntegerField(primary_key=True)
+
     name = models.CharField(unique=True, max_length=200)
     class Meta:
         db_table = u'location'
 
 try :
   class TgGroup(models.Model):
-    id = models.IntegerField(primary_key=True)
+    #id = models.IntegerField(primary_key=True)
     group_name = models.CharField(unique=True, max_length=40)
     display_name = models.CharField(max_length=255)
     created = models.DateTimeField()
     place = models.ForeignKey(Location)
     level = models.CharField(max_length=9)
 
-    enclosures = models.ManyToManyField("self")
-    members = models.ManyToManyField("self")
-
     class Meta:
         db_table = u'tg_group'
-except  Exception, e :
-  print "#### %s" % e
 
+    def isGroup(self) : return True
+
+    def addMember(self,x) :
+        if not self.hasMember(x) :
+            map = HCGroupMapping()
+            map.child=x
+            map.parent=self
+            map.save()
+
+    def getMembers(self) : 
+        return (x.child for x in HCGroupMapping.objects.filter(parent=self))
+
+    def hasMember(self,x) :
+        return (x in self.getMembers())
+
+    def getNoMembers(self) :
+        return HCGroupMapping.objects.filter(parent=self).count()
+
+
+  class HCGroupMapping(models.Model) :
+    content_type = models.ForeignKey(ContentType)
+    object_id = models.PositiveIntegerField()
+    child = generic.GenericForeignKey('content_type', 'object_id')
+    parent = models.ForeignKey(TgGroup)
+
+except Exception, e:
+  print "##### %s" % e
+
+# We're going to add the following method to User class
+def isMemberOf(self,group) : 
+    if not group.isGroup() : return False
+    if group.hasMember(self) : return True
+    # not in group g, but let's check if it's in anything that's a parent of g
+    for x in self.getEnclosures() :
+        if x.isMemberOf(group) : 
+            return True
+    return False
+    
+# add it to TgGroup too
+TgGroup.isMemberOf= isMemberOf
+
+def getEnclosures(self) :
+    return (x.parent for x in HCGroupMapping.objects.all() if x.child == self)
+
+TgGroup.getEnclosures = getEnclosures
+
+def isDirectMemberOf(self, group) :
+    return group.hasMember(self)
+
+TgGroup.isDirectMemberOf = isDirectMemberOf
