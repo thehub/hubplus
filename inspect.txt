@@ -1,3 +1,4 @@
+blah blah
 **************
 Monkey Patched User Class ... gulp!
 # This is an auto-generated Django model module.
