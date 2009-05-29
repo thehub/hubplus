@@ -66,7 +66,6 @@ class TestPermissions(unittest.TestCase) :
         self.assertTrue(u2.isDirectMemberOf(g2))
         self.assertFalse(u2.isDirectMemberOf(g))
 
-
     def testPermissions(self) :
         u = User(username='synnove')
         u.save()
@@ -82,23 +81,49 @@ class TestPermissions(unittest.TestCase) :
         editors = TgGroup(group_name='editors',display_name='editors',created=datetime.date.today(),place=l)
         editors.save()
 
-        self.assertTrue(OurPost.getInterfaces()['viewer'])
-        self.assertTrue(OurPost.getInterfaces()['editor'])
-        self.assertTrue(OurPost.getInterfaces()['commentor'])
+        tif = self.makeInterfaceFactory()
 
-        t = SecurityTag(name='tag1',agent=u,resource=blog,interface=OurPost.getInterfaces()['viewer'])
+        t = SecurityTag(name='tag1',agent=u,resource=blog,interface=tif.get_id(OurPost,'Viewer'))
         t.save()
-        t2 = SecurityTag(name='tag1',agent=u,resource=blog,interface='commentor')
+
+        t2 = SecurityTag(name='tag1',agent=u,resource=blog,interface=tif.get_id(OurPost,'Commentor'))
         t2.save()
 
-        self.assertTrue(t.hasAccess(u,blog,'commentor'))
-        self.assertFalse(t2.hasAccess(u,blog,OurPost.getInterfaces()['editor']))
+        for y in (x for x in SecurityTag.objects.all() ) :
+            print y
 
-        t3 = SecurityTag(name='tag1',agent=editors,resource=blog2,interface='editor')
+        self.assertTrue(t.has_access(u,blog,tif.get_id(OurPost,'Commentor')))
+        self.assertFalse(t2.has_access(u,blog,tif.get_id(OurPost,'Editor')))
+
+        t3 = SecurityTag(name='tag1',agent=editors,resource=blog2,interface=tif.get_id(OurPost,'Editor'))
         t3.save()
-        self.assertTrue(t3.hasAccess(editors,blog2,OurPost.getInterfaces()['editor']))
+
+        self.assertTrue(t3.has_access(editors,blog2,tif.get_id(OurPost,'Editor')))
 
         editors.addMember(u)
-        print [x for x in editors.getMembers()]
-        self.assertTrue(t3.hasAccess(u,blog2,OurPost.getInterfaces()['editor']))
-        self.assertFalse(t3.hasAccess(u,blog,OurPost.getInterfaces()['editor']))
+
+        self.assertTrue(t3.has_access(u,blog2,tif.get_id(OurPost,'Editor')))
+        self.assertFalse(t3.has_access(u,blog,tif.get_id(OurPost,'Editor')))
+
+        self.assertEquals(len([x for x in t3.all_named()]),3)
+
+    def makeInterfaceFactory(self) :
+        tif = InterfaceFactory()
+        
+        tif.add_type(OurPost)
+        tif.add_interface(OurPost,'Viewer',OurPostViewer)
+        tif.add_interface(OurPost,'Editor',OurPostEditor)
+        tif.add_interface(OurPost,'Commentor',OurPostCommentor)
+        return tif
+
+    def testInterfaces(self) :
+        tif = self.makeInterfaceFactory()
+
+        class A : pass
+        self.assertTrue(tif.get_type(OurPost))
+        self.assertRaises(Exception,tif.get_type,A)
+
+        self.assertEquals(tif.get_interface(OurPost,'Viewer'),OurPostViewer)
+        self.assertRaises(Exception,tif.get_interface,OurPost,'xyz')
+        
+

@@ -3,29 +3,38 @@ from django.db import models
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes import generic
 
+class Interface : pass
 
 
-class Interface :
-    def __init__(self,name):
-        self.name = name
+class InterfaceFactory :
 
+    def __init__(self) :
+        self.all = {}
+
+    def add_type(self,cls) :
+        if not self.all.has_key(cls.__name__) :
+            self.all[cls.__name__] = {}
+
+    def get_type(self,cls) :
+        return self.all[cls.__name__]
+
+    def add_interface(self,cls,name,interfaceClass) :
+        self.add_type(cls)
+        self.get_type(cls)[name] = interfaceClass
+
+    def get_interface(self,cls,name) :
+        return self.get_type(cls)[name]
+        
+
+    def get_id(self,cls,name) : 
+        return '%s.%s' % (cls.__name__,name)
 
 class OurPost(models.Model) :
     title = models.CharField(max_length='20')
 
-    @classmethod
-    def getInterfaces(self) :
-        return { 'viewer' : 'viewer', 'editor':'editor', 'commentor':'commentor' }
-        return {
-        'viewer':Interface('viewer'),
-        'editor':Interface('editor'),
-        'commentor':Interface('commentor')
-        }
-
-    @classmethod
-    def getInterface(self,name) :
-        return self.getInterfaces()[name]
-
+class OurPostViewer(Interface) : pass
+class OurPostEditor(Interface) : pass
+class OurPostCommentor(Interface) : pass
 
 
 
@@ -36,26 +45,21 @@ class SecurityTag(models.Model) :
     agent_object_id = models.PositiveIntegerField()
     agent = generic.GenericForeignKey('agent_content_type', 'agent_object_id')
  
-    interface = models.CharField(max_length='20')
- 
+    interface = models.CharField(max_length='50')
+
     resource_content_type = models.ForeignKey(ContentType,related_name='security_tag_resource')
     resource_object_id = models.PositiveIntegerField()
     resource = generic.GenericForeignKey('resource_content_type', 'resource_object_id')
 
+    def all_named(self) : 
+        return (x for x in SecurityTag.objects.all() if x.name == self.name)
 
-    def IoN(self,i,res) :
-        # if variable i is not an Interface object, we guess it evaluates to 
-        # the name of an interface in the dictionary of the resource
-        if i.__class__ != Interface : return res.getInterfaces()[i]
-        return i
-
-    def filter(self,agent,resource,interface) :
-        return (x for x in SecurityTag.objects.all() if (x.agent == agent and x.resource == resource and x.interface == interface) )
-
-    def hasAccess(self,agent,resource,interface) :
-        interface = self.IoN(interface,resource)
-        for x in self.filter(agent,resource,interface) :
-            return True
+    def has_access(self,agent,resource,interface) :
+        for x in (x for x in SecurityTag.objects.all() if x.resource == resource and x.interface == interface) :
+            if x.agent == agent : 
+                return True
+            if agent.isMemberOf(x.agent) : 
+                return True
         return False
 
     def __str__(self) :
