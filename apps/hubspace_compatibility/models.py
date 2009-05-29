@@ -163,7 +163,7 @@ except Exception, e:
 def isMemberOf(self,group) : 
     if not group.isGroup() : return False
     if group.hasMember(self) : return True
-    # not in group g, but let's check if it's in anything that's a parent of g
+    # not a direct member, but perhaps somewhere up the tree of (enclosures / parents)
     for x in self.getEnclosures() :
         if x.isMemberOf(group) : 
             return True

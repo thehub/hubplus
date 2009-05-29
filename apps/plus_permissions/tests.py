@@ -67,12 +67,14 @@ class TestPermissions(unittest.TestCase) :
         self.assertFalse(u2.isDirectMemberOf(g))
 
 
-    def testNew(self) :
+    def testPermissions(self) :
         u = User(username='synnove')
         u.save()
 
-        blog= BlogPost('my post')
-        blog2 = BlogPost('another post')
+        blog= OurPost(title='my post')
+        blog.save()
+        blog2 = OurPost(title='another post')
+        blog2.save()
 
         l = Location(name='da hub')
         l.save()
@@ -80,19 +82,23 @@ class TestPermissions(unittest.TestCase) :
         editors = TgGroup(group_name='editors',display_name='editors',created=datetime.date.today(),place=l)
         editors.save()
 
-        self.assertTrue(BlogPost.interfaces['viewer'])
-        self.assertTrue(BlogPost.interfaces['editor'])
-        self.assertTrue(BlogPost.interfaces['commentor'])
+        self.assertTrue(OurPost.getInterfaces()['viewer'])
+        self.assertTrue(OurPost.getInterfaces()['editor'])
+        self.assertTrue(OurPost.getInterfaces()['commentor'])
 
-        t = SecurityTag('tag1')
-        t.giveAccess(u,blog,BlogPost.interfaces['viewer'])
-        t.giveAccess(u,blog,'commentor')
+        t = SecurityTag(name='tag1',agent=u,resource=blog,interface=OurPost.getInterfaces()['viewer'])
+        t.save()
+        t2 = SecurityTag(name='tag1',agent=u,resource=blog,interface='commentor')
+        t2.save()
 
         self.assertTrue(t.hasAccess(u,blog,'commentor'))
-        self.assertFalse(t.hasAccess(u,blog,BlogPost.interfaces['editor']))
+        self.assertFalse(t2.hasAccess(u,blog,OurPost.getInterfaces()['editor']))
 
-        t.giveAccess(editors,blog2,'editor')
-        self.assertTrue(t.hasAccess(editors,blog2,BlogPost.interfaces['editor']))
+        t3 = SecurityTag(name='tag1',agent=editors,resource=blog2,interface='editor')
+        t3.save()
+        self.assertTrue(t3.hasAccess(editors,blog2,OurPost.getInterfaces()['editor']))
+
         editors.addMember(u)
-        self.assertTrue(t.hasAccess(u,blog2,BlogPost.interfaces['editor']))
-        self.assertFalse(t.hasAccess(u,blog,BlogPost.interfaces['editor']))
+        print [x for x in editors.getMembers()]
+        self.assertTrue(t3.hasAccess(u,blog2,OurPost.getInterfaces()['editor']))
+        self.assertFalse(t3.hasAccess(u,blog,OurPost.getInterfaces()['editor']))
