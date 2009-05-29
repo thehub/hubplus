@@ -3,7 +3,6 @@ from django.db import models
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes import generic
 
-class Interface : pass
 
 
 class InterfaceFactory :
@@ -32,10 +31,10 @@ class InterfaceFactory :
 class OurPost(models.Model) :
     title = models.CharField(max_length='20')
 
+class Interface : pass
 class OurPostViewer(Interface) : pass
 class OurPostEditor(Interface) : pass
 class OurPostCommentor(Interface) : pass
-
 
 
 class SecurityTag(models.Model) :
