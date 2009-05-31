@@ -12,7 +12,10 @@ except Exception, e:
 
 from models import *
 
+# Permission Management by Content Types
+from OurPost import *
 
+# 
 class TestPermissions(unittest.TestCase) :
 
     def testGroupHierarchy(self):
@@ -89,9 +92,6 @@ class TestPermissions(unittest.TestCase) :
         t2 = SecurityTag(name='tag1',agent=u,resource=blog,interface=tif.get_id(OurPost,'Commentor'))
         t2.save()
 
-        for y in (x for x in SecurityTag.objects.all() ) :
-            print y
-
         self.assertTrue(t.has_access(u,blog,tif.get_id(OurPost,'Commentor')))
         self.assertFalse(t2.has_access(u,blog,tif.get_id(OurPost,'Editor')))
 
@@ -114,6 +114,8 @@ class TestPermissions(unittest.TestCase) :
         tif.add_interface(OurPost,'Viewer',OurPostViewer)
         tif.add_interface(OurPost,'Editor',OurPostEditor)
         tif.add_interface(OurPost,'Commentor',OurPostCommentor)
+        
+        tif.add_permission_manager(OurPost,OurPostPermissionManager())
         return tif
 
     def testInterfaces(self) :
@@ -127,3 +129,23 @@ class TestPermissions(unittest.TestCase) :
         self.assertRaises(Exception,tif.get_interface,OurPost,'xyz')
         
 
+    def testSliderSet(self) :
+        tif = self.makeInterfaceFactory()
+        blog = OurPost(title='test')
+        blog.save()
+        u = User(username='phil')
+        u.save()
+        pm = tif.get_permission_manager(OurPost)
+        pd = pm.setup_defaults(u,blog)
+        self.assertFalse(pd.has_extras())
+        self.assertFalse(pd.is_changed())
+        self.assertEquals(len(pd.get_sliders()),3)
+        s = pd.get_slider('Viewer')
+        self.assertEquals(len(s.get_options()),4)
+        ops = s.get_options()
+        
+        self.assertEquals(ops,['anon','members','group members', 'me'])
+        # or is this what we want?
+        # maybe the set of permissions should belong to the content items?
+        
+        

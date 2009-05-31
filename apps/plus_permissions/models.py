@@ -3,12 +3,13 @@ from django.db import models
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes import generic
 
-
+class Interface : pass
 
 class InterfaceFactory :
 
     def __init__(self) :
         self.all = {}
+        self.permission_managers = {}
 
     def add_type(self,cls) :
         if not self.all.has_key(cls.__name__) :
@@ -22,19 +23,16 @@ class InterfaceFactory :
         self.get_type(cls)[name] = interfaceClass
 
     def get_interface(self,cls,name) :
-        return self.get_type(cls)[name]
-        
+        return self.get_type(cls)[name]        
 
     def get_id(self,cls,name) : 
         return '%s.%s' % (cls.__name__,name)
 
-class OurPost(models.Model) :
-    title = models.CharField(max_length='20')
+    def add_permission_manager(self,cls,pm) :
+        self.permission_managers[cls.__name__] = pm
 
-class Interface : pass
-class OurPostViewer(Interface) : pass
-class OurPostEditor(Interface) : pass
-class OurPostCommentor(Interface) : pass
+    def get_permission_manager(self,cls) : 
+        return self.permission_managers[cls.__name__]
 
 
 class SecurityTag(models.Model) :
