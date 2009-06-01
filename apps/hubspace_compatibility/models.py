@@ -131,22 +131,22 @@ try :
     class Meta:
         db_table = u'tg_group'
 
-    def isGroup(self) : return True
+    def is_group(self) : return True
 
-    def addMember(self,x) :
-        if not self.hasMember(x) :
+    def add_member(self,x) :
+        if not self.has_member(x) :
             map = HCGroupMapping()
             map.child=x
             map.parent=self
             map.save()
 
-    def getMembers(self) : 
+    def get_members(self) : 
         return (x.child for x in HCGroupMapping.objects.filter(parent=self))
 
-    def hasMember(self,x) :
-        return (x in self.getMembers())
+    def has_member(self,x) :
+        return (x in self.get_members())
 
-    def getNoMembers(self) :
+    def get_no_members(self) :
         return HCGroupMapping.objects.filter(parent=self).count()
 
 
@@ -160,24 +160,24 @@ except Exception, e:
   print "##### %s" % e
 
 # We're going to add the following method to User class
-def isMemberOf(self,group) : 
-    if not group.isGroup() : return False
-    if group.hasMember(self) : return True
+def is_member_of(self,group) : 
+    if not group.is_group() : return False
+    if group.has_member(self) : return True
     # not a direct member, but perhaps somewhere up the tree of (enclosures / parents)
-    for x in self.getEnclosures() :
-        if x.isMemberOf(group) : 
+    for x in self.get_enclosures() :
+        if x.is_member_of(group) : 
             return True
     return False
     
 # add it to TgGroup too
-TgGroup.isMemberOf= isMemberOf
+TgGroup.is_member_of= is_member_of
 
-def getEnclosures(self) :
+def get_enclosures(self) :
     return (x.parent for x in HCGroupMapping.objects.all() if x.child == self)
 
-TgGroup.getEnclosures = getEnclosures
+TgGroup.get_enclosures = get_enclosures
 
-def isDirectMemberOf(self, group) :
-    return group.hasMember(self)
+def is_direct_member_of(self, group) :
+    return group.has_member(self)
 
-TgGroup.isDirectMemberOf = isDirectMemberOf
+TgGroup.is_direct_member_of = is_direct_member_of

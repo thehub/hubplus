@@ -24,9 +24,10 @@ except :
     User._meta.db_table = 'tg_user'
     User.set_password = set_password
     User.check_password = check_password
-    User.isMemberOf = isMemberOf
-    User.isDirectMemberOf = isDirectMemberOf
-    User.getEnclosures = getEnclosures
+    User.is_member_of = is_member_of
+    User.is_direct_member_of = is_direct_member_of
+    User.get_enclosures = get_enclosures
+    User.is_group = lambda(self) : False
 
     
     print "Monkey Patched User Class ... gulp!"

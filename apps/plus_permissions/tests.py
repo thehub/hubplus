@@ -12,6 +12,8 @@ except Exception, e:
 
 from models import *
 
+import pdb
+
 # Permission Management by Content Types
 from OurPost import *
 
@@ -39,35 +41,35 @@ class TestPermissions(unittest.TestCase) :
         g = TgGroup(group_name='members',display_name='members',created=datetime.date.today(),place=l)
         g.save()
 
-        self.assertEquals(g.getNoMembers(),0)
-        g.addMember(u)
-        self.assertEquals(g.getNoMembers(),1)
-        self.assertTrue(u.isMemberOf(g))
+        self.assertEquals(g.get_no_members(),0)
+        g.add_member(u)
+        self.assertEquals(g.get_no_members(),1)
+        self.assertTrue(u.is_member_of(g))
         
-        self.assertTrue(g in set(u.getEnclosures()))
+        self.assertTrue(g in set(u.get_enclosures()))
 
-        g.addMember(u)
-        self.assertEquals(g.getNoMembers(),1)
+        g.add_member(u)
+        self.assertEquals(g.get_no_members(),1)
 
         g2 = TgGroup(group_name='admins',display_name='admins',created=datetime.date.today(),place=l)
         g2.save()
 
-        g2.addMember(u2)
+        g2.add_member(u2)
 
-        g.addMember(g2) # make group B a member or subgroup of A
-        self.assertEquals(g.getNoMembers(),2)
-        self.assertTrue(g in set(g2.getEnclosures()))
-        self.assertTrue(g2.isMemberOf(g))
-        self.assertTrue(u2.isMemberOf(g2))
-        self.assertTrue(u2.isMemberOf(g))
+        g.add_member(g2) # make group B a member or subgroup of A
+        self.assertEquals(g.get_no_members(),2)
+        self.assertTrue(g in set(g2.get_enclosures()))
+        self.assertTrue(g2.is_member_of(g))
+        self.assertTrue(u2.is_member_of(g2))
+        self.assertTrue(u2.is_member_of(g))
 
         for x in HCGroupMapping.objects.all() :
             print '%s, %s' % (x.parent.group_name,x.child)
 
-        self.assertFalse(u.isMemberOf(g2))
+        self.assertFalse(u.is_member_of(g2))
 
-        self.assertTrue(u2.isDirectMemberOf(g2))
-        self.assertFalse(u2.isDirectMemberOf(g))
+        self.assertTrue(u2.is_direct_member_of(g2))
+        self.assertFalse(u2.is_direct_member_of(g))
 
     def testPermissions(self) :
         u = User(username='synnove')
@@ -100,23 +102,20 @@ class TestPermissions(unittest.TestCase) :
 
         self.assertTrue(t3.has_access(editors,blog2,tif.get_id(OurPost,'Editor')))
 
-        editors.addMember(u)
+        editors.add_member(u)
 
         self.assertTrue(t3.has_access(u,blog2,tif.get_id(OurPost,'Editor')))
         self.assertFalse(t3.has_access(u,blog,tif.get_id(OurPost,'Editor')))
 
         self.assertEquals(len([x for x in t3.all_named()]),3)
 
+
     def makeInterfaceFactory(self) :
-        tif = InterfaceFactory()
-        
-        tif.add_type(OurPost)
-        tif.add_interface(OurPost,'Viewer',OurPostViewer)
-        tif.add_interface(OurPost,'Editor',OurPostEditor)
-        tif.add_interface(OurPost,'Commentor',OurPostCommentor)
-        
+        ps = PermissionSystem()
+        tif = ps.get_interface_factory()        
         tif.add_permission_manager(OurPost,OurPostPermissionManager())
         return tif
+
 
     def testInterfaces(self) :
         tif = self.makeInterfaceFactory()
@@ -131,21 +130,48 @@ class TestPermissions(unittest.TestCase) :
 
     def testSliderSet(self) :
         tif = self.makeInterfaceFactory()
+        ps = PermissionSystem()
         blog = OurPost(title='test')
         blog.save()
         u = User(username='phil')
         u.save()
+
+        everyone = ps.get_anon_group()
+        everyone.add_member(u)
+
+        # NB : todo
+        # we have to find solution to making all users members of everyone, either
+        # 1) automatically add all users to root group
+        # 2) when testing permissions, resources which are linked to this group, we don't bother testing agent
+        # Both have pros and cons
+        # 1) pro is that we have simpler permission system rules. Just test the existence of security tags
+        # 1) con is that we have more complicated set-up. When do we hang users off everyone? When they're created? What about legacy? etc. 
+        # What if they're already members of sub-groups etc?
+        # 2) pro - we don't have to solve the cons of 1
+        # 2) con, we add more complex logic to the permission test which may, spiral out of control
+
+        # ok, back to the tests
+
         pm = tif.get_permission_manager(OurPost)
         pd = pm.setup_defaults(u,blog)
+
         self.assertFalse(pd.has_extras())
         self.assertFalse(pd.is_changed())
         self.assertEquals(len(pd.get_sliders()),3)
         s = pd.get_slider('Viewer')
         self.assertEquals(len(s.get_options()),4)
         ops = s.get_options()
+
+        self.assertEquals([x.name for x in ops],['anon','members','group members', 'me'])
+        self.assertEquals(s.get_current_option().name,'anon')
+        tags = ps.get_permissions_for(blog)
+
+        self.assertTrue(ps.has_access(everyone,blog,tif.get_id(OurPost,'Viewer')))
+        self.assertFalse(ps.has_access(everyone,blog,tif.get_id(OurPost,'Editor')))            
+        self.assertTrue(ps.has_access(u,blog,tif.get_id(OurPost,'Viewer')))
+
+        self.assertEquals(s.set_current_option(1)) # is it ok to set option using numeric index? Or better with name?
+        self.assertEquals(s.get_current_option().name,'members')
         
-        self.assertEquals(ops,['anon','members','group members', 'me'])
-        # or is this what we want?
-        # maybe the set of permissions should belong to the content items?
-        
-        
+
+

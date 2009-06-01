@@ -1,7 +1,12 @@
 from django.db import models
 
+
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes import generic
+
+from apps.hubspace_compatibility.models import TgGroup, Location
+
+import datetime
 
 class Interface : pass
 
@@ -22,6 +27,7 @@ class InterfaceFactory :
         self.add_type(cls)
         self.get_type(cls)[name] = interfaceClass
 
+
     def get_interface(self,cls,name) :
         return self.get_type(cls)[name]        
 
@@ -30,6 +36,7 @@ class InterfaceFactory :
 
     def add_permission_manager(self,cls,pm) :
         self.permission_managers[cls.__name__] = pm
+        pm.register_with_interface_factory(self)
 
     def get_permission_manager(self,cls) : 
         return self.permission_managers[cls.__name__]
@@ -55,10 +62,68 @@ class SecurityTag(models.Model) :
         for x in (x for x in SecurityTag.objects.all() if x.resource == resource and x.interface == interface) :
             if x.agent == agent : 
                 return True
-            if agent.isMemberOf(x.agent) : 
+            if agent.is_member_of(x.agent) : 
                 return True
         return False
 
     def __str__(self) :
         return """Agent : %s, Resource : %s, Interface : %s""" % (self.agent,self.resource,self.interface)
 
+
+_ONLY_INTERFACE_FACTORY = InterfaceFactory()
+
+class PermissionSystem :
+    """ This is a high-level interface to the permission system. Can answer questions about permissions without involving 
+    the user creating a lot of other objects. Also you can ask it to give you some default groups such as 'anon' (the group 
+    to which anyone is a member)"""
+
+    def __init__(self) :
+
+        self.root_location, created = Location.objects.get_or_create(name='root_location')
+        if created :
+            self.root_location.save()
+
+        self.root_group, created = TgGroup.objects.get_or_create(
+            group_name='root',display_name='root',level='member',
+            created=datetime.date.today(),place=self.root_location)
+        if created :
+            self.root_group.save()
+
+
+
+    def get_permissions_for(self,resource) :
+        return (x for x in SecurityTag.objects.all() if x.resource == resource)
+
+    def get_anon_group(self) : 
+        """ The anon_group is the root of all groups, representing permissions given even to non members; plus everyone else"""
+        return TgGroup.objects.filter(group_name='root')[0]
+
+    def has_access(self,agent,resource,interface) :
+        t = SecurityTag()
+        return t.has_access(agent,resource,interface)
+
+    def get_interface_factory(self) : 
+        return _ONLY_INTERFACE_FACTORY
+
+_ONLY_PERMISSION_SYSTEM = PermissionSystem()
+
+def get_permission_system() :
+    return _ONLY_PERMISSION_SYSTEM
+
+class PermissionManager :
+    def get_permission_system(self) :
+        return get_permission_system()
+
+class Slider :
+    def get_options(self) :
+        return self.options
+
+    def get_current_option(self) :
+        return self.options[self.idx_current]
+
+    def set_current_option(self,idx) :
+        self.idx_current = idx
+
+class SliderOption :
+    def __init__(self,name) :
+        self.name = name
