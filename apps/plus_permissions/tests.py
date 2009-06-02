@@ -162,16 +162,21 @@ class TestPermissions(unittest.TestCase) :
         self.assertEquals(len(s.get_options()),4)
         ops = s.get_options()
 
-        self.assertEquals([x.name for x in ops],['anon','members','group members', 'me'])
+        # who are the groups in the default slider sequence?
+        # if there's an official "admin" group for another group (or resource) how is this represented?
+        # if we use current permission mechanism, then this allows many admins over a group
+        # but that is too ambiguous to infer the defaults for the sliders.
+
+        self.assertEquals([x.name for x in ops],['anon','members','me','group members'])
         self.assertEquals(s.get_current_option().name,'anon')
         tags = ps.get_permissions_for(blog)
 
         self.assertTrue(ps.has_access(everyone,blog,tif.get_id(OurPost,'Viewer')))
-        self.assertFalse(ps.has_access(everyone,blog,tif.get_id(OurPost,'Editor')))            
+        self.assertFalse(ps.has_access(everyone,blog,tif.get_id(OurPost,'Editor')))
         self.assertTrue(ps.has_access(u,blog,tif.get_id(OurPost,'Viewer')))
 
-        self.assertEquals(s.set_current_option(1)) # is it ok to set option using numeric index? Or better with name?
+        s.set_current_option(1) # is it ok to set option using numeric index? Or better with name?
         self.assertEquals(s.get_current_option().name,'members')
         
-
-
+        self.assertFalse(ps.has_access(everyone,blog,tif.get_id(OurPost,'Viewer')))
+        self.assertTrue(ps.has_access(members,blog,tif.get_id(OurPost,'Viewer')))

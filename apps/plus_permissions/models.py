@@ -83,12 +83,17 @@ class PermissionSystem :
         if created :
             self.root_location.save()
 
-        self.root_group, created = TgGroup.objects.get_or_create(
-            group_name='root',display_name='root',level='member',
-            created=datetime.date.today(),place=self.root_location)
-        if created :
+        # note : we can't use get_or_create for TgGroup, because the created date clause won't match on a different day 
+        # from the day the record was created.
+        xs = TgGroup.objects.filter(group_name='root')
+        if len(xs) > 0 : 
+            self.root_group = xs[0]
+        else :
+            self.root_group = TgGroup(
+                group_name='root',display_name='root',level='member',
+                place=self.root_location, created=datetime.date.today()
+                )
             self.root_group.save()
-
 
 
     def get_permissions_for(self,resource) :
