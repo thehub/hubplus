@@ -42,6 +42,26 @@ class InterfaceFactory :
         return self.permission_managers[cls.__name__]
 
 
+class DefaultAdmin(models.Model) :
+    agent_content_type = models.ForeignKey(ContentType,related_name='default_admin_agent')
+    agent_object_id = models.PositiveIntegerField()
+    agent = generic.GenericForeignKey('agent_content_type', 'agent_object_id')
+
+    resource_content_type = models.ForeignKey(ContentType,related_name='default_admin_resource')
+    resource_object_id = models.PositiveIntegerField()
+    resource = generic.GenericForeignKey('resource_content_type', 'resource_object_id')
+
+def default_admin_for(resource) :
+    ds = [x for x in DefaultAdmin.objects.all() if x.resource == resource]
+    if len(ds) < 1 : 
+        return None
+    else :
+        return ds[0]
+
+
+    
+    
+ 
 class SecurityTag(models.Model) :
     name = models.CharField(max_length='20') 
 
@@ -77,23 +97,27 @@ class PermissionSystem :
     the user creating a lot of other objects. Also you can ask it to give you some default groups such as 'anon' (the group 
     to which anyone is a member)"""
 
-    def __init__(self) :
+    def get_or_create_group(self,group_name,display_name,place) :
+        # note : we can't use get_or_create for TgGroup, because the created date clause won't match on a different day                                     
+        # from the day the record was created.                                                                                                              
+        xs = TgGroup.objects.filter(group_name=group_name)
+        if len(xs) > 0 :
+            g = xs[0]
+        else :
+            g = TgGroup(
+                group_name=group_name, display_name=display_name, level='member',
+                place=place,created=datetime.date.today()
+                )
+            g.save()
+        return g
 
+    def __init__(self) :
         self.root_location, created = Location.objects.get_or_create(name='root_location')
         if created :
             self.root_location.save()
 
-        # note : we can't use get_or_create for TgGroup, because the created date clause won't match on a different day 
-        # from the day the record was created.
-        xs = TgGroup.objects.filter(group_name='root')
-        if len(xs) > 0 : 
-            self.root_group = xs[0]
-        else :
-            self.root_group = TgGroup(
-                group_name='root',display_name='root',level='member',
-                place=self.root_location, created=datetime.date.today()
-                )
-            self.root_group.save()
+        self.root_group = self.get_or_create_group('root','root',self.root_location)
+        self.all_members_group = self.get_or_create_group('all_members','all members',self.root_location)
 
 
     def get_permissions_for(self,resource) :
@@ -102,6 +126,11 @@ class PermissionSystem :
     def get_anon_group(self) : 
         """ The anon_group is the root of all groups, representing permissions given even to non members; plus everyone else"""
         return TgGroup.objects.filter(group_name='root')[0]
+
+    def get_all_members_group(self) :
+        """ The group to which all account-holding "hub-members" belong"""
+        return TgGroup.objects.filter(group_name='all_members')
+
 
     def has_access(self,agent,resource,interface) :
         t = SecurityTag()
@@ -129,6 +158,8 @@ class Slider :
     def set_current_option(self,idx) :
         self.idx_current = idx
 
+
 class SliderOption :
-    def __init__(self,name) :
+    def __init__(self,name,agent) :
         self.name = name
+        self.agent = agent

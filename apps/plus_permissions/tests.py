@@ -63,13 +63,16 @@ class TestPermissions(unittest.TestCase) :
         self.assertTrue(u2.is_member_of(g2))
         self.assertTrue(u2.is_member_of(g))
 
-        for x in HCGroupMapping.objects.all() :
-            print '%s, %s' % (x.parent.group_name,x.child)
-
         self.assertFalse(u.is_member_of(g2))
 
         self.assertTrue(u2.is_direct_member_of(g2))
         self.assertFalse(u2.is_direct_member_of(g))
+
+        g2.add_member(u)
+        self.assertTrue(u.is_direct_member_of(g2))
+        self.assertFalse(u.is_direct_member_of(g))
+        self.assertTrue(u.is_member_of(g))
+
 
     def testPermissions(self) :
         u = User(username='synnove')
@@ -110,6 +113,7 @@ class TestPermissions(unittest.TestCase) :
         self.assertEquals(len([x for x in t3.all_named()]),3)
 
 
+
     def makeInterfaceFactory(self) :
         ps = PermissionSystem()
         tif = ps.get_interface_factory()        
@@ -131,13 +135,29 @@ class TestPermissions(unittest.TestCase) :
     def testSliderSet(self) :
         tif = self.makeInterfaceFactory()
         ps = PermissionSystem()
+        l = Location(name='biosphere')
+        l.save()
+
+        group = TgGroup(group_name='greenarchitects',display_name='Green Architects', place=l,created=datetime.date.today())
+        group.save()
+        adminGroup = TgGroup(group_name='gaadmin', display_name='Green Architecture Admin', place=l,created=datetime.date.today())
+        adminGroup.save()
+
+        da = DefaultAdmin(agent=adminGroup,resource=group)
+        da.save()
+
         blog = OurPost(title='test')
         blog.save()
         u = User(username='phil')
         u.save()
+        author = User(username='author')
+        author.save()
 
         everyone = ps.get_anon_group()
         everyone.add_member(u)
+        everyone.add_member(author)
+
+        all_members = ps.get_all_members_group()
 
         # NB : todo
         # we have to find solution to making all users members of everyone, either
@@ -153,7 +173,7 @@ class TestPermissions(unittest.TestCase) :
         # ok, back to the tests
 
         pm = tif.get_permission_manager(OurPost)
-        pd = pm.setup_defaults(u,blog)
+        pd = pm.setup_defaults(blog,author,group)
 
         self.assertFalse(pd.has_extras())
         self.assertFalse(pd.is_changed())
@@ -167,8 +187,8 @@ class TestPermissions(unittest.TestCase) :
         # if we use current permission mechanism, then this allows many admins over a group
         # but that is too ambiguous to infer the defaults for the sliders.
 
-        self.assertEquals([x.name for x in ops],['anon','members','me','group members'])
-        self.assertEquals(s.get_current_option().name,'anon')
+        self.assertEquals([a.name for a in ops],['root','all_members','Green Architects','Green Architecture Admin','author'])
+        self.assertEquals(s.get_current_option().name,'root')
         tags = ps.get_permissions_for(blog)
 
         self.assertTrue(ps.has_access(everyone,blog,tif.get_id(OurPost,'Viewer')))
@@ -176,7 +196,6 @@ class TestPermissions(unittest.TestCase) :
         self.assertTrue(ps.has_access(u,blog,tif.get_id(OurPost,'Viewer')))
 
         s.set_current_option(1) # is it ok to set option using numeric index? Or better with name?
-        self.assertEquals(s.get_current_option().name,'members')
-        
+        self.assertEquals(s.get_current_option().name,'all_members')
         self.assertFalse(ps.has_access(everyone,blog,tif.get_id(OurPost,'Viewer')))
         self.assertTrue(ps.has_access(members,blog,tif.get_id(OurPost,'Viewer')))
