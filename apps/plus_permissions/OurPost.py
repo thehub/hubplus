@@ -27,9 +27,9 @@ class OurPostSlider(Slider) :
 class OurPostViewerSlider(OurPostSlider) :
     def __init__(self,creator,owner) :
         self.options = [SliderOption(name,agent) for name,agent in 
-                       'anon',get_permission_system().get_anon_group(),
-                        'all members',get_permission_system().get_all_members_group(),
-                        'members',owner,
+                       'root',get_permission_system().get_anon_group(),
+                        'all_members',get_permission_system().get_all_members_group(),
+                        owner.display,owner,
                         'me',creator,
                         'admin',default_admin_for(owner)
                         ]
