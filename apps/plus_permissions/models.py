@@ -152,13 +152,20 @@ class PermissionSystem :
         """ The group to which all account-holding "hub-members" belong"""
         return TgGroup.objects.filter(group_name='all_members')
 
-
     def has_access(self,agent,resource,interface) :
         t = SecurityTag()
         return t.has_access(agent,resource,interface)
 
+    def delete_access(self,agent,resource,interface) :
+        for tag in SecurityTag.objects.filter(interface=interface) :
+            if tag.agent == agent and tag.resource==resource : 
+                tag.delete()
+
     def get_interface_factory(self) : 
         return _ONLY_INTERFACE_FACTORY
+
+    def get_permission_manager(self,cls) :
+        return self.get_interface_factory().get_permission_manage(cls)
 
 _ONLY_PERMISSION_SYSTEM = PermissionSystem()
 
@@ -170,14 +177,50 @@ class PermissionManager :
         return get_permission_system()
 
 class Slider :
-    def get_options(self) :
-        return self.options
+    """ A Slider is a specialized view of the underlying PermissionSystem.
+    As such, it isn't an entity in the database in it's own right, but is used to manipulate 
+    the existence or otherwise of particular SecurityTags ...
 
+    A slider is created when a user needs to manipulate the PermissionSystem, and destroyed 
+    when no longer relevant.
+
+    The creation or destruction of a slider object represents no change to the permissions.
+
+    When a slider is created, two pieces of fixed information define it : 
+      - the resource to which it refers
+      - the interface of the resource by which it refers
+    These do not change during its life-time.
+
+    The third dimension of the (agent,resource,interface), the agent, is changed by the slider.
+    Changing the agent mapped to the resource / interface involves destroying the existing SecurityTag 
+    and creating a new one.
+
+    On creation, the slider may infer its status from the database
+    
+    """
+
+    def __init__(self, tag_name, resource,interface_id,default_agent,options=[]) :
+        self.resource = resource
+        self.interface_id = interface_id
+        self.options = options
+        self.extras = extras
+
+        self.agent=default_agent # start with the default agent
+        # and over-ride if there's an existing SecurityTag which references one of the agents in our defaults
+        for a in (tag.agent for tag in SecurityTag.objects.filter(interface=interface_id) if tag.resource == resource) :
+            if a in (o.agent for o in self.get_options()) :
+                self.agent = x
+    
     def get_current_option(self) :
         return self.options[self.idx_current]
 
     def set_current_option(self,idx) :
+        # set as index of the slider .... is this right? Probably.
         self.idx_current = idx
+        _ONLY_PERMISSION_SYSTEM.delete_access(self.agent,self.resource,self.interface)
+        self.agent = self.options[self.idx_current].agent
+        t = SecurityTag(self.tag_name,self.agent,self.resource,self.interface)
+        t.save()
 
 
 class SliderOption :

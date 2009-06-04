@@ -79,6 +79,8 @@ class TestPermissions(unittest.TestCase) :
 
 
     def testPermissions(self) :
+        ps = PermissionSystem()
+
         u = User(username='synnove')
         u.save()
 
@@ -101,22 +103,29 @@ class TestPermissions(unittest.TestCase) :
         t2 = SecurityTag(name='tag1',agent=u,resource=blog,interface=tif.get_id(OurPost,'Commentor'))
         t2.save()
 
-        self.assertTrue(t.has_access(u,blog,tif.get_id(OurPost,'Commentor')))
+        self.assertTrue(t2.has_access(u,blog,tif.get_id(OurPost,'Commentor')))
         self.assertFalse(t2.has_access(u,blog,tif.get_id(OurPost,'Editor')))
 
         t3 = SecurityTag(name='tag1',agent=editors,resource=blog2,interface=tif.get_id(OurPost,'Editor'))
         t3.save()
 
-        self.assertTrue(t3.has_access(editors,blog2,tif.get_id(OurPost,'Editor')))
+        self.assertTrue(ps.has_access(editors,blog2,tif.get_id(OurPost,'Editor')))
 
         editors.add_member(u)
 
-        self.assertTrue(t3.has_access(u,blog2,tif.get_id(OurPost,'Editor')))
-        self.assertFalse(t3.has_access(u,blog,tif.get_id(OurPost,'Editor')))
+        self.assertTrue(ps.has_access(u,blog2,tif.get_id(OurPost,'Editor')))
+        self.assertFalse(ps.has_access(u,blog,tif.get_id(OurPost,'Editor')))
 
         self.assertEquals(len([x for x in t3.all_named()]),3)
 
+        t2.delete()
+        
+        self.assertFalse(ps.has_access(u,blog,tif.get_id(OurPost,'Commentor')))
+        ps.delete_access(u,blog,tif.get_id(OurPost,'Viewer'))
 
+        self.assertFalse(ps.has_access(u,blog,tif.get_id(OurPost,'Viewer')))
+
+        
 
     def makeInterfaceFactory(self) :
         ps = PermissionSystem()
@@ -136,8 +145,7 @@ class TestPermissions(unittest.TestCase) :
         self.assertRaises(Exception,tif.get_interface,OurPost,'xyz')
         
 
-    def testSliderSet(self) :
-        tif = self.makeInterfaceFactory()
+    def testSliders(self) :
         ps = PermissionSystem()
         l = Location(name='biosphere')
         l.save()
@@ -163,14 +171,13 @@ class TestPermissions(unittest.TestCase) :
 
         all_members = ps.get_all_members_group()
 
-
-        pm = tif.get_permission_manager(OurPost)
-        pd = pm.setup_defaults(blog,author,group)
+        pm = ps.get_permission_manager(OurPost)
 
         self.assertFalse(pd.has_extras())
         self.assertFalse(pd.is_changed())
         self.assertEquals(len(pd.get_sliders()),3)
-        s = pd.get_slider('Viewer')
+         
+        s = pm.make_slider(blog,'Viewer',group,author)
 
         self.assertEquals(len(s.get_options()),5)
         ops = s.get_options()
@@ -187,3 +194,7 @@ class TestPermissions(unittest.TestCase) :
         self.assertEquals(s.get_current_option().name,'all_members')
         self.assertFalse(ps.has_access(everyone,blog,tif.get_id(OurPost,'Viewer')))
         self.assertTrue(ps.has_access(members,blog,tif.get_id(OurPost,'Viewer')))
+
+        
+
+
