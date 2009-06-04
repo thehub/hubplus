@@ -1,4 +1,3 @@
-
 import unittest
 import datetime
 
@@ -173,10 +172,6 @@ class TestPermissions(unittest.TestCase) :
 
         pm = ps.get_permission_manager(OurPost)
 
-        self.assertFalse(pd.has_extras())
-        self.assertFalse(pd.is_changed())
-        self.assertEquals(len(pd.get_sliders()),3)
-         
         s = pm.make_slider(blog,'Viewer',group,author)
 
         self.assertEquals(len(s.get_options()),5)

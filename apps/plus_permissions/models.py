@@ -165,7 +165,7 @@ class PermissionSystem :
         return _ONLY_INTERFACE_FACTORY
 
     def get_permission_manager(self,cls) :
-        return self.get_interface_factory().get_permission_manage(cls)
+        return self.get_interface_factory().get_permission_manager(cls)
 
 _ONLY_PERMISSION_SYSTEM = PermissionSystem()
 
@@ -175,6 +175,20 @@ def get_permission_system() :
 class PermissionManager :
     def get_permission_system(self) :
         return get_permission_system()
+
+    def make_slider(self,resource,name,owner,creator,) :
+        return Slider(
+            self.get_default_tag_name(),
+            resource,
+            self.get_interface_id(),
+            self.get_default_agent(),
+            self.get_options()
+        )
+
+            
+            
+
+
 
 class Slider :
     """ A Slider is a specialized view of the underlying PermissionSystem.
