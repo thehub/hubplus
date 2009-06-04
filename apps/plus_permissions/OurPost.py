@@ -1,7 +1,9 @@
 # Permissions for OurPost, an example 
 
 from django.db import models
-from models import Interface, Slider, SliderOption, SecurityTag, PermissionManager, get_permission_system, default_admin_for
+
+from models import Interface, Slider, SliderOption, SecurityTag, PermissionManager, AgentNameWrap
+from models import get_permission_system, default_admin_for
 
 from apps.hubspace_compatibility.models import TgGroup
 
@@ -26,13 +28,13 @@ class OurPostSlider(Slider) :
 
 class OurPostViewerSlider(OurPostSlider) :
     def __init__(self,creator,owner) :
-        self.options = [SliderOption(name,agent) for name,agent in 
-                       'root',get_permission_system().get_anon_group(),
-                        'all_members',get_permission_system().get_all_members_group(),
-                        owner.display,owner,
-                        'me',creator,
-                        'admin',default_admin_for(owner)
-                        ]
+        self.options = [SliderOption(name,agent) for (name,agent) in [
+                        ('root',get_permission_system().get_anon_group()),
+                        ('all_members',get_permission_system().get_all_members_group()),
+                        (AgentNameWrap(owner).name,owner),
+                        (AgentNameWrap(creator).name,creator),
+                        (AgentNameWrap(default_admin_for(owner)).name,default_admin_for(owner))
+                        ]]
         self.set_current_option(0)
 
 class OurPostEditorSlider(OurPostSlider) :

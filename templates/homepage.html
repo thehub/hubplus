@@ -7,13 +7,25 @@
 {% block tab_id %}id="home_tab"{% endblock %}
 
 {% block body %}
-    {% blocktrans %}
-        <p><b>Pinax</b> is a <a href="http://djangoproject.com/">Django</a> project intended to provide a starting point for websites. By integrating numerous reusable Django apps to take care of the things that many sites have in common, it lets you focus on what makes your site different.</p>
-        
-        <p>This site is a complete running example of Pinax with most of the features included.</p>
-        
-        <p>For more information about Pinax, see <a href="http://pinaxproject.com/">http://pinaxproject.com/</a>.
-    {% endblocktrans %}
+
+<p>
+        Hub Plus will give me access to the people, resources and knowledge I need to inspire me and make my idea come to life.
+</p>
+
+<p>
+If you want to find out more about Hub Plus or get involved in the development of the site contact us at <a href='mailto:world.tech.plus@the-hub.net'>world.tech.plus@the-hub.net</a>
+</p>
+
+<p>
+Please be aware that this is the development site and any content you
+add may be lost at this time.
+</p>
+
+<p>
+Unless indicated otherwise, all documents on this site are publicly viewable.
+</p>
+
+
     
     {% if user.is_authenticated %}
         {% url what_next as what_next_url %}
@@ -23,7 +35,8 @@
         {% url acct_login as login_url %}
         <p>{% blocktrans %}You can <a href="{{ signup_url }}">Sign up</a> and <a href="{{ login_url }}">Log in</a> to try out the site.{% endblocktrans %}</p>
         
-        <p><b>{% blocktrans %}At this stage, there is openid support, email verification, password management, site announcements, user-to-user messaging, friend invitation (both internal and external to the site), a basic twitter clone, interest groups (called tribes), projects with basic task and issue management, threaded discussions, wikis, blogging, bookmarks, contact import (from vCard, Google or Yahoo), photo management and a notification framework.{% endblocktrans %}</b></p>
+<!--        <p><b>{% blocktrans %}At this stage, there is openid support, email verification, password management, site announcements, user-to-user messaging, friend invitation (both internal and external to the site), a basic twitter clone, interest groups (called tribes), projects with basic task and issue management, threaded discussions, wikis, blogging, bookmarks, contact import (from vCard, Google or Yahoo), photo management and a notification framework.{% endblocktrans %}</b></p> -->
+
     {% endif %}
     
 {% endblock %}

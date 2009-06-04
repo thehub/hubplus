@@ -38,40 +38,44 @@ class TestPermissions(unittest.TestCase) :
         l = Location(name='kingsX')
         l.save()
 
-        g = TgGroup(group_name='members',display_name='members',created=datetime.date.today(),place=l)
-        g.save()
+        members = TgGroup(group_name='members',display_name='members',created=datetime.date.today(),place=l)
+        members.save()
 
-        self.assertEquals(g.get_no_members(),0)
-        g.add_member(u)
-        self.assertEquals(g.get_no_members(),1)
-        self.assertTrue(u.is_member_of(g))
+        self.assertEquals(members.get_no_members(),0)
+        members.add_member(u)
+        self.assertEquals(members.get_no_members(),1)
+        self.assertTrue(u.is_member_of(members))
         
-        self.assertTrue(g in set(u.get_enclosures()))
+        self.assertTrue(members in set(u.get_enclosures()))
 
-        g.add_member(u)
-        self.assertEquals(g.get_no_members(),1)
+        members.add_member(u)
+        self.assertEquals(members.get_no_members(),1)
 
-        g2 = TgGroup(group_name='admins',display_name='admins',created=datetime.date.today(),place=l)
-        g2.save()
+        hosts = TgGroup(group_name='admins',display_name='admins',created=datetime.date.today(),place=l)
+        hosts.save()
 
-        g2.add_member(u2)
+        hosts.add_member(u2)
 
-        g.add_member(g2) # make group B a member or subgroup of A
-        self.assertEquals(g.get_no_members(),2)
-        self.assertTrue(g in set(g2.get_enclosures()))
-        self.assertTrue(g2.is_member_of(g))
-        self.assertTrue(u2.is_member_of(g2))
-        self.assertTrue(u2.is_member_of(g))
+        members.add_member(hosts) # make hosts a member or subgroup of members
+        self.assertEquals(members.get_no_members(),2)
+        self.assertTrue(members in set(hosts.get_enclosures()))
+        self.assertTrue(hosts.is_member_of(members))
+        self.assertTrue(u2.is_member_of(hosts))
+        self.assertTrue(u2.is_member_of(members))
 
-        self.assertFalse(u.is_member_of(g2))
+        self.assertFalse(u.is_member_of(hosts))
 
-        self.assertTrue(u2.is_direct_member_of(g2))
-        self.assertFalse(u2.is_direct_member_of(g))
+        self.assertTrue(u2.is_direct_member_of(hosts))
+        self.assertFalse(u2.is_direct_member_of(members))
 
-        g2.add_member(u)
-        self.assertTrue(u.is_direct_member_of(g2))
-        self.assertFalse(u.is_direct_member_of(g))
-        self.assertTrue(u.is_member_of(g))
+        # Now u becomes a member of subgroup hosts ... 
+        # Question, can we move it from "members" ... it seems it would by good (don't leave junk data in the database)
+        # but "smells" dangerous ... 
+
+        hosts.add_member(u) 
+        self.assertTrue(u.is_direct_member_of(hosts))
+        self.assertTrue(u.is_direct_member_of(members))
+        self.assertTrue(u.is_member_of(members))
 
 
     def testPermissions(self) :
@@ -159,18 +163,6 @@ class TestPermissions(unittest.TestCase) :
 
         all_members = ps.get_all_members_group()
 
-        # NB : todo
-        # we have to find solution to making all users members of everyone, either
-        # 1) automatically add all users to root group
-        # 2) when testing permissions, resources which are linked to this group, we don't bother testing agent
-        # Both have pros and cons
-        # 1) pro is that we have simpler permission system rules. Just test the existence of security tags
-        # 1) con is that we have more complicated set-up. When do we hang users off everyone? When they're created? What about legacy? etc. 
-        # What if they're already members of sub-groups etc?
-        # 2) pro - we don't have to solve the cons of 1
-        # 2) con, we add more complex logic to the permission test which may, spiral out of control
-
-        # ok, back to the tests
 
         pm = tif.get_permission_manager(OurPost)
         pd = pm.setup_defaults(blog,author,group)
@@ -179,15 +171,11 @@ class TestPermissions(unittest.TestCase) :
         self.assertFalse(pd.is_changed())
         self.assertEquals(len(pd.get_sliders()),3)
         s = pd.get_slider('Viewer')
-        self.assertEquals(len(s.get_options()),4)
+
+        self.assertEquals(len(s.get_options()),5)
         ops = s.get_options()
 
-        # who are the groups in the default slider sequence?
-        # if there's an official "admin" group for another group (or resource) how is this represented?
-        # if we use current permission mechanism, then this allows many admins over a group
-        # but that is too ambiguous to infer the defaults for the sliders.
-
-        self.assertEquals([a.name for a in ops],['root','all_members','Green Architects','Green Architecture Admin','author'])
+        self.assertEquals([a.name for a in ops],['root','all_members','Green Architects','author','Green Architecture Admin'])
         self.assertEquals(s.get_current_option().name,'root')
         tags = ps.get_permissions_for(blog)
 

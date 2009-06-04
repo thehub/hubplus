@@ -172,11 +172,13 @@ def is_member_of(self,group) :
 # add it to TgGroup too
 TgGroup.is_member_of= is_member_of
 
+# to be added to User class
 def get_enclosures(self) :
     return (x.parent for x in HCGroupMapping.objects.all() if x.child == self)
 
 TgGroup.get_enclosures = get_enclosures
 
+# to be added to User class
 def is_direct_member_of(self, group) :
     return group.has_member(self)
 

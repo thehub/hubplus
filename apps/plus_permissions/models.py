@@ -4,6 +4,7 @@ from django.db import models
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes import generic
 
+from django.contrib.auth.models import User
 from apps.hubspace_compatibility.models import TgGroup, Location
 
 import datetime
@@ -56,10 +57,30 @@ def default_admin_for(resource) :
     if len(ds) < 1 : 
         return None
     else :
-        return ds[0]
+        return ds[0].agent
 
 
-    
+class AgentNameWrap(object) :
+    def __init__(self,inner) :
+        self.__dict__['inner'] = inner
+
+    def __getattr__(self, name) :
+        if name == 'name' :
+            if self.inner.__class__ == User :
+                return self.inner.username
+            else :
+                return self.inner.display_name
+        else :
+            return getattr(self.inner,name,None)
+
+    def __setattr__(self,name,val) :
+        if name != 'name' :
+            setattr(self.inner,name,val)
+        else :
+            if self.inner.__class__ == User :
+                self.inner.username = val
+            else :
+                self.inner.display_name = val
     
  
 class SecurityTag(models.Model) :
