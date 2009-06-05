@@ -22,17 +22,6 @@ class OurPostEditor(Interface) : pass
 class OurPostCommentor(Interface) : pass
 
 
-class XOurPostViewerSlider(Slider) :
-    def __init__(self,creator,owner) :
-        self.options = [SliderOption(name,agent) for (name,agent) in [
-                        ('root',get_permission_system().get_anon_group()),
-                        ('all_members',get_permission_system().get_all_members_group()),
-                        (AgentNameWrap(owner).name,owner),
-                        (AgentNameWrap(creator).name,creator),
-                        (AgentNameWrap(default_admin_for(owner)).name,default_admin_for(owner))
-                        ]]
-        self.set_current_option(0)
-
 class OurPostPermissionManager(PermissionManager) :
     def register_with_interface_factory(self,interface_factory) :
         self.interface_factory = interface_factory

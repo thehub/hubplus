@@ -20,10 +20,14 @@ from OurPost import *
 class TestPermissions(unittest.TestCase) :
 
     def testGroupHierarchy(self):
+        # Test the group hierarchies stuff ...
+
+        # make a user
         u = User()
         u.username = 'nils'
         u.save()
 
+        # and a couple more
         u2 = User()
         u2.username='tom'
         u2.save()
@@ -32,47 +36,74 @@ class TestPermissions(unittest.TestCase) :
         u3.username = 'jesson'
         u2.save()
 
+        # we need location for TgGroups
         l = Location(name='kingsX')
         l.save()
 
-        members = TgGroup(group_name='members',display_name='members',created=datetime.date.today(),place=l)
-        members.save()
+        # here's a group (called "hub-members")
+        hubMembers = TgGroup(group_name='hub-members',display_name='members',created=datetime.date.today(),place=l)
+        hubMembers.save()
 
-        self.assertEquals(members.get_no_members(),0)
-        members.add_member(u)
-        self.assertEquals(members.get_no_members(),1)
-        self.assertTrue(u.is_member_of(members))
+        # they start empty
+        self.assertEquals(hubMembers.get_no_members(),0)
+
+        # we now add member to the group
+        hubMembers.add_member(u)
+        # which now has one member
+        self.assertEquals(hubMembers.get_no_members(),1)
+        # and u is a member 
+        self.assertTrue(u.is_member_of(hubMembers))
         
-        self.assertTrue(members in set(u.get_enclosures()))
+        # and hubMembers is itself in u's 'enclosures' (containing groups)
+        self.assertTrue(hubMembers in set(u.get_enclosures()))
 
-        members.add_member(u)
-        self.assertEquals(members.get_no_members(),1)
+        # check that you can't add the same member twice
+        hubMembers.add_member(u)
+        self.assertEquals(hubMembers.get_no_members(),1)
 
+        # another group, called hosts
         hosts = TgGroup(group_name='admins',display_name='admins',created=datetime.date.today(),place=l)
         hosts.save()
 
+        # u2 is a host
         hosts.add_member(u2)
 
-        members.add_member(hosts) # make hosts a member or subgroup of members
-        self.assertEquals(members.get_no_members(),2)
-        self.assertTrue(members in set(hosts.get_enclosures()))
-        self.assertTrue(hosts.is_member_of(members))
-        self.assertTrue(u2.is_member_of(hosts))
-        self.assertTrue(u2.is_member_of(members))
+        # make hosts a member (sub-group) of hubMembers
+        hubMembers.add_member(hosts) 
+        
+        # and check that it's counted as a member
+        self.assertEquals(hubMembers.get_no_members(),2)
 
+        # and hubMembers is in hosts' enclosures
+        self.assertTrue(hubMembers in set(hosts.get_enclosures()))
+
+        # and hosts is a member of members
+        self.assertTrue(hosts.is_member_of(hubMembers))
+        self.assertTrue(u2.is_member_of(hosts))
+
+        # and membership is transitive
+        self.assertTrue(u2.is_member_of(hubMembers))
+        
+        # but we haven't done anything crazy by making is_member_of just return false positives
         self.assertFalse(u.is_member_of(hosts))
 
+        # nevertheless we can use is_direct_member_of to check for membership which is NOT transitive
         self.assertTrue(u2.is_direct_member_of(hosts))
-        self.assertFalse(u2.is_direct_member_of(members))
+        self.assertFalse(u2.is_direct_member_of(hubMembers))
 
-        # Now u becomes a member of subgroup hosts ... 
-        # Question, can we move it from "members" ... it seems it would by good (don't leave junk data in the database)
-        # but "smells" dangerous ... 
-
+        # Now we u becomes a member of subgroup hosts ... 
         hosts.add_member(u) 
+
+        # it doesn't stop being a direct_member of hubMembers
+        # which seems a bit messy, but it's dangerous to prune this given that membership is a lattice, not a tree
         self.assertTrue(u.is_direct_member_of(hosts))
-        self.assertTrue(u.is_direct_member_of(members))
-        self.assertTrue(u.is_member_of(members))
+        self.assertTrue(u.is_direct_member_of(hubMembers))
+        self.assertTrue(u.is_member_of(hubMembers))
+
+        # now let's see what happens when we remove membership
+        hosts.remove_member(u)
+        self.assertFalse(u.is_direct_member_of(hosts))
+        self.assertFalse(u.is_member_of(hosts))
 
 
     def testPermissions(self) :
@@ -143,18 +174,23 @@ class TestPermissions(unittest.TestCase) :
         
 
     def testSliders(self) :
+        # PermissionSystem is the generic API to the permission system, 
+        # it's where you can find most things you need.
         ps = PermissionSystem()
+
+        # Locations currently mandatory for TgGroups, so let's have one
         l = Location(name='biosphere')
         l.save()
 
         # create a default group
         group = TgGroup(group_name='greenarchitects',display_name='Green Architects', place=l,created=datetime.date.today())
         group.save()
-        # create a group to be admin of it
+
+        # create another group to be admin of the first
         adminGroup = TgGroup(group_name='gaadmin', display_name='Green Architecture Admin', place=l,created=datetime.date.today())
         adminGroup.save()
 
-        # set adminGroup to be the admin for group
+        # set adminGroup to be the admin for group (there should probably be a method of PermissionSystem for this?)
         da = DefaultAdmin(agent=adminGroup,resource=group)
         da.save()
 

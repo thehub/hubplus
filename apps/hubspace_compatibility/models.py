@@ -140,6 +140,13 @@ try :
             map.parent=self
             map.save()
 
+
+    def remove_member(self,x) :
+        for x in HCGroupMapping.objects.filter(parent=self) :
+            if x.child == x :
+                x.delete()
+                     
+        
     def get_members(self) : 
         return (x.child for x in HCGroupMapping.objects.filter(parent=self))
 
