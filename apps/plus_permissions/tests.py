@@ -32,8 +32,6 @@ class TestPermissions(unittest.TestCase) :
         u3.username = 'jesson'
         u2.save()
 
-        print User.objects.all()
-
         l = Location(name='kingsX')
         l.save()
 
@@ -200,7 +198,7 @@ class TestPermissions(unittest.TestCase) :
         # and check that it gave us "root" (ie. the everyone group) as the view default. (we assume that blogs default to allowing non members to read them)
         self.assertEquals(s.get_current_option().name,'root')
 
-        tags = ps.get_permissions_for(blog)
+        tif = ps.get_interface_factory()
 
         self.assertTrue(ps.has_access(everyone,blog,tif.get_id(OurPost,'Viewer')))
         self.assertFalse(ps.has_access(everyone,blog,tif.get_id(OurPost,'Editor')))
@@ -210,7 +208,7 @@ class TestPermissions(unittest.TestCase) :
         s.set_current_option(1) # is it ok to set option using numeric index? Or better with name?
         self.assertEquals(s.get_current_option().name,'all_members')
         self.assertFalse(ps.has_access(everyone,blog,tif.get_id(OurPost,'Viewer')))
-        self.assertTrue(ps.has_access(members,blog,tif.get_id(OurPost,'Viewer')))
+        self.assertTrue(ps.has_access(all_members,blog,tif.get_id(OurPost,'Viewer')))
 
         
 

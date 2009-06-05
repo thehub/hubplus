@@ -150,7 +150,7 @@ class PermissionSystem :
 
     def get_all_members_group(self) :
         """ The group to which all account-holding "hub-members" belong"""
-        return TgGroup.objects.filter(group_name='all_members')
+        return TgGroup.objects.filter(group_name='all_members')[0]
 
     def has_access(self,agent,resource,interface) :
         t = SecurityTag()
@@ -239,6 +239,12 @@ class Slider :
         if not self.agent is None : # we found a valid default_agent or current value in the database
             self.set_current_option(self.current_idx) # Warning, updates SecurityTag in database
 
+    def get_relevant_tags(self) :
+        return (t for t in SecurityTag.objects.filter(interface=self.interface_id) if t.resource == self.resource)
+
+    def print_relevant_tags(self) :
+        for t in self.get_relevant_tags():
+            print ">> %s, %s, %s, %s" % (AgentNameWrap(t.agent).name, t.interface, t.resource, t.name)
 
     def get_options(self) :
         return self.options
@@ -248,11 +254,13 @@ class Slider :
 
     def set_current_option(self,idx) :
         # set as index of the slider .... is this right? Probably.
-        self.idx_current = idx
+        self.current_idx=idx
         _ONLY_PERMISSION_SYSTEM.delete_access(self.agent,self.resource,self.interface_id)
         self.agent = self.options[self.current_idx].agent
+
         t = SecurityTag(name=self.tag_name,agent=self.agent,resource=self.resource,interface=self.interface_id)
         t.save()
+
 
 
 class SliderOption :

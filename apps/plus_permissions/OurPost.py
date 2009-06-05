@@ -12,6 +12,8 @@ from apps.hubspace_compatibility.models import TgGroup
 class OurPost(models.Model) :
     title = models.CharField(max_length='20')
 
+    def __str__(self) :
+        return self.title
 
 # Here's the wrapping we have to put around it.
 
@@ -20,7 +22,7 @@ class OurPostEditor(Interface) : pass
 class OurPostCommentor(Interface) : pass
 
 
-class OurPostViewerSlider(Slider) :
+class XOurPostViewerSlider(Slider) :
     def __init__(self,creator,owner) :
         self.options = [SliderOption(name,agent) for (name,agent) in [
                         ('root',get_permission_system().get_anon_group()),
@@ -50,14 +52,11 @@ class OurPostPermissionManager(PermissionManager) :
         default_admin = default_admin_for(owner)
         if not default_admin is None :
             options.append( SliderOption(AgentNameWrap(default_admin).name,default_admin) )
-        
-        for o in options :
-            print o.name, o.agent
-            
+
         s = Slider(
             tag_name='OurPostPermissionManager.Viewer slider',
             resource=resource,
-            interface_id='OurPostPermissionManager.Viewer',
+            interface_id='OurPost.Viewer',
             default_agent=self.get_permission_system().get_anon_group(),
             options=options
         )
