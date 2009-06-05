@@ -210,6 +210,26 @@ class TestPermissions(unittest.TestCase) :
         self.assertFalse(ps.has_access(everyone,blog,tif.get_id(OurPost,'Viewer')))
         self.assertTrue(ps.has_access(all_members,blog,tif.get_id(OurPost,'Viewer')))
 
+        # and again
+        s.set_current_option(2) # group level
+        self.assertEquals(s.get_current_option().name,'Green Architects')
+        self.assertFalse(ps.has_access(all_members,blog,tif.get_id(OurPost,'Viewer')))
+        self.assertTrue(ps.has_access(group,blog,tif.get_id(OurPost,'Viewer'))) 
+
+        # and again
+        s.set_current_option(3) # author
+        self.assertEquals(s.get_current_option().name,'author')
+        self.assertFalse(ps.has_access(group,blog,tif.get_id(OurPost,'Viewer')))
+        self.assertTrue(ps.has_access(author,blog,tif.get_id(OurPost,'Viewer')))
+
+        # and again
+        s.set_current_option(4) # group level
+        self.assertEquals(s.get_current_option().name,'Green Architecture Admin')
+        self.assertFalse(ps.has_access(author,blog,tif.get_id(OurPost,'Viewer')))
+        self.assertTrue(ps.has_access(adminGroup,blog,tif.get_id(OurPost,'Viewer')))
+
+
+
         
 
 
