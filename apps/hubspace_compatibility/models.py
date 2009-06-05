@@ -142,10 +142,9 @@ try :
 
 
     def remove_member(self,x) :
-        for x in HCGroupMapping.objects.filter(parent=self) :
-            if x.child == x :
-                x.delete()
-                     
+        for map in HCGroupMapping.objects.filter(parent=self) :
+            if map.child == x :
+                map.delete()
         
     def get_members(self) : 
         return (x.child for x in HCGroupMapping.objects.filter(parent=self))
