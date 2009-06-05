@@ -149,42 +149,64 @@ class TestPermissions(unittest.TestCase) :
         l = Location(name='biosphere')
         l.save()
 
+        # create a default group
         group = TgGroup(group_name='greenarchitects',display_name='Green Architects', place=l,created=datetime.date.today())
         group.save()
+        # create a group to be admin of it
         adminGroup = TgGroup(group_name='gaadmin', display_name='Green Architecture Admin', place=l,created=datetime.date.today())
         adminGroup.save()
 
+        # set adminGroup to be the admin for group
         da = DefaultAdmin(agent=adminGroup,resource=group)
         da.save()
 
+        # create an example bit of content, a blog post of type "OurPost"
         blog = OurPost(title='test')
         blog.save()
+
+        # create a user 
         u = User(username='phil')
         u.save()
+
+        # another user (called 'author') who is set as the creator of our blog
         author = User(username='author')
         author.save()
 
+        # a group which is the top-level of our hierarchy of permission groups. everybody and anybody (even non-authenticated members of the public) 
+        # are considered to be members of this group
         everyone = ps.get_anon_group()
-        everyone.add_member(u)
-        everyone.add_member(author)
+        everyone.add_member(u) # though right now we manually add people ... need to change this, but not sure yet what the default representation is.
+        everyone.add_member(author) # 
 
+        # all_members is all *members* of hubplus, anyone with an account
         all_members = ps.get_all_members_group()
 
+        # the mermissions manager object for OurPosts
         pm = ps.get_permission_manager(OurPost)
 
+        # the permission manager for OurPost knows how to make relevant sliders. 
+        # we need to pass to it the resource itself, the name of the interface, 
+        #     the agent which is the "owner" of the resource (in this case "group") and 
+        #     the agent which is the "creator" of the resource (in this case "author")
         s = pm.make_slider(blog,'Viewer',group,author)
 
+        # now we're just testing that OurPost.Viewer has 5 options for the slider
         self.assertEquals(len(s.get_options()),5)
-        ops = s.get_options()
 
+        # let's see them
+        ops = s.get_options()
         self.assertEquals([a.name for a in ops],['root','all_members','Green Architects','author','Green Architecture Admin'])
+
+        # and check that it gave us "root" (ie. the everyone group) as the view default. (we assume that blogs default to allowing non members to read them)
         self.assertEquals(s.get_current_option().name,'root')
+
         tags = ps.get_permissions_for(blog)
 
         self.assertTrue(ps.has_access(everyone,blog,tif.get_id(OurPost,'Viewer')))
         self.assertFalse(ps.has_access(everyone,blog,tif.get_id(OurPost,'Editor')))
         self.assertTrue(ps.has_access(u,blog,tif.get_id(OurPost,'Viewer')))
 
+        # now use the slider to *change* the permission. Behind the scenes this is manipulating SecurityTags.
         s.set_current_option(1) # is it ok to set option using numeric index? Or better with name?
         self.assertEquals(s.get_current_option().name,'all_members')
         self.assertFalse(ps.has_access(everyone,blog,tif.get_id(OurPost,'Viewer')))

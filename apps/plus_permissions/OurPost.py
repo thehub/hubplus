@@ -31,8 +31,6 @@ class OurPostViewerSlider(Slider) :
                         ]]
         self.set_current_option(0)
 
-
-
 class OurPostPermissionManager(PermissionManager) :
     def register_with_interface_factory(self,interface_factory) :
         self.interface_factory = interface_factory
@@ -41,4 +39,41 @@ class OurPostPermissionManager(PermissionManager) :
         interface_factory.add_interface(OurPost,'Editor',OurPostEditor)
         interface_factory.add_interface(OurPost,'Commentor',OurPostCommentor)
 
- 
+
+    def make_viewer_slider(self,resource,interface_name,owner,creator) :
+        options = [
+            SliderOption('root',get_permission_system().get_anon_group()),
+            SliderOption('all_members',get_permission_system().get_all_members_group()),
+            SliderOption(AgentNameWrap(owner).name,owner),
+            SliderOption(AgentNameWrap(creator).name,creator)
+        ]
+        default_admin = default_admin_for(owner)
+        if not default_admin is None :
+            options.append( SliderOption(AgentNameWrap(default_admin).name,default_admin) )
+        
+        for o in options :
+            print o.name, o.agent
+            
+        s = Slider(
+            tag_name='OurPostPermissionManager.Viewer slider',
+            resource=resource,
+            interface_id='OurPostPermissionManager.Viewer',
+            default_agent=self.get_permission_system().get_anon_group(),
+            options=options
+        )
+
+        s.set_current_option(0)
+        return s
+
+
+
+    def make_slider(self,resource,interface_name,owner,creator) :
+        if interface_name == 'Viewer' :
+            return self.make_viewer_slider(resource,interface_name,owner,creator)
+        elif interface_name == 'Editor' :
+            return Slider()
+        elif interface_name == 'Commentor' : 
+            return Slider()
+        else :
+            raise NoSliderException(OurPost,interface_name)
+               

@@ -84,7 +84,7 @@ class AgentNameWrap(object) :
     
  
 class SecurityTag(models.Model) :
-    name = models.CharField(max_length='20') 
+    name = models.CharField(max_length='50') 
 
     agent_content_type = models.ForeignKey(ContentType,related_name='security_tag_agent')
     agent_object_id = models.PositiveIntegerField()
@@ -172,22 +172,22 @@ _ONLY_PERMISSION_SYSTEM = PermissionSystem()
 def get_permission_system() :
     return _ONLY_PERMISSION_SYSTEM
 
+class UseSubclassException(Exception) :
+    def __init__(self,cls,msg) :
+        self.cls = cls
+        self.msg = msg
+
 class PermissionManager :
     def get_permission_system(self) :
         return get_permission_system()
 
-    def make_slider(self,resource,name,owner,creator,) :
-        return Slider(
-            self.get_default_tag_name(),
-            resource,
-            self.get_interface_id(),
-            self.get_default_agent(),
-            self.get_options()
-        )
+    def make_slider(self,**args) :
+        raise UseSubclassException(PermissionManager,'Only a subclass of PermissionManager can make sliders')
 
-            
-            
-
+class NoSliderException(Exception) :
+    def __init__(self,cls,name) :
+        self.cls = cls
+        self.name = name
 
 
 class Slider :
@@ -217,23 +217,41 @@ class Slider :
         self.resource = resource
         self.interface_id = interface_id
         self.options = options
-        self.extras = extras
+        self.tag_name = tag_name
 
-        self.agent=default_agent # start with the default agent
+        # start with the default agent
+        try :
+            self.current_idx = self.options.index(default_agent)
+            self.agent = default_agent
+        except : 
+            self.current_idx = -1
+            self.agent = None
+
         # and over-ride if there's an existing SecurityTag which references one of the agents in our defaults
         for a in (tag.agent for tag in SecurityTag.objects.filter(interface=interface_id) if tag.resource == resource) :
-            if a in (o.agent for o in self.get_options()) :
-                self.agent = x
-    
+            try : 
+                self.current_idx = self.get_options().index(a)
+                self.agent = a
+                break
+            except :
+                pass
+
+        if not self.agent is None : # we found a valid default_agent or current value in the database
+            self.set_current_option(self.current_idx) # Warning, updates SecurityTag in database
+
+
+    def get_options(self) :
+        return self.options
+
     def get_current_option(self) :
-        return self.options[self.idx_current]
+        return self.options[self.current_idx]
 
     def set_current_option(self,idx) :
         # set as index of the slider .... is this right? Probably.
         self.idx_current = idx
-        _ONLY_PERMISSION_SYSTEM.delete_access(self.agent,self.resource,self.interface)
-        self.agent = self.options[self.idx_current].agent
-        t = SecurityTag(self.tag_name,self.agent,self.resource,self.interface)
+        _ONLY_PERMISSION_SYSTEM.delete_access(self.agent,self.resource,self.interface_id)
+        self.agent = self.options[self.current_idx].agent
+        t = SecurityTag(name=self.tag_name,agent=self.agent,resource=self.resource,interface=self.interface_id)
         t.save()
 
 
