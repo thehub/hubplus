@@ -3,8 +3,10 @@ from django.db import models
 
 from django.contrib.auth.models import User, UserManager, check_password
 
+
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes import generic
+
 
 import hashlib
 
@@ -27,7 +29,25 @@ def to_db_encoding(s, encoding):
         s = s.encode(encoding)
     return s
 
+# __________
 
+class UserNameField(models.CharField) :
+    """ Django works with a User class. Our system, for Hubspace compatibility reasons, needs to use a tg_user table.
+    We will also use this table, but need to cope with the fact that we will have a user_name and a username field
+    Whenever we update user_name we want to also update username.
+    And whenever we update username we want to also update user_name.
+    This class helps us"""
+    
+    def pre_save(self,model_instance,add) :
+        model_instance.user_name = model_instance.username
+        return getattr(model_instance, self.attname)
+
+    def __setattr__(self,obj,val) :
+        print "In __setattr__ %s, %s" % (obj,val)
+        super(models.CharField,self).__setattr__(obj,val)
+
+
+# ______
 def encrypt_password(password) :
     return hashlib.md5(password).hexdigest()
 
