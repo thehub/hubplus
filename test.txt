@@ -1,7 +1,11 @@
 here's a new line on thursday 11th jun
 
-another green world
+another green world for gits
+
+git is a git
 
 something else
+
+what a lot of crap is git
 
 more tests
