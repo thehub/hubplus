@@ -99,6 +99,9 @@ class SecurityTag(models.Model) :
 
     def has_access(self,agent,resource,interface) :
         for x in (x for x in SecurityTag.objects.all() if x.resource == resource and x.interface == interface) :
+            if x.agent == get_permission_system().get_anon_group() : 
+                # in other words, if this resource is matched with anyone, we don't have to test that user is in the "anyone" group
+                return True
             if x.agent == agent : 
                 return True
             if agent.is_member_of(x.agent) : 

@@ -215,8 +215,6 @@ class TestPermissions(unittest.TestCase) :
         # a group which is the top-level of our hierarchy of permission groups. everybody and anybody (even non-authenticated members of the public) 
         # are considered to be members of this group
         everyone = ps.get_anon_group()
-        everyone.add_member(u) # though right now we manually add people ... need to change this, but not sure yet what the default representation is.
-        everyone.add_member(author) # 
 
         # all_members is all *members* of hubplus, anyone with an account
         all_members = ps.get_all_members_group()
@@ -278,6 +276,11 @@ class TestPermissions(unittest.TestCase) :
         p = u.get_profile()
         p.about='about jesson'
         p.save()
+        ps = PermissionSystem()
+        for t in ps.get_permissions_for(p):
+          print t
+        self.assertTrue(ps.has_access(ps.get_anon_group(),p,ps.get_interface_factory().get_id(Profile,'Viewer')))
+
 
 
         

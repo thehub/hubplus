@@ -175,6 +175,7 @@ try :
     def get_no_members(self) :
         return HCGroupMapping.objects.filter(parent=self).count()
 
+    def __str__(self) : return "<TgGroup : %s>" % self.group_name
 
   class HCGroupMapping(models.Model) :
     content_type = models.ForeignKey(ContentType)
