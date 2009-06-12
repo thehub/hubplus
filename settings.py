@@ -75,12 +75,14 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.common.CommonMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
+
     'django_openid.consumer.SessionConsumer',
     'account.middleware.LocaleMiddleware',
     'django.middleware.doc.XViewMiddleware',
     'pagination.middleware.PaginationMiddleware',
     'misc.middleware.SortOrderMiddleware',
     'djangodblog.middleware.DBLogMiddleware',
+    'apps.plus_permissions.middleware.PlusPermissions',
     'django.middleware.transaction.TransactionMiddleware',
 )
 

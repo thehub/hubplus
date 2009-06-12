@@ -1,6 +1,5 @@
 from django.db import models
 
-
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes import generic
 
@@ -49,7 +48,7 @@ class DefaultAdmin(models.Model) :
     agent = generic.GenericForeignKey('agent_content_type', 'agent_object_id')
 
     resource_content_type = models.ForeignKey(ContentType,related_name='default_admin_resource')
-    resource_object_id = models.PositiveIntegerField()
+    resource_object_id = models.PositiveIntegerField(null=True)
     resource = generic.GenericForeignKey('resource_content_type', 'resource_object_id')
 
 def default_admin_for(resource) :
@@ -85,7 +84,6 @@ class AgentNameWrap(object) :
  
 class SecurityTag(models.Model) :
     name = models.CharField(max_length='50') 
-
     agent_content_type = models.ForeignKey(ContentType,related_name='security_tag_agent')
     agent_object_id = models.PositiveIntegerField()
     agent = generic.GenericForeignKey('agent_content_type', 'agent_object_id')
@@ -144,6 +142,9 @@ class PermissionSystem :
     def get_permissions_for(self,resource) :
         return (x for x in SecurityTag.objects.all() if x.resource == resource)
 
+    def has_permissions(self,resource) :
+        return len(set(self.get_permissions_for(resource))) > 0 
+
     def get_anon_group(self) : 
         """ The anon_group is the root of all groups, representing permissions given even to non members; plus everyone else"""
         return TgGroup.objects.filter(group_name='root')[0]
@@ -171,6 +172,9 @@ _ONLY_PERMISSION_SYSTEM = PermissionSystem()
 
 def get_permission_system() :
     return _ONLY_PERMISSION_SYSTEM
+
+
+# Sliders and and permission_managers ____________________________________________________________
 
 class UseSubclassException(Exception) :
     def __init__(self,cls,msg) :
@@ -257,13 +261,12 @@ class Slider :
         self.current_idx=idx
         _ONLY_PERMISSION_SYSTEM.delete_access(self.agent,self.resource,self.interface_id)
         self.agent = self.options[self.current_idx].agent
-
         t = SecurityTag(name=self.tag_name,agent=self.agent,resource=self.resource,interface=self.interface_id)
         t.save()
-
 
 
 class SliderOption :
     def __init__(self,name,agent) :
         self.name = name
         self.agent = agent
+

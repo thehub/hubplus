@@ -125,8 +125,14 @@ class TestPermissions(unittest.TestCase) :
 
         tif = self.makeInterfaceFactory()
 
+        # confirm that there are no permissions currently relating to this resource
+        self.assertFalse(ps.has_permissions(blog))
+
         t = SecurityTag(name='tag1',agent=u,resource=blog,interface=tif.get_id(OurPost,'Viewer'))
         t.save()
+
+        # confirm that there now are permissions for the resource
+        self.assertTrue(ps.has_permissions(blog))
 
         t2 = SecurityTag(name='tag1',agent=u,resource=blog,interface=tif.get_id(OurPost,'Commentor'))
         t2.save()
@@ -265,7 +271,16 @@ class TestPermissions(unittest.TestCase) :
         self.assertTrue(ps.has_access(adminGroup,blog,tif.get_id(OurPost,'Viewer')))
 
 
+    def testProfileSignals(self) :
+        from Profile import *
+        u = User(username='jesson',email='',password='abc')
+        u.save()
+        p = u.get_profile()
+        p.about='about jesson'
+        p.save()
 
+
+        
         
 
 

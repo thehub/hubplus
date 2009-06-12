@@ -57,6 +57,8 @@ urlpatterns = patterns('',
     (r'^feeds/tweets/(.*)/$', 'django.contrib.syndication.views.feed', tweets_feed_dict),
     (r'^feeds/posts/(.*)/$', 'django.contrib.syndication.views.feed', blogs_feed_dict),
     (r'^feeds/bookmarks/(.*)/?$', 'django.contrib.syndication.views.feed', bookmarks_feed_dict),
+
+
 )
 
 ## @@@ for now, we'll use friends_app to glue this stuff together

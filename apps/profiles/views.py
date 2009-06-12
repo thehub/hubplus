@@ -16,6 +16,9 @@ from profiles.models import Profile
 from profiles.forms import ProfileForm
 
 from avatar.templatetags.avatar_tags import avatar
+
+from apps.plus_permissions.models import PermissionSystem, get_permission_system, SecurityTag
+
 #from gravatar.templatetags.gravatar import gravatar as avatar
 
 if "notification" in settings.INSTALLED_APPS:
@@ -43,7 +46,10 @@ def profiles(request, template_name="profiles/profiles.html"):
 
 def profile(request, username, template_name="profiles/profile.html"):
     other_user = get_object_or_404(User, username=username)
+    ps = get_permission_system()
+
     if request.user.is_authenticated():
+
         is_friend = Friendship.objects.are_friends(request.user, other_user)
         is_following = Following.objects.is_following(request.user, other_user)
         other_friends = Friendship.objects.friends_for_user(other_user)
@@ -106,14 +112,29 @@ def profile(request, username, template_name="profiles/profile.html"):
     else:
         profile_form = None
 
-    return render_to_response(template_name, {
-        "profile_form": profile_form,
-        "is_me": is_me,
-        "is_friend": is_friend,
-        "is_following": is_following,
-        "other_user": other_user,
-        "other_friends": other_friends,
-        "invite_form": invite_form,
-        "previous_invitations_to": previous_invitations_to,
-        "previous_invitations_from": previous_invitations_from,
-    }, context_instance=RequestContext(request))
+    if ps.has_access(request.user,other_user.get_profile(),ps.get_interface_factory().get_id(User,'Viewer')) :
+
+        return render_to_response(template_name, {
+                "profile_form": profile_form,
+                "is_me": is_me,
+                "is_friend": is_friend,
+                "is_following": is_following,
+                "other_user": other_user,
+                "other_friends": other_friends,
+                "invite_form": invite_form,
+                "previous_invitations_to": previous_invitations_to,
+                "previous_invitations_from": previous_invitations_from,
+                }, context_instance=RequestContext(request))
+
+    else :
+        return HttpResponse("""
+<p>You don't have permission to see or do this.</p>
+
+<p>You are %s</p>
+
+<p>This is the profile for %s via interface %s</p>
+
+
+""" % (request.user, other_user.get_profile(),'Viewer'))
+ 
+

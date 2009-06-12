@@ -209,3 +209,4 @@ def is_direct_member_of(self, group) :
     return group.has_member(self)
 
 TgGroup.is_direct_member_of = is_direct_member_of
+
