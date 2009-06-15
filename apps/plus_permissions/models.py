@@ -8,7 +8,69 @@ from apps.hubspace_compatibility.models import TgGroup, Location
 
 import datetime
 
+class PlusPermissionsReadOnlyException(Exception) : 
+    def __init__(self,cls,msg) :
+        self.cls = cls
+        self.msg = msg
+
+class PlusPermissionsNoAccessException(Exception) :
+    def __init__(self,cls,msg) :
+        self.cls = cls
+        self.msg = msg
+
 class Interface : pass
+
+class NullInterface :
+    """
+    Empty interface, wraps models in a shell, which only lets explicitly named properties through
+    """
+    def __init__(self, inner) :
+        self.__dict__['_inner'] = inner
+        self.__dict__['_read'] = []
+        self.__dict__['_write'] = []
+
+    def get_inner(self) :
+        return self.__dict__['_inner']
+
+    def get_inner_class(self) :
+        return self.get_inner().__class__
+
+    def __getattr__(self,name) :
+        if name in self.__dict__['_read']:
+            return self.__dict__['_inner'].__getattribute__(name)
+        raise PlusPermissionsNoAccessException(self.get_inner_class(),name)
+
+    def __setattr__(self,name,val) :
+        if name in self.__dict__['_write'] :
+            self.__dict__['_inner'].__setattr__(name,val)
+        else :
+            raise PlusPermissionsReadOnlyException(self.get_inner_class(),name)        
+
+    def add_interface(self,interface) :
+        for k,v in interface.__dict__.iteritems() :
+            if v.__class__ == InterfaceReadProperty :
+                self.__dict__['_read'].append(k)
+            elif v.__class__ == InterfaceWriteProperty :
+                self.__dict__['_write'].append(k)
+
+    def remove_interface(self,cls,name) :
+        pass
+
+    def save(self) :
+        self.get_inner().save()
+
+
+class InterfaceReadProperty :
+    """ Add this to a NullInterface to allow a property to be readable"""
+    def __init__(self,name) :
+        self.name = name
+
+
+class InterfaceWriteProperty :
+    """ Add this to a NullInterface to allow a property to be writable """
+    def __init__(self,name) :
+        self.name = name
+
 
 class InterfaceFactory :
 

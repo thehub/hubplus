@@ -3,6 +3,7 @@
 from django.db import models
 
 from models import Interface, Slider, SliderOption, SecurityTag, PermissionManager, AgentNameWrap
+from models import InterfaceReadProperty, InterfaceWriteProperty
 from models import get_permission_system, default_admin_for
 
 from apps.hubspace_compatibility.models import TgGroup
@@ -11,14 +12,21 @@ from apps.hubspace_compatibility.models import TgGroup
 
 class OurPost(models.Model) :
     title = models.CharField(max_length='20')
+    body = models.CharField(max_length='20')
 
     def __str__(self) :
-        return self.title
+        return self.title+","+self.body
 
 # Here's the wrapping we have to put around it.
 
-class OurPostViewer(Interface) : pass
-class OurPostEditor(Interface) : pass
+class OurPostViewer(Interface) : 
+    title = InterfaceReadProperty('title')
+    body = InterfaceReadProperty('body')
+
+class OurPostEditor(Interface) : 
+    title = InterfaceWriteProperty('title')
+    body = InterfaceWriteProperty('body')
+
 class OurPostCommentor(Interface) : pass
 
 
