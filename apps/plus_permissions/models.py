@@ -35,30 +35,46 @@ class NullInterface :
     def get_inner_class(self) :
         return self.get_inner().__class__
 
+    def get_read(self) : 
+        return self.__dict__['_read']
+
+    def get_write(self) :
+        return self.__dict__['_write']
+
     def __getattr__(self,name) :
-        if name in self.__dict__['_read']:
-            return self.__dict__['_inner'].__getattribute__(name)
+        for r in self.get_read():
+            if r[0] == name :
+                return self.get_inner().__getattribute__(name)
         raise PlusPermissionsNoAccessException(self.get_inner_class(),name)
 
     def __setattr__(self,name,val) :
-        if name in self.__dict__['_write'] :
-            self.__dict__['_inner'].__setattr__(name,val)
-        else :
-            raise PlusPermissionsReadOnlyException(self.get_inner_class(),name)        
+        for w in self.get_write() :
+            if w[0] == name :
+                self.get_inner().__setattr__(name,val)
+                return None
+       
+        raise PlusPermissionsReadOnlyException(self.get_inner_class(),name)        
 
     def add_interface(self,interface) :
         for k,v in interface.__dict__.iteritems() :
             if v.__class__ == InterfaceReadProperty :
-                self.__dict__['_read'].append(k)
+                self.get_read().append((k,interface))
             elif v.__class__ == InterfaceWriteProperty :
-                self.__dict__['_write'].append(k)
+                self.get_write().append((k,interface))
 
-    def remove_interface(self,cls,name) :
-        pass
+    def remove_interface(self,cls) :
+        rs = [r for r in self.get_read() if r[1] != cls]
+        ws = [w for w in self.get_write() if w[1] != cls]
+        self.__dict__['_read'] = rs
+        self.__dict__['_write'] = ws
 
     def save(self) :
         self.get_inner().save()
 
+    def __str__(self) :
+        return self.get_inner()
+        
+            
 
 class InterfaceReadProperty :
     """ Add this to a NullInterface to allow a property to be readable"""

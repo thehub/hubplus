@@ -187,10 +187,10 @@ class TestPermissions(unittest.TestCase) :
         def f(blog) : return blog.title
         self.assertRaises(PlusPermissionsNoAccessException,f,blog)
 
-        class TitleViewer(Interface) :
+        class BodyViewer(Interface) :
             body = InterfaceReadProperty('body')
 
-        blog.add_interface(TitleViewer)
+        blog.add_interface(BodyViewer)
         self.assertEquals(blog.body,"Here's what")
         self.assertRaises(PlusPermissionsNoAccessException,f,blog)
 
@@ -201,16 +201,16 @@ class TestPermissions(unittest.TestCase) :
         self.assertRaises(PlusPermissionsReadOnlyException,f,blog)
         
         blog.add_interface( tif.get_interface(OurPost,'Editor'))
+        
         blog.title = "Hello"
         self.assertEquals(blog.title,'Hello')
         blog.save()
 
         self.assertEquals(blog2.title,'Hello')
 
-        blog.remove_interface( OurPost,'Editor')
-        self.assertRaises(PlusPermissionReadOnlyException,f,blog)
+        blog.remove_interface( tif.get_interface(OurPost,'Editor'))
+        self.assertRaises(PlusPermissionsReadOnlyException,f,blog)
 
-        self.assertRaises(Exception,blog.add_interface(tif.get_interface(OurPost,'Random')))
  
 
     def testSliders(self) :
