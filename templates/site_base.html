@@ -8,6 +8,14 @@
 {% block extra_head_base %}
     <link rel="stylesheet" href="{{ MEDIA_URL }}css/site_tabs.css" />
     <link rel="stylesheet" href="{{ MEDIA_URL }}pinax/css/topics.css" />
+    
+    <link rel="stylesheet" href="{{ MEDIA_URL }}pinax/css/site.css"        type="text/css" media="all" />
+    <link rel="stylesheet" href="{{ MEDIA_URL }}pinax/css/header.css"      type="text/css" media="all" />
+    <link rel="stylesheet" href="{{ MEDIA_URL }}pinax/css/main.css"        type="text/css" media="all" />
+    <link rel="stylesheet" href="{{ MEDIA_URL }}pinax/css/serendipity.css" type="text/css" media="all" />
+    <link rel="stylesheet" href="{{ MEDIA_URL }}pinax/css/footer.css"      type="text/css" media="all" />
+
+
     <script type="text/javascript" src="{{ MEDIA_URL }}pinax/js/topics.js"></script>
     {% block extra_head %}{% endblock %}
 {% endblock %}
@@ -62,15 +70,17 @@
 {% endblock %}
 
 {% block footer %}
-<div class="legal">
-    {% trans "&copy; 2008 &lt;your company here&gt;" %}
-    - <a href="{% url about %}">{% trans "About" %}</a>
-    - <a href="{% url terms %}">{% trans "Terms of Service" %}</a>
-    - <a href="{% url privacy %}">{% trans "Privacy Policy" %}</a>
-    - <a href="{% url dmca %}">{% trans "DMCA Notice" %}</a>
-    - Version: {% svn_app_version %}
-    - Django: {% svn_app_version "django" %}
-</div>
+
+    <p id='copyright'>{% trans "&copy; 2009 &lt;The Hub Collective &gt;" %}</p>
+    <ul id='extra_navigation'>
+      <li><a href="{% url about %}">{% trans "About" %}</a></li>
+      <li><a href="{% url terms %}">{% trans "Terms of Service" %}</a></li>
+      <li><a href="{% url privacy %}">{% trans "Privacy Policy" %}</a></li>
+      <!-- <li><a href="{% url dmca %}">{% trans "DMCA Notice" %}</a></li> -->
+      <!-- li>Version: {% svn_app_version %}</li>
+      <li>Django: {% svn_app_version "django" %}</li> -->
+    </ul>
+
 {% endblock %}
 
 {% block extra_body_base %}
