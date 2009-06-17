@@ -80,7 +80,7 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.transaction.TransactionMiddleware',
 )
 
-3ROOT_URLCONF = 'hubplus.urls'
+ROOT_URLCONF = 'hubplus.urls'
 
 TEMPLATE_DIRS = (
     os.path.join(os.path.dirname(__file__), "templates"),
