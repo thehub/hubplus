@@ -42,9 +42,9 @@
 	<!-- main -->
 	<div id='main'>
           {% block main %}
-	     <div id='page_title'>
-               {% block page_title %} {% endblock %}
-	     </div>  
+	     <div id='head_title'>{{head_title}}</div>
+	     <div id='head_title_status'>{{head_title_status}}</div>
+
              <div id='body'>
                  {% block body %}{% endblock %}
              </div>

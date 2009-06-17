@@ -9,13 +9,6 @@
 
 {% block body %}
     
-    <div class="right_panel">
-      {% block right_panel %}
-        {% include "profiles/profile_right_panel.html" %}
-      {% endblock %}
-    </div>
-
-    
     <div class="left_panel">
       {% block left_panel %}
       <div id='top_profile_block' class='block'>
@@ -39,6 +32,9 @@
 
         </div>
       </div>  
+
+      {% include 'profiles/tabbed_subs.html' %}
+
         {% if user.is_authenticated %}
             <p>
                 <a href="{% url tweet_followers other_user %}">{% trans "Followers" %}</a>: {{ other_user.followers.count|default:"0" }}
