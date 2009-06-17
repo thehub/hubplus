@@ -22,12 +22,6 @@ ADMINS = (
 
 MANAGERS = ADMINS
 
-DATABASE_ENGINE = 'postgresql_psycopg2'    # 'postgresql_psycopg2', 'postgresql', 'mysql', 'sqlite3' or 'ado_mssql'.
-DATABASE_NAME = 'hubspace'       # Or path to database file if using sqlite3.
-DATABASE_USER = 'thehub'             # Not used with sqlite3.
-DATABASE_PASSWORD = 'pwfth'         # Not used with sqlite3.
-DATABASE_HOST = ''             # Set to empty string for localhost. Not used with sqlite3.
-DATABASE_PORT = ''             # Set to empty string for default. Not used with sqlite3.
 
 # Local time zone for this installation. Choices can be found here:
 # http://www.postgresql.org/docs/8.1/static/datetime-keywords.html#DATETIME-TIMEZONE-SET-TABLE
@@ -86,7 +80,7 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.transaction.TransactionMiddleware',
 )
 
-ROOT_URLCONF = 'hubplus.urls'
+3ROOT_URLCONF = 'hubplus.urls'
 
 TEMPLATE_DIRS = (
     os.path.join(os.path.dirname(__file__), "templates"),
@@ -245,8 +239,13 @@ WIKI_REQUIRES_LOGIN = True
 
 # local_settings.py can be used to override environment-specific settings
 # like database and email that differ between development and production.
+
+try:
+    from hubspace_compatibility import *
+except ImportError:
+    pass
+
 try:
     from local_settings import *
 except ImportError:
     pass
-
