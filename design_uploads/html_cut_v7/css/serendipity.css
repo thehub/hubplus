@@ -1,0 +1,70 @@
+/* Layout: Serendipity */
+
+#serendipity {
+	background	: #EEE;
+	margin-bottom	: 10px;
+	overflow 	: hidden;
+	padding		: 10px 10px 0px;
+}
+
+#serendipity div.block {
+	background	: #FFF;
+	border		: 1px solid #000;
+	padding		: 10px;
+}
+
+#serendipity #serendipity_navigation {
+	list-style	: none;
+	margin		: -1px 0 10px;
+	overflow	: hidden;
+}
+
+#serendipity #serendipity_navigation li {
+	float		: left;
+}
+
+#serendipity #serendipity_navigation li a {
+	background	: #FFF;
+	border		: 1px solid #000;
+	color		: #000;
+	display		: block;
+	margin-right: -1px;
+	padding		: 1px 5px;
+}
+
+#serendipity #serendipity_navigation li a.active {
+	background	: #666;
+	color		: #FFF;
+}
+
+#serendipity #serendipity_content {
+	overflow	: hidden;
+}
+
+#serendipity #serendipity_content.blackboard div {
+	float		: left;
+	margin-right	: 10px;
+	min-height	: 70px;
+	width		: 200px;
+}
+
+#serendipity #serendipity_content.blackboard .answer {
+	border		: 1px solid #000;
+	padding		: 10px;
+	width		: 180px;
+}
+
+#serendipity #serendipity_content.blackboard .label_source,
+#serendipity #serendipity_content.blackboard .label_source a {
+	color		: #888;
+}
+
+#serendipity #serendipity_content.have_you_met .member {
+	float		: left;
+	padding		: 10px;
+	width		: 180px;
+}
+
+#serendipity #serendipity_content.have_you_met .member ul {
+	list-style	: none;
+}
