@@ -2,7 +2,8 @@
 {% load avatar_tags %}
 
 {% if is_me %}
-    <div class="tribes">
+
+    <div class="tribes block">
         <h2>{% trans "Your Tribes" %}</h2>
         {% if other_user.tribe_set.all %}
             {% for tribe in other_user.tribe_set.all %}
@@ -13,7 +14,8 @@
             <p>{% blocktrans %}You are not yet a member of any <a href="{{ tribe_url }}">tribes</a>.{% endblocktrans %}</p>
         {% endif %}
     </div>
-    <div class="friends">
+
+    <div class="friends block">
         <h2>{% trans "Your Friends" %}</h2>
         {% if other_friends %}
             <table width="100%">
@@ -34,7 +36,7 @@
 {% endif %}
 
 {% if is_friend %}
-    <div class="tribes">
+    <div class="tribes block">
         <h2>{% blocktrans %}{{ other_user }}'s Tribes{% endblocktrans %}</h2>
         {% if other_user.tribe_set.all %}
             {% for tribe in other_user.tribe_set.all %}
@@ -44,7 +46,7 @@
             <p>{% blocktrans %}Not yet a member of any tribes.{% endblocktrans %}</p>
         {% endif %}
     </div>
-    <div class="friends">
+    <div class="friends block">
         <h2>{% blocktrans %}{{ other_user }}'s Friends{% endblocktrans %}</h2>
         <table width="100%">
             {% for friendship in other_friends %}

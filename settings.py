@@ -17,7 +17,7 @@ TEMPLATE_DEBUG = DEBUG
 SERVE_MEDIA = DEBUG
 
 ADMINS = (
-    # ('Your Name', 'your_email@domain.com'),
+     ('phil jones', 'phil.jones@the-hub.net'),
 )
 
 MANAGERS = ADMINS
@@ -183,7 +183,7 @@ NOTIFICATION_LANGUAGE_MODULE = 'account.Account'
 EMAIL_CONFIRMATION_DAYS = 2
 EMAIL_DEBUG = DEBUG
 CONTACT_EMAIL = "feedback@example.com"
-SITE_NAME = "Pinax"
+SITE_NAME = "Hub+"
 LOGIN_URL = "/account/login"
 LOGIN_REDIRECT_URLNAME = "what_next"
 

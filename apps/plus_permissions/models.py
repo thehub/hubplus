@@ -8,7 +8,85 @@ from apps.hubspace_compatibility.models import TgGroup, Location
 
 import datetime
 
+class PlusPermissionsReadOnlyException(Exception) : 
+    def __init__(self,cls,msg) :
+        self.cls = cls
+        self.msg = msg
+
+class PlusPermissionsNoAccessException(Exception) :
+    def __init__(self,cls,msg) :
+        self.cls = cls
+        self.msg = msg
+
 class Interface : pass
+
+class NullInterface :
+    """
+    Empty interface, wraps models in a shell, which only lets explicitly named properties through
+    """
+    def __init__(self, inner) :
+        self.__dict__['_inner'] = inner
+        self.__dict__['_read'] = []
+        self.__dict__['_write'] = []
+
+    def get_inner(self) :
+        return self.__dict__['_inner']
+
+    def get_inner_class(self) :
+        return self.get_inner().__class__
+
+    def get_read(self) : 
+        return self.__dict__['_read']
+
+    def get_write(self) :
+        return self.__dict__['_write']
+
+    def __getattr__(self,name) :
+        for r in self.get_read():
+            if r[0] == name :
+                return self.get_inner().__getattribute__(name)
+        raise PlusPermissionsNoAccessException(self.get_inner_class(),name)
+
+    def __setattr__(self,name,val) :
+        for w in self.get_write() :
+            if w[0] == name :
+                self.get_inner().__setattr__(name,val)
+                return None
+       
+        raise PlusPermissionsReadOnlyException(self.get_inner_class(),name)        
+
+    def add_interface(self,interface) :
+        for k,v in interface.__dict__.iteritems() :
+            if v.__class__ == InterfaceReadProperty :
+                self.get_read().append((k,interface))
+            elif v.__class__ == InterfaceWriteProperty :
+                self.get_write().append((k,interface))
+
+    def remove_interface(self,cls) :
+        rs = [r for r in self.get_read() if r[1] != cls]
+        ws = [w for w in self.get_write() if w[1] != cls]
+        self.__dict__['_read'] = rs
+        self.__dict__['_write'] = ws
+
+    def save(self) :
+        self.get_inner().save()
+
+    def __str__(self) :
+        return self.get_inner()
+        
+            
+
+class InterfaceReadProperty :
+    """ Add this to a NullInterface to allow a property to be readable"""
+    def __init__(self,name) :
+        self.name = name
+
+
+class InterfaceWriteProperty :
+    """ Add this to a NullInterface to allow a property to be writable """
+    def __init__(self,name) :
+        self.name = name
+
 
 class InterfaceFactory :
 

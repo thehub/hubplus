@@ -169,6 +169,7 @@ class TestPermissions(unittest.TestCase) :
 
 
     def testInterfaces(self) :
+
         tif = self.makeInterfaceFactory()
 
         class A : pass
@@ -177,7 +178,40 @@ class TestPermissions(unittest.TestCase) :
 
         self.assertEquals(tif.get_interface(OurPost,'Viewer'),OurPostViewer)
         self.assertRaises(Exception,tif.get_interface,OurPost,'xyz')
+
+        blog= OurPost(title='what I want to say',body="Here's what")
+        blog.save()
+        blog2 = blog
         
+        blog = NullInterface(blog)
+        def f(blog) : return blog.title
+        self.assertRaises(PlusPermissionsNoAccessException,f,blog)
+
+        class BodyViewer(Interface) :
+            body = InterfaceReadProperty('body')
+
+        blog.add_interface(BodyViewer)
+        self.assertEquals(blog.body,"Here's what")
+        self.assertRaises(PlusPermissionsNoAccessException,f,blog)
+
+        blog.add_interface( tif.get_interface(OurPost,'Viewer'))
+        self.assertEquals(blog.title,'what I want to say')
+        
+        def f(blog) : blog.title = "something stupid"
+        self.assertRaises(PlusPermissionsReadOnlyException,f,blog)
+        
+        blog.add_interface( tif.get_interface(OurPost,'Editor'))
+        
+        blog.title = "Hello"
+        self.assertEquals(blog.title,'Hello')
+        blog.save()
+
+        self.assertEquals(blog2.title,'Hello')
+
+        blog.remove_interface( tif.get_interface(OurPost,'Editor'))
+        self.assertRaises(PlusPermissionsReadOnlyException,f,blog)
+
+ 
 
     def testSliders(self) :
         # PermissionSystem is the generic API to the permission system, 
