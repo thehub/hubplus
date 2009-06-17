@@ -241,11 +241,15 @@ WIKI_REQUIRES_LOGIN = True
 # like database and email that differ between development and production.
 
 try:
-    from hubspace_compatibility import *
-except ImportError:
-    pass
-
-try:
     from local_settings import *
 except ImportError:
+    print "local failed"
     pass
+
+
+try:
+    from hubspace_compatibility import *
+except ImportError, e:
+    print "compat failed" + `e`
+    pass
+
