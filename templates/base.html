@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" dir="{% if LANGUAGE_BIDI %}rtl{% else %}ltr{% endif %}" xml:lang="{{ LANGUAGE_CODE }}" lang="{{ LANGUAGE_CODE }}">
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
-        <title>{% if site_name %}{{ site_name }} : {% endif %}{% block head_title %}{% endblock %}</title>
+        <title>{% if site_name %}{{ site_name }} : {% endif %}{% if head_title %}{{head_title}}{% endif %}</title>
         <!--[if IE]><style>
             div {
                 zoom: 1; /* trigger hasLayout */
@@ -44,6 +44,21 @@
           {% block main %}
 	     <div id='head_title'>{{head_title}}</div>
 	     <div id='head_title_status'>{{head_title_status}}</div>
+
+	     <div id='site_wide_messages'>
+               {% if site_wide_announcements %}
+               <div id="site_wide_announcements">
+                 <ul>
+                   {% for announcement in site_wide_announcements %}
+                   <li>
+                     <a href="{{ announcement.get_absolute_url }}">{{ announcement }}</a> -
+                     <a href="{% url announcement_hide announcement.pk %}?next={{ request.path }}">{% trans "Hide announcement" %}</a>
+                   </li>
+                   {% endfor %}
+                 </ul>
+               </div>
+               {% endif %}
+	     </div>
 
              <div id='body'>
                  {% block body %}{% endblock %}

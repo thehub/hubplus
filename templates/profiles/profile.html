@@ -5,10 +5,8 @@
 {% load app_plugins %}
 {% load uni_form %}
 
-{% block head_title %}{% blocktrans %}Profile for {{ other_user }}{% endblocktrans %}{% endblock %}
-
 {% block body %}
-    
+
     <div class="left_panel">
       {% block left_panel %}
       <div id='top_profile_block' class='block'>
@@ -23,6 +21,12 @@
         <h1>{% blocktrans %}Profile for {{ other_user }}{% endblocktrans %}</h1>
         
         <div class="profile_info">
+
+	    <p><b>{% trans "Interests" %} : </b></p>
+	    <p><b>{% trans "Groups" %} : </b></p>
+
+	    <p><b>{% trans "Organization" %} :</b></p>
+	    <p><b>{% trans "Role" %} : </b></p>
 
             {% if other_user.get_profile.name %}<p><b>{% trans "Name " %}</b>: {{ other_user.get_profile.name }}</p>{% endif %}
             {% if other_user.get_profile.about %}<p><b>{% trans "About " %}</b>: {{ other_user.get_profile.about }}</p>{% endif %}

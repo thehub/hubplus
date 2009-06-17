@@ -4,24 +4,27 @@ HUB PLUS 2009
 
 
 
-/* Body Generic */
+/* Main Generic */
 
-#body h2 {
+#main h2 {
 	padding-bottom	: 10px;
 }
 
-#body h3 {
+#main h3 {
 	padding-bottom	: .5em;
 }
 
-#body p {
+#main p {
 	padding-bottom	: 1.5em;
 }
 
-#body span.label_time {
+#main span.label_time {
 	color		: #888;
 }
 
+#head_title {
+	font-size	: 1.5em; 
+}
 
 /* Divided lists */
 
