@@ -5,18 +5,49 @@
 {% load svn_app_version %}
 {% load analytics %}
 
-
-{% block header %}  
-     {% include "header.html" %}
-{% endblock %}
-
 {% block extra_head_base %}
+    <link rel="stylesheet" href="{{ MEDIA_URL }}css/site_tabs.css" />
+    <link rel="stylesheet" href="{{ MEDIA_URL }}css/topics.css" />
     
+    <link rel="stylesheet" href="{{ MEDIA_URL }}css/site.css"        type="text/css" media="all" />
+    <link rel="stylesheet" href="{{ MEDIA_URL }}css/header.css"      type="text/css" media="all" />
+    <link rel="stylesheet" href="{{ MEDIA_URL }}css/main.css"        type="text/css" media="all" />
+    <link rel="stylesheet" href="{{ MEDIA_URL }}css/serendipity.css" type="text/css" media="all" />
+    <link rel="stylesheet" href="{{ MEDIA_URL }}css/footer.css"      type="text/css" media="all" />
+
     <script type="text/javascript" src="{{ MEDIA_URL }}pinax/js/topics.js"></script>
     {% block extra_head %}{% endblock %}
 {% endblock %}
 
+{% block login %}
+    {% if user.is_authenticated %}
+        {% openid_icon openid user %}<b>{{ user }}</b> | <a href="{% url acct_email %}">{% trans "Account" %}</a> | {% if user.is_staff %}<a href="/admin/">{% trans "Admin" %}</a> | {% endif %}<a href="/openid/logout/?next={% url acct_logout %}">{% trans "Logout" %}</a>
+    {% else %}
+        <a href="{% url acct_login %}">{% trans "Login" %}</a> {% trans "or" %} <a href="{% url acct_signup %}"><b>{% trans "Sign up" %}</b></a>
+    {% endif %}
+{% endblock %}
 
+{% block locale_switcher %}
+    <form action="{% if request.user.is_authenticated %}{% url acct_language_change %}{% else %}/i18n/setlang/{% endif %}" method="post" id="locale_switcher">
+        <select name="language" onchange="$('#locale_switcher').submit()">
+            {% for lang in LANGUAGES %}
+                <option value="{{ lang.0 }}"{% ifequal lang.0 LANGUAGE_CODE %} selected="selected"{% endifequal %}>{{ lang.1 }}</option>
+            {% endfor %}
+        </select>
+    </form>
+{% endblock %}
+
+{% block logo_link_image %}<a href="{% url home %}"><img src="{{ MEDIA_URL }}pinax/images/logo.png" alt="Pinax"/></a>{% endblock %}
+
+{% block tabs %}
+{% comment %}
+    <table>
+        <tr>
+            <td class="tab tab_home"><div><a href="{% url home %}">{% trans "Home" %}</a></div></td>
+        </tr>
+    </table>
+{% endcomment %}
+{% endblock %}
 
 {% block right_tab %}
     {% if user.is_authenticated %}
@@ -39,7 +70,7 @@
 
 {% block footer %}
 
-    <p id='copyright'>{% trans "&copy; 2009 HubWorld" %}</p>
+    <p id='copyright'>{% trans "&copy; 2009The Hub Collective" %}</p>
     <ul id='extra_navigation'>
       <li class='first'><a href="{% url about %}">{% trans "About" %}</a></li>
       <li><a href='{% url terms %}'>{% trans "Terms of Service" %}</a></li>
