@@ -6,15 +6,15 @@ HUB PLUS 2009
 
 /* Main Generic */
 
-#main h2 {
+#body h2 {
 	padding-bottom	: 10px;
 }
 
-#main h3 {
+#body h3 {
 	padding-bottom	: .5em;
 }
 
-#main p {
+#body p {
 	padding-bottom	: 1.5em;
 }
 
