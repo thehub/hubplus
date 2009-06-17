@@ -1,0 +1,67 @@
+/* Layout: Header */
+
+#header {
+	background	: #eeeeee;
+	margin-bottom	: 10px;
+	padding		: 10px;
+	position	: relative;
+}
+
+#header #site_title a {
+	color		: #000;
+	text-decoration	: none;
+}
+
+#header #account_navigation {
+	background	: #ffffff;
+	border		: 1px solid #000;
+	list-style	: none;
+	padding		: 3px;
+	position	: absolute;
+	right		: 10px;
+	top			: 10px;
+}
+
+#header #account_navigation li {
+	border-left : 1px solid #000;
+	float		: left;
+	padding-left: 5px;
+	margin-left	: 5px;
+}
+
+#header #account_navigation li.first {
+	border-left : 0;
+	padding-left: 0;
+	margin-left	: 0;
+}
+
+#header #account_navigation li a {
+	color		: #000;
+}
+
+#header #main_navigation {
+	bottom		: 10px;
+	font-size	: 1.4em;
+	line-height	: 1.4em;
+	list-style	: none;	
+	position	: absolute;
+	right		: 10px;
+}
+
+#header #main_navigation li {
+	background	: #ffffff;
+	float		: left;
+	margin-left	: 8px;
+}
+
+#header #main_navigation li a {
+	border		: 1px solid #000;
+	color		: #000;
+	display		: block;
+	padding		: 3px 10px;
+}
+
+#header #main_navigation li a.active {
+	background	: #666;
+	color		: #fff;
+}

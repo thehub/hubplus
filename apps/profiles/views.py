@@ -112,7 +112,7 @@ def profile(request, username, template_name="profiles/profile.html"):
     else:
         profile_form = None
 
-    if ps.has_access(request.user,other_user.get_profile(),ps.get_interface_factory().get_id(User,'Viewer')) :
+    if ps.has_access(request.user,other_user.get_profile(),ps.get_interface_factory().get_id(Profile,'Viewer')) :
 
         return render_to_response(template_name, {
                 "profile_form": profile_form,
@@ -135,6 +135,6 @@ def profile(request, username, template_name="profiles/profile.html"):
 <p>This is the profile for %s via interface %s</p>
 
 
-""" % (request.user, other_user.get_profile(),'Viewer'))
+""" % (request.user, other_user.get_profile(),'Viewer', ) )
  
 

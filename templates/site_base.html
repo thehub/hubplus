@@ -7,7 +7,14 @@
 
 {% block extra_head_base %}
     <link rel="stylesheet" href="{{ MEDIA_URL }}css/site_tabs.css" />
-    <link rel="stylesheet" href="{{ MEDIA_URL }}pinax/css/topics.css" />
+    <link rel="stylesheet" href="{{ MEDIA_URL }}css/topics.css" />
+    
+    <link rel="stylesheet" href="{{ MEDIA_URL }}css/site.css"        type="text/css" media="all" />
+    <link rel="stylesheet" href="{{ MEDIA_URL }}css/header.css"      type="text/css" media="all" />
+    <link rel="stylesheet" href="{{ MEDIA_URL }}css/main.css"        type="text/css" media="all" />
+    <link rel="stylesheet" href="{{ MEDIA_URL }}css/serendipity.css" type="text/css" media="all" />
+    <link rel="stylesheet" href="{{ MEDIA_URL }}css/footer.css"      type="text/css" media="all" />
+
     <script type="text/javascript" src="{{ MEDIA_URL }}pinax/js/topics.js"></script>
     {% block extra_head %}{% endblock %}
 {% endblock %}
@@ -46,31 +53,33 @@
     {% if user.is_authenticated %}
         <table>
             <tr>
-                <td class="tab rtab_profile"><div><a href="{% url profile_detail user %}">{% trans "Profile" %}</a></div></td>
-                <td class="tab rtab_photos"><div><a href="{% url photos %}">{% trans "Photos" %}</a></div></td>
-                <td class="tab rtab_blogs"><div><a href="{% url blog_list_all %}">{% trans "Blogs" %}</a></div></td>
-                <td class="tab rtab_projects"><div><a href="{% url project_list %}">{% trans "Projects" %}</a></div></td>
-                <td class="tab rtab_tribes"><div><a href="{% url tribe_list %}">{% trans "Tribes" %}</a></div></td>
-                <td class="tab rtab_tweets"><div><a href="{% url tweets_you_follow %}">{% trans "Tweets" %}</a></div></td>
-                <td class="tab rtab_bookmarks"><div><a href="{% url all_bookmarks %}">{% trans "Bookmarks" %}</a></div></td>
-                <td class="tab rtab_swaps"><div><a href="{% url offer_list_all %}">{% trans "Swaps" %}</a></div></td>
-                <td class="tab rtab_locations"><div><a href="{% url loc_yours %}">{% trans "Locations" %}</a></div></td>
-                <td class="tab rtab_inbox"><div><a href="{% url messages_inbox %}">{% trans "Inbox" %} ({{ combined_inbox_count }})</a></div></td>
+                <td class="tab rtab_profile {% block active_profile_tab %}{% endblock %}"><div><a href="{% url profile_detail user %}">{% trans "Profile" %}</a></div></td>
+                <!-- <td class="tab rtab_photos"><div><a href="{% url photos %}">{% trans "Photos" %}</a></div></td> -->
+                <!-- <td class="tab rtab_blogs"><div><a href="{% url blog_list_all %}">{% trans "Blogs" %}</a></div></td> -->
+                <!-- <td class="tab rtab_projects"><div><a href="{% url project_list %}">{% trans "Projects" %}</a></div></td> -->
+                <td class="tab rtab_tribes {% block active_group_tab %}{% endblock %}"><div><a href="{% url tribe_list %}">{% trans "Groups" %}</a></div></td> 
+                <!-- <td class="tab rtab_tweets"><div><a href="{% url tweets_you_follow %}">{% trans "Tweets" %}</a></div></td> -->
+                <!-- <td class="tab rtab_bookmarks"><div><a href="{% url all_bookmarks %}">{% trans "Bookmarks" %}</a></div></td> -->
+                <!-- <td class="tab rtab_swaps"><div><a href="{% url offer_list_all %}">{% trans "Swaps" %}</a></div></td> -->
+                <!-- <td class="tab rtab_locations"><div><a href="{% url loc_yours %}">{% trans "Locations" %}</a></div></td> -->
+                <td class="tab rtab_inbox {% block active_message_tab %}{% endblock %}"><div><a href="{% url messages_inbox %}">{% trans "Inbox" %} ({{ combined_inbox_count }})</a></div></td>
             </tr>
         </table>
     {% endif %}
 {% endblock %}
 
 {% block footer %}
-<div class="legal">
-    {% trans "&copy; 2008 &lt;your company here&gt;" %}
-    - <a href="{% url about %}">{% trans "About" %}</a>
-    - <a href="{% url terms %}">{% trans "Terms of Service" %}</a>
-    - <a href="{% url privacy %}">{% trans "Privacy Policy" %}</a>
-    - <a href="{% url dmca %}">{% trans "DMCA Notice" %}</a>
-    - Version: {% svn_app_version %}
-    - Django: {% svn_app_version "django" %}
-</div>
+
+    <p id='copyright'>{% trans "&copy; 2009The Hub Collective" %}</p>
+    <ul id='extra_navigation'>
+      <li class='first'><a href="{% url about %}">{% trans "About" %}</a></li>
+      <li><a href='{% url terms %}'>{% trans "Terms of Service" %}</a></li>
+      <li class='last'><a href="{% url privacy %}">{% trans "Privacy Policy" %}</a></li>
+      <!-- <li><a href="{% url dmca %}">{% trans "DMCA Notice" %}</a></li> -->
+      <!-- li>Version: {% svn_app_version %}</li>
+      <li>Django: {% svn_app_version "django" %}</li> -->
+    </ul>
+
 {% endblock %}
 
 {% block extra_body_base %}
