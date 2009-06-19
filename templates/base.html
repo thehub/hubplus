@@ -38,12 +38,11 @@
 
 	<!-- header -->
 	{% block header %}{% endblock %}
-
 	<!-- main -->
 	<div id='main'>
           {% block main %}
-	  <div id='head_title'>{{head_title}}</div>
-	  <div id='head_title_status'>{{head_title_status}}</div>
+	  <h2>{{head_title}}</h2>
+	  <p class='disabled'>{{head_title_status}} - <span class="label_time">{{head_title_status.time}}</span></p>
 
 	  <div id='site_wide_messages'>
             {% if site_wide_announcements %}

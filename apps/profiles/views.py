@@ -17,6 +17,7 @@ from profiles.forms import ProfileForm
 
 from avatar.templatetags.avatar_tags import avatar
 
+from apps.plus_lib.models import DisplayStatus
 from apps.plus_permissions.models import PermissionSystem, get_permission_system, SecurityTag
 
 #from gravatar.templatetags.gravatar import gravatar as avatar
@@ -114,6 +115,8 @@ def profile(request, username, template_name="profiles/profile.html"):
 
     if ps.has_access(request.user,other_user.get_profile(),ps.get_interface_factory().get_id(Profile,'Viewer')) :
 
+        dummy_status = DisplayStatus("Dummy Status"," about 3 hours ago")
+
         return render_to_response(template_name, {
                 "profile_form": profile_form,
                 "is_me": is_me,
@@ -125,6 +128,7 @@ def profile(request, username, template_name="profiles/profile.html"):
                 "previous_invitations_to": previous_invitations_to,
                 "previous_invitations_from": previous_invitations_from,
                 "head_title" : "Profile for %s" % other_user.get_profile().name,
+                "head_title_status" : dummy_status,
                 "host_info" : other_user.get_profile().get_host_info(),
                 
                 }, context_instance=RequestContext(request))

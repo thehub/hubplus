@@ -1,24 +1,34 @@
 
-
 {% load openid_tags %}
 {% load i18n %}
 
-<div id="tabhead">
-  <div class="logo" dir="ltr">
-     {% block logo_link_image %}<a href="{% url home %}"><img src="{{ MEDIA_URL }}pinax/images/logo.png" alt="Pinax"/></a>{% endblock %}
-  </div>
+<div id="header">
 
-  <div class="login">
+    <div id='logo'>
+      {% block logo_link_image %}<a href="{% url home %}"><img src="{{ MEDIA_URL }}pinax/images/logo.png" alt="Pinax"/></a>{% endblock %}
+    </div>
+
     {% block login %}
-    {% if user.is_authenticated %}
-        {% openid_icon openid user %}<b>{{ user }}</b> | <a href="{% url acct_email %}">{% trans "Account" %}</a> | {% if user.is_staff %}<a href="/admin/">{% trans "Admin" %}</a> | {% endif %}<a href="/openid/logout/?next={% url acct_logout %}">{% trans "Logout" %}</a>
-    {% else %}
-        <a href="{% url acct_login %}">{% trans "Login" %}</a> {% trans "or" %} <a href="{% url acct_signup %}"><b>{% trans "Sign up" %}</b></a>
-    {% endif %}
-{% endblock %}
+    <ul id='account_navigation'>
+        {% if user.is_authenticated %}
+             <li class='first'>{% openid_icon openid user %}{% trans "Welcome" %} {{ user }}</li>
+	     <li><a href='/profiles/{{user.username}}'>{% trans "Profile" %}</a></li>
+             <li><a href="{% url acct_email %}">{% trans "Settings" %}</a></li>
+	     <!-- Do we have this notion of admin now? -->
+ 	     {% if user.is_staff %}
+	        <li><a href="/admin/">{% trans "Admin" %}</a></li>
+	     {% endif %}
+	     <li><a href="/openid/logout/?next={% url acct_logout %}">{% trans "Logout" %}</a></li>
+        {% else %}
+             <li class='last'><a href="{% url acct_login %}">{% trans "Login" %}</a>
+	       {% trans "or" %} <a href="{% url acct_signup %}"><b>{% trans "Sign up" %}</b></a>
+	     </li>
+        {% endif %}
+    </ul>
+    {% endblock %}
 
-
-{% block locale_switcher %}
+    <!-- 
+    {% block locale_switcher %}
     <form action="{% if request.user.is_authenticated %}{% url acct_language_change %}{% else %}/i18n/setlang/{% endif %}" 
 	  method="post" id="locale_switcher">
         <select name="language" onchange="$('#locale_switcher').submit()">
@@ -27,53 +37,18 @@
             {% endfor %}
         </select>
     </form>
-{% endblock %}
+    {% endblock %}
+    -->
 
+    <ul id='main_navigation'>
+        <li class="first"><div><a href="{% url home %}">{% trans "Home" %}</a></div></li>
+        <li><a href='#'>{% trans "Explore" %}</a></li>
+	<li><a href='/profiles/'>{% trans "Members" %}</a></li>
+	<li><a href='#'>{% trans "Groups" %}</a></li>
+	<li><a href='#'>{% trans "Hubs" %}</a></li>
+	<li class="last"><a href='#'>{% trans "Events" %}</a></li>
+    </ul>
 
-  <div style="text-align: right;"></div>
-</div>
-
-  <div class="tabs" {% block tab_id %}{% endblock %}>
-
-{% block tabs %}
-{% comment %}
-    <table>
-        <tr>
-            <td class="tab tab_home"><div><a href="{% url home %}">{% trans "Home" %}</a></div></td>
-        </tr>
-    </table>
-{% endcomment %}
-{% endblock %}
-</div>
-
-  <div class="right_tab" {% block rtab_id %}{% endblock %}>
-
-{% block right_tab %}
-    {% if user.is_authenticated %}
-        <table>
-            <tr>
-                <td class="tab rtab_profile {% block active_profile_tab %}{% endblock %}">
-		  <div><a href="{% url profile_detail user %}">{% trans "Profile" %}</a></div>
-		</td>
-                <!-- <td class="tab rtab_photos"><div><a href="{% url photos %}">{% trans "Photos" %}</a></div></td> -->
-                <!-- <td class="tab rtab_blogs"><div><a href="{% url blog_list_all %}">{% trans "Blogs" %}</a></div></td> -->
-                <!-- <td class="tab rtab_projects"><div><a href="{% url project_list %}">{% trans "Projects" %}</a></div></td> -->
-                <td class="tab rtab_tribes {% block active_group_tab %}{% endblock %}">
-		  <div><a href="{% url tribe_list %}">{% trans "Groups" %}</a></div>
-		</td>
-                <!-- <td class="tab rtab_tweets"><div><a href="{% url tweets_you_follow %}">{% trans "Tweets" %}</a></div></td> -->
-                <!-- <td class="tab rtab_bookmarks"><div><a href="{% url all_bookmarks %}">{% trans "Bookmarks" %}</a></div></td> -->
-                <!-- <td class="tab rtab_swaps"><div><a href="{% url offer_list_all %}">{% trans "Swaps" %}</a></div></td> -->
-                <!-- <td class="tab rtab_locations"><div><a href="{% url loc_yours %}">{% trans "Locations" %}</a></div></td> -->
-                <td class="tab rtab_inbox {% block active_message_tab %}{% endblock %}">
-		  <div><a href="{% url messages_inbox %}">{% trans "Inbox" %} ({{ combined_inbox_count }})</a></div>
-		</td>
-            </tr>
-        </table>
-    {% endif %}
-{% endblock %}
-
-</div>
 </div>
 
 <div id="subnav" class="clearfix">{% block subnav %}&nbsp;{% endblock %}</div>

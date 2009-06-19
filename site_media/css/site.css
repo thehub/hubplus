@@ -63,4 +63,6 @@ body {
 	padding		: 10px;
 }
 
-
+.disabled {
+	opacity:.4;
+}
