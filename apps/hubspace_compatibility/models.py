@@ -175,6 +175,10 @@ try :
     def get_no_members(self) :
         return HCGroupMapping.objects.filter(parent=self).count()
 
+
+    def get_permission_agent_name(self) : 
+        return self.display_name
+
     def __str__(self) : return "<TgGroup : %s>" % self.group_name
 
   class HCGroupMapping(models.Model) :
@@ -186,7 +190,7 @@ try :
 except Exception, e:
   print "##### %s" % e
 
-# We're going to add the following method to User class
+# We're going to add the following method to User class (and to group)
 def is_member_of(self,group) : 
     if not group.is_group() : return False
     if group.has_member(self) : return True
@@ -210,4 +214,9 @@ def is_direct_member_of(self, group) :
     return group.has_member(self)
 
 TgGroup.is_direct_member_of = is_direct_member_of
+
+# to be added to User class
+def get_permission_agent_name(self) :
+    return self.username
+
 

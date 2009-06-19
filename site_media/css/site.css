@@ -52,7 +52,7 @@ body {
 }
 
 #side_bar {
-	float		: left;
+	float		: right;
 	width		: 250px;
 }
 

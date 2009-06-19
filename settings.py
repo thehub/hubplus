@@ -240,6 +240,7 @@ WIKI_REQUIRES_LOGIN = True
 # local_settings.py can be used to override environment-specific settings
 # like database and email that differ between development and production.
 
+
 try:
     from local_settings import *
 except ImportError:
@@ -247,9 +248,12 @@ except ImportError:
     pass
 
 
+import pdb
+#pdb.set_trace()
+
 try:
     from hubspace_compatibility import *
 except ImportError, e:
-    print "compat failed" + `e`
+    print "import hubspace_compatibility failed :: " + `e`
     pass
 

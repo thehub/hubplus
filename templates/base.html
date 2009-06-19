@@ -1,36 +1,36 @@
-
 {% load i18n %}
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" dir="{% if LANGUAGE_BIDI %}rtl{% else %}ltr{% endif %}" xml:lang="{{ LANGUAGE_CODE }}" lang="{{ LANGUAGE_CODE }}">
+<html xmlns="http://www.w3.org/1999/xhtml" 
+      dir="{% if LANGUAGE_BIDI %}rtl{% else %}ltr{% endif %}" xml:lang="{{ LANGUAGE_CODE }}" lang="{{ LANGUAGE_CODE }}">
     <head>
-        <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
-        <title>{% if site_name %}{{ site_name }} : {% endif %}{% if head_title %}{{head_title}}{% endif %}</title>
-        <!--[if IE]><style>
-            div {
-                zoom: 1; /* trigger hasLayout */
-            }
-        </style><![endif]-->
-        <link rel="stylesheet" href="{{ MEDIA_URL }}base.css" />
-        <link rel="stylesheet" href="{{ MEDIA_URL }}css/tabs.css" />
-        <link rel="stylesheet" href="{{ MEDIA_URL }}css/uni-form.css" />
-
-	<link rel="stylesheet" href="{{ MEDIA_URL }}css/site.css"        type="text/css" media="all" />
-	<link rel="stylesheet" href="{{ MEDIA_URL }}css/header.css"      type="text/css" media="all" />
-	<link rel="stylesheet" href="{{ MEDIA_URL }}css/main.css"        type="text/css" media="all" />
-	<link rel="stylesheet" href="{{ MEDIA_URL }}css/serendipity.css" type="text/css" media="all" />
-	<link rel="stylesheet" href="{{ MEDIA_URL }}css/footer.css"      type="text/css" media="all" />
-
-
-        {% if LANGUAGE_BIDI %}
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+      <title>{% if site_name %}{{ site_name }} : {% endif %}{% if head_title %}{{head_title}}{% endif %}</title>
+      <!--[if IE]><style>
+          div {
+          zoom: 1; /* trigger hasLayout */
+          }
+          </style><![endif]-->
+      <!-- link rel="stylesheet" href="{{ MEDIA_URL }}base.css" / -->
+      <link rel="stylesheet" href="{{ MEDIA_URL }}css/tabs.css" />
+      <link rel="stylesheet" href="{{ MEDIA_URL }}css/uni-form.css" />
+      
+      <link rel="stylesheet" href="{{ MEDIA_URL }}css/site.css"        type="text/css" media="all" />
+      <link rel="stylesheet" href="{{ MEDIA_URL }}css/header.css"      type="text/css" media="all" />
+      <link rel="stylesheet" href="{{ MEDIA_URL }}css/main.css"        type="text/css" media="all" />
+      <link rel="stylesheet" href="{{ MEDIA_URL }}css/serendipity.css" type="text/css" media="all" />
+      <link rel="stylesheet" href="{{ MEDIA_URL }}css/footer.css"      type="text/css" media="all" />
+      
+	
+      {% if LANGUAGE_BIDI %}
         <style type="text/css" media="screen">
-            div.right_panel {
+          div.right_panel {
                 float: left; /* hotfix for sidebar */
             }
         </style>
-        {% endif %}
-        {% block extra_head_base %}
-            {% block extra_head %}{% endblock %}
-        {% endblock %}
+      {% endif %}
+      {% block extra_head_base %}
+        {% block extra_head %}{% endblock %}
+      {% endblock %}
     </head>
     
     <body>
@@ -42,33 +42,33 @@
 	<!-- main -->
 	<div id='main'>
           {% block main %}
-	     <div id='head_title'>{{head_title}}</div>
-	     <div id='head_title_status'>{{head_title_status}}</div>
+	  <div id='head_title'>{{head_title}}</div>
+	  <div id='head_title_status'>{{head_title_status}}</div>
 
-	     <div id='site_wide_messages'>
-               {% if site_wide_announcements %}
-               <div id="site_wide_announcements">
-                 <ul>
-                   {% for announcement in site_wide_announcements %}
-                   <li>
-                     <a href="{{ announcement.get_absolute_url }}">{{ announcement }}</a> -
-                     <a href="{% url announcement_hide announcement.pk %}?next={{ request.path }}">{% trans "Hide announcement" %}</a>
-                   </li>
-                   {% endfor %}
-                 </ul>
-               </div>
-               {% endif %}
-	     </div>
-
-             <div id='body'>
-                 {% block body %}{% endblock %}
-             </div>
-             <div id='side_bar'>
-                 {% block side_bar %}{% endblock %}
-             </div>
+	  <div id='site_wide_messages'>
+            {% if site_wide_announcements %}
+            <div id="site_wide_announcements">
+              <ul>
+                {% for announcement in site_wide_announcements %}
+                <li>
+                  <a href="{{ announcement.get_absolute_url }}">{{ announcement }}</a> -
+                  <a href="{% url announcement_hide announcement.pk %}?next={{ request.path }}">{% trans "Hide announcement" %}</a>
+                </li>
+                {% endfor %}
+              </ul>
+            </div>
+            {% endif %}
+	  </div>
+	  
+          <div id='body'>
+            {% block body %}{% endblock %}
+          </div>
+          <div id='side_bar'>
+            {% block side_bar %}{% endblock %}
+          </div>
           {% endblock %}
 	</div>
-
+	
 	<!-- serenedipity -->
 	<div id='serendipity'>
 	  {% block serendipity %} {% endblock %}

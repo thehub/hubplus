@@ -124,7 +124,9 @@ def profile(request, username, template_name="profiles/profile.html"):
                 "invite_form": invite_form,
                 "previous_invitations_to": previous_invitations_to,
                 "previous_invitations_from": previous_invitations_from,
-                "head_title" : "Profile for %s" % other_user.username,
+                "head_title" : "Profile for %s" % other_user.get_profile().name,
+                "host_info" : other_user.get_profile().get_host_info(),
+                
                 }, context_instance=RequestContext(request))
 
     else :
