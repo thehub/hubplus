@@ -1,5 +1,30 @@
-blah blah
+import hubspace_compatibility failed :: ImportError('Settings cannot be imported, because environment variable DJANGO_SETTINGS_MODULE is undefined.',)
 **************
+In __setattr__ name, None
+In __setattr__ verbose_name, None
+In __setattr__ primary_key, False
+In __setattr__ max_length, 255
+In __setattr__ _unique, True
+In __setattr__ blank, False
+In __setattr__ null, False
+In __setattr__ rel, None
+In __setattr__ default, django.db.models.fields.NOT_PROVIDED
+In __setattr__ editable, True
+In __setattr__ serialize, True
+In __setattr__ unique_for_date, None
+In __setattr__ unique_for_month, None
+In __setattr__ unique_for_year, None
+In __setattr__ _choices, []
+In __setattr__ help_text, 
+In __setattr__ db_column, None
+In __setattr__ db_tablespace, 
+In __setattr__ auto_created, False
+In __setattr__ db_index, False
+In __setattr__ creation_counter, 34
+In __setattr__ name, user_name
+In __setattr__ attname, user_name
+In __setattr__ column, user_name
+In __setattr__ verbose_name, user name
 Monkey Patched User Class ... gulp!
 # This is an auto-generated Django model module.
 # You'll have to do the following manually to clean this up:
@@ -850,16 +875,6 @@ class AboutMytestclass(models.Model):
     class Meta:
         db_table = u'about_mytestclass'
 
-class ProfilesProfile(models.Model):
-    id = models.IntegerField(primary_key=True)
-    user = models.ForeignKey(TgUser)
-    name = models.CharField(max_length=50)
-    about = models.TextField()
-    location = models.CharField(max_length=40)
-    website = models.CharField(max_length=200)
-    class Meta:
-        db_table = u'profiles_profile'
-
 class AccountAccount(models.Model):
     id = models.IntegerField(primary_key=True)
     user = models.ForeignKey(TgUser)
@@ -1215,6 +1230,90 @@ class PhotosPhotoset(models.Model):
     class Meta:
         db_table = u'photos_photoset'
 
+class TgUserUserPermissions(models.Model):
+    id = models.IntegerField(primary_key=True)
+    user = models.ForeignKey(TgUser)
+    permission = models.ForeignKey(AuthPermission)
+    class Meta:
+        db_table = u'tg_user_user_permissions'
+
+class PlusPermissionsSecuritytag(models.Model):
+    id = models.IntegerField(primary_key=True)
+    name = models.CharField(max_length=50)
+    agent_content_type = models.ForeignKey(DjangoContentType)
+    agent_object_id = models.IntegerField()
+    interface = models.CharField(max_length=50)
+    resource_content_type = models.ForeignKey(DjangoContentType)
+    resource_object_id = models.IntegerField()
+    class Meta:
+        db_table = u'plus_permissions_securitytag'
+
+class ProfilesHostinfo(models.Model):
+    id = models.IntegerField(primary_key=True)
+    user = models.ForeignKey(TgUser)
+    find_out = models.TextField()
+    peer_mentoring = models.BooleanField()
+    project = models.TextField()
+    project_stage = models.TextField()
+    assistance_offered = models.TextField()
+    class Meta:
+        db_table = u'profiles_hostinfo'
+
+class HubspaceCompatibilityHcgroupmapping(models.Model):
+    id = models.IntegerField(primary_key=True)
+    content_type = models.ForeignKey(DjangoContentType)
+    object_id = models.IntegerField()
+    parent = models.ForeignKey(TgGroup)
+    class Meta:
+        db_table = u'hubspace_compatibility_hcgroupmapping'
+
+class PlusPermissionsDefaultadmin(models.Model):
+    id = models.IntegerField(primary_key=True)
+    agent_content_type = models.ForeignKey(DjangoContentType)
+    agent_object_id = models.IntegerField()
+    resource_content_type = models.ForeignKey(DjangoContentType)
+    resource_object_id = models.IntegerField()
+    class Meta:
+        db_table = u'plus_permissions_defaultadmin'
+
+class ProfilesProfile(models.Model):
+    id = models.IntegerField(primary_key=True)
+    user = models.ForeignKey(TgUser)
+    name = models.CharField(max_length=50)
+    about = models.TextField()
+    location = models.CharField(max_length=40)
+    website = models.CharField(max_length=200)
+    organization = models.CharField(max_length=50)
+    role = models.CharField(max_length=50)
+    class Meta:
+        db_table = u'profiles_profile'
+
+class ProfilesProfileinterest(models.Model):
+    id = models.IntegerField(primary_key=True)
+    user = models.ForeignKey(TgUser)
+    interest_id = models.IntegerField()
+    class Meta:
+        db_table = u'profiles_profileinterest'
+
+class ProfilesInteresttag(models.Model):
+    id = models.IntegerField(primary_key=True)
+    label = models.TextField()
+    class Meta:
+        db_table = u'profiles_interesttag'
+
+class ProfilesProfileneed(models.Model):
+    id = models.IntegerField(primary_key=True)
+    user = models.ForeignKey(TgUser)
+    need_id = models.IntegerField()
+    class Meta:
+        db_table = u'profiles_profileneed'
+
+class ProfilesSkilltag(models.Model):
+    id = models.IntegerField(primary_key=True)
+    label = models.TextField()
+    class Meta:
+        db_table = u'profiles_skilltag'
+
 class TgUser(models.Model):
     id = models.IntegerField(primary_key=True)
     user_name = models.CharField(unique=True, max_length=255)
@@ -1284,10 +1383,16 @@ class TgUser(models.Model):
     class Meta:
         db_table = u'tg_user'
 
-class TgUserUserPermissions(models.Model):
+class ProfilesNeedtag(models.Model):
+    id = models.IntegerField(primary_key=True)
+    label = models.TextField()
+    class Meta:
+        db_table = u'profiles_needtag'
+
+class ProfilesProfileskill(models.Model):
     id = models.IntegerField(primary_key=True)
     user = models.ForeignKey(TgUser)
-    permission = models.ForeignKey(AuthPermission)
+    skill_id = models.IntegerField()
     class Meta:
-        db_table = u'tg_user_user_permissions'
+        db_table = u'profiles_profileskill'
 
