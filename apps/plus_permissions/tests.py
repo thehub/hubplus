@@ -157,7 +157,7 @@ class TestPermissions(unittest.TestCase) :
         self.assertFalse(ps.has_access(u,blog,tif.get_id(OurPost,'Commentor')))
         ps.delete_access(u,blog,tif.get_id(OurPost,'Viewer'))
 
-        self.assertFalse(ps.has_access(u,blog,tif.get_id(OurPost,'Viewer')))
+        self.assertFalse(ps.has_access(u,blog,ps.get_interface_id(OurPost,'Viewer')))
 
         
 

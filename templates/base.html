@@ -78,5 +78,10 @@
 	  {% block footer %} {% endblock %}
 	</div>
       </div>
+
+      <script src="{{ MEDIA_URL }}pinax/js/jquery.js" type="text/javascript"></script>
+      <script src="{{ MEDIA_URL }}pinax/js/uni-form.jquery.js" type="text/javascript"></script>
+      {% block extra_body_base %}{% endblock %}
+
     </body>
 </html>

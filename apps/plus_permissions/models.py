@@ -8,6 +8,12 @@ from apps.hubspace_compatibility.models import TgGroup, Location
 
 import datetime
 
+class PlusPermissionsNoAccessException(Exception):
+    def __init__(self,cls,id,msg) :
+        self.cls
+        self.id
+        self.msg
+
 class PlusPermissionsReadOnlyException(Exception) : 
     def __init__(self,cls,msg) :
         self.cls = cls
@@ -245,6 +251,9 @@ class PermissionSystem :
 
     def get_interface_factory(self) : 
         return _ONLY_INTERFACE_FACTORY
+
+    def get_interface_id(self,cls,name) :
+        return self.get_interface_factory().get_id(cls,name)
 
     def get_permission_manager(self,cls) :
         return self.get_interface_factory().get_permission_manager(cls)

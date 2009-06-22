@@ -18,7 +18,10 @@ from profiles.forms import ProfileForm
 from avatar.templatetags.avatar_tags import avatar
 
 from apps.plus_lib.models import DisplayStatus
-from apps.plus_permissions.models import PermissionSystem, get_permission_system, SecurityTag
+from apps.plus_permissions.models import PermissionSystem, get_permission_system, SecurityTag, PlusPermissionsNoAccessException
+
+from django.contrib.auth.decorators import login_required
+
 
 #from gravatar.templatetags.gravatar import gravatar as avatar
 
@@ -143,5 +146,39 @@ def profile(request, username, template_name="profiles/profile.html"):
 
 
 """ % (request.user, other_user.get_profile(),'Viewer', ) )
- 
+
+
+@login_required
+def update_profile_form(request,username) :
+    """ Get a prefilled basic form for the profile """
+    other_user = get_object_or_404(User,username=username)
+    p = other_user.get_profile()
+    ps= get_permission_system()
+    if not ps.has_access(request.user,p,ps.get_interface_id(Profile,'Editor')) :
+        raise PluPermissionsNoAccessException(Profile,p.pk,'update_profile_form')
+    else :
+        profile_form = ProfileForm(request.POST, p)
+        
+    
+
+
+@login_required
+def update_profile(request,username) :
+    other_user = get_object_or_404(User,username=username)
+    p = other_user.get_profile()
+    ps = get_permission_system()
+
+@login_required
+def add_interest(request,username) :
+    other_user = get_object_or_404(User,username=username)
+    ps = get_permission_system()
+    p = other_user.get_profile()
+    interest = request.POST['interest']
+    if not ps.has_permission(request.user,p,ps.get_interface_factory().get_id(Profile,'Editor')) :
+        raise PlusPermissionsNoAccessException(Profile,p.pk,'from views.add_interest')
+    else :
+        other_user.add_interest(get_or_create_interest(interest))
+        return HttpResponseRedirect('/profiles/%s/' % request.user.username)
+
+
 

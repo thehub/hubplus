@@ -8,8 +8,25 @@ from timezones.fields import TimeZoneField
 
 import itertools
 
-class Profile(models.Model):
-    
+def get_or_create_something(M,txt) :
+    try :
+        return M.objects.get(label=txt),False
+    except :
+        x = M(label=txt)
+        x.save()
+        return x,True
+
+def get_or_create_interest(txt) :
+    return get_or_create_something(InterestTag,txt)
+
+def get_or_create_need(txt) :
+    return get_or_create_something(NeedTag,txt)
+
+def get_or_create_skill(txt):
+    return get_or_create_something(SkillTag,txt)
+
+
+class Profile(models.Model):    
     user = models.ForeignKey(User, unique=True, verbose_name=_('user'))
     name = models.CharField(_('name'), max_length=50, null=True, blank=True)
     about = models.TextField(_('about'), null=True, blank=True)

@@ -1,0 +1,17 @@
+{% load i18n %}
+{% load uni_form %}
+
+
+<p><span id="edit_profile_info_toggle">{% trans "Edit Profile Info"%}</span></p>
+
+
+  <form class="uniForm" id="edit_profile_info" method="POST" action="" style="display: none;">
+    <fieldset class="inlineLabels">  
+      {{ profile_form|as_uni_form }}
+      <div class="form_block">
+	<input type="hidden" name="action" value="update" />
+	<input type="submit" value="{% trans "update" %}"/>
+      </div>
+    </fieldset>
+  </form>
+

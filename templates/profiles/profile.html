@@ -33,6 +33,7 @@
 	        <a class="tag">{{i.label}}</a> 
 	      {% endfor %}
 	    </dd>
+
 	    {% endif %}
 	  </dl>
 	</li>
@@ -63,6 +64,8 @@
 	</li>
 	
       </ul>
+
+      {% include "profiles/profile_info_form.html"%}
       
     </div>
     
@@ -125,6 +128,8 @@
       </li>
       {% endif %}
     </ul>
+
+    {% include "profiles/profile_about_form.html" %}
     
     
     <h3>Host Questions (Private)</h3>
@@ -136,6 +141,8 @@
       <li><dl><dt>What stage is your project at?:</dt><dd>{{host_info.project_stage}}</dd></dl></li>
     <li><dl><dt>What assistence would you like to offer other members?</dt><dd>{{host_info.assistance_offered}}</dd></dl></li>
     </ul>
+    {% include "profiles/profile_host_info_form.html" %}
+
   </div>
 </div>
 
@@ -199,15 +206,18 @@
 {% block extra_body %}
     <script type="text/javascript">
         $(document).ready(function() {
-            $('#edit-profile').hide();
-            $('#edit-profile-toggle').click(function() {
-                $('#edit-profile').toggle();
-                $('#edit-profile').autoscroll();
+	    alert("running jquery");
+            $('#edit_profile_info').hide();
+            $('#edit_profile_info_toggle').click(function() {
+                $('#edit_profile_info').toggle();
+
+                //$('#edit_profile_info').autoscroll();
+	        
                 return false;
             });
-            if ($('#edit-profile ul.errorlist').length) {
-                $('#edit-profile').show();
-                $('#edit-profile ul.errorlist').autoscroll();
+            if ($('#edit_profile_info ul.errorlist').length) {
+                $('#edit_profile_info').show();
+                //$('#edit_profile_info ul.errorlist').autoscroll();
             }
         });
     </script>

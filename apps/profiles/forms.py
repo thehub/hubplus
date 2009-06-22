@@ -1,6 +1,22 @@
 from django import forms
 from profiles.models import Profile
 
+class ProfileInfoForm(forms.Form) :
+    #organization,role,location, hub
+    organization = forms.CharField(max_length=100)
+    role = forms.CharField(max_length=100)
+    location = forms.CharField(max_length=100)
+    hub = forms.CharField(max_length=100)
+  
+    
+
+class ProfileAboutForm(forms.Form):
+    pass
+
+class ProfileHostInfoForm(forms.Form) :
+    pass
+
+
 class ProfileForm(forms.ModelForm):
     class Meta:
         model = Profile
