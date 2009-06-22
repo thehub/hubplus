@@ -258,9 +258,13 @@ class PermissionSystem :
     def get_permission_manager(self,cls) :
         return self.get_interface_factory().get_permission_manager(cls)
 
-_ONLY_PERMISSION_SYSTEM = PermissionSystem()
+_ONLY_PERMISSION_SYSTEM = None
+
 
 def get_permission_system() :
+    global _ONLY_PERMISSION_SYSTEM
+    if not _ONLY_PERMISSION_SYSTEM :
+        _ONLY_PERMISSION_SYSTEM = PermissionSystem()
     return _ONLY_PERMISSION_SYSTEM
 
 
