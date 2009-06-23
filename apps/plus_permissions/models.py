@@ -10,16 +10,11 @@ import datetime
 
 class PlusPermissionsNoAccessException(Exception):
     def __init__(self,cls,id,msg) :
-        self.cls
-        self.id
-        self.msg
+        self.cls=cls
+        self.id=id
+        self.msg=msg
 
 class PlusPermissionsReadOnlyException(Exception) : 
-    def __init__(self,cls,msg) :
-        self.cls = cls
-        self.msg = msg
-
-class PlusPermissionsNoAccessException(Exception) :
     def __init__(self,cls,msg) :
         self.cls = cls
         self.msg = msg

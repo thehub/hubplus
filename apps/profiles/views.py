@@ -161,7 +161,6 @@ def update_profile_form(request,username) :
         
     
 
-
 @login_required
 def update_profile(request,username) :
     other_user = get_object_or_404(User,username=username)
@@ -181,4 +180,22 @@ def add_interest(request,username) :
         return HttpResponseRedirect('/profiles/%s/' % request.user.username)
 
 
-
+@login_required
+def profile_field(request,username,fieldname) :
+    """ Get the value of one field from the user profile, so we can write an ajaxy editor """
+    other_user = get_object_or_404(User,username=username)
+    ps = get_permission_system()
+    p = other_user.get_profile()
+    if not ps.has_access(request.user,p,ps.get_interface_id(Profile,'Editor')) :
+        return HttpResponse("You aren't authorized to access %s in profile for %s. You are %s" % (fieldname,username,request.user),status=401)
+    else :
+        if not request.POST :
+            return HttpResponse("%s" % getattr(p,fieldname), mimetype="text/plain")
+        else :
+            val = request.POST['value']
+            setattr(p,fieldname,val)
+            try :
+                p.save()
+                return HttpResponse("%s" % getattr(p,fieldname),mimetype='text/plain')
+            except Exception, e :
+                return HttpResponse('%s' % e,status=500)
