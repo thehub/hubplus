@@ -12,7 +12,7 @@ from friends.models import FriendshipInvitation, Friendship
 
 from microblogging.models import Following
 
-from profiles.models import Profile
+from profiles.models import Profile, HostInfo
 from profiles.forms import ProfileForm
 
 from avatar.templatetags.avatar_tags import avatar
@@ -167,6 +167,7 @@ def update_profile(request,username) :
     p = other_user.get_profile()
     ps = get_permission_system()
 
+
 @login_required
 def add_interest(request,username) :
     other_user = get_object_or_404(User,username=username)
@@ -174,28 +175,35 @@ def add_interest(request,username) :
     p = other_user.get_profile()
     interest = request.POST['interest']
     if not ps.has_permission(request.user,p,ps.get_interface_factory().get_id(Profile,'Editor')) :
-        raise PlusPermissionsNoAccessException(Profile,p.pk,'from views.add_interest')
+        return HttpResponse("You aren't authorized to add an interest for %s. You are %s" % (username,request.user),status=401)
     else :
         other_user.add_interest(get_or_create_interest(interest))
         return HttpResponseRedirect('/profiles/%s/' % request.user.username)
 
 
 @login_required
-def profile_field(request,username,fieldname) :
+def profile_field(request,username,fieldname,*args,**kwargs) :
     """ Get the value of one field from the user profile, so we can write an ajaxy editor """
     other_user = get_object_or_404(User,username=username)
     ps = get_permission_system()
     p = other_user.get_profile()
     if not ps.has_access(request.user,p,ps.get_interface_id(Profile,'Editor')) :
-        return HttpResponse("You aren't authorized to access %s in profile for %s. You are %s" % (fieldname,username,request.user),status=401)
+        return HttpResponse("You aren't authorized to access %s in %s for %s. You are %s" % (fieldname,kwargs['class'],username,request.user),status=401)
     else :
-        if not request.POST :
-            return HttpResponse("%s" % getattr(p,fieldname), mimetype="text/plain")
-        else :
-            val = request.POST['value']
-            setattr(p,fieldname,val)
-            try :
-                p.save()
-                return HttpResponse("%s" % getattr(p,fieldname),mimetype='text/plain')
-            except Exception, e :
-                return HttpResponse('%s' % e,status=500)
+        if kwargs['class'] == 'Profile' :
+            return one_model_field(request,p,fieldname)
+        elif kwargs['class'] == 'HostInfo' :
+            return one_model_field(request,p.get_host_info(),fieldname)
+    
+
+def one_model_field(request,object,fieldname) :
+    if not request.POST :
+        return HttpResponse("%s" % getattr(object,fieldname), mimetype="text/plain")
+    else :
+        val = request.POST['value']
+        setattr(object,fieldname,val)
+        try :
+            object.save()
+            return HttpResponse("%s" % getattr(object,fieldname),mimetype='text/plain')
+        except Exception, e :
+            return HttpResponse('%s' % e,status=500)
