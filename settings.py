@@ -240,6 +240,12 @@ WIKI_REQUIRES_LOGIN = True
 # local_settings.py can be used to override environment-specific settings
 # like database and email that differ between development and production.
 
+SYNC_ENABLED = False
+HUBPLUSSVCUID = "hubplus"
+HUBPLUSSVCPASS = "secret"
+SYNCER_HOST = "127.0.0.1"
+SYNCER_PORT = 9003
+SESSION_COOKIE_DOMAIN = ".the-hub.net"
 
 try:
     from local_settings import *
