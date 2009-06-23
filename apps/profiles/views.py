@@ -1,7 +1,7 @@
 from django.shortcuts import render_to_response, get_object_or_404
 from django.template import RequestContext
 from django.contrib.auth.models import User
-from django.http import HttpResponse, HttpResponseForbidden
+from django.http import HttpResponse, HttpResponseRedirect, HttpResponseForbidden
 from django.conf import settings
 
 from django.utils.translation import ugettext_lazy as _
@@ -12,7 +12,7 @@ from friends.models import FriendshipInvitation, Friendship
 
 from microblogging.models import Following
 
-from profiles.models import Profile, HostInfo
+from profiles.models import Profile, HostInfo, get_or_create_interest
 from profiles.forms import ProfileForm
 
 from avatar.templatetags.avatar_tags import avatar
@@ -169,15 +169,17 @@ def update_profile(request,username) :
 
 
 @login_required
-def add_interest(request,username) :
+def add_profile_interest(request,username) :
+    """ This is actually a way to add interests """
     other_user = get_object_or_404(User,username=username)
     ps = get_permission_system()
     p = other_user.get_profile()
     interest = request.POST['interest']
-    if not ps.has_permission(request.user,p,ps.get_interface_factory().get_id(Profile,'Editor')) :
+    if not ps.has_access(request.user,p,ps.get_interface_factory().get_id(Profile,'Editor')) :
         return HttpResponse("You aren't authorized to add an interest for %s. You are %s" % (username,request.user),status=401)
     else :
-        other_user.add_interest(get_or_create_interest(interest))
+        i,created = get_or_create_interest(interest)
+        p.add_interest(i)
         return HttpResponseRedirect('/profiles/%s/' % request.user.username)
 
 

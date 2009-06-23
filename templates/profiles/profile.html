@@ -32,6 +32,10 @@
 	      {% for i in other_user.get_profile.get_interests %}
 	        <a class="tag">{{i.label}}</a> 
 	      {% endfor %}
+	      <form method='post' action='/profiles/{{other_user.username}}/interests/'>
+		<input name='interest' />
+		<input type='submit'/>
+	      </form>
 	    </dd>
 
 	    {% endif %}
