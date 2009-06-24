@@ -114,6 +114,10 @@
 	  {% for s in other_user.get_profile.get_skills %}
 	     <a href="#" class="tag option">{{s.label}}</a>
 	  {% endfor %}
+             <form method='post' action='/profiles/{{other_user.username}}/skills/'>
+               <input name='skill' />
+               <input type='submit'/>
+             </form>
 	  </dd>
 	</dl>
       </li>
@@ -127,6 +131,10 @@
 	    {% for n in other_user.get_profile.get_needs %}
 	    <a href="#" class="tag option">{{n.label}}</a>
 	    {% endfor %}
+            <form method='post' action='/profiles/{{other_user.username}}/needs/'>
+              <input name='need' />
+              <input type='submit'/>
+            </form>
 	  </dd>
 	</dl>
       </li>

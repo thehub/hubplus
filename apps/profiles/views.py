@@ -12,8 +12,9 @@ from friends.models import FriendshipInvitation, Friendship
 
 from microblogging.models import Following
 
-from profiles.models import Profile, HostInfo, get_or_create_interest
-from profiles.forms import ProfileForm
+from profiles.models import Profile, HostInfo
+from profiles.models import get_or_create_interest, get_or_create_need, get_or_create_skill
+from profiles.forms import ProfileForm, HostInfoForm
 
 from avatar.templatetags.avatar_tags import avatar
 
@@ -145,8 +146,19 @@ def profile(request, username, template_name="profiles/profile.html"):
 <p>This is the profile for %s via interface %s</p>
 
 
-""" % (request.user, other_user.get_profile(),'Viewer', ) )
+""" % (request.user, other_user.get_profile(),'Viewer', ), status=401 )
 
+def our_profile_permission_test(fn) :
+    """ Trying to put our permission testing into a decorator """
+    def our_fn(request,username) :
+        ps = get_permission_system()
+        other_user = get_object_or_404(User,username=username)
+        profile = other_user.get_profile()
+        if not ps.has_access(request.user,profile,ps.get_interface_id(Profile,'Editor')) :
+            return HttpResponse("You don't have permission to do that to %s, you are %s" % (username,request.user),status=401)
+        else :
+            return fn(request,other_user,profile)
+    return our_fn
 
 @login_required
 def update_profile_form(request,username) :
@@ -158,29 +170,30 @@ def update_profile_form(request,username) :
         raise PluPermissionsNoAccessException(Profile,p.pk,'update_profile_form')
     else :
         profile_form = ProfileForm(request.POST, p)
-        
-    
 
 @login_required
-def update_profile(request,username) :
-    other_user = get_object_or_404(User,username=username)
-    p = other_user.get_profile()
-    ps = get_permission_system()
-
-
-@login_required
-def add_profile_interest(request,username) :
+@our_profile_permission_test
+def add_profile_interest(request,other_user,profile) :
     """ This is actually a way to add interests """
-    other_user = get_object_or_404(User,username=username)
-    ps = get_permission_system()
-    p = other_user.get_profile()
-    interest = request.POST['interest']
-    if not ps.has_access(request.user,p,ps.get_interface_factory().get_id(Profile,'Editor')) :
-        return HttpResponse("You aren't authorized to add an interest for %s. You are %s" % (username,request.user),status=401)
-    else :
-        i,created = get_or_create_interest(interest)
-        p.add_interest(i)
-        return HttpResponseRedirect('/profiles/%s/' % request.user.username)
+    interest,created = get_or_create_interest(request.POST['interest'])
+    profile.add_interest(interest)
+    return HttpResponseRedirect('/profiles/%s/' % request.user.username)
+
+@login_required
+@our_profile_permission_test
+def add_profile_skill(request,other_user,profile) :
+    """ This is actually a way to add skills """
+    skill,created = get_or_create_skill(request.POST['skill'])
+    profile.add_skill(skill)
+    return HttpResponseRedirect('/profiles/%s/' % request.user.username)
+
+@login_required
+@our_profile_permission_test
+def add_profile_need(request,other_user,profile) :
+    """ This is actually a way to add needs """
+    need, created = get_or_create_need(request.POST['need'])
+    profile.add_need(need)
+    return HttpResponseRedirect('/profiles/%s/' % request.user.username)
 
 
 @login_required
@@ -193,19 +206,21 @@ def profile_field(request,username,fieldname,*args,**kwargs) :
         return HttpResponse("You aren't authorized to access %s in %s for %s. You are %s" % (fieldname,kwargs['class'],username,request.user),status=401)
     else :
         if kwargs['class'] == 'Profile' :
-            return one_model_field(request,p,fieldname)
+            return one_model_field(request,p,ProfileForm,fieldname)
         elif kwargs['class'] == 'HostInfo' :
-            return one_model_field(request,p.get_host_info(),fieldname)
-    
+            return one_model_field(request,p.get_host_info(),HostInfoForm,fieldname)
 
-def one_model_field(request,object,fieldname) :
+
+def one_model_field(request,object,formClass,fieldname) :
     if not request.POST :
         return HttpResponse("%s" % getattr(object,fieldname), mimetype="text/plain")
     else :
-        val = request.POST['value']
-        setattr(object,fieldname,val)
+        form = formClass(request.POST,instance=object)
         try :
-            object.save()
-            return HttpResponse("%s" % getattr(object,fieldname),mimetype='text/plain')
+            if form.is_valid() :
+                form.save()
+                return HttpResponse("%s" % getattr(object,fieldname),mimetype='text/plain')
+            else :
+                return HttpResponse('Form invalid',status=500)
         except Exception, e :
             return HttpResponse('%s' % e,status=500)
