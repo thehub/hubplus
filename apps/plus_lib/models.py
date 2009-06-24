@@ -8,3 +8,9 @@ class DisplayStatus :
 
     def __str__(self) :
         return self.txt
+
+
+def add_edit_key(cls) :
+   def edit_key(self) :
+       return '%s-%s-' % (self.__class__.__name__,self.pk)
+   cls.edit_key = edit_key

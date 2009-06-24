@@ -18,11 +18,15 @@ from profiles.forms import ProfileForm, HostInfoForm
 
 from avatar.templatetags.avatar_tags import avatar
 
-from apps.plus_lib.models import DisplayStatus
+from apps.plus_lib.models import DisplayStatus, add_edit_key
 from apps.plus_permissions.models import PermissionSystem, get_permission_system, SecurityTag, PlusPermissionsNoAccessException
 
 from django.contrib.auth.decorators import login_required
 
+
+add_edit_key(User)
+add_edit_key(Profile)
+add_edit_key(HostInfo)
 
 #from gravatar.templatetags.gravatar import gravatar as avatar
 
@@ -127,6 +131,7 @@ def profile(request, username, template_name="profiles/profile.html"):
                 "is_friend": is_friend,
                 "is_following": is_following,
                 "other_user": other_user,
+                "profile":other_user.get_profile(),
                 "other_friends": other_friends,
                 "invite_form": invite_form,
                 "previous_invitations_to": previous_invitations_to,
@@ -150,14 +155,14 @@ def profile(request, username, template_name="profiles/profile.html"):
 
 def our_profile_permission_test(fn) :
     """ Trying to put our permission testing into a decorator """
-    def our_fn(request,username) :
+    def our_fn(request,username,*args,**kwargs) :
         ps = get_permission_system()
         other_user = get_object_or_404(User,username=username)
         profile = other_user.get_profile()
         if not ps.has_access(request.user,profile,ps.get_interface_id(Profile,'Editor')) :
             return HttpResponse("You don't have permission to do that to %s, you are %s" % (username,request.user),status=401)
         else :
-            return fn(request,other_user,profile)
+            return fn(request,other_user,profile,*args,**kwargs)
     return our_fn
 
 @login_required
