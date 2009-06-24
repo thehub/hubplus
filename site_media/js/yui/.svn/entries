@@ -1,0 +1,83 @@
+9
+
+dir
+815
+svn+ssh://hubspace@open.coop/home/hubspace/hubspace/trunk/hubspace/hubspace/static/javascript/yui
+svn+ssh://hubspace@open.coop/home/hubspace/hubspace
+
+
+
+2009-04-20T00:31:05.127457Z
+777
+hubspace
+
+
+svn:special svn:externals svn:needs-lock
+
+
+
+
+
+
+
+
+
+
+
+bf49c9ed-bc1d-0410-be56-895f1ec7e301
+
+build
+dir
+
+assets
+dir
+
+tests
+dir
+
+docs
+dir
+
+as-docs
+dir
+
+releasenotes
+dir
+
+index.html
+file
+
+
+
+
+2009-06-03T11:56:18.000000Z
+ef16100e8656ad23161e659c99da993c
+2009-04-20T00:31:05.127457Z
+777
+hubspace
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+18101
+
+examples
+dir
+
