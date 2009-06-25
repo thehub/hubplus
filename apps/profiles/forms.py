@@ -3,7 +3,7 @@ from profiles.models import Profile, HostInfo
 
 class ProfileInfoForm(forms.Form) :
     #organization,role,location, hub
-    organization = forms.CharField(max_length=100)
+    organisation = forms.CharField(max_length=100)
     role = forms.CharField(max_length=100)
     location = forms.CharField(max_length=100)
     hub = forms.CharField(max_length=100)
