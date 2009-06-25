@@ -33,7 +33,7 @@ class Profile(models.Model):
     location = models.CharField(_('location'), max_length=40, null=True, blank=True)
     website = models.URLField(_('website'), null=True, blank=True, verify_exists=False)
 
-    organization = models.CharField(max_length=50,blank=True,null=True)
+    organisation = models.CharField(max_length=50,blank=True,null=True)
     role = models.CharField(max_length=50,blank=True,null=True)
     
     def __unicode__(self):
@@ -115,7 +115,10 @@ class Profile(models.Model):
         verbose_name_plural = _('profiles')
 
 
+import logging
+
 def create_profile(sender, instance=None, **kwargs):
+    logging.debug("in create a profile signal %s" % instance)
     if instance is None:
         return
     profile, created = Profile.objects.get_or_create(user=instance)
@@ -138,7 +141,7 @@ def create_host_info(sender, instance=None, **kwargs) :
         return
     host_info, created = HostInfo.objects.get_or_create(user=instance)
 
-post_save.connect(create_host_info,sender=User)    
+post_save.connect(create_host_info,sender=User) 
 
 class InterestTag(models.Model) :
     label = models.TextField(max_length=30)

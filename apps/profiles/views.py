@@ -57,6 +57,9 @@ def profile(request, username, template_name="profiles/profile.html"):
     other_user = get_object_or_404(User, username=username)
     ps = get_permission_system()
 
+    if not other_user.get_profile() :
+        other_user.save()
+
     if request.user.is_authenticated():
 
         is_friend = Friendship.objects.are_friends(request.user, other_user)

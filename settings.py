@@ -263,3 +263,9 @@ except ImportError, e:
     print "import hubspace_compatibility failed :: " + `e`
     pass
 
+
+import logging
+logging.basicConfig(
+    level = logging.DEBUG,
+    format = '%(asctime)s %(levelname)s %(message)s',
+)
