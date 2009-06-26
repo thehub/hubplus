@@ -54,18 +54,18 @@
 	</li>
 	<br />
 	<li>
-	  <dl><dt  class='editable' id='{{profile.edit_key}}organisation'>{% trans "Organisation" %} :</dt><dd>{{profile.organisation}}</dd></dl>
+	  <dl><dt >{% trans "Organisation" %} :</dt><dd class='editable' id='{{profile.edit_key}}organisation'>{{profile.organisation}}</dd></dl>
 	</li>
 	<li>
-	  <dl><dt  class='editable' id='{{profile.edit_key}}role'>{% trans "Role" %} : </dt><dd>{{profile.role}}</dd></dl>
+	  <dl><dt >{% trans "Role" %} : </dt><dd  class='editable' id='{{profile.edit_key}}role'>{{profile.role}}</dd></dl>
 	</li>
 	<br />
 	<li>
-	  <dl><dt  class='editable' id='{{profile.edit_key}}location'>{% trans "Location" %} : </dt><dd>{{profile.location}}
+	  <dl><dt >{% trans "Location" %} : </dt><dd class='editable' id='{{profile.edit_key}}location'>{{profile.location}}
 	  </dd></dl>
 	</li>
 	<li>
-	  <dl><dt  class='editable' id='{{profile.edit_key}}hub'>{% trans "Hub" %} : </dt><dd><a href="hub.html">{{profile.get_hub}}</a></dd></dl>
+	  <dl><dt >{% trans "Hub" %} : </dt><dd class='editable' id='{{profile.edit_key}}hub'><a href="hub.html">{{profile.get_hub}}</a></dd></dl>
 	</li>
 	
       </ul>
@@ -84,8 +84,8 @@
     <ul>
       <li>
 	<dl>
-	  <dt  class='editable' id='{{profile.edit_key}}about'>{% trans "A bit about me" %} :</dt>
-	  <dd>
+	  <dt >{% trans "A bit about me" %} :</dt>
+	  <dd class='editable' id='{{profile.edit_key}}about'>
 	    {{profile.about}}
 	    <a href="#">more</a>
 	  </dd>
@@ -95,13 +95,13 @@
     
     <h3>Contact</h3>
     <ul>
-      <li><dl><dt  class='editable' id='{{profile.edit_key}}phone'>Phone:</dt><dd></dd></dl></li>
-      <li><dl><dt  class='editable' id='{{profile.edit_key}}email'>Email:</dt><dd>{{profile.email}}</dd></dl></li>
+      <li><dl><dt >Phone:</dt><dd class='editable' id='{{profile.edit_key}}phone'></dd></dl></li>
+      <li><dl><dt >Email:</dt><dd class='editable' id='{{profile.edit_key}}email'>{{profile.email}}</dd></dl></li>
     </ul>
     
     <h3>Links</h3>
     <ul>
-      <li><dl><dt  class='editable' id='{{profile.edit_key}}website'>Website:</dt><dd><a href="#"></a></dd></dl></li>
+      <li><dl><dt >Website:</dt><dd class='editable' id='{{profile.edit_key}}website'><a href="#"></a></dd></dl></li>
     </ul>
     
     <h3>Skills and needs</h3>
@@ -147,12 +147,12 @@
     
     <h3>Host Questions (Private)</h3>
     <ul>
-      <li><dl><dt  class='editable' id='{{host_info.edit_key}}find_out'>How did you find out about the Hub?</dt><dd>{{host_info.find_out}}</dd></dl></li>
-      <li><dl><dt  class='editable' id='{{host_info.edit_key}}peer_mentoring'>Are you interested in peer mentoring?</dt><dd>{{host_info.peer_mentoring}}</dd></dl></li>
+      <li><dl><dt >How did you find out about the Hub?</dt><dd class='editable' id='{{host_info.edit_key}}find_out'>{{host_info.find_out}}</dd></dl></li>
+      <li><dl><dt >Are you interested in peer mentoring?</dt><dd class='editable' id='{{host_info.edit_key}}peer_mentoring'>{{host_info.peer_mentoring}}</dd></dl></li>
       
-      <li><dl><dt  class='editable' id='{{host_info.edit_key}}project'>Tell us a bit about your project?</dt><dd>{{host_info.project}}</dd></dl></li>
-      <li><dl><dt  class='editable' id='{{host_info.edit_key}}project_stage'>What stage is your project at?:</dt><dd>{{host_info.project_stage}}</dd></dl></li>
-    <li><dl><dt  class='editable' id='{{host_info.edit_key}}assisstance_offered'>What assistence would you like to offer other members?</dt><dd>{{host_info.assistance_offered}}</dd></dl></li>
+      <li><dl><dt >Tell us a bit about your project?</dt><dd class='editable' id='{{host_info.edit_key}}project'>{{host_info.project}}</dd></dl></li>
+      <li><dl><dt >What stage is your project at?:</dt><dd class='editable' id='{{host_info.edit_key}}project_stage'>{{host_info.project_stage}}</dd></dl></li>
+    <li><dl><dt >What assistence would you like to offer other members?</dt><dd class='editable' id='{{host_info.edit_key}}assisstance_offered'>{{host_info.assistance_offered}}</dd></dl></li>
     </ul>
     {% include "profiles/profile_host_info_form.html" %}
 
