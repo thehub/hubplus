@@ -25,6 +25,10 @@ def get_or_create_need(txt) :
 def get_or_create_skill(txt):
     return get_or_create_something(SkillTag,txt)
 
+class DelegateToUser(object) :
+   def __init__(self,attr_name) : self.attr_name = attr_name
+   def __get__(self,obj,typ=None) : return getattr(obj.user,self.attr_name)
+   def __set__(self,obj,val) : setattr(obj.user,self.attr_name,val)
 
 class Profile(models.Model):    
     user = models.ForeignKey(User, unique=True, verbose_name=_('user'))
