@@ -25,10 +25,25 @@ except :
     # Patching the User class
 
     User.add_to_class('user_name',UserNameField(unique=True, max_length=255))
-    
-
     User.add_to_class('email_address',models.CharField(max_length=20))
 
+    #User.add_to_class('active',models.SmallIntegerField(null=True)) # not shown
+    User.add_to_class('display_name',models.CharField(max_length=255,null=True))
+    User.add_to_class('title',models.CharField(max_length=255,null=True))
+    User.add_to_class('mobile',models.CharField(max_length=30))
+    User.add_to_class('work',models.CharField(max_length=30))
+    User.add_to_class('home',models.CharField(max_length=30))
+    User.add_to_class('fax',models.CharField(max_length=30))
+
+    User.add_to_class('created',models.DateTimeField())
+    User.add_to_class('email2',models.CharField(max_length=255))
+    User.add_to_class('email3',models.CharField(max_length=255))
+    User.add_to_class('address',models.TextField())
+    User.add_to_class('skype_id',models.TextField())
+    User.add_to_class('sip_id',models.TextField())
+    User.add_to_class('website',models.TextField())
+    User.add_to_class('homeplace',models.ForeignKey(Location,null=True))
+    
     User.email = AliasOf('email_address')
     User._meta.db_table = 'tg_user'
     User.set_password = set_password
@@ -37,25 +52,7 @@ except :
     User.is_direct_member_of = is_direct_member_of
     User.get_enclosures = get_enclosures
     User.is_group = lambda(self) : False
-
-    # Over-ride the UserManager's create_user method
-    def our_create_user(self,username,email,password=None) :
-        """Creates and saves a User with the given username, e-mail and password.
-
-        Directly adapted from Django contrib.auth.models.UserManager.create_user 
-        """
-        now = datetime.datetime.now()
-
-        user = self.model(None, username, '', '', email.strip().lower(), 'placeholder', False, True, False, now, now)
-        if password:
-            user.set_password(password)
-        else:
-            user.set_unusable_password()
-
-        user.save()
-        return user
-
-    UserManager.create_user = our_create_user
-    
+    User.save = user_save
+   
     print "Monkey Patched User Class ... gulp!"
     # Finished the User Patch
