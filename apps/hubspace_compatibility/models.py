@@ -7,8 +7,8 @@ from django.contrib.auth.models import User, UserManager, check_password
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes import generic
 
-
 import hashlib
+import datetime
 
 def getHubspaceUser(username) :
     """ Returns the hubspace user. None if doesn't exist"""
@@ -146,6 +146,8 @@ try :
     display_name = models.CharField(max_length=255)
     created = models.DateTimeField()
     place = models.ForeignKey(Location)
+    #if place is Hub Islington then set member of toHub Islington group if level is member
+    #if level is host, set member of to Hub Islington Host Group.
     level = models.CharField(max_length=9)
 
     class Meta:
@@ -220,3 +222,8 @@ def get_permission_agent_name(self) :
     return self.username
 
 
+def user_save(self) :
+    if not self.created :
+        self.created = datetime.date.today()
+    super(User,self).save()
+    
