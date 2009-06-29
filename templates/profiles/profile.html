@@ -57,29 +57,24 @@
 	</li>
 	<br />
 	<li>
-	  <dl><dt >{% trans "Organisation" %} :</dt><dd class='editable' id='{{profile.edit_key}}organisation'>{{profile.organisation}}</dd></dl>
+
+              <dl><dt >{% trans "Organisation" %} :</dt><dd class='editable' id='{{profile.edit_key}}organisation'>{% if profile.organisation %}{{profile.organisation}}{% else %}Your organisation{% endif  %}</dd></dl>
 	</li>
 	<li>
-	  <dl><dt >{% trans "Role" %} : </dt><dd  class='editable' id='{{profile.edit_key}}role'>{{profile.role}}</dd></dl>
+	  <dl><dt >{% trans "Role" %} : </dt><dd  class='editable' id='{{profile.edit_key}}role'>{% if profile.role %}{{profile.role}}{% else %}Your role{% endif  %}</dd></dl>
 	</li>
 	<br />
 	<li>
-	  <dl><dt >{% trans "Location" %} : </dt><dd class='editable' id='{{profile.edit_key}}location'>{{profile.location}}
-	  </dd></dl>
+	  <dl><dt >{% trans "Location" %} : </dt><dd class='editable' id='{{profile.edit_key}}location'>{% if profile.location %}{{profile.location}}{% else %}Your location{% endif  %}</dd></dl>
 	</li>
 	<li>
-	  <dl><dt >{% trans "Hub" %} : </dt>
+	  <dl><dt >{% trans "Hubs" %} : </dt>
 	    <dd>
 	      <a href="hub.html" class='editable' id='{{profile.edit_key}}hub'>{{profile.get_hub}}</a>
 	  </dd></dl>
-	</li>
-	
+	</li>	
       </ul>
-
-      {% include "profiles/profile_info_form.html"%}
-      
     </div>
-    
   </div>
 
 
@@ -87,7 +82,7 @@
   <div id="about" class="block">
   
     <h3>About me</h3>
-    <ul>
+    <ul class="yui-skin-sam">
       <li>
 	<dl>
 	  <dt >{% trans "A bit about me" %} :</dt>

@@ -1,0 +1,70 @@
+table.draglist { 
+    position: relative;
+    border-spacing: 10px;
+    border-collapse: separate;
+    background: #ffffff;
+    border: 1px solid gray;
+    list-style: none;
+    margin:0;
+    padding:0;
+    color: #000000;
+    z-index: 100;
+}
+table.draglist tr {
+    margin: 1px;
+    cursor: move; 
+    background-color: #F4F4F4;
+    border: 2px solid #560005;
+    height: 30px;
+}
+table.draglist td.add_remove {
+    width:100px;
+}
+table.draglist tr a {
+    color: #660007;
+}
+table.draglist_alt { 
+    position: relative;
+    width: 200px; 
+    list-style: none;
+    margin:0;
+    padding:0;
+    padding-bottom:20px;
+}
+table.draglist_alt tr {
+    margin: 1px;
+    cursor: move; 
+}
+#user_actions { 
+	float: right; 
+}
+div.logger{
+	position:absolute;
+}
+div.edit_list {
+        float: left;
+}
+div.edit_list a {
+       color: #660007; 
+}
+div#edit_list_left {
+       height: 10px;
+       position: absolute;
+       top: -20px;
+       color: #000000;
+       left: 0px;
+}
+div#edit_list_right {
+       height: 30px;
+       position: absolute;
+       top: -20px;
+       right: 0px;
+       color: #000000;
+}
+div#edit_list_places {
+       height: 30px;
+       position: absolute;
+       top: 10px;
+       left: 20px;
+       color: #000000;
+}
