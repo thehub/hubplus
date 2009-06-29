@@ -3,7 +3,7 @@ from django.template import RequestContext
 from django.contrib.auth.models import User
 from django.http import HttpResponse, HttpResponseRedirect, HttpResponseForbidden
 from django.conf import settings
-
+from django.core.exceptions import ValidationError
 from django.utils.translation import ugettext_lazy as _
 from django.utils.translation import ugettext
 
@@ -214,21 +214,32 @@ def profile_field(request,username,fieldname,*args,**kwargs) :
         return HttpResponse("You aren't authorized to access %s in %s for %s. You are %s" % (fieldname,kwargs['class'],username,request.user),status=401)
     else :
         if kwargs['class'] == 'Profile' :
-            return one_model_field(request,p,ProfileForm,fieldname)
+            return one_model_field(request,p,ProfileForm,fieldname, kwargs.get('default', ''))
         elif kwargs['class'] == 'HostInfo' :
-            return one_model_field(request,p.get_host_info(),HostInfoForm,fieldname)
+            return one_model_field(request,p.get_host_info(),HostInfoForm,fieldname, kwargs.get('default', ''))
 
 
-def one_model_field(request,object,formClass,fieldname) :
-    if not request.POST :
-        return HttpResponse("%s" % getattr(object,fieldname), mimetype="text/plain")
-    else :
-        form = formClass(request.POST,instance=object)
-        try :
-            if form.is_valid() :
-                form.save()
-                return HttpResponse("%s" % getattr(object,fieldname),mimetype='text/plain')
-            else :
-                return HttpResponse('Form invalid',status=500)
-        except Exception, e :
-            return HttpResponse('%s' % e,status=500)
+def one_model_field(request, object, formClass, fieldname, default) :
+    val = getattr(object, fieldname)
+    print "%s,%s,%s" %(fieldname,default,val)
+    if not request.POST:
+        val = val and val or default
+        return HttpResponse("%s" % val, mimetype="text/plain")
+
+    field_validator = formClass.base_fields[fieldname]
+    new_val = request.POST['value']
+    try:
+        field_validator.clean(new_val)
+    except ValidationError, e:
+        return HttpResponse('%s' % e, status=500)
+
+    try:
+        setattr(object, fieldname, new_val)
+        object.save()
+    except Exception, e :
+        return HttpResponse('%s' % e, status=500)
+
+    new_val = new_val and new_val or default
+    return HttpResponse("%s" % new_val, mimetype='text/plain')
+
+
