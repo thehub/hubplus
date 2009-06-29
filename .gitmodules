@@ -1,0 +1,3 @@
+[submodule "./site_media/js"]
+	path = ./site_media/js
+	url = git://github.com/yui/yui3.git
