@@ -423,7 +423,7 @@ var inplace_editor = function (element_id, url, special_options) {
         return false;
     };
     var onComplete = function (data, xhr) {
-        if (xhr.getResponseHeader('X-JSON') === 'success') {
+        if (xhr.status === 200) {
             if (options.ui_type === 'gmap') {
                 element.html(data);
                 leaveEditMode();

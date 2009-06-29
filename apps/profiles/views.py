@@ -6,6 +6,7 @@ from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.utils.translation import ugettext_lazy as _
 from django.utils.translation import ugettext
+from django.db import transaction
 
 from friends.forms import InviteFriendForm
 from friends.models import FriendshipInvitation, Friendship
@@ -182,6 +183,7 @@ def our_profile_permission_test(fn) :
     return our_fn
 
 @login_required
+@transaction.commit_on_success
 def update_profile_form(request,username) :
     """ Get a prefilled basic form for the profile """
     other_user = get_object_or_404(User,username=username)
@@ -202,6 +204,7 @@ def add_profile_interest(request,other_user,profile) :
 
 @login_required
 @our_profile_permission_test
+@transaction.commit_on_success
 def add_profile_skill(request,other_user,profile) :
     """ This is actually a way to add skills """
     skill,created = get_or_create_skill(request.POST['skill'])
@@ -210,6 +213,7 @@ def add_profile_skill(request,other_user,profile) :
 
 @login_required
 @our_profile_permission_test
+@transaction.commit_on_success
 def add_profile_need(request,other_user,profile) :
     """ This is actually a way to add needs """
     need, created = get_or_create_need(request.POST['need'])
@@ -218,6 +222,7 @@ def add_profile_need(request,other_user,profile) :
 
 
 @login_required
+@transaction.commit_on_success
 def profile_field(request,username,fieldname,*args,**kwargs) :
     """ Get the value of one field from the user profile, so we can write an ajaxy editor """
     other_user = get_object_or_404(User,username=username)
@@ -234,9 +239,7 @@ def profile_field(request,username,fieldname,*args,**kwargs) :
 
 def one_model_field(request, object, formClass, fieldname, default) :
     val = getattr(object, fieldname)
-    print "%s,%s,%s" %(fieldname,default,val)
     if not request.POST:
-        val = val and val or default
         return HttpResponse("%s" % val, mimetype="text/plain")
 
     field_validator = formClass.base_fields[fieldname]
@@ -251,7 +254,6 @@ def one_model_field(request, object, formClass, fieldname, default) :
         object.save()
     except Exception, e :
         return HttpResponse('%s' % e, status=500)
-
     new_val = new_val and new_val or default
     return HttpResponse("%s" % new_val, mimetype='text/plain')
 
