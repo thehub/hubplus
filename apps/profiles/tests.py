@@ -83,3 +83,24 @@ class TestProfileSubsidiaries(unittest.TestCase):
         x, created = get_or_create_need('history')
         self.assertEquals(get_or_create_need('history')[0],x)
         self.assertTrue(created)
+
+    def testDelegates(self) :
+        u = User(username='ck')
+        u.save()
+        p=u.get_profile()
+
+        p.name = 'ck-name'
+        self.assertEquals(p.name,'ck-name')
+        p.title ='mr'
+        p.display_name = p.name
+        p.save()
+        u.save()
+        self.assertEquals(p.display_name,p.name)
+        self.assertEquals(p.user.display_name,p.name)
+        self.assertEquals(p.user,u)
+        print `u.display_name`
+        print `p.user.display_name`
+        self.assertEquals(u.display_name,p.name)
+
+        p.save()
+

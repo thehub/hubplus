@@ -12,7 +12,9 @@ from friends.models import FriendshipInvitation, Friendship
 
 from microblogging.models import Following
 
+from apps.plus_permissions.Profile import *  # Essential to get signals working at the moment.
 from profiles.models import Profile, HostInfo
+  
 from profiles.models import get_or_create_interest, get_or_create_need, get_or_create_skill
 from profiles.forms import ProfileForm, HostInfoForm
 
@@ -22,7 +24,6 @@ from apps.plus_lib.models import DisplayStatus, add_edit_key
 from apps.plus_permissions.models import PermissionSystem, get_permission_system, SecurityTag, PlusPermissionsNoAccessException
 
 from django.contrib.auth.decorators import login_required
-
 
 add_edit_key(User)
 add_edit_key(Profile)
@@ -57,8 +58,12 @@ def profile(request, username, template_name="profiles/profile.html"):
     other_user = get_object_or_404(User, username=username)
     ps = get_permission_system()
 
-    if not other_user.get_profile() :
+    try:
+        p = other_user.get_profile()
+    except Exception : 
         other_user.save()
+        p = other_user.get_profile()
+        p.save()
 
     if request.user.is_authenticated():
 
@@ -153,8 +158,16 @@ def profile(request, username, template_name="profiles/profile.html"):
 
 <p>This is the profile for %s via interface %s</p>
 
-
-""" % (request.user, other_user.get_profile(),'Viewer', ), status=401 )
+Current Permissions
+<ul>
+%s
+</ul>
+...
+""" % (request.user, other_user.get_profile(),'Viewer', 
+       ''.join([
+          ('<li>%s</li>'%x) for x in ps.get_permissions_for(other_user.get_profile())
+          ]),
+       ), status=401 )
 
 def our_profile_permission_test(fn) :
     """ Trying to put our permission testing into a decorator """
