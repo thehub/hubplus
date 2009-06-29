@@ -40,6 +40,17 @@ class Profile(models.Model):
     organisation = models.CharField(max_length=50,blank=True,null=True)
     role = models.CharField(max_length=50,blank=True,null=True)
     
+    display_name = DelegateToUser('display_name')
+    title = DelegateToUser('title')
+    mobile = DelegateToUser('mobile')
+    email2 = DelegateToUser('email2')
+    address = DelegateToUser('address')
+    skype_id = DelegateToUser('skype_id')
+    sip_id = DelegateToUser('sip_id')
+    website = DelegateToUser('website')
+    homeplace = DelegateToUser('homeplace')
+
+
     def __unicode__(self):
         return self.user.username
     
