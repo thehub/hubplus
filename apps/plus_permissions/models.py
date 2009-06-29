@@ -74,20 +74,29 @@ class NullInterface :
 
     def __str__(self) :
         return self.get_inner()
-        
-            
+                    
 
 class InterfaceReadProperty :
     """ Add this to a NullInterface to allow a property to be readable"""
     def __init__(self,name) :
         self.name = name
 
+    def can_read(self) : 
+        return True
+
+    def can_write(self) :
+        return False
 
 class InterfaceWriteProperty :
     """ Add this to a NullInterface to allow a property to be writable """
     def __init__(self,name) :
         self.name = name
 
+    def can_read(self) : 
+        return True
+
+    def can_write(self) :
+        return True
 
 class InterfaceFactory :
 

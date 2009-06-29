@@ -2,7 +2,7 @@
 from django.db import models
 
 from models import Interface, Slider, SliderOption, SecurityTag, PermissionManager, AgentNameWrap
-from models import get_permission_system, default_admin_for
+from models import get_permission_system, default_admin_for, InterfaceReadProperty, InterfaceWriteProperty
 
 from apps.profiles.models import Profile
 
@@ -13,8 +13,46 @@ from django.db.models.signals import post_save
 
 # Here's the wrapping we have to put around it.                                                                                                              
 
-class ProfileViewer(Interface) : pass
-class ProfileEditor(Interface) : pass
+class ProfileViewer(Interface) : 
+
+    about = InterfaceReadProperty('about')
+    location = InterfaceReadProperty('location')
+    website = InterfaceReadProperty('website')
+
+    organisation = InterfaceReadProperty('organisation')
+    role = InterfaceReadProperty('role')
+
+    display_name = InterfaceReadProperty('display_name')
+    title = InterfaceReadProperty('title')
+
+    mobile = InterfaceReadProperty('mobile')
+    email2 = InterfaceReadProperty('email2')
+    address = InterfaceReadProperty('address')
+    skype_id = InterfaceReadProperty('skype_id')
+    sip_id = InterfaceReadProperty('sip_id')
+    website = InterfaceReadProperty('website')
+    homeplace = InterfaceReadProperty('homeplace')
+
+
+class ProfileEditor(Interface) : 
+    about = InterfaceWriteProperty('about')
+    location = InterfaceWriteProperty('location')
+    website = InterfaceWriteProperty('website')
+
+    organisation = InterfaceWriteProperty('organisation')
+    role = InterfaceWriteProperty('role')
+
+    display_name = InterfaceWriteProperty('display_name')
+    title = InterfaceWriteProperty('title')
+
+    mobile = InterfaceWriteProperty('mobile')
+    email2 = InterfaceWriteProperty('email2')
+    address = InterfaceWriteProperty('address')
+    skype_id = InterfaceWriteProperty('skype_id')
+    sip_id = InterfaceWriteProperty('sip_id')
+    website = InterfaceWriteProperty('website')
+    homeplace = InterfaceWriteProperty('homeplace')
+
 
 
 class ProfilePermissionManager(PermissionManager) :
