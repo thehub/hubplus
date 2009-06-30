@@ -200,6 +200,10 @@ class TestPermissions(unittest.TestCase) :
         def f(blog) : blog.title = "something stupid"
         self.assertRaises(PlusPermissionsReadOnlyException,f,blog)
         
+        def try_delete(blog) : 
+            blog.delete()
+        self.assertRaises(PlusPermissionsNoAccessException,try_delete,blog)
+
         blog.add_interface( tif.get_interface(OurPost,'Editor'))
         
         blog.title = "Hello"
@@ -210,6 +214,13 @@ class TestPermissions(unittest.TestCase) :
 
         blog.remove_interface( tif.get_interface(OurPost,'Editor'))
         self.assertRaises(PlusPermissionsReadOnlyException,f,blog)
+        
+        self.assertRaises(PlusPermissionsNoAccessException,try_delete,blog)
+        blog.add_interface(tif.get_interface(OurPost,'Editor'))
+        
+        blog.delete()
+        
+        
 
  
 

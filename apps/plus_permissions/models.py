@@ -19,7 +19,27 @@ class PlusPermissionsReadOnlyException(Exception) :
         self.cls = cls
         self.msg = msg
 
-class Interface : pass
+class Interface : 
+    @classmethod
+    def delete(self) :
+        return False
+
+    @classmethod
+    def has_property_name_and_class(self,name,cls) :
+        """Does this object have a property of name 'name' and class 'cls'?"""
+        for k,v in self.__dict__.iteritems() :
+            if k == name and v.__class__ == cls :
+                return True
+        return False
+
+    @classmethod
+    def has_write(self,name) :
+        return self.has_property_name_and_class(name,InterfaceWriteProperty)
+
+    @classmethod
+    def has_read(self,name) :
+        return self.has_property_name_and_class(name,InterfaceReadProperty)
+        
 
 class NullInterface :
     """
@@ -27,8 +47,7 @@ class NullInterface :
     """
     def __init__(self, inner) :
         self.__dict__['_inner'] = inner
-        self.__dict__['_read'] = []
-        self.__dict__['_write'] = []
+        self.__dict__['_interfaces'] = []
 
     def get_inner(self) :
         return self.__dict__['_inner']
@@ -36,38 +55,38 @@ class NullInterface :
     def get_inner_class(self) :
         return self.get_inner().__class__
 
-    def get_read(self) : 
-        return self.__dict__['_read']
+    def get_interfaces(self) :
+        return self.__dict__['_interfaces']
 
-    def get_write(self) :
-        return self.__dict__['_write']
+    def fold_interfaces(self, f,init) :
+        for i in self.get_interfaces() :
+            init = f(init,i)
+        return init
+
+    def delete(self) :
+        """If any interface provides a delete method which returns True, we can delete the object"""
+        if self.fold_interfaces(lambda a, i : a or i.delete(), False) :
+            self.get_inner().delete()
+        else :
+            raise PlusPermissionsNoAccessException(self.get_inner_class(),'delete','trying to delete')
 
     def __getattr__(self,name) :
-        for r in self.get_read():
-            if r[0] == name :
-                return self.get_inner().__getattribute__(name)
-        raise PlusPermissionsNoAccessException(self.get_inner_class(),name)
+        if self.fold_interfaces(lambda a, i : a or i.has_read(name),False) :
+            return self.get_inner().__getattribute__(name)
+        raise PlusPermissionsNoAccessException(self.get_inner_class(),name,'from __getattr__')
 
     def __setattr__(self,name,val) :
-        for w in self.get_write() :
-            if w[0] == name :
-                self.get_inner().__setattr__(name,val)
-                return None
-       
+        if self.fold_interfaces(lambda a,i : a or i.has_write(name),False) :
+            self.get_inner().__setattr__(name,val)
+            return None      
         raise PlusPermissionsReadOnlyException(self.get_inner_class(),name)        
 
     def add_interface(self,interface) :
-        for k,v in interface.__dict__.iteritems() :
-            if v.__class__ == InterfaceReadProperty :
-                self.get_read().append((k,interface))
-            elif v.__class__ == InterfaceWriteProperty :
-                self.get_write().append((k,interface))
+        self.get_interfaces().append(interface)
 
     def remove_interface(self,cls) :
-        rs = [r for r in self.get_read() if r[1] != cls]
-        ws = [w for w in self.get_write() if w[1] != cls]
-        self.__dict__['_read'] = rs
-        self.__dict__['_write'] = ws
+        ifs = [i for i in self.get_interfaces() if i != cls]
+        self.__dict__['_interfaces'] = ifs
 
     def save(self) :
         self.get_inner().save()

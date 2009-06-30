@@ -26,8 +26,12 @@ class OurPostViewer(Interface) :
 class OurPostEditor(Interface) : 
     title = InterfaceWriteProperty('title')
     body = InterfaceWriteProperty('body')
+    @classmethod
+    def delete(self) :
+        return True
 
-class OurPostCommentor(Interface) : pass
+class OurPostCommentor(Interface) : 
+    pass
 
 
 class OurPostPermissionManager(PermissionManager) :
