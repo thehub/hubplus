@@ -11,17 +11,20 @@
           }
           </style><![endif]-->
       <!-- link rel="stylesheet" href="{{ MEDIA_URL }}base.css" / -->
-      <link rel="stylesheet" href="{{ MEDIA_URL }}css/tabs.css" />
       <link rel="stylesheet" href="{{ MEDIA_URL }}css/uni-form.css" />
       <link rel="stylesheet" href="{{ MEDIA_URL }}css/site.css"        type="text/css" media="all" />
       <link rel="stylesheet" href="{{ MEDIA_URL }}css/header.css"      type="text/css" media="all" />
       <link rel="stylesheet" href="{{ MEDIA_URL }}css/main.css"        type="text/css" media="all" />
       <link rel="stylesheet" href="{{ MEDIA_URL }}css/serendipity.css" type="text/css" media="all" />
       <link rel="stylesheet" href="{{ MEDIA_URL }}css/footer.css"      type="text/css" media="all" />
+      <link rel="stylesheet" href="{{ MEDIA_URL }}css/tabview.css"      type="text/css" media="all" />
       <script src="{{ MEDIA_URL }}js/jquery.min.js" type="text/javascript" charset="utf-8"></script>
       <script src="{{ MEDIA_URL }}js/jq.noconflict.js" type="text/javascript" charset="utf-8"></script>
       <link rel="stylesheet" href="{{ MEDIA_URL }}css/jquery.autocomplete.css" type="text/css" media="screen"/>
+     <!-- <link rel="stylesheet" href="{{ MEDIA_URL }}css/ui.tabs.css" type="text/css" media="screen"/> -->
+      <link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}css/tabview.css" />
       <script src="{{ MEDIA_URL }}js/ui.core.js" type="text/javascript" charset="utf-8"></script>
+      <!--<script src="{{ MEDIA_URL }}js/ui.tabs.js" type="text/javascript" charset="utf-8"></script>-->
       <script src="{{ MEDIA_URL }}js/effects.core.js" type="text/javascript" charset="utf-8"></script>
       <script src="{{ MEDIA_URL }}js/effects.highlight.js" type="text/javascript" charset="utf-8"></script>
       <link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}js/yui/build/editor/assets/skins/sam/editor.css" />
@@ -37,11 +40,14 @@
       <script src="{{ MEDIA_URL }}js/yui/build/logger/logger-min.js"></script> 
       <script src="{{ MEDIA_URL }}js/yui/build/dragdrop/dragdrop-min.js"></script>
       <script src="{{ MEDIA_URL }}js/yui/build/selector/selector-min.js"></script> 
+      <script src="{{ MEDIA_URL }}js/yui/build/tabview/tabview-min.js"></script>
+      <script src="{{ MEDIA_URL }}js/yui/build/history/history.js"></script>
       <link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}css/list-edit-table.css" />
       <script src="{{ MEDIA_URL }}js/jquery.confirm.js" type="text/javascript" charset="utf-8"></script>
       <script src="{{ MEDIA_URL }}js/jquery.confirm-1.1.js" type="text/javascript" charset="utf-8"></script>
       <script src="{{ MEDIA_URL }}js/list-editor.js" type="text/javascript" charset="utf-8"></script>
       <script src="{{ MEDIA_URL }}js/hubcms.js" type="text/javascript" charset="utf-8"></script>
+      <script src="{{ MEDIA_URL }}js/tab_hist.js" type="text/javascript" charset="utf-8"></script>
       <script src="{{ MEDIA_URL }}js/hubplus.js" ></script> 
       
 	
@@ -58,6 +64,8 @@
     </head>
     
     <body>
+      <iframe id="yui-history-iframe" src="assets/blank.html"></iframe> 
+      <input id="yui-history-field" type="hidden"> 
       <div id='wrapper'>
 
 	<!-- header -->

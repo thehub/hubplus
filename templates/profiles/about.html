@@ -1,0 +1,81 @@
+
+
+  <div id="about" class="block">
+  
+    <h3>About me</h3>
+    <ul class="yui-skin-sam">
+      <li>
+	<dl>
+	  <dt >{% trans "A bit about me" %} :</dt>
+	  <dd class='editable' id='{{profile.edit_key}}about'>
+            {% autoescape off %} 
+	       {{profile.about}}
+            {% endautoescape %}
+	    <a href="#">more</a>
+	  </dd>
+	</dl>
+      </li>
+    </ul>
+    
+    <h3>Contact</h3>
+    <ul>
+      <li><dl><dt >Phone:</dt><dd class='editable' id='{{profile.edit_key}}phone'>{% if profile.phone %}{{profile.phone}}{% else %}Your phone no.{% endif  %}</dd></dl></li>
+      <li><dl><dt >Email:</dt><dd class='editable' id='{{profile.edit_key}}email'>{% if profile.email %}{{profile.email}}{% else %}Your email{% endif  %}</dd></dl></li>
+    </ul>
+    
+    <h3>Links</h3>
+    <ul>
+      <li><dl><dt >Website:</dt><dd class='editable' id='{{profile.edit_key}}website'><a href="#"></a></dd></dl></li>
+    </ul>
+    
+    <h3>Skills and needs</h3>
+    
+    <ul>
+      {% if other_user.get_profile.has_skills %}
+      <li>
+	<dl>
+	  <dt>Skills:</dt>
+	  <dd>
+	  {% for s in other_user.get_profile.get_skills %}
+	     <a href="#" class="tag option">{{s.label}}</a>
+	  {% endfor %}
+             <form method='post' action='/profiles/{{other_user.username}}/skills/'>
+               <input name='skill' />
+               <input type='submit'/>
+             </form>
+	  </dd>
+	</dl>
+      </li>
+      {% endif %}
+      
+      {% if other_user.get_profile.has_needs %}
+      <li>
+	<dl>
+	  <dt>Needs:</dt>
+	  <dd>
+	    {% for n in other_user.get_profile.get_needs %}
+	    <a href="#" class="tag option">{{n.label}}</a>
+	    {% endfor %}
+            <form method='post' action='/profiles/{{other_user.username}}/needs/'>
+              <input name='need' />
+              <input type='submit'/>
+            </form>
+	  </dd>
+	</dl>
+      </li>
+      {% endif %}
+    </ul>
+
+    {% include "profiles/profile_about_form.html" %}
+    
+    
+    <h3>Host Questions (Private)</h3>
+    <ul>
+      <li><dl><dt >How did you find out about the Hub?</dt><dd class='editable' id='{{host_info.edit_key}}find_out'>{{host_info.find_out}}</dd></dl></li>
+      <li><dl><dt >Are you interested in peer mentoring?</dt><dd class='editable' id='{{host_info.edit_key}}peer_mentoring'>{{host_info.peer_mentoring}}</dd></dl></li>
+      
+      <li><dl><dt >Tell us a bit about your project?</dt><dd class='editable' id='{{host_info.edit_key}}project'>{{host_info.project}}</dd></dl></li>
+      <li><dl><dt >What stage is your project at?:</dt><dd class='editable' id='{{host_info.edit_key}}project_stage'>{{host_info.project_stage}}</dd></dl></li>
+    <li><dl><dt >What assistence would you like to offer other members?</dt><dd class='editable' id='{{host_info.edit_key}}assisstance_offered'>{{host_info.assistance_offered}}</dd></dl></li>
+    </ul>
+    {% include "profiles/profile_host_info_form.html" %}
