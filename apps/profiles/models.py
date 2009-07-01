@@ -35,24 +35,27 @@ class DelegateToUser(object) :
 
 class Profile(models.Model):    
     user = models.ForeignKey(User, unique=True, verbose_name=_('user'))
-    name = models.CharField(_('name'), max_length=50, null=True, blank=True)
     about = models.TextField(_('about'), null=True, blank=True)
-    location = models.CharField(_('location'), max_length=40, null=True, blank=True)
-    website = models.URLField(_('website'), null=True, blank=True, verify_exists=False)
 
-    organisation = models.CharField(max_length=50,blank=True,null=True)
-    role = models.CharField(max_length=50,blank=True,null=True)
-    
+    email_address = DelegateToUser('email_address')
+    name = DelegateToUser('username')
     display_name = DelegateToUser('display_name')
-    title = DelegateToUser('title')
+    first_name = DelegateToUser('first_name')
+    last_name = DelegateToUser('last_name')
+    organisation = DelegateToUser('organisation')
+    role = DelegateToUser('title')
     mobile = DelegateToUser('mobile')
+    home = DelegateToUser('home')
+    work = DelegateToUser('work')
+    fax = DelegateToUser('fax')
+
     email2 = DelegateToUser('email2')
     address = DelegateToUser('address')
     skype_id = DelegateToUser('skype_id')
     sip_id = DelegateToUser('sip_id')
     website = DelegateToUser('website')
     homeplace = DelegateToUser('homeplace')
-
+    location = DelegateToUser('location')
 
     def __unicode__(self):
         return self.user.username
