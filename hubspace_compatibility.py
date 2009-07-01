@@ -1,6 +1,7 @@
 from django.contrib.auth.models import User,UserManager
 from django.db import models
 
+
 import datetime
 
 try :
@@ -28,11 +29,14 @@ except :
     User.add_to_class('email_address',models.CharField(max_length=20))
 
     #User.add_to_class('active',models.SmallIntegerField(null=True)) # not shown
+ 
     User.add_to_class('display_name',models.CharField(max_length=255,null=True))
+
+    User.add_to_class('organisation', models.CharField(max_length=255))
+ 
     User.add_to_class('title',models.CharField(max_length=255,null=True))
     User.add_to_class('mobile',models.CharField(max_length=30))
     User.add_to_class('work',models.CharField(max_length=30))
-
     User.add_to_class('home',models.CharField(max_length=30))
     User.add_to_class('fax',models.CharField(max_length=30))
 
