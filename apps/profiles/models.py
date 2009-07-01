@@ -29,9 +29,13 @@ class DelegateToUser(object) :
    def __init__(self,attr_name) : self.attr_name = attr_name
    def __get__(self,obj,typ=None) : return getattr(obj.user,self.attr_name)
    def __set__(self,obj,val) : 
-       print "setting %s to %s for %s (class %s (user = %s, cls = %s))" % (self.attr_name,val,obj,obj.__class__,obj.user, obj.user.__class__)
+       #print `obj`
+       #print "setting %s to %s for %s (class %s (user = %s, cls = %s))" % (self.attr_name,val,obj,obj.__class__,obj.user, obj.user.__class__)
        setattr(obj.user,self.attr_name,val)
-       print "Getting from inner %s" % getattr(obj.user,self.attr_name)
+       obj.user.save()
+       print self.attr_name,val,getattr(obj.user,self.attr_name) 
+       #print "Getting from inner %s" % getattr(obj.user,self.attr_name)
+
 
 class Profile(models.Model):    
     user = models.ForeignKey(User, unique=True, verbose_name=_('user'))
