@@ -35,8 +35,8 @@ class DelegateToUser(object) :
 
 class Profile(models.Model):    
     user = models.ForeignKey(User, unique=True, verbose_name=_('user'))
-    about = models.TextField(_('about'), null=True, blank=True)
 
+    about = DelegateToUser('description')
     email_address = DelegateToUser('email_address')
     name = DelegateToUser('username')
     display_name = DelegateToUser('display_name')
