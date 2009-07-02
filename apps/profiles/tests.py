@@ -88,19 +88,23 @@ class TestProfileSubsidiaries(unittest.TestCase):
         u = User(username='ck')
         u.save()
         p=u.get_profile()
-
-        p.name = 'ck-name'
-        self.assertEquals(p.name,'ck-name')
-        p.title ='mr'
-        p.display_name = p.name
         p.save()
-        u.save()
-        self.assertEquals(p.display_name,p.name)
-        self.assertEquals(p.user.display_name,p.name)
+        u=p.user
+
+        self.assertEquals(p,u.get_profile())
         self.assertEquals(p.user,u)
-        print `u.display_name`
-        print `p.user.display_name`
-        self.assertEquals(u.display_name,p.name)
+        self.assertTrue(p.user is u)
 
-        p.save()
+        p.role = 'host'
+        self.assertEquals(p.role,u.title)
+        self.assertEquals(p.user.title,p.role)
+        self.assertEquals(p.user,u)
+        self.assertEquals(u.title,p.role)
+
+        self.assertEquals(u.title,p.role)
+        u.title = 'coffee maker'
+        self.assertEquals(u.title,p.role)
+
+
+        
 

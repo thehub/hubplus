@@ -42,11 +42,11 @@
 
     <ul id='main_navigation'>
         <li class="first"><div><a href="{% url home %}">{% trans "Home" %}</a></div></li>
-        <li><a href='#'>{% trans "Explore" %}</a></li>
+        <li class="disabled"><a href='#'>{% trans "Explore" %}</a></li>
 	<li><a href='/profiles/'>{% trans "Members" %}</a></li>
-	<li><a href='#'>{% trans "Groups" %}</a></li>
-	<li><a href='#'>{% trans "Hubs" %}</a></li>
-	<li class="last"><a href='#'>{% trans "Events" %}</a></li>
+	<li class="disabled"><a href='#'>{% trans "Groups" %}</a></li>
+	<li class="disabled"><a href='#'>{% trans "Hubs" %}</a></li>
+	<li class="last disabled"><a href='#'>{% trans "Events" %}</a></li>
     </ul>
 
 </div>

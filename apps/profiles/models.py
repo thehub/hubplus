@@ -27,13 +27,15 @@ def get_or_create_skill(txt):
 
 class DelegateToUser(object) :
    def __init__(self,attr_name) : self.attr_name = attr_name
-   def __get__(self,obj,typ=None) : return getattr(obj.user,self.attr_name)
+   def __get__(self,obj,typ=None) : 
+       print "UUU %s, get attr %s" % (obj, getattr(obj.user,self.attr_name))
+       return getattr(obj.user,self.attr_name)
    def __set__(self,obj,val) : 
-       #print `obj`
+       print "SSS", `obj`
        #print "setting %s to %s for %s (class %s (user = %s, cls = %s))" % (self.attr_name,val,obj,obj.__class__,obj.user, obj.user.__class__)
        setattr(obj.user,self.attr_name,val)
        obj.user.save()
-       print self.attr_name,val,getattr(obj.user,self.attr_name) 
+       print "QQQ attribute name %s, val: %s, get obj.user %s"% (self.attr_name,val,getattr(obj.user,self.attr_name))
        #print "Getting from inner %s" % getattr(obj.user,self.attr_name)
 
 

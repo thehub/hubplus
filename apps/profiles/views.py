@@ -179,6 +179,10 @@ def our_profile_permission_test(fn) :
         if not ps.has_access(request.user,profile,ps.get_interface_id(Profile,'Editor')) :
             return HttpResponse("You don't have permission to do that to %s, you are %s" % (username,request.user),status=401)
         else :
+            profile = NullInterface(profile)
+            for interface in ps.get_interfaces_for_class(Profile) :
+                if ps.has_access(request.user,profile,interface) :
+                    profile.add_interface(interface)
             return fn(request,other_user,profile,*args,**kwargs)
     return our_fn
 
@@ -232,7 +236,7 @@ def profile_field(request,username,fieldname,*args,**kwargs) :
         return HttpResponse("You aren't authorized to access %s in %s for %s. You are %s" % (fieldname,kwargs['class'],username,request.user),status=401)
     else :
         if kwargs['class'] == 'Profile' :
-            return one_model_field(request,p,ProfileForm,fieldname, kwargs.get('default', ''),[other_user])
+            return one_model_field(request,p,ProfileForm,fieldname, kwargs.get('default', ''),[p.user])
         elif kwargs['class'] == 'HostInfo' :
             return one_model_field(request,p.get_host_info(),HostInfoForm,fieldname, kwargs.get('default', ''))
 
@@ -247,21 +251,14 @@ def one_model_field(request, object, formClass, fieldname, default,other_objects
         field_validator.clean(new_val)
     except ValidationError, e:
         return HttpResponse('%s' % e, status=500)
-
     try:
-        print "CCC %s, %s,  %s, %s " %(object,object.__class__,fieldname,new_val)
         setattr(object, fieldname, new_val)
         object.save()
         for o in other_objects :
-            print `o`
             o.save()
-            print "AAAA %s" % o
+
     except Exception, e :
-        print "FFF %s" % e
         return HttpResponse('%s' % e, status=500)
-    print "GGG"
+
     new_val = new_val and new_val or default
-    print "HHH"
     return HttpResponse("%s" % new_val, mimetype='text/plain')
-
-

@@ -70,6 +70,13 @@ class NullInterface :
         else :
             raise PlusPermissionsNoAccessException(self.get_inner_class(),'delete','trying to delete')
 
+    def can_access(self,name) :
+        try : 
+            self.__getattr__(name)
+            return True
+        except :
+            return False
+
     def __getattr__(self,name) :
         if self.fold_interfaces(lambda a, i : a or i.has_read(name),False) :
             return self.get_inner().__getattribute__(name)
@@ -206,7 +213,7 @@ class SecurityTag(models.Model) :
         return (x for x in SecurityTag.objects.all() if x.name == self.name)
 
     def has_access(self,agent,resource,interface) :
-        for x in (x for x in SecurityTag.objects.all() if x.resource == resource and x.interface == interface) :
+        for x in SecurityTag.objects.filter(interface=interface,resource_object_id = resource.id) :
             if x.agent == get_permission_system().get_anon_group() : 
                 # in other words, if this resource is matched with anyone, we don't have to test that user is in the "anyone" group
                 return True
@@ -251,7 +258,7 @@ class PermissionSystem :
 
 
     def get_permissions_for(self,resource) :
-        return (x for x in SecurityTag.objects.all() if x.resource == resource)
+        return (x for x in SecurityTag.objects.filter(resource_object_id=resource.id) if x.resource_content_type.model_class() == resource.__class__)
 
     def has_permissions(self,resource) :
         return len(set(self.get_permissions_for(resource))) > 0 
@@ -281,6 +288,9 @@ class PermissionSystem :
 
     def get_permission_manager(self,cls) :
         return self.get_interface_factory().get_permission_manager(cls)
+
+    def get_interfaces_for_class(self,cls):
+        return self.get_interface_factory().get_type(cls)
 
 _ONLY_PERMISSION_SYSTEM = None
 

@@ -26,11 +26,6 @@ class ProfileViewer(Interface) :
     display_name = InterfaceReadProperty('display_name')
     title = InterfaceReadProperty('title')
 
-    mobile = InterfaceReadProperty('mobile')
-    email2 = InterfaceReadProperty('email2')
-    address = InterfaceReadProperty('address')
-    skype_id = InterfaceReadProperty('skype_id')
-    sip_id = InterfaceReadProperty('sip_id')
     website = InterfaceReadProperty('website')
     homeplace = InterfaceReadProperty('homeplace')
 
@@ -46,14 +41,31 @@ class ProfileEditor(Interface) :
     display_name = InterfaceWriteProperty('display_name')
     title = InterfaceWriteProperty('title')
 
-    mobile = InterfaceWriteProperty('mobile')
-    email2 = InterfaceWriteProperty('email2')
-    address = InterfaceWriteProperty('address')
-    skype_id = InterfaceWriteProperty('skype_id')
-    sip_id = InterfaceWriteProperty('sip_id')
     website = InterfaceWriteProperty('website')
     homeplace = InterfaceWriteProperty('homeplace')
 
+    mobile = InterfaceWriteProperty('mobile')
+    work = InterfaceWriteProperty('work')
+    email2 = InterfaceWriteProperty('email2')
+    fax = InterfaceWriteProperty('fax')
+    home = InterfaceWriteProperty('home')
+
+    address = InterfaceReadProperty('address')
+    skype_id = InterfaceReadProperty('skype_id')
+    sip_id = InterfaceReadProperty('sip_id')
+
+
+
+class ProfileContactViewer(Interface) :
+    mobile = InterfaceReadProperty('mobile')
+    work = InterfaceReadProperty('work')
+    email2 = InterfaceReadProperty('email2')
+    fax = InterfaceReadProperty('fax')
+    home = InterfaceReadProperty('home')
+
+    address = InterfaceReadProperty('address')
+    skype_id = InterfaceReadProperty('skype_id')
+    sip_id = InterfaceReadProperty('sip_id')
 
 
 class ProfilePermissionManager(PermissionManager) :
@@ -62,6 +74,7 @@ class ProfilePermissionManager(PermissionManager) :
         interface_factory.add_type(OurPost)
         interface_factory.add_interface(Profile,'Viewer',ProfileViewer)
         interface_factory.add_interface(Profile,'Editor',ProfileEditor)
+        interface_factory.add_interface(Profile,'ContactViewer',ProfileContactViewer)
 
     def make_slider_options(self,resource,interface_name,owner,creator) :
         options = [
@@ -102,12 +115,24 @@ class ProfilePermissionManager(PermissionManager) :
         s.set_current_option(3)
         return s
 
+    def make_contact_viewer_slider(self,resource,interface_name,owner,creator) :
+        options = self.make_slider_options(resource,interface_name,owner,creator)
+        s = Slider(
+            tag_name='ProfilePermissionManager.ContactViewer slider',
+            resource=resource,
+            interface_id='Profile.ContactViewer',
+            default_agent=self.get_permission_system().get_anon_group(),
+            options=options
+        )
+        s.set_current_option(2)
 
     def make_slider(self,resource,interface_name,owner,creator) :
         if interface_name == 'Viewer' :
             return self.make_viewer_slider(resource,interface_name,owner,creator)
         elif interface_name == 'Editor' :
             return self.make_editor_slider(resource,interface_name,owner,creator)
+        elif interface_name == 'ContactViewer' :
+            return self.make_contact_viewer_slider(resource,interface_name,owner,creator)
         else :
             raise NoSliderException(Profile,interface_name)
 
@@ -115,6 +140,8 @@ class ProfilePermissionManager(PermissionManager) :
         s = self.make_slider(resource,'Viewer',owner,creator)
         s.set_current_option(s.current_idx)
         s = self.make_slider(resource,'Editor',owner,creator)
+        s.set_current_option(s.current_idx)
+        s = self.make_slider(resource,'ContactViewer',owner,creator)
         s.set_current_option(s.current_idx)
 
         

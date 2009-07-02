@@ -10,6 +10,7 @@ except Exception, e:
     print "*** %s" % e
 
 from models import *
+from Profile import *
 
 import pdb
 
@@ -117,6 +118,9 @@ class TestPermissions(unittest.TestCase) :
         blog2 = OurPost(title='another post')
         blog2.save()
 
+        pr= u.get_profile()
+        pr.save()
+
         l = Location(name='da hub')
         l.save()
 
@@ -126,6 +130,7 @@ class TestPermissions(unittest.TestCase) :
         tif = self.makeInterfaceFactory()
 
         # confirm that there are no permissions currently relating to this resource
+        print SecurityTag.objects.all()
         self.assertFalse(ps.has_permissions(blog))
 
         t = SecurityTag(name='tag1',agent=u,resource=blog,interface=tif.get_id(OurPost,'Viewer'))
@@ -194,12 +199,16 @@ class TestPermissions(unittest.TestCase) :
         self.assertEquals(blog.body,"Here's what")
         self.assertRaises(PlusPermissionsNoAccessException,f,blog)
 
+        self.assertEquals(blog.can_access('body'),True)
+        self.assertEquals(blog.can_access('title'),False)
+
         blog.add_interface( tif.get_interface(OurPost,'Viewer'))
         self.assertEquals(blog.title,'what I want to say')
         
         def f(blog) : blog.title = "something stupid"
         self.assertRaises(PlusPermissionsReadOnlyException,f,blog)
-        
+
+
         def try_delete(blog) : 
             blog.delete()
         self.assertRaises(PlusPermissionsNoAccessException,try_delete,blog)
