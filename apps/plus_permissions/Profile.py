@@ -146,20 +146,27 @@ class ProfilePermissionManager(PermissionManager) :
         s = self.make_slider(resource,'ContactViewer',owner,creator)
         s.set_current_option(s.current_idx)
 
-        
-ProfilePermissionManager().register_with_interface_factory(get_permission_system().get_interface_factory())
+
+_PROFILE_PERMISSION_MANAGER = None 
+def make_permission_manager() : 
+    global _PROFILE_PERMISSION_MANAGER
+    if not _PROFILE_PERMISSION_MANAGER :
+        _PROFILE_PERMISSION_MANAGER=ProfilePermissionManager()
+        _PROFILE_PERMISSION_MANAGER.register_with_interface_factory(get_permission_system().get_interface_factory())
+    return _PROFILE_PERMISSION_MANAGER
 
 # ========= Signal handlers
-
 
 def setup_default_permissions(sender,**kwargs):
     # This signalled by Profile.save()
     # tests if there are already permissions for the profile and if not, creates defaults
     profile = kwargs['instance']
     signal = kwargs['signal']
-
+    print "DDDD %s, " % profile
     if not get_permission_system().has_permissions(profile) :
-        ProfilePermissionManager().setup_defaults(profile,profile.user,profile.user)
+        print "HHHHH"
+        get_profile_permission_manager().setup_defaults(profile,profile.user,profile.user)
+        print "JJJJ"
 
 post_save.connect(setup_default_permissions,sender=Profile)
 

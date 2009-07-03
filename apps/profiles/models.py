@@ -28,15 +28,11 @@ def get_or_create_skill(txt):
 class DelegateToUser(object) :
    def __init__(self,attr_name) : self.attr_name = attr_name
    def __get__(self,obj,typ=None) : 
-       print "UUU %s, get attr %s" % (obj, getattr(obj.user,self.attr_name))
        return getattr(obj.user,self.attr_name)
    def __set__(self,obj,val) : 
-       print "SSS", `obj`
-       #print "setting %s to %s for %s (class %s (user = %s, cls = %s))" % (self.attr_name,val,obj,obj.__class__,obj.user, obj.user.__class__)
        setattr(obj.user,self.attr_name,val)
        obj.user.save()
-       print "QQQ attribute name %s, val: %s, get obj.user %s"% (self.attr_name,val,getattr(obj.user,self.attr_name))
-       #print "Getting from inner %s" % getattr(obj.user,self.attr_name)
+
 
 
 class Profile(models.Model):    
@@ -148,7 +144,9 @@ def create_profile(sender, instance=None, **kwargs):
     logging.debug("in create a profile signal %s" % instance)
     if instance is None:
         return
+    print  "CCCCC "
     profile, created = Profile.objects.get_or_create(user=instance)
+    print "create_profile for %s, %s, %s" % (instance,profile,created)
 
 post_save.connect(create_profile, sender=User)
 
@@ -171,6 +169,7 @@ def create_host_info(sender, instance=None, **kwargs) :
 post_save.connect(create_host_info,sender=User) 
 
 class InterestTag(models.Model) :
+
     label = models.TextField(max_length=30)
 
 class ProfileInterest(models.Model) :

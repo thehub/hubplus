@@ -82,8 +82,10 @@ class NullInterface :
 
     def load_interfaces_for(self,agent) :
         """Load interfaces for the wrapped inner content that are available to the agent"""
+        print "YYYY"
         ps = get_permission_system()
         resource = self.get_inner()
+        print "JJ JJ %s, %s, %s"% (resource,ps.get_interface_factory(),resource.__class__)
         types = ps.get_interface_factory().get_type(resource.__class__)
         for k,v in types.iteritems() :
             if ps.has_access(agent=agent,resource=resource,interface=ps.get_interface_id(self.get_inner().__class__,k)) :
@@ -190,6 +192,7 @@ def default_admin_for(resource) :
         return ds[0].agent
 
 
+# REMOVE ME .. AgentNameWrap should be deprecated now that User has been retrofitted with a display_name attribute
 class AgentNameWrap(object) :
     def __init__(self,inner) :
         self.__dict__['inner'] = inner
@@ -317,11 +320,15 @@ class PermissionSystem :
 
 _ONLY_PERMISSION_SYSTEM = None
 
-
 def get_permission_system() :
     global _ONLY_PERMISSION_SYSTEM
+    print _ONLY_PERMISSION_SYSTEM
     if not _ONLY_PERMISSION_SYSTEM :
+        print "Creating PermissionSystem"
         _ONLY_PERMISSION_SYSTEM = PermissionSystem()
+        print "this should have setup default groups"
+        for x in TgGroup.objects.all() :
+            print x
     return _ONLY_PERMISSION_SYSTEM
 
 

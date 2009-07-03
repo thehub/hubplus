@@ -26,7 +26,9 @@ class TestPermissions(unittest.TestCase) :
         # make a user
         u = User()
         u.username = 'nils'
+        print "AAAAA"
         u.save()
+        print "BBBBB"
 
         # and a couple more
         u2 = User()
