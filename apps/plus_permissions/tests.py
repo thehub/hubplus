@@ -130,7 +130,6 @@ class TestPermissions(unittest.TestCase) :
         tif = self.makeInterfaceFactory()
 
         # confirm that there are no permissions currently relating to this resource
-        print SecurityTag.objects.all()
         self.assertFalse(ps.has_permissions(blog))
 
         t = SecurityTag(name='tag1',agent=u,resource=blog,interface=tif.get_id(OurPost,'Viewer'))
@@ -142,12 +141,13 @@ class TestPermissions(unittest.TestCase) :
         t2 = SecurityTag(name='tag1',agent=u,resource=blog,interface=tif.get_id(OurPost,'Commentor'))
         t2.save()
 
-        self.assertTrue(t2.has_access(u,blog,tif.get_id(OurPost,'Commentor')))
-        self.assertFalse(t2.has_access(u,blog,tif.get_id(OurPost,'Editor')))
+        self.assertTrue(ps.has_access(u,blog,tif.get_id(OurPost,'Commentor')))
+
+        self.assertFalse(ps.has_access(u,blog,tif.get_id(OurPost,'Editor')))
 
         t3 = SecurityTag(name='tag1',agent=editors,resource=blog2,interface=tif.get_id(OurPost,'Editor'))
         t3.save()
-
+        
         self.assertTrue(ps.has_access(editors,blog2,tif.get_id(OurPost,'Editor')))
 
         editors.add_member(u)
@@ -293,7 +293,7 @@ class TestPermissions(unittest.TestCase) :
         self.assertEquals(s.get_current_option().name,'root')
 
         tif = ps.get_interface_factory()
-
+        
         self.assertTrue(ps.has_access(everyone,blog,tif.get_id(OurPost,'Viewer')))
         self.assertFalse(ps.has_access(everyone,blog,tif.get_id(OurPost,'Editor')))
         self.assertTrue(ps.has_access(u,blog,tif.get_id(OurPost,'Viewer')))
@@ -331,13 +331,41 @@ class TestPermissions(unittest.TestCase) :
         p.about='about jesson'
         p.save()
         ps = PermissionSystem()
-        for t in ps.get_permissions_for(p):
-          print t
         self.assertTrue(ps.has_access(ps.get_anon_group(),p,ps.get_interface_factory().get_id(Profile,'Viewer')))
 
 
+    def testUserWrapping(self) :
+        u=User(username='oli')
+        u.save()
+        blog = OurPost(title='test wrapping')
+        blog.save()
 
-        
+        blog = NullInterface(blog)
+
+        ps = PermissionSystem()
+        pm = ps.get_permission_manager(OurPost)
+
+        pm.setup_defaults(blog,u,u)
+        perms = ps.get_permissions_for(blog)
+        count = 0
+        for p in perms : count=count+1
+        self.assertEquals(count,3)
+
+        # in this case, because of the defaults for blog u has access to all interfaces
+        blog.load_interfaces_for(u) 
+        self.assertEquals(len(blog.get_interfaces()),3)
+
+        u2=User(username='holly')
+        u2.save()
+        blog2=OurPost(title='test rapping')
+        blog2.save()
+        blog2=NullInterface(blog2)
+
+        pm.setup_defaults(blog2,u2,u2)
+
+        # in this case, u is only getting access to the Viewer interface, the other two defaults went to u2
+        blog2.load_interfaces_for(u)
+        self.assertEquals(len(blog.get_interfaces()),1)
         
 
 

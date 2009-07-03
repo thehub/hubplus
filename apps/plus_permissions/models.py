@@ -14,6 +14,9 @@ class PlusPermissionsNoAccessException(Exception):
         self.id=id
         self.msg=msg
 
+    def __str__(self) :
+        return "%s =.= %s =.= %s" % (msg,cls,id)
+
 class PlusPermissionsReadOnlyException(Exception) : 
     def __init__(self,cls,msg) :
         self.cls = cls
@@ -77,10 +80,26 @@ class NullInterface :
         except :
             return False
 
+    def load_interfaces_for(self,agent) :
+        """Load interfaces for the wrapped inner content that are available to the agent"""
+        ps = get_permission_system()
+        types = ps.get_interface_factory().get_type(self.get_inner().__class__)
+        for k,v in types.iteritems() :
+            print k,v,agent
+            for x in self.get_permissions_for(resource) :
+                print x
+            if ps.has_access(agent=agent,resource=self.get_inner(),interface=ps.get_interface_id(self.get_inner().__class__,k)) :
+                print "****"
+                self.add_interface(v)
+        
+            
+
     def __getattr__(self,name) :
+        if name.find('_') == 0 :
+            return self.get_inner().__getattribute__(name)
         if self.fold_interfaces(lambda a, i : a or i.has_read(name),False) :
             return self.get_inner().__getattribute__(name)
-        raise PlusPermissionsNoAccessException(self.get_inner_class(),name,'from __getattr__')
+        raise PlusPermissionsNoAccessException(self.get_inner_class(),name,'from NullInterface.__getattr__ accessing %s in a %s' % (name,self.get_inner_class().__class__ ))
 
     def __setattr__(self,name,val) :
         if self.fold_interfaces(lambda a,i : a or i.has_write(name),False) :
@@ -212,17 +231,6 @@ class SecurityTag(models.Model) :
     def all_named(self) : 
         return (x for x in SecurityTag.objects.all() if x.name == self.name)
 
-    def has_access(self,agent,resource,interface) :
-        for x in SecurityTag.objects.filter(interface=interface,resource_object_id = resource.id) :
-            if x.agent == get_permission_system().get_anon_group() : 
-                # in other words, if this resource is matched with anyone, we don't have to test that user is in the "anyone" group
-                return True
-            if x.agent == agent : 
-                return True
-            if agent.is_member_of(x.agent) : 
-                return True
-        return False
-
     def __str__(self) :
         return """Agent : %s, Resource : %s, Interface : %s""" % (self.agent,self.resource,self.interface)
 
@@ -247,7 +255,7 @@ class PermissionSystem :
                 )
             g.save()
         return g
-
+        
     def __init__(self) :
         self.root_location, created = Location.objects.get_or_create(name='root_location')
         if created :
@@ -255,13 +263,21 @@ class PermissionSystem :
 
         self.root_group = self.get_or_create_group('root','root',self.root_location)
         self.all_members_group = self.get_or_create_group('all_members','all members',self.root_location)
+        
 
+    def get_tags_for_resource(self,resource) :
+        try : # if in a NullInterface, extract the actual resource object
+            resource = resource.get_inner()
+        except : # it's already a real resource
+            pass
+        resource_type = ContentType.objects.get_for_model(resource) # get the type of the generic content_type, resource
+        return SecurityTag.objects.filter(resource_content_type__pk=resource_type.id,resource_object_id=resource.id)
 
     def get_permissions_for(self,resource) :
-        return (x for x in SecurityTag.objects.filter(resource_object_id=resource.id) if x.resource_content_type.model_class() == resource.__class__)
+        return self.get_tags_for_resource(resource).iterator()
 
     def has_permissions(self,resource) :
-        return len(set(self.get_permissions_for(resource))) > 0 
+        return self.get_tags_for_resource(resource).count() > 0
 
     def get_anon_group(self) : 
         """ The anon_group is the root of all groups, representing permissions given even to non members; plus everyone else"""
@@ -272,12 +288,20 @@ class PermissionSystem :
         return TgGroup.objects.filter(group_name='all_members')[0]
 
     def has_access(self,agent,resource,interface) :
-        t = SecurityTag()
-        return t.has_access(agent,resource,interface)
+        for tag in self.get_tags_for_resource(resource).filter(interface=interface) :
+            if tag.agent == get_permission_system().get_anon_group() :
+                # in other words, if this resource is matched with anyone, 
+                # we don't have to test that user is in the "anyone" group                          
+                return True
+            if tag.agent == agent :
+                return True
+            if agent.is_member_of(tag.agent) : # recursive step, 
+                return True
+        return False
 
     def delete_access(self,agent,resource,interface) :
-        for tag in SecurityTag.objects.filter(interface=interface) :
-            if tag.agent == agent and tag.resource==resource : 
+        for tag in self.get_tags_for_resource(resource).filter(interface=interface) :
+            if tag.agent == agent :
                 tag.delete()
 
     def get_interface_factory(self) : 

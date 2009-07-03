@@ -125,6 +125,7 @@ class ProfilePermissionManager(PermissionManager) :
             options=options
         )
         s.set_current_option(2)
+        return s
 
     def make_slider(self,resource,interface_name,owner,creator) :
         if interface_name == 'Viewer' :
