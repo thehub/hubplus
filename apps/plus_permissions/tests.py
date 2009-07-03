@@ -363,9 +363,9 @@ class TestPermissions(unittest.TestCase) :
 
         pm.setup_defaults(blog2,u2,u2)
 
-        # in this case, u is only getting access to the Viewer interface, the other two defaults went to u2
+        # in this case, u is only getting access to the Viewer & Commentor interfaces
         blog2.load_interfaces_for(u)
-        self.assertEquals(len(blog.get_interfaces()),1)
+        self.assertEquals(len(blog2.get_interfaces()),2)
         
 
 

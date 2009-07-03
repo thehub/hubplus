@@ -69,9 +69,10 @@ class ProfileContactViewer(Interface) :
 
 
 class ProfilePermissionManager(PermissionManager) :
+
     def register_with_interface_factory(self,interface_factory) :
         self.interface_factory = interface_factory
-        interface_factory.add_type(OurPost)
+        interface_factory.add_type(Profile)
         interface_factory.add_interface(Profile,'Viewer',ProfileViewer)
         interface_factory.add_interface(Profile,'Editor',ProfileEditor)
         interface_factory.add_interface(Profile,'ContactViewer',ProfileContactViewer)
@@ -146,7 +147,7 @@ class ProfilePermissionManager(PermissionManager) :
         s.set_current_option(s.current_idx)
 
         
-
+ProfilePermissionManager().register_with_interface_factory(get_permission_system().get_interface_factory())
 
 # ========= Signal handlers
 

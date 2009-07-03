@@ -3,7 +3,7 @@ from django.db import models
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes import generic
 
-from django.contrib.auth.models import User
+from django.contrib.auth.models import User, AnonymousUser
 from apps.hubspace_compatibility.models import TgGroup, Location
 
 import datetime
@@ -83,13 +83,10 @@ class NullInterface :
     def load_interfaces_for(self,agent) :
         """Load interfaces for the wrapped inner content that are available to the agent"""
         ps = get_permission_system()
-        types = ps.get_interface_factory().get_type(self.get_inner().__class__)
+        resource = self.get_inner()
+        types = ps.get_interface_factory().get_type(resource.__class__)
         for k,v in types.iteritems() :
-            print k,v,agent
-            for x in self.get_permissions_for(resource) :
-                print x
-            if ps.has_access(agent=agent,resource=self.get_inner(),interface=ps.get_interface_id(self.get_inner().__class__,k)) :
-                print "****"
+            if ps.has_access(agent=agent,resource=resource,interface=ps.get_interface_id(self.get_inner().__class__,k)) :
                 self.add_interface(v)
         
             
@@ -293,6 +290,8 @@ class PermissionSystem :
                 # in other words, if this resource is matched with anyone, 
                 # we don't have to test that user is in the "anyone" group                          
                 return True
+            if agent.__class__ == AnonymousUser : 
+                return False
             if tag.agent == agent :
                 return True
             if agent.is_member_of(tag.agent) : # recursive step, 
