@@ -257,11 +257,17 @@ except ImportError:
 import pdb
 #pdb.set_trace()
 
-try:
-    from hubspace_compatibility import *
-except ImportError, e:
-    print "import hubspace_compatibility failed :: " + `e`
-    pass
+if HUBSPACE_COMPATIBLE :
+    try:
+        from hubspace_compatibility import *
+    except ImportError, e:
+        print "import hubspace_compatibility failed :: " + `e`
+
+else :
+    try :
+        from stand_alone import *
+    except ImportError, e:
+        print "import stand_alone failed :: " + `e`
 
 
 import logging
