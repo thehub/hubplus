@@ -7,6 +7,7 @@ from django.contrib.auth.models import User, AnonymousUser
 from apps.hubspace_compatibility.models import TgGroup, Location
 
 import datetime
+import pdb
 
 class PlusPermissionsNoAccessException(Exception):
     def __init__(self,cls,id,msg) :
@@ -82,10 +83,8 @@ class NullInterface :
 
     def load_interfaces_for(self,agent) :
         """Load interfaces for the wrapped inner content that are available to the agent"""
-        print "YYYY"
         ps = get_permission_system()
         resource = self.get_inner()
-        print "JJ JJ %s, %s, %s"% (resource,ps.get_interface_factory(),resource.__class__)
         types = ps.get_interface_factory().get_type(resource.__class__)
         for k,v in types.iteritems() :
             if ps.has_access(agent=agent,resource=resource,interface=ps.get_interface_id(self.get_inner().__class__,k)) :
@@ -192,30 +191,6 @@ def default_admin_for(resource) :
         return ds[0].agent
 
 
-# REMOVE ME .. AgentNameWrap should be deprecated now that User has been retrofitted with a display_name attribute
-class AgentNameWrap(object) :
-    def __init__(self,inner) :
-        self.__dict__['inner'] = inner
-
-    def __getattr__(self, name) :
-        if name == 'name' :
-            if self.inner.__class__ == User :
-                return self.inner.username
-            else :
-                return self.inner.display_name
-        else :
-            return getattr(self.inner,name,None)
-
-    def __setattr__(self,name,val) :
-        if name != 'name' :
-            setattr(self.inner,name,val)
-        else :
-            if self.inner.__class__ == User :
-                self.inner.username = val
-            else :
-                self.inner.display_name = val
-    
- 
 class SecurityTag(models.Model) :
     name = models.CharField(max_length='50') 
     agent_content_type = models.ForeignKey(ContentType,related_name='security_tag_agent')
@@ -243,8 +218,9 @@ class PermissionSystem :
     to which anyone is a member)"""
 
     def get_or_create_group(self,group_name,display_name,place) :
-        # note : we can't use get_or_create for TgGroup, because the created date clause won't match on a different day                                     
-        # from the day the record was created.                                                                                                              
+        # note : we can't use get_or_create for TgGroup, because the created date clause won't match on a different day 
+        # from the day the record was created.
+        print "Get or create group %s"% group_name
         xs = TgGroup.objects.filter(group_name=group_name)
         if len(xs) > 0 :
             g = xs[0]
@@ -256,39 +232,48 @@ class PermissionSystem :
             g.save()
         return g
         
-    def __init__(self) :
+    def setup(self) :
         self.root_location, created = Location.objects.get_or_create(name='root_location')
         if created :
             self.root_location.save()
-
         self.root_group = self.get_or_create_group('root','root',self.root_location)
         self.all_members_group = self.get_or_create_group('all_members','all members',self.root_location)
-        
 
     def get_tags_for_resource(self,resource) :
-        try : # if in a NullInterface, extract the actual resource object
-            resource = resource.get_inner()
-        except : # it's already a real resource
-            pass
+        resource=self.real_resource(resource)
         resource_type = ContentType.objects.get_for_model(resource) # get the type of the generic content_type, resource
-        return SecurityTag.objects.filter(resource_content_type__pk=resource_type.id,resource_object_id=resource.id)
+        print "XXX %s, %s, %s" % (resource_type,resource,resource.id)
+        #return SecurityTag.objects.filter(resource_object_id=resource.id,resource_content_type__pk=resource_type.id)
+        g = (st for st in SecurityTag.objects.all() if st.resource==resource )
+        print "YYY"
+        return g
+
+    def real_resource(self,resource) :
+        try : # if in a NullInterface, extract the actual resource object
+            return resource.get_inner()
+        except :
+            return resource
 
     def get_permissions_for(self,resource) :
-        return self.get_tags_for_resource(resource).iterator()
+        return self.get_tags_for_resource(resource)
 
     def has_permissions(self,resource) :
-        return self.get_tags_for_resource(resource).count() > 0
+        return len(set(self.get_tags_for_resource(resource)))>0
 
     def get_anon_group(self) : 
         """ The anon_group is the root of all groups, representing permissions given even to non members; plus everyone else"""
-        return TgGroup.objects.filter(group_name='root')[0]
+        if TgGroup.objects.filter(group_name='root').count() > 0 :
+            return TgGroup.objects.get(group_name='root')
+        else :
+            ps=get_permission_system() # should create defaults
+            return TgGroup.objects.get(group_name='root')
 
     def get_all_members_group(self) :
         """ The group to which all account-holding "hub-members" belong"""
-        return TgGroup.objects.filter(group_name='all_members')[0]
+        return TgGroup.objects.get(group_name='all_members')
 
     def has_access(self,agent,resource,interface) :
-        for tag in self.get_tags_for_resource(resource).filter(interface=interface) :
+        for tag in (tag for tag in self.get_tags_for_resource(resource) if tag.interface == interface) :
             if tag.agent == get_permission_system().get_anon_group() :
                 # in other words, if this resource is matched with anyone, 
                 # we don't have to test that user is in the "anyone" group                          
@@ -302,8 +287,8 @@ class PermissionSystem :
         return False
 
     def delete_access(self,agent,resource,interface) :
-        for tag in self.get_tags_for_resource(resource).filter(interface=interface) :
-            if tag.agent == agent :
+        for tag in self.get_tags_for_resource(resource) :
+            if tag.agent == agent and tag.interface == interface:
                 tag.delete()
 
     def get_interface_factory(self) : 
@@ -318,18 +303,20 @@ class PermissionSystem :
     def get_interfaces_for_class(self,cls):
         return self.get_interface_factory().get_type(cls)
 
-_ONLY_PERMISSION_SYSTEM = None
+        
+_ONLY_PERMISSION_SYSTEM = []
 
 def get_permission_system() :
-    global _ONLY_PERMISSION_SYSTEM
-    print _ONLY_PERMISSION_SYSTEM
+
     if not _ONLY_PERMISSION_SYSTEM :
-        print "Creating PermissionSystem"
-        _ONLY_PERMISSION_SYSTEM = PermissionSystem()
-        print "this should have setup default groups"
-        for x in TgGroup.objects.all() :
-            print x
-    return _ONLY_PERMISSION_SYSTEM
+        ps = PermissionSystem()
+        _ONLY_PERMISSION_SYSTEM.append(ps)
+    else : 
+        ps = _ONLY_PERMISSION_SYSTEM[0]
+    if TgGroup.objects.filter(group_name='root').count() == 0 :
+        # the database wasn't set up 
+        ps.setup()
+    return _ONLY_PERMISSION_SYSTEM[0]
 
 
 # Sliders and and permission_managers ____________________________________________________________
@@ -390,6 +377,7 @@ class Slider :
             self.agent = None
 
         # and over-ride if there's an existing SecurityTag which references one of the agents in our defaults
+        
         for a in (tag.agent for tag in SecurityTag.objects.filter(interface=interface_id) if tag.resource == resource) :
             try : 
                 self.current_idx = self.get_options().index(a)
@@ -406,7 +394,7 @@ class Slider :
 
     def print_relevant_tags(self) :
         for t in self.get_relevant_tags():
-            print ">> %s, %s, %s, %s" % (AgentNameWrap(t.agent).name, t.interface, t.resource, t.name)
+            print ">> %s, %s, %s, %s" % (t.agent.display_name, t.interface, t.resource, t.name)
 
     def get_options(self) :
         return self.options
@@ -417,7 +405,7 @@ class Slider :
     def set_current_option(self,idx) :
         # set as index of the slider .... is this right? Probably.
         self.current_idx=idx
-        _ONLY_PERMISSION_SYSTEM.delete_access(self.agent,self.resource,self.interface_id)
+        get_permission_system().delete_access(self.agent,self.resource,self.interface_id)
         self.agent = self.options[self.current_idx].agent
         t = SecurityTag(name=self.tag_name,agent=self.agent,resource=self.resource,interface=self.interface_id)
         t.save()

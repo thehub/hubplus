@@ -26,9 +26,7 @@ class TestPermissions(unittest.TestCase) :
         # make a user
         u = User()
         u.username = 'nils'
-        print "AAAAA"
         u.save()
-        print "BBBBB"
 
         # and a couple more
         u2 = User()
@@ -266,6 +264,7 @@ class TestPermissions(unittest.TestCase) :
 
         # another user (called 'author') who is set as the creator of our blog
         author = User(username='author')
+        author.display_name = 'author'
         author.save()
 
         # a group which is the top-level of our hierarchy of permission groups. everybody and anybody (even non-authenticated members of the public) 
@@ -369,5 +368,16 @@ class TestPermissions(unittest.TestCase) :
         blog2.load_interfaces_for(u)
         self.assertEquals(len(blog2.get_interfaces()),2)
         
+        
+    def testProfile(self) :
+        ps = get_permission_system()
+        u= User(username='dermot')
+        u.save()
+        p = u.get_profile()
+        p.save()
+        for tag in ps.get_permissions_for(p) :
+            tag.delete()
+        p.save()
 
+        
 

@@ -2,7 +2,7 @@
 # Permissions for OurPost, an example                                                                                                                        
 from django.db import models
 
-from models import Interface, Slider, SliderOption, SecurityTag, PermissionManager, AgentNameWrap
+from models import Interface, Slider, SliderOption, SecurityTag, PermissionManager
 from models import get_permission_system, default_admin_for, InterfaceReadProperty, InterfaceWriteProperty
 
 from apps.profiles.models import Profile
@@ -81,14 +81,14 @@ class ProfilePermissionManager(PermissionManager) :
         options = [
             SliderOption('root',get_permission_system().get_anon_group()),
             SliderOption('all_members',get_permission_system().get_all_members_group()),
-            SliderOption(AgentNameWrap(owner).name,owner),
-            SliderOption(AgentNameWrap(creator).name,creator)
+            SliderOption(owner.display_name,owner),
+            SliderOption(creator.display_name,creator)
         ]
 
         default_admin = default_admin_for(owner)
 
         if not default_admin is None :
-            options.append( SliderOption(AgentNameWrap(default_admin).name,default_admin) )
+            options.append( SliderOption(default_admin.display_name,default_admin) )
 
         return options
 
@@ -162,11 +162,9 @@ def setup_default_permissions(sender,**kwargs):
     # tests if there are already permissions for the profile and if not, creates defaults
     profile = kwargs['instance']
     signal = kwargs['signal']
-    print "DDDD %s, " % profile
-    if not get_permission_system().has_permissions(profile) :
-        print "HHHHH"
-        get_profile_permission_manager().setup_defaults(profile,profile.user,profile.user)
-        print "JJJJ"
+    ps = get_permission_system()
+    if not ps.has_permissions(profile) :
+        make_permission_manager().setup_defaults(profile,profile.user,profile.user)
 
 post_save.connect(setup_default_permissions,sender=Profile)
 

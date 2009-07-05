@@ -144,9 +144,7 @@ def create_profile(sender, instance=None, **kwargs):
     logging.debug("in create a profile signal %s" % instance)
     if instance is None:
         return
-    print  "CCCCC "
     profile, created = Profile.objects.get_or_create(user=instance)
-    print "create_profile for %s, %s, %s" % (instance,profile,created)
 
 post_save.connect(create_profile, sender=User)
 

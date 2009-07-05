@@ -26,6 +26,8 @@ from apps.plus_permissions.models import PermissionSystem, get_permission_system
 
 from django.contrib.auth.decorators import login_required
 
+import ipdb as pdb
+
 add_edit_key(User)
 add_edit_key(Profile)
 add_edit_key(HostInfo)
@@ -61,6 +63,7 @@ def profile(request, username, template_name="profiles/profile.html"):
 
     try:
         p = other_user.get_profile()
+        p.save()
     except Exception : 
         other_user.save()
         p = other_user.get_profile()
@@ -130,11 +133,15 @@ def profile(request, username, template_name="profiles/profile.html"):
     else:
         profile_form = None
 
-    if ps.has_access(request.user,other_user.get_profile(),ps.get_interface_factory().get_id(Profile,'Viewer')) :
+    profile = other_user.get_profile()
+    if not ps.has_permissions(profile) :
+        ps.get_permission_manager(Profile).setup_defaults(profile,other_user,other_user)
+
+    if ps.has_access(request.user,profile,ps.get_interface_factory().get_id(Profile,'Viewer')) :
 
         dummy_status = DisplayStatus("Dummy Status"," about 3 hours ago")
 
-        profile = NullInterface(other_user.get_profile())
+        profile = NullInterface(profile)
         profile.load_interfaces_for(request.user)
         
         return render_to_response(template_name, {
@@ -179,6 +186,9 @@ def our_profile_permission_test(fn) :
         ps = get_permission_system()
         other_user = get_object_or_404(User,username=username)
         profile = other_user.get_profile()
+        if not ps.has_permissions(profile) :
+            ps.get_permission_manager(Profile).setup_defaults(profile,profile.user,profile.user)
+
         if not ps.has_access(request.user,profile,ps.get_interface_id(Profile,'Editor')) :
             return HttpResponse("You don't have permission to do that to %s, you are %s" % (username,request.user),status=401)
         else :
@@ -229,7 +239,7 @@ def add_profile_need(request,other_user,profile) :
 
 
 @login_required
-@transaction.commit_on_success
+#@transaction.commit_on_success
 def profile_field(request,username,fieldname,*args,**kwargs) :
     """ Get the value of one field from the user profile, so we can write an ajaxy editor """
     other_user = get_object_or_404(User,username=username)
@@ -250,17 +260,28 @@ def one_model_field(request, object, formClass, fieldname, default,other_objects
         return HttpResponse("%s" % val, mimetype="text/plain")
     field_validator = formClass.base_fields[fieldname]
     new_val = request.POST['value']
+    print "+AAAA"
     try:
         field_validator.clean(new_val)
     except ValidationError, e:
+        print "+BBB %s" % e
         return HttpResponse('%s' % e, status=500)
     try:
+        print "+CCCC %s(%s), %s, %s" % (object, object.__class__, fieldname, new_val)
         setattr(object, fieldname, new_val)
+        print "+cd"
+        
+        #pdb.set_trace()
+        object._meta
         object.save()
+        print "+DDDD"
         for o in other_objects :
+            print "+EE %s"%o
             o.save()
+            print "+FFFF"
 
     except Exception, e :
+        print "+GGGG %s" % e
         return HttpResponse('%s' % e, status=500)
 
     new_val = new_val and new_val or default
