@@ -246,7 +246,8 @@ def map_tags(request, tagged_resource):
                        "data": {  
                            'relation': "<h4>%s tagged as %s</h4> " %(tagged_resource.name, tag.keyword)  
                            },  
-                       "children": []} for tag in get_tags(tagged = tagged_resource, tagger = request.user, tag_type = 'skill')]  
+                       "children": []} for tag in get_tags(tagged = tagged_resource, tagger = request.user, tag_type = 'skill')],
+         "data": {'relation':"<h4>%s</h4>" %(tagged_resource.name)}
      }
     
     json = simplejson.dumps(json)
