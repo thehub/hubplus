@@ -238,24 +238,19 @@ def delete_tag(request, tagged_resource):
 @login_required
 @our_profile_permission_test
 def map_tags(request, tagged_resource):
-    json = [  
-     {  
-         "id": tagged_resource.__class__ + "-" +tagged_resource.id,  
+    json = {  
+         "id": tagged_resource.__class__.__name__ + "-" +str(tagged_resource.id),  
          "name": tagged_resource.name,  
-         "data": {  
-             "some key": "some value",  
-             "some other key": "some other value"  
-          },  
-         "children": [{"id": 'tag' + "-" +tag.id,  
-                       "name": tagged_resource.name,  
+         "children": [{"id": 'tag' + "-" +str(tag.id),  
+                       "name": tag.keyword,  
                        "data": {  
-                        "some key": "some value",  
-                        "some other key": "some other value"  
-                        },  
+                           'relation': "<h4>%s tagged as %s</h4> " %(tagged_resource.name, tag.keyword)  
+                           },  
                        "children": []} for tag in get_tags(tagged = tagged_resource, tagger = request.user, tag_type = 'skill')]  
      }
-    ]
-    return HttpResponse(jsonx, mimetype='application/json')
+    
+    json = simplejson.dumps(json)
+    return HttpResponse(json, mimetype='application/json')
 
 
 @login_required

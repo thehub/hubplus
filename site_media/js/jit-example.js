@@ -9,7 +9,8 @@ function addEvent(obj, type, fn) {
 //init canvas
 //Create a new canvas instance.
 function init_rgraph(json) {
-var infovis = document.getElementById('infovis');
+    console.log(json);
+    var infovis = document.getElementById('infovis');
     var w = infovis.offsetWidth, h = infovis.offsetHeight;
 
     var canvas = new Canvas('mycanvas', {

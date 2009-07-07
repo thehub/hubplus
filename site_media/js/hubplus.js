@@ -447,7 +447,7 @@ var setup_tag_lists = function () {
 var profile = function () {
     editing();
     setup_tag_lists();
-    init_rgraph(json);
+    jq.getJSON('map_tags/', {}, init_rgraph);
 };
 jq(document).ready(function () {
     profile();
