@@ -7,6 +7,7 @@ from django.core.exceptions import ValidationError
 from django.utils.translation import ugettext_lazy as _
 from django.utils.translation import ugettext
 from django.db import transaction
+from django.utils import simplejson
 
 from friends.forms import InviteFriendForm
 from friends.models import FriendshipInvitation, Friendship
@@ -14,9 +15,9 @@ from friends.models import FriendshipInvitation, Friendship
 from microblogging.models import Following
 
 from apps.plus_permissions.Profile import *  # Essential to get signals working at the moment.
-from profiles.models import Profile, HostInfo
+from profiles.models import Profile, HostInfo, tag_add, tag_delete, get_tags, tag_autocomplete
   
-from profiles.models import get_or_create_interest, get_or_create_need, get_or_create_skill
+
 from profiles.forms import ProfileForm, HostInfoForm
 
 from avatar.templatetags.avatar_tags import avatar
@@ -65,6 +66,7 @@ def profile(request, username, template_name="profiles/profile.html"):
         other_user.save()
         p = other_user.get_profile()
         p.save()
+
 
     if request.user.is_authenticated():
 
@@ -130,6 +132,8 @@ def profile(request, username, template_name="profiles/profile.html"):
     else:
         profile_form = None
 
+    skills = get_tags(tagged = other_user.get_profile(), tagger = other_user, tag_type = 'skill')
+    needs = get_tags(tagged = other_user.get_profile(), tagger = other_user, tag_type = 'need')
     if ps.has_access(request.user,other_user.get_profile(),ps.get_interface_factory().get_id(Profile,'Viewer')) :
 
         dummy_status = DisplayStatus("Dummy Status"," about 3 hours ago")
@@ -148,7 +152,8 @@ def profile(request, username, template_name="profiles/profile.html"):
                 "head_title" : "%s" % other_user.get_profile().name,
                 "head_title_status" : dummy_status,
                 "host_info" : other_user.get_profile().get_host_info(),
-                
+                "skills" : skills,
+                "needs" : needs
                 }, context_instance=RequestContext(request))
 
     else :
@@ -179,7 +184,7 @@ def our_profile_permission_test(fn) :
         if not ps.has_access(request.user,profile,ps.get_interface_id(Profile,'Editor')) :
             return HttpResponse("You don't have permission to do that to %s, you are %s" % (username,request.user),status=401)
         else :
-            return fn(request,other_user,profile,*args,**kwargs)
+            return fn(request, profile, *args, **kwargs)
     return our_fn
 
 @login_required
@@ -190,35 +195,67 @@ def update_profile_form(request,username) :
     p = other_user.get_profile()
     ps= get_permission_system()
     if not ps.has_access(request.user,p,ps.get_interface_id(Profile,'Editor')) :
-        raise PluPermissionsNoAccessException(Profile,p.pk,'update_profile_form')
+        raise PlusPermissionsNoAccessException(Profile,p.pk,'update_profile_form')
     else :
         profile_form = ProfileForm(request.POST, p)
 
-@login_required
-@our_profile_permission_test
-def add_profile_interest(request,other_user,profile) :
-    """ This is actually a way to add interests """
-    interest,created = get_or_create_interest(request.POST['interest'])
-    profile.add_interest(interest)
-    return HttpResponseRedirect('/profiles/%s/' % request.user.username)
 
 @login_required
 @our_profile_permission_test
 @transaction.commit_on_success
-def add_profile_skill(request,other_user,profile) :
-    """ This is actually a way to add skills """
-    skill,created = get_or_create_skill(request.POST['skill'])
-    profile.add_skill(skill)
-    return HttpResponseRedirect('/profiles/%s/' % request.user.username)
+def add_tag(request, tagged_resource):
+    """ This is actually a way to add typed keywords (e.g. skills, interests, needs) as well as 'free tags'"""
+    tag_type = request.POST['tag_type']
+    tag_value = request.POST['tag_value']
+    tagger = request.user
+    tag, added = tag_add(tagged_resource, tag_type, tag_value, tagger)
+    data = simplejson.dumps({'keyword':tag.keyword, 'tag_type':tag.tag_type, 'tagged':'yourself', 'added':added})
+    return HttpResponse(data, mimetype='application/json')
 
 @login_required
 @our_profile_permission_test
 @transaction.commit_on_success
-def add_profile_need(request,other_user,profile) :
-    """ This is actually a way to add needs """
-    need, created = get_or_create_need(request.POST['need'])
-    profile.add_need(need)
-    return HttpResponseRedirect('/profiles/%s/' % request.user.username)
+def autocomplete_tag(request, tagged_resource, tag_type):
+    q = request.GET['q']
+    limit = request.GET['limit']
+    options = tag_autocomplete(tag_type, q, limit)
+    options = '\n'.join(options)
+    return HttpResponse(options)
+    
+    
+
+@login_required
+@our_profile_permission_test
+@transaction.commit_on_success
+def delete_tag(request, tagged_resource):
+    tag_type = request.POST['tag_type']
+    tag_value = request.POST['tag_value']
+    tagger = request.user
+    tag, deleted = tag_delete(tagged_resource, tag_type, tag_value, tagger)
+    data = simplejson.dumps({'deleted':deleted})
+    return HttpResponse(data, mimetype='application/json')
+
+@login_required
+@our_profile_permission_test
+def map_tags(request, tagged_resource):
+    json = [  
+     {  
+         "id": tagged_resource.__class__ + "-" +tagged_resource.id,  
+         "name": tagged_resource.name,  
+         "data": {  
+             "some key": "some value",  
+             "some other key": "some other value"  
+          },  
+         "children": [{"id": 'tag' + "-" +tag.id,  
+                       "name": tagged_resource.name,  
+                       "data": {  
+                        "some key": "some value",  
+                        "some other key": "some other value"  
+                        },  
+                       "children": []} for tag in get_tags(tagged = tagged_resource, tagger = request.user, tag_type = 'skill')]  
+     }
+    ]
+    return HttpResponse(jsonx, mimetype='application/json')
 
 
 @login_required

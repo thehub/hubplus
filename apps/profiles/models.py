@@ -3,27 +3,12 @@ from django.conf import settings
 from django.contrib.auth.models import User
 from django.db.models.signals import post_save
 from django.utils.translation import ugettext_lazy as _
+from django.contrib.contenttypes import generic
+from django.contrib.contenttypes.models import ContentType
 
 from timezones.fields import TimeZoneField
 
 import itertools
-
-def get_or_create_something(M,txt) :
-    try :
-        return M.objects.get(label=txt),False
-    except :
-        x = M(label=txt)
-        x.save()
-        return x,True
-
-def get_or_create_interest(txt) :
-    return get_or_create_something(InterestTag,txt)
-
-def get_or_create_need(txt) :
-    return get_or_create_something(NeedTag,txt)
-
-def get_or_create_skill(txt):
-    return get_or_create_something(SkillTag,txt)
 
 class DelegateToUser(object) :
    def __init__(self,attr_name) : self.attr_name = attr_name
@@ -76,54 +61,6 @@ class Profile(models.Model):
         return (match.label in (x.label for x in fun()))
 
 
-    # interests
-    def has_interests(self) :
-        return self.has_somethings(self.get_interests)
-
-    def get_interests(self) :
-        return (x.interest for x in ProfileInterest.objects.filter(user=self.user))
-
-    def has_interest(self,tag) :
-        return self.has_something(self.get_interests,tag)
-
-    def add_interest(self,interest_tag) :
-        if not self.has_interest(interest_tag) :
-            pi = ProfileInterest(interest=interest_tag,user=self.user)
-            pi.save()
-        
-
-    # needs
-    def has_needs(self) :
-        return self.has_somethings(self.get_needs)
-
-    def get_needs(self) :
-        return (x.need for x in ProfileNeed.objects.filter(user=self.user))
-
-    def has_need(self,tag) :
-        return self.has_something(self.get_needs,tag)
-
-    def add_need(self,need_tag) :
-        if not self.has_need(need_tag) :
-            pn = ProfileNeed(need=need_tag,user=self.user)
-            pn.save()
-
-
-    # skills
-    def has_skills(self) :
-        return self.has_somethings(self.get_skills)
-
-    def get_skills(self) :
-        return (x. skill for x in ProfileSkill.objects.filter(user=self.user))
-
-    def has_skill(self,tag) :
-        return self.has_something(self.get_skills,tag)
-
-    def add_skill(self,skill_tag) :
-        if not self.has_skill(skill_tag) :
-            ps = ProfileSkill(skill=skill_tag,user=self.user)
-            ps.save()
-
-
     def get_host_info(self) :
         hi, created = HostInfo.objects.get_or_create(user=self.user)
         if created :
@@ -164,24 +101,59 @@ def create_host_info(sender, instance=None, **kwargs) :
 
 post_save.connect(create_host_info,sender=User) 
 
-class InterestTag(models.Model) :
-    label = models.TextField(max_length=30)
+class GenericTag(models.Model) :
+    keyword = models.TextField(max_length=50)
+    tag_type = models.TextField(max_length=30, default=None)
 
-class ProfileInterest(models.Model) :
-    user = models.ForeignKey(User)
-    interest = models.ForeignKey(InterestTag)
+    agent_content_type = models.ForeignKey(ContentType, related_name='generic_tag_agent')
+    agent_object_id = models.PositiveIntegerField()
+    agent = generic.GenericForeignKey('agent_content_type', 'agent_object_id')
 
-class SkillTag(models.Model) :
-    label = models.TextField(max_length=30)
+    subject_content_type = models.ForeignKey(ContentType, related_name='generic_tag_subject')
+    subject_object_id = models.PositiveIntegerField()
+    subject = generic.GenericForeignKey('subject_content_type', 'subject_object_id')
 
-class ProfileSkill(models.Model) :
-    user = models.ForeignKey(User)
-    skill = models.ForeignKey(SkillTag)
 
-class NeedTag(models.Model) :
-    label = models.TextField(max_length=30)
+def tag_autocomplete(tag_type, tag_value, limit):
+    tags = get_tags(tag_type=tag_type, partial_tag_value=tag_value)
+    return [tag.keyword for tag in tags[0:10]]
 
-class ProfileNeed(models.Model) :
-    user = models.ForeignKey(User)
-    need = models.ForeignKey(NeedTag)
-    
+def get_tags(tagged=None, tag_type=None, tag_value=None, tagger=None, partial_tag_value=None):
+    given = {}
+    if tagged != None:
+       tagged_type = ContentType.objects.get_for_model(tagged)
+       given.update(dict(subject_object_id = tagged.id,
+                         subject_content_type__pk = tagged_type.id))
+    if tagger != None:
+       tagger_type = ContentType.objects.get_for_model(tagger)
+       given.update(dict(agent_object_id = tagger.id, 
+                         agent_content_type__pk = tagger_type.id))
+    if tag_type != None:
+       given['tag_type'] = tag_type
+    if tag_value != None:
+       given['keyword'] = tag_value
+    elif partial_tag_value != None:
+       given['keyword__startswith'] = partial_tag_value
+    tags = GenericTag.objects.filter(**given)
+    tags.order_by('keyword')
+    return tags
+
+def tag_add(tagged, tag_type, tag_value, tagger):
+    existing_tag = get_tags(tagged, tag_type, tag_value, tagger)
+
+    if existing_tag:
+       return (existing_tag[0], False)
+
+    new_tag = GenericTag(keyword = tag_value,
+                         tag_type = tag_type,
+                         agent = tagger,
+                         subject = tagged)
+    new_tag.save()
+    return (new_tag, True) 
+
+def tag_delete(tagged, tag_type, tag_value, tagger):
+    existing_tag = get_tags(tagged, tag_type, tag_value, tagger)
+    if not existing_tag:
+       return (None, False)
+    existing_tag.delete()
+    return (None, True)

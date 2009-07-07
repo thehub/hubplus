@@ -38,41 +38,45 @@
     <h3>Skills and needs</h3>
     
     <ul>
-      {% if other_user.get_profile.has_skills %}
       <li>
 	<dl>
 	  <dt>Skills:</dt>
-	  <dd>
-	  {% for s in other_user.get_profile.get_skills %}
-	     <a href="#" class="tag option">{{s.label}}</a>
-	  {% endfor %}
-             <form method='post' action='/profiles/{{other_user.username}}/skills/'>
-               <input name='skill' />
-               <input type='submit'/>
+	  <dd class="tag_manager" id="skills">
+              <span class="tag_list">
+		{% for s in skills %}
+		<span><a href="tag/{{s.keyword}}/" class="tag option">{{s.keyword}}</a><a class="delete_tag" href="./delete/">X</a></span>
+		{% endfor %}
+	      </span>
+              <span class="error_message"></span>
+             <form method='post' class="add_tag_form" action='./add_tag/' >
+               <input name="tag_type" class="tag_type" value="skill" type="hidden" />
+               <input name="tag_value" class="tag_value" />
+               <input class="add_tag" type="submit" value="add a skill" />
              </form>
 	  </dd>
 	</dl>
       </li>
-      {% endif %}
       
-      {% if other_user.get_profile.has_needs %}
       <li>
 	<dl>
 	  <dt>Needs:</dt>
-	  <dd>
-	    {% for n in other_user.get_profile.get_needs %}
-	    <a href="#" class="tag option">{{n.label}}</a>
-	    {% endfor %}
-            <form method='post' action='/profiles/{{other_user.username}}/needs/'>
-              <input name='need' />
-              <input type='submit'/>
-            </form>
+	  <dd class="tag_manager" id="needs">
+              <span class="tag_list">
+		{% for s in needs %}
+		<span><a href="tag/{{s.keyword}}/" class="tag option">{{s.keyword}}</a><a class="delete_tag" href="./delete/">X</a></span>
+		{% endfor %}
+	      </span>
+              <span class="error_message"></span>
+             <form method='post' class="add_tag_form" action='./add_tag/'>
+               <input name="tag_type" class="tag_type" value="need" type="hidden" />
+               <input name="tag_value" class="tag_value" />
+               <input class="add_tag" type="submit" value="add a need" />
+             </form>
 	  </dd>
 	</dl>
       </li>
-      {% endif %}
     </ul>
-
+    
     {% include "profiles/profile_about_form.html" %}
     
     
@@ -86,3 +90,4 @@
     <li><dl><dt >What assistence would you like to offer other members?</dt><dd class='editable' id='{{host_info.edit_key}}assisstance_offered'>{{host_info.assistance_offered}}</dd></dl></li>
     </ul>
     {% include "profiles/profile_host_info_form.html" %}
+</div>

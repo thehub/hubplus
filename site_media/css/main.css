@@ -234,7 +234,15 @@ a.tag {
 	margin		: 0 0 5px 0;
 	padding		: 1px 3px;
 }
-
+a.delete_tag {
+        color: #FF0000;
+}
+form.add_tag_form {
+    display: inline;
+}
+.error_message {
+    color: #FF0000;
+}
 #resources a.active {
 	background	: #666;
 	color		: #fff;

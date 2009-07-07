@@ -1,4 +1,22 @@
-var json = {
+var Log = {
+    elem: false,
+    write: function(text){
+        if (!this.elem) 
+            this.elem = document.getElementById('log');
+        this.elem.innerHTML = text;
+        this.elem.style.left = (500 - this.elem.offsetWidth / 2) + 'px';
+    }
+};
+
+function addEvent(obj, type, fn) {
+    if (obj.addEventListener) obj.addEventListener(type, fn, false);
+    else obj.attachEvent('on' + type, fn);
+};
+
+
+function init(){
+    //init data
+    var json = {
         id: "190_0",
         name: "Pearl Jam",
         children: [{
@@ -354,101 +372,104 @@ var json = {
         }],
         data: {
             relation: "<h4>Pearl Jam</h4><b>Connections:</b><ul><li>Pearl Jam &amp; Cypress Hill <div>(relation: collaboration)</div></li><li>Neil Young &amp; Pearl Jam <div>(relation: collaboration)</div></li><li>Jeff Ament <div>(relation: member of band)</div></li><li>Stone Gossard <div>(relation: member of band)</div></li><li>Eddie Vedder <div>(relation: member of band)</div></li><li>Mike McCready <div>(relation: member of band)</div></li><li>Matt Cameron <div>(relation: member of band)</div></li><li>Dave Krusen <div>(relation: member of band)</div></li><li>Matt Chamberlain <div>(relation: member of band)</div></li><li>Dave Abbruzzese <div>(relation: member of band)</div></li><li>Jack Irons <div>(relation: member of band)</div></li></ul>"
-        }};
-
-
-
-
-var widget_map = {'Profile':{'about':'text_wysiwyg'}
-		 };
-
-var editing = function () {
-    //jq('#section_tab_navigation').tabs();
-    tab_history('profile');
-    jq('.editable').each(function (i, ele) {
-	var element_id = jq(ele).attr('id');
-	var prop_data = element_id.split('-');
-	var object_type = prop_data[0];
-	var object_id = prop_data[1];
-	var object_prop = prop_data[2];
-	try {
-	    var widget_type = widget_map[object_type][object_prop];
-	} catch(e) {
-            var widget_type = 'text_small';
-	}
-	if (widget_type == 'image') {
-            new Upload(object_id, object_type, object_prop, ele, ele, relative_url +'edit/');
-            return;
         }
-	var edit_event = 'click';
-	var clickToEdit = "Click To Edit";
-	var page_name = jq('#page_path_name').attr('class');
-	inplace_editor(element_id, 'field/' + object_prop + '/', {callback: function (form, val) {
-	    return [{name: 'value', value: val}];
-	    },
-            object_type: object_type,
-            object_id: object_id,
-            ui_type: widget_type,
-            edit_event: edit_event,
-            clickToEditText: clickToEdit,
-            widget_id: element_id + '_widget',
-            widget_name: element_id,
-            property: object_prop,
-            value: jq('#' + element_id).html(),
-            loadTextURL:  'field/' + object_prop + '/?default=' + encodeURIComponent(jq(ele).html())
-	});
-    });
-};
-var tag_list = function (ele) {
-    var manager = jq(ele);
-    var tag_type = manager.find('.tag_type').val();
-    var append_tag = function (data) {
-	if (data.added === false) {
-	    manager.find('.error_message').html("You have already tagged " + data.tagged + " as having the " + data.tag_type + " <em>" +  data.keyword + "</em>");
-	    return;
-	}
-	var tag = jq('<span><a href="tag/' + data.keyword + '" class="tag option">' + data.keyword + '</a><a class="delete_tag" href="./delete_tag/">X</a></span>');
-	manager.find('.tag_list').append(tag);
-	manager.find('input.tag_value').val("");
-	manager.find('.error_message').html("");
     };
-    var delete_tag = function (tag, data) {
-	if (data.deleted === true) {
-	    tag.remove();
-	}
-    };
+    //end
+    
+    var infovis = document.getElementById('infovis');
+    var w = infovis.offsetWidth, h = infovis.offsetHeight;
+    
+    //init canvas
+    //Create a new canvas instance.
+    var canvas = new Canvas('mycanvas', {
+        //Where to append the canvas widget
+        'injectInto': 'infovis',
+        'width': w,
+        'height': h,
+        
+        //Optional: create a background canvas and plot
+        //concentric circles in it.
+        'backgroundCanvas': {
+            'styles': {
+                'strokeStyle': '#555'
+            },
+            
+            'impl': {
+                'init': function(){},
+                'plot': function(canvas, ctx){
+                    var times = 6, d = 100;
+                    var pi2 = Math.PI * 2;
+                    for (var i = 1; i <= times; i++) {
+                        ctx.beginPath();
+                        ctx.arc(0, 0, i * d, 0, pi2, true);
+                        ctx.stroke();
+                        ctx.closePath();
+                    }
+                }
+            }
+        }
+    });
+    //end
+    //init RGraph
+    var rgraph = new RGraph(canvas, {
+        //Set Node and Edge colors.
+        Node: {
+            color: '#ccddee'
+        },
+        
+        Edge: {
+            color: '#772277'
+        },
 
-    manager.find('.tag_value').autocomplete('autocomplete_tag/'+ manager.find('.tag_type').val()+ '/', {width: 175,
-													matchSubset: false,
-													selectFirst: false,
-													max:10});
+        onBeforeCompute: function(node){
+            Log.write("centering " + node.name + "...");
+            //Add the relation list in the right column.
+            //This list is taken from the data property of each JSON node.
+            document.getElementById('inner-details').innerHTML = node.data.relation;
+        },
+        
+        onAfterCompute: function(){
+            Log.write("done");
+        },
+        //Add the name of the node in the correponding label
+        //and a click handler to move the graph.
+        //This method is called once, on label creation.
+        onCreateLabel: function(domElement, node){
+            domElement.innerHTML = node.name;
+            domElement.onclick = function(){
+                rgraph.onClick(node.id);
+            };
+        },
+        //Change some label dom properties.
+        //This method is called each time a label is plotted.
+        onPlaceLabel: function(domElement, node){
+            var style = domElement.style;
+            style.display = '';
+            style.cursor = 'pointer';
 
-    manager.find('.add_tag').click(function () {
-	jq.post('add_tag/', jq(this).parent().serializeArray(), append_tag, "json");
-	return false;
+            if (node._depth <= 1) {
+                style.fontSize = "0.8em";
+                style.color = "#ccc";
+            
+            } else if(node._depth == 2){
+                style.fontSize = "0.7em";
+                style.color = "#494949";
+            
+            } else {
+                style.display = 'none';
+            }
+
+            var left = parseInt(style.left);
+            var w = domElement.offsetWidth;
+            style.left = (left - w / 2) + 'px';
+        }
     });
-    var delete_tags = '#'+ manager.attr('id') + ' .delete_tag';
-    jq(delete_tags).live('click', function () {
-	var tag_value = jq(this).prev().html();
-	var tag_data = [{name : 'tag_type', value : tag_type},
-			{name : 'tag_value', value : tag_value}];
-	var tag = jq(this).parent();
-	jq.post('delete_tag/', tag_data, function(data) {
-	    delete_tag(tag, data);
-	}, "json");
-	return false;
-    });
-};
-var setup_tag_lists = function () {
-    jq('.tag_manager').each(function(i, ele) {
-	tag_list(ele);
-    });
-};
-var profile = function () {
-    editing();
-    setup_tag_lists();
-    init_rgraph(json);
-};
-jq(document).ready(function () {
-    profile();
-});
+    
+    //load JSON data
+    rgraph.loadJSON(json);
+    //compute positions and make the first plot
+    rgraph.refresh();
+    //end
+    //append information about the root relations in the right column
+    document.getElementById('inner-details').innerHTML = rgraph.graph.getNode(rgraph.root).data.relation;
+}

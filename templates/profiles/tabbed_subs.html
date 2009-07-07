@@ -9,52 +9,9 @@
     <li><a href="#news"><span>News</span></a></li>
   </ul>
 <div  class="yui-content">
-  <div id="about">
-
-    <h3>About me</h3>
-    <ul>
-      <li><dl><dt>A bit about me:</dt><dd>Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat. Ut wisi enim ad minim veniam, quis nostrud exerci tation ullamcorper suscipit lobortis nisl ut aliquip ex ea commodo consequat... <a href="#">more</a></dd></dl></li>
-      </ul>
-    <h3>Contact</h3>
-    <ul>
-
-      <li><dl><dt>Phone:</dt><dd>+44 (0)20 7841 8900</dd></dl></li>
-      <li><dl><dt>Email:</dt><dd>andrew@pantstopoverty.net</dd></dl></li>
-      </ul>
-    <h3>Links</h3>
-    <ul>
-      <li><dl><dt>Website:</dt><dd><a href="#">andrew.mac.com</a></dd></dl></li>
-
-      </ul>
-    <h3>Skills and needs</h3>
-    <ul>
-      <li><dl><dt>Skills:</dt><dd>
-	    <a href="#" class="tag option">eating</a>
-	    <a href="#" class="tag option">sharing</a>
-	    <a href="#" class="tag option">health</a>
-
-	    <a href="#" class="tag option">rinsing</a>
-	    <a href="#" class="tag option">ripping</a>
-	    </dd></dl></li>
-      <li><dl><dt>Needs:</dt><dd>
-	    <a href="#" class="tag option">ingredients</a>
-	    <a href="#" class="tag option">mouths</a>
-
-	    <a href="#" class="tag option">recipes</a>
-	    </dd></dl></li>
-      </ul>
-    <h3>Host Questions (Private)</h3>
-    <ul>
-      <li><dl><dt>How did you find out about the Hub?</dt><dd>Lorem ipsum dolor sit amet, consectetuer adipiscing elit.</dd></dl></li>
-      <li><dl><dt>Are you interested in peer mentoring?</dt><dd>Yes.</dd></dl></li>
-
-      <li><dl><dt>Tell us a bit about your project?</dt><dd>My project Name Here is about ex ea commodo consequat. Duis autem vel eum iriure dolor.</dd></dl></li>
-      <li><dl><dt>What stage is your project at?:</dt><dd>My project is really kicking off now, nisl ut aliquip ex ea commodo consequat. Duis autem vel eum iriure dolor in hendrerit in vulputate velit esse molestie cons.</dd></dl></li>
-      <li><dl><dt>What assistence would you like to offer other members?</dt><dd>I'm very good at consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat</dd></dl></li>
-      </ul>
-    </div>
-
-  <div id="updates_feed" class="block">
+   {% include "profiles/about.html" %}
+ 
+   <div id="updates_feed" class="block">
     <!--<div id="feed_customise_link"><a href="#">Customise my feed (Admin only)</a></div>-->
     <ul id="feed" class="content_list">
       <li class="first"><img class="thumb" src="image/member.jpg" /><a href="#">Andrew</a> is taking a giant step forward. <span class="label_time">2 minutes ago.</span></li>
@@ -84,11 +41,17 @@
 
   <div id="tags" class="block">
     List of content tagged by Andrew (explorable by tag)
-    </div>
+    <div id="container">
+      <div id="center_container">
+	<div id="infovis"></div>
+      </div>
+      <div id="inner-details"></div>
 
+    </div>
+  </div>
   <div id="news" class="block">
     List of news posts by Andrew
-    </div>
-
   </div>
+
+</div>
 </div>
