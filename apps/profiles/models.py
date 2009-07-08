@@ -12,21 +12,11 @@ import itertools
 
 class DelegateToUser(object) :
    def __init__(self,attr_name) : self.attr_name = attr_name
-   def __get__(self,obj,typ=None) : 
-       return getattr(obj.user,self.attr_name)
+   def __get__(self,obj,typ=None) : return getattr(obj.user,self.attr_name)
    def __set__(self,obj,val) : 
-<<<<<<< HEAD:apps/profiles/models.py
-=======
        #print "setting %s to %s for %s (class %s (user = %s, cls = %s))" % (self.attr_name,val,obj,obj.__class__,obj.user, obj.user.__class__)
->>>>>>> ff38161f69fce03bebf94e8de1e9e7e00cfc2f6c:apps/profiles/models.py
        setattr(obj.user,self.attr_name,val)
-<<<<<<< HEAD:apps/profiles/models.py
-       obj.user.save()
-
-
-=======
        #print "Getting from inner %s" % getattr(obj.user,self.attr_name)
->>>>>>> ff38161f69fce03bebf94e8de1e9e7e00cfc2f6c:apps/profiles/models.py
 
 class Profile(models.Model):    
     user = models.ForeignKey(User, unique=True, verbose_name=_('user'))
@@ -111,52 +101,23 @@ def create_host_info(sender, instance=None, **kwargs) :
 
 post_save.connect(create_host_info,sender=User) 
 
-<<<<<<< HEAD:apps/profiles/models.py
-class InterestTag(models.Model) :
-=======
 class GenericTag(models.Model) :
     keyword = models.TextField(max_length=50)
     tag_type = models.TextField(max_length=30, default=None)
->>>>>>> ff38161f69fce03bebf94e8de1e9e7e00cfc2f6c:apps/profiles/models.py
 
-<<<<<<< HEAD:apps/profiles/models.py
-    label = models.TextField(max_length=30)
-=======
     agent_content_type = models.ForeignKey(ContentType, related_name='generic_tag_agent')
     agent_object_id = models.PositiveIntegerField()
     agent = generic.GenericForeignKey('agent_content_type', 'agent_object_id')
->>>>>>> ff38161f69fce03bebf94e8de1e9e7e00cfc2f6c:apps/profiles/models.py
 
-<<<<<<< HEAD:apps/profiles/models.py
-class ProfileInterest(models.Model) :
-    user = models.ForeignKey(User)
-    interest = models.ForeignKey(InterestTag)
-=======
     subject_content_type = models.ForeignKey(ContentType, related_name='generic_tag_subject')
     subject_object_id = models.PositiveIntegerField()
     subject = generic.GenericForeignKey('subject_content_type', 'subject_object_id')
->>>>>>> ff38161f69fce03bebf94e8de1e9e7e00cfc2f6c:apps/profiles/models.py
 
-<<<<<<< HEAD:apps/profiles/models.py
-class SkillTag(models.Model) :
-    label = models.TextField(max_length=30)
-=======
->>>>>>> ff38161f69fce03bebf94e8de1e9e7e00cfc2f6c:apps/profiles/models.py
 
-<<<<<<< HEAD:apps/profiles/models.py
-class ProfileSkill(models.Model) :
-    user = models.ForeignKey(User)
-    skill = models.ForeignKey(SkillTag)
-=======
 def tag_autocomplete(tag_type, tag_value, limit):
     tags = get_tags(tag_type=tag_type, partial_tag_value=tag_value)
     return [tag.keyword for tag in tags[0:10]]
->>>>>>> ff38161f69fce03bebf94e8de1e9e7e00cfc2f6c:apps/profiles/models.py
 
-<<<<<<< HEAD:apps/profiles/models.py
-class NeedTag(models.Model) :
-    label = models.TextField(max_length=30)
-=======
 def get_tags(tagged=None, tag_type=None, tag_value=None, tagger=None, partial_tag_value=None):
     given = {}
     if tagged != None:
@@ -176,14 +137,7 @@ def get_tags(tagged=None, tag_type=None, tag_value=None, tagger=None, partial_ta
     tags = GenericTag.objects.filter(**given)
     tags.order_by('keyword')
     return tags
->>>>>>> ff38161f69fce03bebf94e8de1e9e7e00cfc2f6c:apps/profiles/models.py
 
-<<<<<<< HEAD:apps/profiles/models.py
-class ProfileNeed(models.Model) :
-    user = models.ForeignKey(User)
-    need = models.ForeignKey(NeedTag)
-    
-=======
 def tag_add(tagged, tag_type, tag_value, tagger):
     existing_tag = get_tags(tagged, tag_type, tag_value, tagger)
 
@@ -203,4 +157,3 @@ def tag_delete(tagged, tag_type, tag_value, tagger):
        return (None, False)
     existing_tag.delete()
     return (None, True)
->>>>>>> ff38161f69fce03bebf94e8de1e9e7e00cfc2f6c:apps/profiles/models.py
