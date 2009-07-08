@@ -7,11 +7,15 @@ HUB PLUS 2009
 /* Main Generic */
 
 #main h2 {
-	padding-bottom	: 10px;
+	font-size	: 2.6em;
+	font-weight	: normal;
+	margin-bottom	: 25px;
 }
 
 #main h3 {
+	font-size	: 1.1em;
 	padding-bottom	: .5em;
+	text-transform	: uppercase;
 }
 
 #main p {
