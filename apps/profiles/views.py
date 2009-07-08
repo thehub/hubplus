@@ -265,12 +265,12 @@ def profile_field(request,username,fieldname,*args,**kwargs) :
         return HttpResponse("You aren't authorized to access %s in %s for %s. You are %s" % (fieldname,kwargs['class'],username,request.user),status=401)
     else :
         if kwargs['class'] == 'Profile' :
-            return one_model_field(request,p,ProfileForm,fieldname, kwargs.get('default', ''))
+            return one_model_field(request,p,ProfileForm,fieldname, kwargs.get('default', ''),[p.user])
         elif kwargs['class'] == 'HostInfo' :
-            return one_model_field(request,p.get_host_info(),HostInfoForm,fieldname, kwargs.get('default', ''))
+            return one_model_field(request,p.get_host_info(),HostInfoForm,fieldname, kwargs.get('default', ''),[p.user])
 
 
-def one_model_field(request, object, formClass, fieldname, default) :
+def one_model_field(request, object, formClass, fieldname, default, other_objects=[]) :
     val = getattr(object, fieldname)
     if not request.POST:
         return HttpResponse("%s" % val, mimetype="text/plain")
@@ -285,6 +285,8 @@ def one_model_field(request, object, formClass, fieldname, default) :
     try:
         setattr(object, fieldname, new_val)
         object.save()
+        for o in other_objects :
+            o.save()
     except Exception, e :
         return HttpResponse('%s' % e, status=500)
     new_val = new_val and new_val or default
