@@ -20,8 +20,8 @@
       {% endif %}
 
 	 <ul id="actions" class="link_list">
-	   <li class="first"><a href="#">Follow {{other_user.get_profile.name}}</a></li>
-	   <li class="last"><a href="#">Message {{other_user.get_profile.name}}</a></li>
+	   <li class="first disabled"><a href="#">Follow {{other_user.get_profile.name}}</a></li>
+	   <li class="last disabled"><a href="#">Message {{other_user.get_profile.name}}</a></li>
 	 </ul>
     </div>
 
@@ -68,7 +68,7 @@
 	  <dl><dt >{% trans "Location" %} : </dt><dd class='editable' id='{{profile.edit_key}}location'>{% if profile.location %}{{profile.location}}{% else %}Your location{% endif  %}</dd></dl>
 	</li>
 	<li>
-	  <dl><dt >{% trans "Hubs" %} : </dt>
+	  <dl><dt >{% trans "Region" %} : </dt>
 	    <dd>
 	      <a href="hub.html" class='editable' id='{{profile.edit_key}}hub'>{{profile.get_hub}}</a>
 	  </dd></dl>
