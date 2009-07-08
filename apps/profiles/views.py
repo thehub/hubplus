@@ -264,7 +264,6 @@ def profile_field(request,username,fieldname,*args,**kwargs) :
     if not ps.has_access(request.user,p,ps.get_interface_id(Profile,'Editor')) :
         return HttpResponse("You aren't authorized to access %s in %s for %s. You are %s" % (fieldname,kwargs['class'],username,request.user),status=401)
     else :
-        print "AAA %s" % kwargs['class']
         if kwargs['class'] == 'Profile' :
             return one_model_field(request,p,ProfileForm,fieldname, kwargs.get('default', ''),[p.user])
         elif kwargs['class'] == 'HostInfo' :
