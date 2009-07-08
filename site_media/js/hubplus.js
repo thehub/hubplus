@@ -1,7 +1,7 @@
 var widget_map = {'Profile':{'about':'text_wysiwyg'}
 		 };
 
-var init = function () {
+var editing = function () {
     //jq('#section_tab_navigation').tabs();
     tab_history('profile');
     jq('.editable').each(function (i, ele) {
@@ -38,6 +38,56 @@ var init = function () {
 	});
     });
 };
-jq(document).ready(function() {
-    init();
+var tag_list = function (ele) {
+    var manager = jq(ele);
+    var tag_type = manager.find('.tag_type').val();
+    var append_tag = function (data) {
+	if (data.added === false) {
+	    manager.find('.error_message').html("You have already tagged " + data.tagged + " as having the " + data.tag_type + " <em>" +  data.keyword + "</em>");
+	    return;
+	}
+	var tag = jq('<span><a href="tag/' + data.keyword + '" class="tag option">' + data.keyword + '</a><a class="delete_tag" href="./delete_tag/">X</a></span>');
+	manager.find('.tag_list').append(tag);
+	manager.find('input.tag_value').val("");
+	manager.find('.error_message').html("");
+    };
+    var delete_tag = function (tag, data) {
+	if (data.deleted === true) {
+	    tag.remove();
+	}
+    };
+
+    manager.find('.tag_value').autocomplete('autocomplete_tag/'+ manager.find('.tag_type').val()+ '/', {width: 175,
+													matchSubset: false,
+													selectFirst: false,
+													max:10});
+
+    manager.find('.add_tag').click(function () {
+	jq.post('add_tag/', jq(this).parent().serializeArray(), append_tag, "json");
+	return false;
+    });
+    var delete_tags = '#'+ manager.attr('id') + ' .delete_tag';
+    jq(delete_tags).live('click', function () {
+	var tag_value = jq(this).prev().html();
+	var tag_data = [{name : 'tag_type', value : tag_type},
+			{name : 'tag_value', value : tag_value}];
+	var tag = jq(this).parent();
+	jq.post('delete_tag/', tag_data, function(data) {
+	    delete_tag(tag, data);
+	}, "json");
+	return false;
+    });
+};
+var setup_tag_lists = function () {
+    jq('.tag_manager').each(function(i, ele) {
+	tag_list(ele);
+    });
+};
+var profile = function () {
+    editing();
+    setup_tag_lists();
+    jq.getJSON('map_tags/', {}, init_rgraph);
+};
+jq(document).ready(function () {
+    profile();
 });

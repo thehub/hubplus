@@ -6,8 +6,8 @@ urlpatterns = patterns('',
     url(r'^(?P<username>[\w\._-]+)/$', 'profiles.views.profile', name='profile_detail'),
     url(r'^(?P<username>[\w\._-]+)/field/(?P<fieldname>[\w_]+)/(?P<default>[\w_]*)$','profiles.views.profile_field',{"class":"Profile"},name='profile_field'),
     url(r'^(?P<username>[\w\._-]+)/host_info/field/(?P<fieldname>[\w_]+)/$','profiles.views.profile_field',{"class":"HostInfo"},name='host_info_profile_field'),
-    url(r'^(?P<username>[\w\._-]+)/interests/$','profiles.views.add_profile_interest',name='profile_interests'),
-    url(r'^(?P<username>[\w\._-]+)/skills/$','profiles.views.add_profile_skill',name='profile_skills'),
-    url(r'^(?P<username>[\w\._-]+)/needs/$','profiles.views.add_profile_need',name='profile_needs'),
-
+    url(r'^(?P<username>[\w\._-]+)/add_tag/$','profiles.views.add_tag', name='add generic_tag'),
+    url(r'^(?P<username>[\w\._-]+)/delete_tag/$','profiles.views.delete_tag', name='delete generic_tag'),
+    url(r'^(?P<username>[\w\._-]+)/autocomplete_tag/(?P<tag_type>[\w_]+)/$','profiles.views.autocomplete_tag', name='autocomplete generic_tag'),
+    url(r'^(?P<username>[\w\._-]+)/map_tags/$','profiles.views.map_tags', name='map users and tags')
 )
