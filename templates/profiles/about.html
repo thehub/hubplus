@@ -82,12 +82,22 @@
     
     <h3>Host Questions (Private)</h3>
     <ul>
-      <li><dl><dt >How did you find out about the Hub?</dt><dd class='editable' id='{{host_info.edit_key}}find_out'>{{host_info.find_out}}</dd></dl></li>
-      <li><dl><dt >Are you interested in peer mentoring?</dt><dd class='editable' id='{{host_info.edit_key}}peer_mentoring'>{{host_info.peer_mentoring}}</dd></dl></li>
+      <li><dl><dt>How did you find out about the Network?</dt>
+	  <dd class='editable' id='{{host_info.edit_key}}find_out'>{{host_info.find_out}}</dd></dl>
+      </li>
+      <li><dl><dt>What would you like to get from being involved with the network?</dt>
+	  <dd class='editable' id='{{host_info.edit_key}}project_stage'>{{host_info.peer_mentoring}}</dd></dl>
+      </li>
       
-      <li><dl><dt >Tell us a bit about your project?</dt><dd class='editable' id='{{host_info.edit_key}}project'>{{host_info.project}}</dd></dl></li>
-      <li><dl><dt >What stage is your project at?:</dt><dd class='editable' id='{{host_info.edit_key}}project_stage'>{{host_info.project_stage}}</dd></dl></li>
-    <li><dl><dt >What assistence would you like to offer other members?</dt><dd class='editable' id='{{host_info.edit_key}}assisstance_offered'>{{host_info.assistance_offered}}</dd></dl></li>
+      <li><dl><dt>What's your aim for the next 6 months?</dt>
+	  <dd class='editable' id='{{host_info.edit_key}}project'>{{host_info.project}}</dd></dl>
+      </li>
+ <!--     <li><dl><dt>What stage is your project at?:</dt>
+	  <dd class='editable' id='{{host_info.edit_key}}project_stage'>{{host_info.project_stage}}</dd></dl>
+      </li>
+      <li><dl><dt>What assistence would you like to offer other members?</dt>
+	  <dd class='editable' id='{{host_info.edit_key}}assisstance_offered'>{{host_info.assistance_offered}}</dd></dl>
+      </li> -->
     </ul>
     {% include "profiles/profile_host_info_form.html" %}
 </div>

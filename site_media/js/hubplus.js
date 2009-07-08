@@ -86,7 +86,7 @@ var setup_tag_lists = function () {
 var profile = function () {
     editing();
     setup_tag_lists();
-    jq.getJSON('map_tags/', {}, init_rgraph);
+    //jq.getJSON('map_tags/', {}, init_rgraph);
 };
 jq(document).ready(function () {
     profile();

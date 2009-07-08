@@ -13,7 +13,7 @@
         {% if user.is_authenticated %}
              <li class='first'>{% openid_icon openid user %}{% trans "Welcome" %} {{ user }}</li>
 	     <li><a href='/profiles/{{user.username}}'>{% trans "Profile" %}</a></li>
-             <li><a href="{% url acct_email %}">{% trans "Settings" %}</a></li>
+             <li><a href="{% url acct_email %}" class='disabled'>{% trans "Settings" %}</a></li>
 	     <!-- Do we have this notion of admin now? -->
  	     {% if user.is_staff %}
 	        <li><a href="/admin/">{% trans "Admin" %}</a></li>
