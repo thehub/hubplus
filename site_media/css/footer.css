@@ -1,5 +1,7 @@
 /* Layout: Footer */
 
+/* Layout: Footer */
+
 #footer {
 	background	: #EEE;
 	padding		: 10px;
@@ -11,8 +13,6 @@
 }
 
 #footer #extra_navigation {
-	background	: #FFF;
-	border		: 1px solid #000;
 	list-style	: none;
 	padding		: 3px;
 	position	: absolute;
@@ -21,16 +21,8 @@
 }
 
 #footer #extra_navigation li {
-	border-left : 1px solid #000;
 	float		: left;
-	padding-left: 5px;
-	margin-left	: 5px;
-}
-
-#footer #extra_navigation li.first {
-	border-left : 0;
-	padding-left: 0;
-	margin-left	: 0;
+	margin-left	: 15px;
 }
 
 #footer #extra_navigation li a {

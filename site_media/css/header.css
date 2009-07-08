@@ -1,67 +1,83 @@
 /* Layout: Header */
 
 #header {
-	background	: #eeeeee;
-	margin-bottom	: 10px;
-	padding		: 10px;
+	color		: #fff;
+	height		: 110px;
+	margin-bottom	: 20px;
 	position	: relative;
 }
 
-#header #site_title a {
-	color		: #000;
-	text-decoration	: none;
+
+/* Site Title */
+
+#header h1 a {
+	color		: #fff;
+	display		: block;
+	padding-top	: 20px;
 }
+
+#header h1 a:hover {
+	color		: #ddd;
+}
+
+
+/* Account Navigation */
 
 #header #account_navigation {
-	background	: #ffffff;
-	border		: 1px solid #000;
 	list-style	: none;
-	padding		: 3px;
 	position	: absolute;
-	right		: 10px;
-	top			: 10px;
+	right		: 0;
+	top			: 0;
 }
-
+	
 #header #account_navigation li {
-	border-left : 1px solid #000;
 	float		: left;
-	padding-left: 5px;
-	margin-left	: 5px;
+	margin-left	: 15px;
 }
 
 #header #account_navigation li.first {
-	border-left : 0;
-	padding-left: 0;
+	padding-top	: 10px;
 	margin-left	: 0;
 }
 
 #header #account_navigation li a {
-	color		: #000;
+	color		: #fff;
+	display		: block;
+	padding-top	: 10px;
 }
 
+#header #account_navigation li.active a,
+#header #account_navigation li a:hover {
+	background	: url('../images/account_nav_indicator.gif') 50% 0 no-repeat;
+	color		: #ddd;
+}
+
+
+/* Main Navigation */
+
 #header #main_navigation {
-	bottom		: 10px;
-	font-size	: 1.4em;
+	bottom		: 0;
+	font-size	: 1.6em;
+	letter-spacing	: 1px;
 	line-height	: 1.4em;
 	list-style	: none;	
 	position	: absolute;
-	right		: 10px;
+	right		: 0;
 }
 
 #header #main_navigation li {
-	background	: #ffffff;
 	float		: left;
-	margin-left	: 8px;
+	margin-left	: 20px;
 }
 
 #header #main_navigation li a {
-	border		: 1px solid #000;
-	color		: #000;
+	color		: #ffffff;
 	display		: block;
-	padding		: 3px 10px;
+	padding-bottom	: 15px;
 }
 
-#header #main_navigation li a.active {
-	background	: #666;
-	color		: #fff;
+#header #main_navigation li.active a,
+#header #main_navigation li a:hover {
+	background	: url('../images/main_nav_indicator.gif') 50% 102% no-repeat;
+	color		: #ddd;
 }
