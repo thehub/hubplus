@@ -1,0 +1,268 @@
+{% extends "profiles/base.html" %}
+
+{% load i18n %}
+{% load avatar_tags %}
+{% load app_plugins %}
+{% load uni_form %}
+
+{% block body %}
+
+<div id='main_column'>
+  <div id="intro" class="block">
+    <div id="extra" class="block_column">
+      <!--img id="member_image" src="image/member.jpg" width="180px" /-->
+      <div>{% avatar other_user 180 %}</div>
+      {% if is_me %}
+         <a href="{% url avatar_change %}" id="avatar_replace">(replace)</a>
+      {% endif %}
+
+	 <ul id="actions" class="link_list">
+	   <li class="first"><a href="#">Follow {{other_user.get_profile.name}}</a></li>
+	   <li class="last"><a href="#">Message {{other_user.get_profile.name}}</a></li>
+	 </ul>
+    </div>
+
+    <div id="info" class="block_column">
+      <ul>
+	<li>
+	  <dl>
+	    {% if other_user.get_profile.has_interests %}
+	    <dt>{% trans "Interests" %}:</dt>
+	    <dd>
+	      {% for i in other_user.get_profile.get_interests %}
+	        <a class="tag">{{i.label}}</a> 
+	      {% endfor %}
+	    </dd>
+	    {% endif %}
+	  </dl>
+	</li>
+
+	<li>
+	  <dl>
+	    <dt>{% trans "Groups" %} :</dt>
+	    <dd><a href="#">Sexy Salad Club</a> | <a href="#">Space Design</a> </dd></dl></li>
+	<br />
+	<li><dl><dt>{% trans "Organisation" %} :</dt><dd>{{other_user.get_profile.organization}}</dd></dl></li>
+	<li><dl><dt>{% trans "Role" %} : </dt><dd>{{other_user.get_profile.role}}</dd></dl></li>
+	<br />
+	<li><dl><dt>{% trans "Location" %} : </dt><dd>{{other_user.get_profile.location}}</dd></dl></li>
+	<li><dl><dt>{% trans "Hub" %} : </dt><dd><a href="hub.html">{{other_user.get_profile.get_hub}}</a></dd></dl></li>
+	
+      </ul>
+      
+    </div>
+    
+  </div>
+</div>
+
+
+<div id="about" class="block">
+
+  <h3>About me</h3>
+  <ul>
+    <li>
+      <dl>
+	<dt>{% trans "A bit about me" %} :</dt>
+	<dd>
+	  {{other_user.get_profile.about}}
+	  <a href="#">more</a>
+	</dd>
+      </dl>
+    </li>
+    </ul>
+
+  <h3>Contact</h3>
+  <ul>
+    <li><dl><dt>Phone:</dt><dd></dd></dl></li>
+    <li><dl><dt>Email:</dt><dd>{{other_user.get_profile.email}}</dd></dl></li>
+    </ul>
+
+  <h3>Links</h3>
+  <ul>
+    <li><dl><dt>Website:</dt><dd><a href="#"></a></dd></dl></li>
+
+    </ul>
+
+  <h3>Skills and needs</h3>
+  <ul>
+    <li>
+      <dl>
+	<dt>Skills:</dt>
+	<dd><a href="#" class="tag option">eating</a></dd>
+      </dl>
+    </li>
+
+    <li>
+      <dl>
+	<dt>Needs:</dt>
+	<dd>
+	  <a href="#" class="tag option">ingredients</a>
+	</dd>
+      </dl>
+    </li>
+  </ul>
+
+
+  <h3>Host Questions (Private)</h3>
+  <ul>
+    <li><dl><dt>How did you find out about the Hub?</dt><dd>Lorem ipsum dolor sit amet, consectetuer adipiscing elit.</dd></dl></li>
+    <li><dl><dt>Are you interested in peer mentoring?</dt><dd>Yes.</dd></dl></li>
+
+    <li><dl><dt>Tell us a bit about your project?</dt><dd>My project Name Here is about ex ea commodo consequat. Duis autem vel eum iriure dolor.</dd></dl></li>
+    <li><dl><dt>What stage is your project at?:</dt><dd>My project is really kicking off now, nisl ut aliquip ex ea commodo consequat. Duis autem vel eum iriure dolor in hendrerit in vulputate velit esse molestie cons.</dd></dl></li>
+    <li><dl><dt>What assistence would you like to offer other members?</dt><dd>I'm very good at consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat</dd></dl></li>
+    </ul>
+</div>
+
+
+
+    <!--  { -- % include 'profiles/tabbed_subs.html' %} COMMENTED OUT FOR DEVELOPMENT -->
+
+        {% if user.is_authenticated %}
+            <p>
+                <a href="{% url tweet_followers other_user %}">{% trans "Followers" %}</a>: {{ other_user.followers.count|default:"0" }}
+                <a href="{% url tweet_following other_user %}">{% trans "Following" %}</a>: {{ other_user.followed.count|default:"0" }}
+            </p>
+            
+            {% if is_me %}
+                <div class="form-toggle">
+                <p><span id="edit-profile-toggle">{% trans "Edit profile" %}</span></p>
+                
+                <form class="uniForm" id="edit-profile" method="POST" action="" style="display: none;">
+                    <fieldset class="inlineLabels">  
+                        {{ profile_form|as_uni_form }}
+                        <div class="form_block">
+                        <input type="hidden" name="action" value="update" />
+                        <input type="submit" value="{% trans "update" %}"/>
+                        </div>
+                    </fieldset>
+                </form>
+                </div>
+            {% else %}
+                {# @@@ this could be done with ajax, or at the very least turned into an inclusion tag #}
+                <div>
+                    <form method="POST" action="{% url toggle_follow other_user %}">
+                        {% if is_following %}
+                            <input type="hidden" name="action" value="unfollow" /><input type="submit" value="{% trans "unfollow" %}"/>
+                        {% else %}
+                            <input type="hidden" name="action" value="follow" /><input type="submit" value="{% trans "follow tweets" %}"/>
+                        {% endif %}
+                    </form>
+                </div>
+                
+                {# @@@ this should be an inclusion tag #}
+                {% if is_friend %}
+                    <p>{% blocktrans %}You are friends with {{ other_user }}.{% endblocktrans %} <a href="{% url messages_compose %}{{ other_user }}/">{% trans "Send a message" %}</a>.</p>
+                {% else %}
+                    {% if previous_invitations_from %}
+                        <p>{% blocktrans %}{{ other_user }} has requested friendship.{% endblocktrans %}</p>
+                        {% for invitation in previous_invitations_from %}
+                            <div class="friendship_request">
+                                <p>From <a href="{% url profile_detail invitation.from_user.username %}">{{ invitation.from_user }}</a> ({{ invitation.sent }}):</p>
+                                <p class="invitation_message">{{ invitation.message }}</p>
+                                <form method="post" action="">
+                                    <input type="hidden" name="invitation" value="{{ invitation.id }}"/>
+                                    <input type="hidden" name="action" value="accept"/>
+                                    <input type="submit" value="{% trans 'accept' %}" />
+                                </form>
+                            </div>
+                        {% endfor %}
+                    {% else %}
+                        {% if previous_invitations_to %}
+                            <p>{% trans "Friendship request sent." %}</p>
+                        {% else %}
+                            <h2>{% trans "Add As Friend" %}</h2>
+                            <form class="uniForm" method="POST" action="">
+                                <fieldset class="inlineLabels">  
+                                    {{ invite_form|as_uni_form }}
+                                    <div class="form_block">
+                                        <input type="hidden" name="action" value="invite" />
+                                        <input type="submit" value="{% trans "invite" %}"/>
+                                        {% blocktrans %}{{ other_user }} to be a friend.{%  endblocktrans %}
+                                    </div>
+                                </fieldset>
+                            </form>
+                        {% endif %} {# previous_invitations_to #}
+                    {% endif %} {# previous_invitations_from #}
+                {% endif %} {# is_friend #}
+                
+            {% endif %} {# is me #}
+            
+            {% plugin_point "profiles.profile" user=other_user owner=other_user viewer=user %}
+            
+        {% else %} {# not user.is_authenticated #}
+            {% url acct_signup as signup_url %}
+            {% url acct_login as login_url %}
+            <p>{% blocktrans %}<a href="{{ signup_url }}">Sign up</a> and <a href="{{ login_url }}">log in </a> to add this person as a friend and see their tweets and blog posts.{% endblocktrans %}</p>
+        {% endif %}
+
+    </div>
+{% endblock %}
+
+{% block side_bar %}
+<div id="right_column">
+
+  <div id="feature_search" class="block">
+    <h3>Search</h3>
+    <form>
+      <input name="search_term" type="text" /> <input type="submit" value="Search" /><br />
+      <input name="current_area" type="checkbox" checked="checked" /> Members only<br />
+      <!--<input name="search_limit" type="radio" checked="checked" /> Members only <input name="search_limit" type="radio" /> Hub+<br />-->
+
+      </form>
+    </div>
+
+  <div id="feature_explore" class="block">
+    <h3>Explore Members</h3>
+    <div class="tags"><a href="#" class="tag">green</a> <a href="#" class="tag">environment</a> <a href="#" class="tag">fairtrade</a> <a href="#" class="tag">reference</a> <a href="#" class="tag">clothes</a> <a href="#" class="tag">design</a> <a href="#" class="tag">sustainability</a> <a href="#" class="tag">energy</a> <a href="#" class="tag">shopping</a> <a href="#" class="tag">climatechange</a> <a href="#" class="tag">science</a> <a href="#" class="tag">activism</a> <a href="#" class="tag">health</a> <a href="#" class="tag">architecture</a> <a href="#" class="tag">shopping</a> <a href="#" class="tag">green</a> <a href="#" class="tag">environment</a> <a href="#" class="tag">fairtrade</a> <a href="#" class="tag">reference</a> <a href="#" class="tag">clothes</a> <a href="#" class="tag">design</a></div>
+
+    </div>
+
+  <div id="feature_members_online" class="block">
+    <h3>Who's online</h3>
+    <ul id="members_list">
+      <li class="first"><a href="#"><img class="member_thumb" src="image/member.jpg" /></a></li>
+      <li><a href="#"><img class="member_thumb" src="image/member.jpg" /></a></li>
+      <li><a href="#"><img class="member_thumb" src="image/member.jpg" /></a></li>
+      <li><a href="#"><img class="member_thumb" src="image/member.jpg" /></a></li>
+
+      <li class="last" ><a href="#"><img class="member_thumb" src="image/member.jpg" /></a></li>
+      </ul>
+    <a href="#">Show all (43)</a>
+    </div>
+
+  <div id="feature_my_hub" class="block">
+    <h3>My Hub</h3>
+    <img class="hub_thumb" src="image/group.jpg" />
+
+    <p><a href="#">Hub Kings Cross</a> is having a bit of a spring clean.</p>
+    <ul class="links">
+      <li class="first"><a href="#">Hub page</a></li>
+      <li class="last" ><a href="#">Book space</a></li>
+      </ul>
+    </div>
+
+  </div>
+
+</div>
+
+
+{% endblock %}
+
+{% block extra_body %}
+    <script type="text/javascript">
+        $(document).ready(function() {
+            $('#edit-profile').hide();
+            $('#edit-profile-toggle').click(function() {
+                $('#edit-profile').toggle();
+                $('#edit-profile').autoscroll();
+                return false;
+            });
+            if ($('#edit-profile ul.errorlist').length) {
+                $('#edit-profile').show();
+                $('#edit-profile ul.errorlist').autoscroll();
+            }
+        });
+    </script>
+{% endblock %}
+

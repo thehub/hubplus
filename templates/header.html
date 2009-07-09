@@ -4,16 +4,18 @@
 
 <div id="header">
 
-    <h1 id='logo'>
-      {% block logo_link_image %}<a href="{% url home %}"><img src="{{ MEDIA_URL }}pinax/images/psn_logo.gif" alt="Pinax"/></a>{% endblock %}
-    </h1>
+
+	<h1><a href="index.html">{{ site_name }}</a></h1>
+    <!--<div id='logo'>
+      {% block logo_link_image %}<a href="{% url home %}"><img src="{{ MEDIA_URL }}pinax/images/logo.png" alt="Pinax"/></a>{% endblock %}
+    </div>-->
 
     {% block login %}
     <ul id='account_navigation'>
         {% if user.is_authenticated %}
              <li class='first'>{% openid_icon openid user %}{% trans "Welcome" %} {{ user }}</li>
 	     <li><a href='/profiles/{{user.username}}'>{% trans "Profile" %}</a></li>
-             <li><a href="{% url acct_email %}">{% trans "Settings" %}</a></li>
+             <li><a href="{% url acct_email %}" class='disabled'>{% trans "Settings" %}</a></li>
 	     <!-- Do we have this notion of admin now? -->
  	     {% if user.is_staff %}
 	        <li><a href="/admin/">{% trans "Admin" %}</a></li>
@@ -41,19 +43,12 @@
     -->
 
     <ul id='main_navigation'>
-        <li class="first"><div><a href="{% url home %}">{% trans "Home" %}</a></div></li>
-<<<<<<< HEAD:templates/header.html
+        <li class="first"><a href="{% url home %}">{% trans "Home" %}</a></li>
         <li class="disabled"><a href='#'>{% trans "Explore" %}</a></li>
-=======
-        <li class="disabled"><a href='#'>{% trans "Resources" %}</a></li>
->>>>>>> ff38161f69fce03bebf94e8de1e9e7e00cfc2f6c:templates/header.html
+
 	<li><a href='/profiles/'>{% trans "Members" %}</a></li>
 	<li class="disabled"><a href='#'>{% trans "Groups" %}</a></li>
-<<<<<<< HEAD:templates/header.html
-	<li class="disabled"><a href='#'>{% trans "Hubs" %}</a></li>
-=======
 	<li class="disabled"><a href='#'>{% trans "Regions" %}</a></li>
->>>>>>> ff38161f69fce03bebf94e8de1e9e7e00cfc2f6c:templates/header.html
 	<li class="last disabled"><a href='#'>{% trans "Events" %}</a></li>
     </ul>
 

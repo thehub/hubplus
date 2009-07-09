@@ -26,7 +26,7 @@ except :
     # Patching the User class
 
     User.add_to_class('user_name', UserNameField(unique=True, max_length=255))
-    User.add_to_class('email_address', models.CharField(max_length=20))
+    User.add_to_class('email_address', models.CharField(max_length=255))
 
     #User.add_to_class('active',models.SmallIntegerField(null=True)) # not shown
  
