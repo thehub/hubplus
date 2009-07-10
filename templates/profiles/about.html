@@ -19,15 +19,29 @@
 
     <h3>Contact</h3>
     <ul>
-      
+      {% if profile.mobile %}
       <li><dl><dt >Phone (Mobile):</dt><dd class='editable' id='{{profile.edit_key}}mobile'>{{profile.mobile}}</dd></dl></li>
+      {% endif %}
+
+      {% if profile.work %}
       <li><dl><dt >Phone (Work):</dt><dd class='editable' id='{{profile.edit_key}}work'>{{profile.work}}</dd></dl></li>
+      {% endif %}
+
+      {% if profile.home %}
       <li><dl><dt >Phone (Home):</dt><dd class='editable' id='{{profile.edit_key}}home'>{{profile.home}}</dd></dl></li>
+      {% endif %}
+
+      {% if profile.fax %}
       <li><dl><dt >Phone (Fax):</dt><dd class='editable' id='{{profile.edit_key}}fax'>{{profile.fax}}</dd></dl></li>
+      {% endif %}
 
+      {% if profile.address %}
       <li><dl><dt >Address:</dt><dd class='editable' id='{{profile.edit_key}}address'>{{profile.address}}</dd></dl></li>
+      {% endif %}
 
-      <li><dl><dt >Email:</dt><dd class='editable' id='{{profile.edit_key}}email'>{{profile.email_address}}</dd></dl></li>
+      {% if profile.email_address %}
+      <li><dl><dt >Email:</dt><dd class='editable' id='{{profile.edit_key}}email_address'>{{profile.email_address}}</dd></dl></li>
+      {% endif %}
     </ul>
 
     <h3>Links</h3>

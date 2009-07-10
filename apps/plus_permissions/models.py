@@ -20,7 +20,8 @@ class PlusPermissionsReadOnlyException(Exception) :
         self.cls = cls
         self.msg = msg
 
-class Interface : 
+class Interface :
+
     @classmethod
     def delete(self) :
         return False
@@ -41,6 +42,19 @@ class Interface :
     def has_read(self,name) :
         return self.has_property_name_and_class(name,InterfaceReadProperty)
         
+    @classmethod
+    def make_slider_for(cls,options,resource,owner,creator) :
+        options = self.make_slider_options(resource,interface_name,owner,creator)
+        s = Slider(
+            tag_name='ProfilePermissionManager.Viewer slider',
+            resource=resource,
+            interface_id='Profile.Viewer',
+            default_agent=self.get_permission_system().get_anon_group(),
+            options=options
+        )
+        s.set_current_option(0)
+        return s
+
 
 class NullInterface :
     """
