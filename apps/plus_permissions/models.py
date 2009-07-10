@@ -66,7 +66,14 @@ class NullInterface :
         """Load interfaces for the wrapped inner content that are available to the agent"""
         ps = get_permission_system()
         resource = self.get_inner()
-        types = ps.get_interface_factory().get_type(resource.__class__)
+        cls = resource.__class__
+        tif = ps.get_interface_factory()
+        try :
+            types = tif.get_type(cls)
+        except :
+            pm = ps.get_permission_manager(cls)
+            pm.register_with_interface_factory(tif)
+            types = tif.get_type(cls)
         for k,v in types.iteritems() :
             if ps.has_access(agent=agent,resource=resource,interface=ps.get_interface_id(self.get_inner().__class__,k)) :
                 self.add_interface(v)
@@ -285,6 +292,10 @@ class PermissionSystem :
 
     def get_permission_manager(self,cls) :
         return self.get_interface_factory().get_permission_manager(cls)
+
+    def add_permission_manager(self,pm) :
+        pm.register_with_interface_factory(self.get_interface_factory())
+        
 
 _ONLY_PERMISSION_SYSTEM = None
 

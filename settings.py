@@ -184,7 +184,7 @@ NOTIFICATION_LANGUAGE_MODULE = 'account.Account'
 EMAIL_CONFIRMATION_DAYS = 2
 EMAIL_DEBUG = DEBUG
 CONTACT_EMAIL = "feedback@example.com"
-SITE_NAME = "Psychosocial Network"
+SITE_NAME = "Hub+"
 LOGIN_URL = "/account/login"
 LOGIN_REDIRECT_URLNAME = "what_next"
 
@@ -255,20 +255,10 @@ except ImportError:
     pass
 
 
-import pdb
-#pdb.set_trace()
-
-if HUBSPACE_COMPATIBLE :
-    try:
-        from hubspace_compatibility import *
-    except ImportError, e:
-        print "import hubspace_compatibility failed :: " + `e`
-
-else :
-    try :
-        from stand_alone import *
-    except ImportError, e:
-        print "import stand_alone failed :: " + `e`
+try:
+    from hubspace_compatibility import *
+except ImportError, e:
+    print "import hubspace_compatibility failed :: " + `e`
 
 
 import logging

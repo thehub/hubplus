@@ -14,25 +14,30 @@ from django.db.models.signals import post_save
 
 # Here's the wrapping we have to put around it.                                                                                                              
 
+def read_interface(name) :
+    class ReadInterface(Interface) : pass
+    setattr(ReadInterface,name,InterfaceReadProperty(name))
+    return ReadInterface
+        
 class ProfileViewer(Interface) : 
 
     about = InterfaceReadProperty('about')
     location = InterfaceReadProperty('location')
     website = InterfaceReadProperty('website')
-
+    homeplace = InterfaceReadProperty('homeplace')
     organisation = InterfaceReadProperty('organisation')
     role = InterfaceReadProperty('role')
 
     display_name = InterfaceReadProperty('display_name')
     title = InterfaceReadProperty('title')
 
-    mobile = InterfaceReadProperty('mobile')
-    email2 = InterfaceReadProperty('email2')
-    address = InterfaceReadProperty('address')
-    skype_id = InterfaceReadProperty('skype_id')
-    sip_id = InterfaceReadProperty('sip_id')
-    website = InterfaceReadProperty('website')
-    homeplace = InterfaceReadProperty('homeplace')
+ProfileEmailAddressViewer = read_interface('email_address')
+ProfileHomeViewer = read_interface('home')
+ProfileMobileViewer = read_interface('mobile')
+ProfileFaxViewer = read_interface('fax')
+ProfileAddressViewer = read_interface('address')
+ProfileSkypeViewer = read_interface('skype_id')
+ProfileSipViewer = read_interface('sip_id')
 
 
 class ProfileEditor(Interface) : 
@@ -47,7 +52,7 @@ class ProfileEditor(Interface) :
     title = InterfaceWriteProperty('title')
 
     mobile = InterfaceWriteProperty('mobile')
-    email2 = InterfaceWriteProperty('email2')
+    email_address = InterfaceWriteProperty('email_address')
     address = InterfaceWriteProperty('address')
     skype_id = InterfaceWriteProperty('skype_id')
     sip_id = InterfaceWriteProperty('sip_id')
@@ -55,11 +60,10 @@ class ProfileEditor(Interface) :
     homeplace = InterfaceWriteProperty('homeplace')
 
 
-
 class ProfilePermissionManager(PermissionManager) :
     def register_with_interface_factory(self,interface_factory) :
         self.interface_factory = interface_factory
-        interface_factory.add_type(OurPost)
+        interface_factory.add_type(Profile)
         interface_factory.add_interface(Profile,'Viewer',ProfileViewer)
         interface_factory.add_interface(Profile,'Editor',ProfileEditor)
 
@@ -118,7 +122,7 @@ class ProfilePermissionManager(PermissionManager) :
         s.set_current_option(s.current_idx)
 
         
-
+get_permission_system().add_permission_manager(ProfilePermissionManager())
 
 # ========= Signal handlers
 
@@ -133,6 +137,7 @@ def setup_default_permissions(sender,**kwargs):
         ProfilePermissionManager().setup_defaults(profile,profile.user,profile.user)
 
 post_save.connect(setup_default_permissions,sender=Profile)
+
 
 
 

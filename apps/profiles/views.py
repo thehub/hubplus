@@ -23,7 +23,7 @@ from profiles.forms import ProfileForm, HostInfoForm
 from avatar.templatetags.avatar_tags import avatar
 
 from apps.plus_lib.models import DisplayStatus, add_edit_key
-from apps.plus_permissions.models import PermissionSystem, get_permission_system, SecurityTag, PlusPermissionsNoAccessException
+from apps.plus_permissions.models import PermissionSystem, get_permission_system, SecurityTag, PlusPermissionsNoAccessException, NullInterface
 
 from django.contrib.auth.decorators import login_required
 
@@ -137,6 +137,10 @@ def profile(request, username, template_name="profiles/profile.html"):
     if ps.has_access(request.user,other_user.get_profile(),ps.get_interface_factory().get_id(Profile,'Viewer')) :
 
         dummy_status = DisplayStatus("Dummy Status"," about 3 hours ago")
+
+        profile = other_user.get_profile()
+        profile = NullInterface(profile)
+        profile.load_interfaces_for(request.user)
 
         return render_to_response(template_name, {
                 "profile_form": profile_form,
