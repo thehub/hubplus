@@ -186,7 +186,14 @@ class TestPermissions(unittest.TestCase) :
         
         blog = NullInterface(blog)
         def f(blog) : return blog.title
-        self.assertRaises(PlusPermissionsNoAccessException,f,blog)
+        
+        self.assertRaises(PlusPermissionsNoAccessException,f,blog) 
+        try : f(blog)
+        except PlusPermissionsNoAccessException, e :
+            self.assertEquals(e.silent_variable_failure,True)
+
+
+
 
         class BodyViewer(Interface) :
             body = InterfaceReadProperty('body')

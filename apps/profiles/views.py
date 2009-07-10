@@ -148,7 +148,7 @@ def profile(request, username, template_name="profiles/profile.html"):
                 "is_friend": is_friend,
                 "is_following": is_following,
                 "other_user": other_user,
-                "profile":other_user.get_profile(),
+                "profile":profile,
                 "other_friends": other_friends,
                 "invite_form": invite_form,
                 "previous_invitations_to": previous_invitations_to,
