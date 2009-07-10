@@ -258,8 +258,10 @@ def map_tags(request, tagged_resource):
 
 @login_required
 @transaction.commit_on_success
-def profile_field(request,username,fieldname,*args,**kwargs) :
+def profile_field(request,username,classname,fieldname,*args,**kwargs) :
     """ Get the value of one field from the user profile, so we can write an ajaxy editor """
+    print "In profile_field"
+    print "username %s, classname %s, fieldname %s" % (username,classname,fieldname)
     other_user = get_object_or_404(User,username=username)
     ps = get_permission_system()
     p = other_user.get_profile()

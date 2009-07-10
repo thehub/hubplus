@@ -1,5 +1,9 @@
-var widget_map = {'Profile':{'about':'text_wysiwyg'}
-		 };
+var widget_map = {
+    'Profile':{'about':'text_wysiwyg',
+               'find_out':'text_wysiwyg',
+	       'project_stage':'text_wysiwyg',
+    },
+};
 
 var editing = function () {
     //jq('#section_tab_navigation').tabs();
@@ -10,6 +14,7 @@ var editing = function () {
 	var object_type = prop_data[0];
 	var object_id = prop_data[1];
 	var object_prop = prop_data[2];
+
 	try {
 	    var widget_type = widget_map[object_type][object_prop];
 	} catch(e) {

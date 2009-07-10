@@ -169,30 +169,30 @@ HUB PLUS 2009
 
 /* Tag Block */
 
-#about {
+#about_block {
 	
 }
 
-#about dl {
+#about_block dl {
 	overflow	: hidden;
 }
 
-#about dt {
+#about_block dt {
 	float		: left;
 	width		: 30%;
 }
 
-#about dd {
+#about_block dd {
 	float		: left;
 	width		: 70%;
 }
 
-#about ul {
+#about_block ul {
 	list-style	: none;
 	padding-bottom	: 1em;
 }
 
-#about ul li ul {
+#about_block ul li ul {
 	list-style	: none;
 	padding-bottom	: 0;
 }

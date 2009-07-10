@@ -7,6 +7,7 @@ from django.contrib.auth.models import User
 from apps.hubspace_compatibility.models import TgGroup, Location
 
 import datetime
+import ipdb
 
 class PlusPermissionsNoAccessException(Exception):
     def __init__(self,cls,id,msg) :
@@ -44,8 +45,8 @@ class Interface :
         
     @classmethod
     def get_id(cls) : 
-        return 'Interface'
-
+        raise UseSubclassException(Interface,'You need a subclass of Interface that implements its get_id')
+        
     @classmethod
     def make_slider_for(cls,resource,options,default_agent,selected) :
         s = Slider(
@@ -234,6 +235,7 @@ class SecurityTag(models.Model) :
         return (x for x in SecurityTag.objects.all() if x.name == self.name)
 
     def has_access(self,agent,resource,interface) :
+        #ipdb.set_trace()
         for x in (x for x in SecurityTag.objects.all() if x.resource == resource and x.interface == interface) :
             if x.agent == get_permission_system().get_anon_group() : 
                 # in other words, if this resource is matched with anyone, we don't have to test that user is in the "anyone" group

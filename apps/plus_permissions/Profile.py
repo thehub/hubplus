@@ -39,7 +39,7 @@ class ProfileViewer(Interface) :
     def get_id(self) : 
         return 'Profile.Viewer'
 
-ProfileEmailAddressViewer = read_interface('email_address','Profile.ProfileEmailAddressViewer')
+ProfileEmailAddressViewer = read_interface('email_address','Profile.EmailAddressViewer')
 ProfileHomeViewer = read_interface('home','Profile.EmailAddressViewer')
 ProfileWorkViewer = read_interface('work','Profile.WorkViewer')
 ProfileMobileViewer = read_interface('mobile','Profile.MobileViewer')

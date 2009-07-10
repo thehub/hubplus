@@ -1,6 +1,6 @@
 {% load i18n %}
 
-  <div id="about" class="block">
+  <div id="about_block" class="block">
   
     <h3>About me</h3>
     <ul class="yui-skin-sam">
@@ -11,8 +11,8 @@
             {% autoescape off %} 
 	       {{profile.about}}
             {% endautoescape %}
-	    <a href="#">more</a>
-	  </dd>
+	    </dd>
+	  <a href="#">more</a>
 	</dl>
       </li>
     </ul>
@@ -46,7 +46,9 @@
 
     <h3>Links</h3>
     <ul>
-      <li><dl><dt >Website:</dt><dd class='editable' id='{{profile.edit_key}}website'><a href="#"></a>{{profile.website}}</dd></dl></li>
+      <li><dl><dt >Website:</dt>
+	  <dd class='editable' id='{{profile.edit_key}}website'><a href="#"></a>{{profile.website}}</dd></dl>
+      </li>
     </ul>
  
     
