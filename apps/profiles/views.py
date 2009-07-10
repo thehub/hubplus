@@ -221,8 +221,6 @@ def autocomplete_tag(request, tagged_resource, tag_type):
     options = tag_autocomplete(tag_type, q, limit)
     options = '\n'.join(options)
     return HttpResponse(options)
-    
-    
 
 @login_required
 @our_profile_permission_test

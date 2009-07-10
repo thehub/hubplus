@@ -154,6 +154,7 @@ INSTALLED_APPS = (
     
     # internal (for now)
     'about',
+    'plus_lib',
     'hubspace_compatibility',
     'plus_permissions',
 

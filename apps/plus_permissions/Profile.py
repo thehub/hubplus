@@ -2,7 +2,7 @@
 # Permissions for OurPost, an example                                                                                                                        
 from django.db import models
 
-from models import Interface, Slider, SliderOption, SecurityTag, PermissionManager, AgentNameWrap
+from models import Interface, Slider, SliderOption, SecurityTag, PermissionManager
 from models import get_permission_system, default_admin_for, InterfaceReadProperty, InterfaceWriteProperty
 
 from apps.profiles.models import Profile
@@ -67,14 +67,14 @@ class ProfilePermissionManager(PermissionManager) :
         options = [
             SliderOption('root',get_permission_system().get_anon_group()),
             SliderOption('all_members',get_permission_system().get_all_members_group()),
-            SliderOption(AgentNameWrap(owner).name,owner),
-            SliderOption(AgentNameWrap(creator).name,creator)
+            SliderOption(owner.display_name,owner),
+            SliderOption(creator.display_name,creator)
         ]
 
         default_admin = default_admin_for(owner)
 
         if not default_admin is None :
-            options.append( SliderOption(AgentNameWrap(default_admin).name,default_admin) )
+            options.append( SliderOption(default_admin.display_name,default_admin) )
 
         return options
 

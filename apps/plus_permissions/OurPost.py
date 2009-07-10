@@ -15,7 +15,7 @@ class OurPost(models.Model) :
     body = models.CharField(max_length='20')
 
     def __str__(self) :
-        return "OurPost" #%s,%s" % (self.title,self.body)
+        return "OurPost %s,%s" % (self.title,self.body)
 
 # Here's the wrapping we have to put around it.
 

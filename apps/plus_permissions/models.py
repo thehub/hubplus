@@ -48,6 +48,10 @@ class NullInterface :
     def __init__(self, inner) :
         self.__dict__['_inner'] = inner
         self.__dict__['_interfaces'] = []
+        
+        self.__dict__['_exceptions'] = [ # these always go through
+            lambda x : x[0]=='_', # starts with _
+        ]
 
     def get_inner(self) :
         return self.__dict__['_inner']
@@ -57,6 +61,16 @@ class NullInterface :
 
     def get_interfaces(self) :
         return self.__dict__['_interfaces']
+
+    def load_interfaces_for(self,agent) :
+        """Load interfaces for the wrapped inner content that are available to the agent"""
+        ps = get_permission_system()
+        resource = self.get_inner()
+        types = ps.get_interface_factory().get_type(resource.__class__)
+        for k,v in types.iteritems() :
+            if ps.has_access(agent=agent,resource=resource,interface=ps.get_interface_id(self.get_inner().__class__,k)) :
+                self.add_interface(v)
+
 
     def fold_interfaces(self, f,init) :
         for i in self.get_interfaces() :
@@ -71,8 +85,12 @@ class NullInterface :
             raise PlusPermissionsNoAccessException(self.get_inner_class(),'delete','trying to delete')
 
     def __getattr__(self,name) :
+        for rule in self.__dict__['_exceptions'] :
+            if rule(name) :
+                return self.get_inner().__getattribute__(name)
         if self.fold_interfaces(lambda a, i : a or i.has_read(name),False) :
             return self.get_inner().__getattribute__(name)
+        print 'WWW %s, %s' % (self.get_inner_class(),name)
         raise PlusPermissionsNoAccessException(self.get_inner_class(),name,'from __getattr__')
 
     def __setattr__(self,name,val) :
@@ -117,6 +135,13 @@ class InterfaceWriteProperty(InterfacePropertyBase) :
     def can_write(self) :
         return True
 
+
+def strip(x) :
+    """If x is really a Null interface, return the inner value, otherwise, return itself"""
+    try : 
+        return x.get_inner()
+    except :
+        return x
 
 class InterfaceFactory :
 
@@ -167,28 +192,6 @@ def default_admin_for(resource) :
         return ds[0].agent
 
 
-class AgentNameWrap(object) :
-    def __init__(self,inner) :
-        self.__dict__['inner'] = inner
-
-    def __getattr__(self, name) :
-        if name == 'name' :
-            if self.inner.__class__ == User :
-                return self.inner.username
-            else :
-                return self.inner.display_name
-        else :
-            return getattr(self.inner,name,None)
-
-    def __setattr__(self,name,val) :
-        if name != 'name' :
-            setattr(self.inner,name,val)
-        else :
-            if self.inner.__class__ == User :
-                self.inner.username = val
-            else :
-                self.inner.display_name = val
-    
  
 class SecurityTag(models.Model) :
     name = models.CharField(max_length='50') 
@@ -222,6 +225,7 @@ class SecurityTag(models.Model) :
 
 _ONLY_INTERFACE_FACTORY = InterfaceFactory()
 
+
 class PermissionSystem :
     """ This is a high-level interface to the permission system. Can answer questions about permissions without involving 
     the user creating a lot of other objects. Also you can ask it to give you some default groups such as 'anon' (the group 
@@ -251,7 +255,7 @@ class PermissionSystem :
 
 
     def get_permissions_for(self,resource) :
-        return (x for x in SecurityTag.objects.all() if x.resource == resource)
+        return (x for x in SecurityTag.objects.all() if x.resource == strip(resource))
 
     def has_permissions(self,resource) :
         return len(set(self.get_permissions_for(resource))) > 0 
@@ -270,7 +274,7 @@ class PermissionSystem :
 
     def delete_access(self,agent,resource,interface) :
         for tag in SecurityTag.objects.filter(interface=interface) :
-            if tag.agent == agent and tag.resource==resource : 
+            if tag.agent == agent and tag.resource==strip(resource) : 
                 tag.delete()
 
     def get_interface_factory(self) : 
@@ -366,7 +370,7 @@ class Slider :
 
     def print_relevant_tags(self) :
         for t in self.get_relevant_tags():
-            print ">> %s, %s, %s, %s" % (AgentNameWrap(t.agent).name, t.interface, t.resource, t.name)
+            print ">> %s, %s, %s, %s" % (agent.display_name, t.interface, t.resource, t.name)
 
     def get_options(self) :
         return self.options

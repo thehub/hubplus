@@ -11,7 +11,7 @@ except Exception, e:
 
 from models import *
 
-import pdb
+import ipdb
 
 # Permission Management by Content Types
 from OurPost import *
@@ -338,10 +338,13 @@ class TestPermissions(unittest.TestCase) :
         ps = PermissionSystem()
         pm = ps.get_permission_manager(OurPost)
 
+        #ipdb.set_trace()
         pm.setup_defaults(blog,u,u)
         perms = ps.get_permissions_for(blog)
         count = 0
-        for p in perms : count=count+1
+        for p in perms : 
+            print p
+            count=count+1
         self.assertEquals(count,3)
 
         # in this case, because of the defaults for blog u has access to all interfaces
