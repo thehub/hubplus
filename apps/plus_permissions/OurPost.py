@@ -77,8 +77,5 @@ class OurPostPermissionManager(PermissionManager) :
         s = interfaces['Viewer'].make_slider_for(resource,options,owner,0)
         s = interfaces['Editor'].make_slider_for(resource,options,owner,2)
         s = interfaces['Commentor'].make_slider_for(resource,options,owner,1)
-        print "VVV"
-        for x in  get_permission_system().get_permissions_for(resource):
-            print x
-
+ 
 
