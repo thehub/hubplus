@@ -43,16 +43,19 @@ class Interface :
         return self.has_property_name_and_class(name,InterfaceReadProperty)
         
     @classmethod
-    def make_slider_for(cls,options,resource,owner,creator) :
-        options = self.make_slider_options(resource,interface_name,owner,creator)
+    def get_id(cls) : 
+        return 'Interface'
+
+    @classmethod
+    def make_slider_for(cls,resource,options,default_agent,selected) :
         s = Slider(
-            tag_name='ProfilePermissionManager.Viewer slider',
+            tag_name='%s slider'%cls.__name__,
             resource=resource,
-            interface_id='Profile.Viewer',
-            default_agent=self.get_permission_system().get_anon_group(),
+            interface_id=cls.get_id(),
+            default_agent=default_agent,
             options=options
         )
-        s.set_current_option(0)
+        s.set_current_option(selected)
         return s
 
 
@@ -112,7 +115,6 @@ class NullInterface :
                 return self.get_inner().__getattribute__(name)
         if self.fold_interfaces(lambda a, i : a or i.has_read(name),False) :
             return self.get_inner().__getattribute__(name)
-        print 'WWW %s, %s' % (self.get_inner_class(),name)
         raise PlusPermissionsNoAccessException(self.get_inner_class(),name,'from __getattr__')
 
     def __setattr__(self,name,val) :
@@ -177,6 +179,7 @@ class InterfaceFactory :
 
     def get_type(self,cls) :
         return self.all[cls.__name__]
+
 
     def add_interface(self,cls,name,interfaceClass) :
         self.add_type(cls)
@@ -308,8 +311,8 @@ class PermissionSystem :
     def get_permission_manager(self,cls) :
         return self.get_interface_factory().get_permission_manager(cls)
 
-    def add_permission_manager(self,pm) :
-        pm.register_with_interface_factory(self.get_interface_factory())
+    def add_permission_manager(self,cls,pm) :
+        self.get_interface_factory().add_permission_manager(cls,pm)
         
 
 _ONLY_PERMISSION_SYSTEM = None
@@ -330,11 +333,15 @@ class UseSubclassException(Exception) :
         self.msg = msg
 
 class PermissionManager :
+    def __init__(self,target_class) :
+        self.target_class = target_class # what class does this manager provide permissions for
+
     def get_permission_system(self) :
         return get_permission_system()
 
-    def make_slider(self,**args) :
-        raise UseSubclassException(PermissionManager,'Only a subclass of PermissionManager can make sliders')
+    def get_interfaces(self) :
+        return self.get_permission_system().get_interface_factory().get_type(self.target_class)
+
 
 class NoSliderException(Exception) :
     def __init__(self,cls,name) :

@@ -160,12 +160,11 @@ class TestPermissions(unittest.TestCase) :
 
         self.assertFalse(ps.has_access(u,blog,ps.get_interface_id(OurPost,'Viewer')))
 
-        
 
     def makeInterfaceFactory(self) :
         ps = PermissionSystem()
         tif = ps.get_interface_factory()        
-        tif.add_permission_manager(OurPost,OurPostPermissionManager())
+        tif.add_permission_manager(OurPost,OurPostPermissionManager(OurPost))
         return tif
 
 
@@ -280,7 +279,8 @@ class TestPermissions(unittest.TestCase) :
         # we need to pass to it the resource itself, the name of the interface, 
         #     the agent which is the "owner" of the resource (in this case "group") and 
         #     the agent which is the "creator" of the resource (in this case "author")
-        s = pm.make_slider(blog,'Viewer',group,author)
+        
+        s = pm.get_interfaces()['Viewer'].make_slider_for(blog,pm.make_slider_options(blog,group,author),u,0)
 
         # now we're just testing that OurPost.Viewer has 5 options for the slider
         self.assertEquals(len(s.get_options()),5)
@@ -349,13 +349,16 @@ class TestPermissions(unittest.TestCase) :
         pm.setup_defaults(blog,u,u)
         perms = ps.get_permissions_for(blog)
         count = 0
-        for p in perms : 
-            print p
+        for x in perms :
             count=count+1
         self.assertEquals(count,3)
 
         # in this case, because of the defaults for blog u has access to all interfaces
+
+        ps.get_all_members_group().add_member(u)
+
         blog.load_interfaces_for(u) 
+
         self.assertEquals(len(blog.get_interfaces()),3)
 
         u2=User(username='holly')
@@ -363,11 +366,12 @@ class TestPermissions(unittest.TestCase) :
         blog2=OurPost(title='test rapping')
         blog2.save()
         blog2=NullInterface(blog2)
-
+        
         pm.setup_defaults(blog2,u2,u2)
 
         # in this case, u is only getting access to the Viewer & Commentor interfaces
         blog2.load_interfaces_for(u)
+
         self.assertEquals(len(blog2.get_interfaces()),2)
         
         
