@@ -59,7 +59,6 @@ class Interface :
         s.set_current_option(selected)
         return s
 
-
 class NullInterface :
     """
     Empty interface, wraps models in a shell, which only lets explicitly named properties through
@@ -133,6 +132,11 @@ class NullInterface :
 
     def save(self) :
         self.get_inner().save()
+
+    def edit_key(self) :
+        print "In edit key %s" % self.get_inner().edit_key()
+        return self.get_inner().edit_key()
+
 
     def __str__(self) :
         return self.get_inner()
