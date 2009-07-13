@@ -1,4 +1,4 @@
-from django.contrib.auth.models import User,UserManager
+from django.contrib.auth.models import User,AnonymousUser,UserManager
 from django.db import models
 
 
@@ -61,4 +61,7 @@ except :
     User.save = user_save
    
     print "Monkey Patched User Class ... gulp!"
+
+    AnonymousUser.is_member_of = lambda *args, **kwargs : False
+    AnonymousUser.is_direct_member_of = lambda *args, **kwarg : False
     # Finished the User Patch
