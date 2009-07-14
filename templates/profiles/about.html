@@ -61,11 +61,13 @@
 	  <dd class="tag_manager" id="skills">
               <span class="tag_list">
 		{% for s in skills %}
-		<span><a href="tag/{{s.keyword}}/" class="tag option">{{s.keyword}}</a><a class="delete_tag" href="./delete/">X</a></span>
+		<span><a href="/plus_tags/tag/{{s.keyword}}/" class="tag option">{{s.keyword}}</a><a class="delete_tag" href="/plus_tags/Profile/{{profile.pk}}/delete/">X</a></span>
 		{% endfor %}
 	      </span>
               <span class="error_message"></span>
-             <form method='post' class="add_tag_form" action='./add_tag/' >
+             <form method='post' class="add_tag_form" action='/plus_tags/add_tag/' >
+	       <input name="target_class" class="target_class" value="Profile" type="hidden" />
+	       <input name="target_id" class="target_id" value="{{profile.pk}}" type="hidden" />
                <input name="tag_type" class="tag_type" value="skill" type="hidden" />
                <input name="tag_value" class="tag_value" />
                <input class="add_tag" type="submit" value="add a skill" />
@@ -80,11 +82,13 @@
 	  <dd class="tag_manager" id="needs">
               <span class="tag_list">
 		{% for s in needs %}
-		<span><a href="tag/{{s.keyword}}/" class="tag option">{{s.keyword}}</a><a class="delete_tag" href="./delete/">X</a></span>
+		<span><a href="/plus_tags/tag/{{s.keyword}}/" class="tag option">{{s.keyword}}</a><a class="delete_tag" href="/plus_tags/Profile/{{profile.pk}}/delete/">X</a></span>
 		{% endfor %}
 	      </span>
               <span class="error_message"></span>
-             <form method='post' class="add_tag_form" action='./add_tag/'>
+             <form method='post' class="add_tag_form" action=''>
+               <input name="target_class" class="target_class" value="Profile" type="hidden" />
+               <input name="target_id" class="target_id" value="{{profile.pk}}" type="hidden" />
                <input name="tag_type" class="tag_type" value="need" type="hidden" />
                <input name="tag_value" class="tag_value" />
                <input class="add_tag" type="submit" value="add a need" />

@@ -50,6 +50,7 @@ ProfileSipViewer = read_interface('sip_id','SipViewer')
 
 
 class ProfileEditor(Interface) : 
+    pk = InterfaceReadProperty('pk')
     about = InterfaceWriteProperty('about')
     location = InterfaceWriteProperty('location')
     website = InterfaceWriteProperty('website')

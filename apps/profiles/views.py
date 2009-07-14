@@ -15,7 +15,7 @@ from friends.models import FriendshipInvitation, Friendship
 from microblogging.models import Following
 
 from apps.plus_permissions.Profile import *  # Essential to get signals working at the moment.
-from profiles.models import Profile, HostInfo, tag_add, tag_delete, get_tags, tag_autocomplete
+from profiles.models import Profile, HostInfo
   
 
 from profiles.forms import ProfileForm, HostInfoForm
@@ -27,9 +27,13 @@ from apps.plus_permissions.models import PermissionSystem, get_permission_system
 
 from django.contrib.auth.decorators import login_required
 
+from apps.plus_tags.models import  tag_add, tag_delete, get_tags, tag_autocomplete
+
+
 # need 
 add_edit_key(User)
 add_edit_key(Profile)
+
 add_edit_key(HostInfo)
 
 #from gravatar.templatetags.gravatar import gravatar as avatar
@@ -133,8 +137,10 @@ def profile(request, username, template_name="profiles/profile.html"):
     else:
         profile_form = None
 
+    interests = get_tags(tagged = other_user.get_profile(), tagger = other_user, tag_type = 'interest')
     skills = get_tags(tagged = other_user.get_profile(), tagger = other_user, tag_type = 'skill')
     needs = get_tags(tagged = other_user.get_profile(), tagger = other_user, tag_type = 'need')
+
     if ps.has_access(request.user,other_user.get_profile(),ps.get_interface_factory().get_id(Profile,'Viewer')) :
 
         dummy_status = DisplayStatus("Dummy Status"," about 3 hours ago")
@@ -158,23 +164,17 @@ def profile(request, username, template_name="profiles/profile.html"):
                 "head_title_status" : dummy_status,
                 "host_info" : other_user.get_profile().get_host_info(),
                 "skills" : skills,
-                "needs" : needs
+                "needs" : needs,
+                "interests" : interests,
                 }, context_instance=RequestContext(request))
 
     else :
         return HttpResponse("""
 <p>You don't have permission to see or do this.</p>
-
 <p>You are %s</p>
-
 <p>This is the profile for %s via interface %s</p>
-
 Current Permissions
-<ul>
-%s
-</ul>
-...
-""" % (request.user, other_user.get_profile(),'Viewer', 
+<ul>%s</ul>...""" % (request.user, other_user.get_profile(),'Viewer', 
        ''.join([
           ('<li>%s</li>'%x) for x in ps.get_permissions_for(other_user.get_profile())
           ]),
@@ -203,59 +203,6 @@ def update_profile_form(request,username) :
         raise PlusPermissionsNoAccessException(Profile,p.pk,'update_profile_form')
     else :
         profile_form = ProfileForm(request.POST, p)
-
-
-@login_required
-@our_profile_permission_test
-@transaction.commit_on_success
-def add_tag(request, tagged_resource):
-    """ This is actually a way to add typed keywords (e.g. skills, interests, needs) as well as 'free tags'"""
-    tag_type = request.POST['tag_type']
-    tag_value = request.POST['tag_value']
-    tagger = request.user
-    tag, added = tag_add(tagged_resource, tag_type, tag_value, tagger)
-    data = simplejson.dumps({'keyword':tag.keyword, 'tag_type':tag.tag_type, 'tagged':'yourself', 'added':added})
-    return HttpResponse(data, mimetype='application/json')
-
-@login_required
-@our_profile_permission_test
-@transaction.commit_on_success
-def autocomplete_tag(request, tagged_resource, tag_type):
-    q = request.GET['q']
-    limit = request.GET['limit']
-    options = tag_autocomplete(tag_type, q, limit)
-    options = '\n'.join(options)
-    return HttpResponse(options)
-
-@login_required
-@our_profile_permission_test
-@transaction.commit_on_success
-def delete_tag(request, tagged_resource):
-    tag_type = request.POST['tag_type']
-    tag_value = request.POST['tag_value']
-    tagger = request.user
-    tag, deleted = tag_delete(tagged_resource, tag_type, tag_value, tagger)
-    data = simplejson.dumps({'deleted':deleted})
-    return HttpResponse(data, mimetype='application/json')
-
-@login_required
-@our_profile_permission_test
-def map_tags(request, tagged_resource):
-    json = {  
-         "id": tagged_resource.__class__.__name__ + "-" +str(tagged_resource.id),  
-         "name": tagged_resource.name,  
-         "children": [{"id": 'tag' + "-" +str(tag.id),  
-                       "name": tag.keyword,  
-                       "data": {  
-                           'relation': "<h4>%s tagged as %s</h4> " %(tagged_resource.name, tag.keyword)  
-                           },  
-                       "children": []} for tag in get_tags(tagged = tagged_resource, tagger = request.user, tag_type = 'skill')],
-         "data": {'relation':"<h4>%s</h4>" %(tagged_resource.name)}
-     }
-    
-    json = simplejson.dumps(json)
-    return HttpResponse(json, mimetype='application/json')
-
 
 @login_required
 @transaction.commit_on_success

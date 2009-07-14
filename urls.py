@@ -34,6 +34,11 @@ urlpatterns = patterns('',
     (r'^bbauth/', include('bbauth.urls')),
     (r'^authsub/', include('authsub.urls')),
     (r'^profiles/', include('profiles.urls')),
+    
+    (r'^plus_tags/', include('plus_tags.urls')),
+
+    (r'^groups/', include('plus_groups.urls')),                                                                                                         
+  
     (r'^blog/', include('blog.urls')),
     (r'^tags/', include('tag_app.urls')),
     (r'^invitations/', include('friends_app.urls')),

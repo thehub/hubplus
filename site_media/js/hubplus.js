@@ -45,13 +45,19 @@ var editing = function () {
 };
 var tag_list = function (ele) {
     var manager = jq(ele);
+    
     var tag_type = manager.find('.tag_type').val();
+    var target_id = manager.find('.target_id').val();
+    var target_class = manager.find('.target_class').val();
+
+    console.log(tag_type+","+target_id+","+target_class);
+
     var append_tag = function (data) {
 	if (data.added === false) {
 	    manager.find('.error_message').html("You have already tagged " + data.tagged + " as having the " + data.tag_type + " <em>" +  data.keyword + "</em>");
 	    return;
 	}
-	var tag = jq('<span><a href="tag/' + data.keyword + '" class="tag option">' + data.keyword + '</a><a class="delete_tag" href="./delete_tag/">X</a></span>');
+	var tag = jq('<span><a href="/plus_tags/tag/' + data.keyword + '" class="tag option">' + data.keyword + '</a><a class="delete_tag" href="/plus_tags/delete_tag/">X</a></span>');
 	manager.find('.tag_list').append(tag);
 	manager.find('input.tag_value').val("");
 	manager.find('.error_message').html("");
@@ -62,22 +68,31 @@ var tag_list = function (ele) {
 	}
     };
 
-    manager.find('.tag_value').autocomplete('autocomplete_tag/'+ manager.find('.tag_type').val()+ '/', {width: 175,
-													matchSubset: false,
-													selectFirst: false,
-													max:10});
+    manager.find('.tag_value').autocomplete('/plus_tags/autocomplete_tag/'+ 
+					    manager.find('.tag_type').val()+ '/'+
+					    manager.find('.target_class').val()+'/'+
+					    manager.find('.target_id').val()+'/' , 
+                                            {width: 175,
+					     matchSubset: false,
+					     selectFirst: false,
+					     max:10}
+					   );
 
     manager.find('.add_tag').click(function () {
-	jq.post('add_tag/', jq(this).parent().serializeArray(), append_tag, "json");
+	jq.post('/plus_tags/add_tag/', jq(this).parent().serializeArray(), append_tag, "json");
 	return false;
     });
     var delete_tags = '#'+ manager.attr('id') + ' .delete_tag';
     jq(delete_tags).live('click', function () {
 	var tag_value = jq(this).prev().html();
+	console.log(tag_value);
 	var tag_data = [{name : 'tag_type', value : tag_type},
-			{name : 'tag_value', value : tag_value}];
+			{name : 'tag_value', value : tag_value},
+			{name : 'target_class', value : target_class},
+			{name : 'target_id', value : target_id}
+			];
 	var tag = jq(this).parent();
-	jq.post('delete_tag/', tag_data, function(data) {
+	jq.post('/plus_tags/delete_tag/', tag_data, function(data) {
 	    delete_tag(tag, data);
 	}, "json");
 	return false;
