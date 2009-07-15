@@ -22,14 +22,18 @@ def group(request, group_id, template_name="plus_groups/group.html"):
     group = get_object_or_404(TgGroup, pk=group_id)
     ps = get_permission_system()
     group.save()
+
     if ps.has_access(request.user,group,ps.get_interface_factory().get_id(TgGroup,'Viewer')) :
         dummy_status = DisplayStatus("Dummy Status"," about 3 hours ago")
         group = NullInterface(group)
         group.load_interfaces_for(request.user)
 
+
         return render_to_response(template_name, {
                 "head_title" : "%s" % group.display_name,
                 "head_title_status" : dummy_status,
+                "group" : group,
+                "extras" : group.groupextras, 
                 }, context_instance=RequestContext(request))
 
     else :

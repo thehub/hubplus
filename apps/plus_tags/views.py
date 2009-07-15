@@ -7,17 +7,23 @@ from django.utils import simplejson
 from models import *
 from django.http import HttpResponse, HttpResponseRedirect, HttpResponseForbidden
 
+# this collection must be kept up-to-date for each type of model which 
+# CHANGE THIS
 from apps.profiles.models import Profile
+from apps.hubspace_compatibility.models import TgGroup
 
 from django.contrib.contenttypes.models import ContentType
 
 def tag_permission_test(fn) :
     """ Decorator for permissions for adding and removing tags. """
     def our_fn(request,*args,**kwargs) :
+        print "AAA"
         ps = get_permission_system()
+        print "BBB"
         target_class = request.POST['target_class']
         target_id = request.POST['target_id']
-        
+        print "CCC %s, %s" % (target_class,target_id)
+
         if target_id != '' and target_class != '' :
             try :
                 cls = eval(target_class)

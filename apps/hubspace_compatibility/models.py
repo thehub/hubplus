@@ -64,17 +64,6 @@ class HubspaceCompatibilityNotToBeSavedException(Exception) :
         self.cls = cls
         self.extra = extra
 
-class TgUser(models.Model):
-    user_name = models.CharField(unique=True, max_length=255)
-    email_address = models.CharField(unique=True, max_length=255)
-    password = models.CharField(max_length=40)
-
-    class Meta:
-        db_table = u'tg_user'
-
-    def save(self) :
-        raise HubspaceCompatibilityNotToBeSavedException(TgUser,'User_name:%s'%self.user_name)
-
 
 class HubspaceAuthenticationBackend :
     """

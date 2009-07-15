@@ -22,10 +22,12 @@ def read_interface(name,id) :
         
 class TgGroupViewer(Interface) : 
 
+    pk = InterfaceReadProperty('pk')
     about = InterfaceReadProperty('about')
     location = InterfaceReadProperty('location')
     website = InterfaceReadProperty('website')
     display_name = InterfaceReadProperty('display_name')
+    groupextras = InterfaceReadProperty('groupextras')
 
     @classmethod
     def get_id(self) : 
@@ -92,7 +94,7 @@ def setup_default_permissions(sender,**kwargs):
     signal = kwargs['signal']
     
     ps = get_permission_system()
-
+    print "DDD setup_default_permission for TgGroup"
     try :
         ps.get_permission_manager(TgGroup)
     except :
