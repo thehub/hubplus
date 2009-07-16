@@ -164,6 +164,7 @@ INSTALLED_APPS = (
     'profiles',
 
     'plus_groups',
+    'plus_links',
 
     'staticfiles',
     'account',

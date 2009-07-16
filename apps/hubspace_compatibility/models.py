@@ -3,7 +3,6 @@ from django.db import models
 
 from django.contrib.auth.models import User, UserManager, check_password
 
-
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes import generic
 
@@ -13,7 +12,7 @@ import datetime
 def getHubspaceUser(username) :
     """ Returns the hubspace user. None if doesn't exist"""
     try :
-        tu = User.objects.filter(username=username)[0]
+        tu = User.objects.get(username=username)
         return  tu
     except Exception,e:
         print "Error in getHubspaceUser %s" % e
@@ -216,3 +215,23 @@ def user_save(self) :
         self.created = datetime.date.today()
     super(User,self).save()
     
+
+# ======================================
+# The hubspace object reference model
+
+class ObjectReference(models.Model):
+    """ Generic object reference, based on version in Hubspace"""
+    content_type = models.ForeignKey(ContentType)
+    object_id = models.PositiveIntegerField()
+    object = generic.GenericForeignKey('content_type', 'object_id')
+
+
+def make_object_reference(object) :
+    if not object.pk : 
+        object.save()
+    o = ObjectReference(object=object)
+    o.save()
+    return o
+
+def get_referenced_object(id) :
+    return ObjectReference.objects.get(pk=id).object
