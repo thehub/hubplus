@@ -312,7 +312,7 @@ var inplace_editor = function (element_id, url, special_options) {
         if (options.textarea) {
             submit_html = "<br />";
         }
-        submit_html += "<div class='buttons'><input type='image' src='/static/images/button_save.gif' class='submit' value='{okText}'/><input type='image' src='/static/images/button_cancel.gif' class='cancel' value='{cancelText}' /></div><br class='clear' />".supplant({okText: options.okText, cancelText: options.cancelText});
+        submit_html += "<div class='buttons'><input type='image' src='/site_media/images/button_save.gif' class='submit' value='{okText}'/><input type='image' src='/site_media/images/button_cancel.gif' class='cancel' value='{cancelText}' /></div><br class='clear' />".supplant({okText: options.okText, cancelText: options.cancelText});
         var dom_nodes = jq(submit_html);
         dom_nodes.appendTo(form);
         dom_nodes.find('.cancel').one('click', onclickCancel);
