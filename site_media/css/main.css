@@ -233,20 +233,24 @@ HUB PLUS 2009
 }
 
 a.tag {
-	background	: #fff;
+	background	: #eee url('../images/tag_grad.gif') 0 0 repeat-x;
 	border		: 1px solid #BBB;
 	margin		: 0 0 5px 0;
 	padding		: 1px 3px;
 }
+
 a.delete_tag {
-        color: #FF0000;
+	color: #FF0000;
 }
+
 form.add_tag_form {
-    display: inline;
+	display: inline;
 }
+
 .error_message {
-    color: #FF0000;
+	color: #FF0000;
 }
+
 #resources a.active {
 	background	: #666;
 	color		: #fff;
