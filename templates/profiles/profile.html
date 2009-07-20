@@ -28,12 +28,12 @@
 	<dl>
 	  <dt>{% trans "Interests" %}:</dt>
           <dd class="tag_manager" id="interests">
-            <span class="tag_list">
+            <ul class="tag_list">
               {% for s in interests %}
-              <span><a href="/plus_tags/tag/{{s.keyword}}/" class="tag option">{{s.keyword}}</a><a class="delete_tag" href="/plus_tags/Profile/{{profile.p\
-															    k}}/delete/">X</a></span>
+              <li><a href="/plus_tags/tag/{{s.keyword}}/" class="tag option">{{s.keyword}}</a><a class="delete_tag" href="/plus_tags/Profile/{{profile.p\
+															    k}}/delete/">X</a></li>
               {% endfor %}
-            </span>
+            </ul>
             <span class="error_message"></span>
             <form method='post' class="add_tag_form" action='/plus_tags/add_tag/' >
               <input name="target_class" class="target_class" value="Profile" type="hidden" />
@@ -94,18 +94,18 @@
 
 <div id="feature_explore" class="block">
   <h3>Explore Members</h3>
-  <div class="tags">
-    <a href="#" class="tag">green</a> <a href="#" class="tag">environment</a> 
-    <a href="#" class="tag">fairtrade</a> <a href="#" class="tag">reference</a> 
-    <a href="#" class="tag">clothes</a> <a href="#" class="tag">design</a> 
-    <a href="#" class="tag">sustainability</a> <a href="#" class="tag">energy</a> 
-    <a href="#" class="tag">shopping</a> <a href="#" class="tag">climatechange</a> 
-    <a href="#" class="tag">science</a> <a href="#" class="tag">activism</a> 
-    <a href="#" class="tag">health</a> <a href="#" class="tag">architecture</a> 
-    <a href="#" class="tag">shopping</a> <a href="#" class="tag">green</a> 
-    <a href="#" class="tag">environment</a> <a href="#" class="tag">fairtrade</a> 
-    <a href="#" class="tag">reference</a> <a href="#" class="tag">clothes</a> <a href="#" class="tag">design</a>
-  </div>
+  <ol class="tag_list">
+    <li><a href="#" class="tag">green</a> <a href="#" class="tag">environment</a></li> 
+    <li><a href="#" class="tag">fairtrade</a> <a href="#" class="tag">reference</a></li> 
+    <li><a href="#" class="tag">clothes</a> <a hryef="#" class="tag">design</a> </li>
+    <li><a href="#" class="tag">sustainability</a> <a href="#" class="tag">energy</a></li>
+    <li><a href="#" class="tag">shopping</a> <a href="#" class="tag">climatechange</a> </li>
+    <li><a href="#" class="tag">science</a> <a href="#" class="tag">activism</a> </li>
+    <li><a href="#" class="tag">health</a> <a href="#" class="tag">architecture</a> </li>
+    <li><a href="#" class="tag">shopping</a> <a href="#" class="tag">green</a> </li>
+    <li><a href="#" class="tag">environment</a> <a href="#" class="tag">fairtrade</a> </li>
+    <li><a href="#" class="tag">reference</a> <a href="#" class="tag">clothes</a> <a href="#" class="tag">design</a></li>
+  </ol>
 </div>
 
 <div id="feature_members_online" class="block">

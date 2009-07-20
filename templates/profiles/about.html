@@ -59,11 +59,11 @@
 	<dl>
 	  <dt>Skills:</dt>
 	  <dd class="tag_manager" id="skills">
-              <span class="tag_list">
+              <ul class="tag_list">
 		{% for s in skills %}
-		<span><a href="/plus_tags/tag/{{s.keyword}}/" class="tag option">{{s.keyword}}</a><a class="delete_tag" href="/plus_tags/Profile/{{profile.pk}}/delete/">X</a></span>
+		<li><a href="/plus_tags/tag/{{s.keyword}}/" class="tag option">{{s.keyword}}</a><a class="delete_tag" href="/plus_tags/Profile/{{profile.pk}}/delete/">X</a></li>
 		{% endfor %}
-	      </span>
+	      </ul>
               <span class="error_message"></span>
              <form method='post' class="add_tag_form" action='/plus_tags/add_tag/' >
 	       <input name="target_class" class="target_class" value="Profile" type="hidden" />
@@ -80,11 +80,11 @@
 	<dl>
 	  <dt>Needs:</dt>
 	  <dd class="tag_manager" id="needs">
-              <span class="tag_list">
+              <ul class="tag_list">
 		{% for s in needs %}
-		<span><a href="/plus_tags/tag/{{s.keyword}}/" class="tag option">{{s.keyword}}</a><a class="delete_tag" href="/plus_tags/Profile/{{profile.pk}}/delete/">X</a></span>
+		<li><a href="/plus_tags/tag/{{s.keyword}}/" class="tag option">{{s.keyword}}</a><a class="delete_tag" href="/plus_tags/Profile/{{profile.pk}}/delete/">X</a></li>
 		{% endfor %}
-	      </span>
+	      </ul>
               <span class="error_message"></span>
              <form method='post' class="add_tag_form" action=''>
                <input name="target_class" class="target_class" value="Profile" type="hidden" />
