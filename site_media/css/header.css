@@ -13,6 +13,7 @@
 #header h1 a {
 	color		: #fff;
 	display		: block;
+	line-height	: 1.5em;
 	padding-top	: 20px;
 }
 
@@ -41,7 +42,7 @@
 }
 
 #header #account_navigation li a {
-	color		: #fff;
+	color		: #ccc;
 	display		: block;
 	padding-top	: 10px;
 }
@@ -49,7 +50,7 @@
 #header #account_navigation li.active a,
 #header #account_navigation li a:hover {
 	background	: url('../images/account_nav_indicator.gif') 50% 0 no-repeat;
-	color		: #ddd;
+	color		: #fff;
 }
 
 
@@ -71,7 +72,7 @@
 }
 
 #header #main_navigation li a {
-	color		: #ffffff;
+	color		: #bbb;
 	display		: block;
 	padding-bottom	: 15px;
 }
@@ -79,5 +80,5 @@
 #header #main_navigation li.active a,
 #header #main_navigation li a:hover {
 	background	: url('../images/main_nav_indicator.gif') 50% 102% no-repeat;
-	color		: #ddd;
+	color		: #fff;
 }

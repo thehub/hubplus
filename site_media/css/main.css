@@ -7,13 +7,15 @@ HUB PLUS 2009
 /* Main Generic */
 
 #main h2 {
+	color		: #5a0000;
 	font-size	: 2.6em;
 	font-weight	: normal;
-	margin-bottom	: 25px;
+	line-height	: 1.1em;
+	margin-bottom	: 10px;
 }
 
 #main h3 {
-	font-size	: 1.1em;
+	font-size	: 1.0em;
 	padding-bottom	: .5em;
 	text-transform	: uppercase;
 }
@@ -29,6 +31,7 @@ HUB PLUS 2009
 #head_title {
 	font-size	: 1.5em; 
 }
+
 
 /* Divided lists */
 
@@ -232,6 +235,52 @@ HUB PLUS 2009
 	overflow	: hidden;
 }
 
+#resources a.active {
+	background	: #666;
+	color		: #fff;
+}
+
+
+/* Tags */
+
+.tag_list {
+	list-style	: none;
+	overflow	: hidden;
+}
+
+.tag_list li {
+	float		: left;
+	margin		: 0 3px 3px 0;
+}
+
+.tag_list a.tag {
+	background	: #eee url('../images/tag_grad.gif') 0 0 repeat-x;
+	border		: 1px solid #BBB;
+	border-color: #BBB #999 #999 #BBB;
+	display		: block;
+	float		: left;
+	padding		: 0 3px 2px;
+}
+
+.tag_list a.tag:hover {
+	background	: #5a0000;
+	border-color: #500000 #300000 #300000 #500000;
+	color		: #EEE;
+}
+
+.error_message {
+	color: #FF0000;
+}
+
+a.delete_tag {
+	color: #FF0000;
+}
+
+form.add_tag_form {
+	display: inline;
+}
+
+/*
 a.tag {
 	background	: #eee url('../images/tag_grad.gif') 0 0 repeat-x;
 	border		: 1px solid #BBB;
@@ -250,18 +299,7 @@ form.add_tag_form {
 .error_message {
 	color: #FF0000;
 }
-
-#resources a.active {
-	background	: #666;
-	color		: #fff;
-}
-
-
-
-
-
-
-
+*/
 
 
 
