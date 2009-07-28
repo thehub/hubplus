@@ -11,7 +11,7 @@
 <div id="intro" class="block">
   <div id="extra" class="block_column">
     
-    <div>{% avatar other_user 180 %}</div>
+    <div id="member_image">{% avatar other_user 180 %}</div>
     {% if is_me %}
     <a href="{% url avatar_change %}" id="avatar_replace">(replace)</a>
     {% endif %}
@@ -39,8 +39,8 @@
               <input name="target_class" class="target_class" value="Profile" type="hidden" />
               <input name="target_id" class="target_id" value="{{profile.pk}}" type="hidden" />
               <input name="tag_type" class="tag_type" value="interest" type="hidden" />
-              <input name="tag_value" class="tag_value" />
-              <input class="add_tag" type="submit" value="add an interest" />
+              <input name="tag_value" class="text tag_value" />
+              <input class="button add_tag" type="submit" value="Add" />
             </form>
           </dd>
 	</dl>

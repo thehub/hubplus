@@ -61,6 +61,12 @@ body {
 	padding		: 15px 0 10px;
 }
 
+#side_bar .block {
+	background	: #fff url('../images/block_header_right.gif') 0 0 repeat-x;
+	border-top	: 0;
+	padding-top	: 27px;
+}
+
 .disabled {
 	opacity:.4;
 }

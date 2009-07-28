@@ -37,14 +37,14 @@ HUB PLUS 2009
 
 .content_list,
 .link_list {
-	border-bottom	: 1px solid #DDD;
+	border-bottom	: 1px solid #ddd;
 	list-style	: none;
 	overflow	: hidden;
 }
 
 .content_list li,
 .link_list li {
-	border-top	: 1px solid #DDD;
+	border-top	: 1px solid #ddd;
 	padding		: 5px 0;
 	overflow	: hidden;
 }
@@ -81,7 +81,7 @@ HUB PLUS 2009
 }
 
 .section_tab_navigation li a {
-	background	: #FFF;
+	background	: #fff;
 	border		: 1px solid #000;
 	color		: #000;
 	display		: block;
@@ -91,7 +91,7 @@ HUB PLUS 2009
 
 .section_tab_navigation li a.active {
 	background	: #666;
-	color		: #FFF;
+	color		: #fff;
 }
 
 /* Block: Updates */
@@ -132,6 +132,11 @@ HUB PLUS 2009
 
 #intro #group_image {
 	width		: 200px;
+}
+
+#intro #member_image {
+	border		: 1px solid #ddd;
+	padding		: 10px;
 }
 
 #intro #extra {
@@ -257,8 +262,8 @@ HUB PLUS 2009
 .tag_list a.tag,
 .tag_list a.delete_tag {
 	background	: #eee url('../images/tag_bg.gif') 0 0 repeat-x;
-	border		: 1px solid #BBB;
-	border-color: #BBB #999 #999 #BBB;
+	border		: 1px solid #bbb;
+	border-color: #bbb #999 #999 #bbb;
 	display		: block;
 	float		: left;
 	padding		: 3px 3px 4px;
@@ -276,7 +281,7 @@ HUB PLUS 2009
 .tag_list a.tag:hover {
 	background	: #5a0000;
 	border-color: #500000 #300000 #300000 #500000;
-	color		: #EEE;
+	color		: #eee;
 }
 
 .tag_list a.delete_tag:hover {
@@ -288,14 +293,38 @@ HUB PLUS 2009
 	color: #FF0000;
 }
 
-form.add_tag_form {
-	display: inline;
+
+/* Forms & Buttons */
+
+.button {
+	background	: #e2e2e2 url('../images/button_bg.gif') 0 0 repeat-x;
+	border		: 1px solid #bbb;
+	border-color: #bbb #999 #999 #bbb;
+	cursor		: pointer;
+	padding		: 2px 5px 2px !important;	
+	text-transform	: uppercase;
+}
+
+.button::-moz-focus-inner {
+	padding		: 0;
+	border		: none;
+}
+
+.button:hover {
+	background	: #ccc;
+	border-color: #aaa #999 #aaa #999;
+}
+
+input.text{
+	background	: #fff url('../images/input_bg.gif') 0 0 repeat-x;
+	border		: 1px solid #999;
+	border-color: #777 #bbb #ddd #aaa;
+
+	padding		: 2px 3px;
 }
 
 
-
-
-/* Right Blocks: Members Online */
+/* Side Blocks: Members Online */
 
 #feature_members_online ul {
 	list-style	: none;
@@ -312,7 +341,7 @@ form.add_tag_form {
 }
 
 
-/* Right Blocks: My Hub */
+/* Side Blocks: My Hub */
 
 #feature_my_hub .hub_thumb {
 	float		: left;
