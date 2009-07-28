@@ -40,7 +40,7 @@ class ProfileViewer(Interface) :
         return 'Profile.Viewer'
 
 ProfileEmailAddressViewer = read_interface('email_address','Profile.EmailAddressViewer')
-ProfileHomeViewer = read_interface('home','Profile.EmailAddressViewer')
+ProfileHomeViewer = read_interface('home','Profile.HomeViewer')
 ProfileWorkViewer = read_interface('work','Profile.WorkViewer')
 ProfileMobileViewer = read_interface('mobile','Profile.MobileViewer')
 ProfileFaxViewer = read_interface('fax','Profile.FaxViewer')
@@ -81,7 +81,14 @@ class ProfilePermissionManager(PermissionManager) :
         interface_factory.add_interface(Profile,'Viewer',ProfileViewer)
         interface_factory.add_interface(Profile,'Editor',ProfileEditor)
         interface_factory.add_interface(Profile,'EmailAddressViewer',ProfileEmailAddressViewer)
+        interface_factory.add_interface(Profile,'HomeViewer',ProfileHomeViewer)
         interface_factory.add_interface(Profile,'WorkViewer',ProfileWorkViewer)
+        interface_factory.add_interface(Profile,'MobileViewer',ProfileMobileViewer)
+        interface_factory.add_interface(Profile,'FaxViewer',ProfileFaxViewer)
+
+        interface_factory.add_interface(Profile,'AddressViewer',ProfileAddressViewer)
+        interface_factory.add_interface(Profile,'SkypeViewer',ProfileSkypeViewer)
+
 
     def make_slider_options(self,resource,owner,creator) :
         options = [
@@ -106,7 +113,14 @@ class ProfilePermissionManager(PermissionManager) :
         slide = interfaces['Viewer'].make_slider_for(resource,options,owner,0)
         slide = interfaces['Editor'].make_slider_for(resource,options,owner,2)
         slide = interfaces['EmailAddressViewer'].make_slider_for(resource,options,owner,1)
-        slide = interfaces['WorkViewer'].make_slider_for(resource,options,owner,0)
+        slide = interfaces['HomeViewer'].make_slider_for(resource,options,owner,2)
+        slide = interfaces['WorkViewer'].make_slider_for(resource,options,owner,2)
+        slide = interfaces['MobileViewer'].make_slider_for(resource,options,owner,2)
+        slide = interfaces['FaxViewer'].make_slider_for(resource,options,owner,2)
+
+        slide = interfaces['AddressViewer'].make_slider_for(resource,options,owner,2)
+        slide = interfaces['SkypeViewer'].make_slider_for(resource,options,owner,1)
+
 
         #ipdb.set_trace()
 
@@ -124,7 +138,7 @@ def setup_default_permissions(sender,**kwargs):
     signal = kwargs['signal']
     
     ps = get_permission_system()
-
+    print "In setup_default_permissions"
     try :
         ps.get_permission_manager(Profile)
     except :

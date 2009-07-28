@@ -41,8 +41,6 @@ def get_tags(tagged=None, tag_type=None, tag_value=None, tagger=None, partial_ta
     tags.order_by('keyword')
     return tags
 
-
-
 def tag_add(tagged, tag_type, tag_value, tagger):
     existing_tag = get_tags(tagged, tag_type, tag_value, tagger)
 

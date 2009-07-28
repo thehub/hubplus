@@ -5,11 +5,18 @@
 {% load avatar_tags %}
 {% load app_plugins %}
 {% load uni_form %}
+{% load profile_tags %}
+{% load plus_tags %}
+{% load plus_permissions %}
 
 {% block body %}
 
 <div id="intro" class="block">
+
   <div id="extra" class="block_column">
+
+    <div id='permission_sliders'>
+    </div>
     
     <div>{% avatar other_user 180 %}</div>
     {% if is_me %}
@@ -46,6 +53,12 @@
 	</dl>
       </li>
       
+
+      <!-- li>
+	{ % plus_tag 'interest2' 'interests' profile.id profile.user.id % }
+	
+      </li -->
+
       <li>
 	<dl>
 	  <dt>{% trans "Groups" %} :</dt>

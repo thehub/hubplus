@@ -50,7 +50,7 @@ var tag_list = function (ele) {
     var target_id = manager.find('.target_id').val();
     var target_class = manager.find('.target_class').val();
 
-    console.log(tag_type+","+target_id+","+target_class);
+    //console.log(tag_type+","+target_id+","+target_class);
 
     var append_tag = function (data) {
 	if (data.added === false) {

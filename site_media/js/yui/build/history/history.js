@@ -803,3 +803,4 @@ YAHOO.util.History = (function () {
 
 YAHOO.register("history", YAHOO.util.History, {version: "2.7.0", build: "1799"});
 
+

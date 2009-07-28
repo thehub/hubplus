@@ -8,9 +8,13 @@
 	<dl>
 	  <dt >{% trans "A bit about me" %} :</dt>
 	  <dd class='editable' id='{{profile.edit_key}}about'>
+	    {% if profile.about %}
             {% autoescape off %} 
 	       {{profile.about}}
             {% endautoescape %}
+	    {% else %}
+	       About me
+	    {% endif %}
 	    </dd>
 	  <a href="#">more</a>
 	</dl>
@@ -19,35 +23,49 @@
 
     <h3>Contact</h3>
     <ul>
-      {% if profile.mobile %}
-      <li><dl><dt >Phone (Mobile):</dt><dd class='editable' id='{{profile.edit_key}}mobile'>{{profile.mobile}}</dd></dl></li>
-      {% endif %}
+ 
+      <li><dl><dt >Phone (Mobile):</dt><dd class='editable' id='{{profile.edit_key}}mobile'>
+	   {% if profile.mobile %}{{profile.mobile}}{% else %}My mobile{% endif %}
+      </dd></dl></li>
+ 
 
-      {% if profile.work %}
-      <li><dl><dt >Phone (Work):</dt><dd class='editable' id='{{profile.edit_key}}work'>{{profile.work}}</dd></dl></li>
-      {% endif %}
+ 
+      <li><dl><dt >Phone (Work):</dt><dd class='editable' id='{{profile.edit_key}}work'>
+	   {% if profile.work %} {{profile.work}}{% else %}My work phone{% endif %}
+      </dd></dl></li>
+ 
 
-      {% if profile.home %}
-      <li><dl><dt >Phone (Home):</dt><dd class='editable' id='{{profile.edit_key}}home'>{{profile.home}}</dd></dl></li>
-      {% endif %}
+ 
+      <li><dl><dt >Phone (Home):</dt><dd class='editable' id='{{profile.edit_key}}home'>
+	    {% if profile.home %}{{profile.home}}{% else %}My phone{% endif %}
+      </dd></dl></li>
+ 
 
-      {% if profile.fax %}
-      <li><dl><dt >Phone (Fax):</dt><dd class='editable' id='{{profile.edit_key}}fax'>{{profile.fax}}</dd></dl></li>
-      {% endif %}
+ 
+      <li><dl><dt >Phone (Fax):</dt><dd class='editable' id='{{profile.edit_key}}fax'>
+	    {% if profile.fax %}{{profile.fax}}{% else %}Fax{% endif %}
+      </dd></dl></li>
+ 
 
-      {% if profile.address %}
-      <li><dl><dt >Address:</dt><dd class='editable' id='{{profile.edit_key}}address'>{{profile.address}}</dd></dl></li>
-      {% endif %}
+ 
+      <li><dl><dt >Address:</dt><dd class='editable' id='{{profile.edit_key}}address'>
+	    {% if profile.address %}{{profile.address}}{% else %}My address{% endif %}
+      </dd></dl></li>
+ 
 
-      {% if profile.email_address %}
-      <li><dl><dt >Email:</dt><dd class='editable' id='{{profile.edit_key}}email_address'>{{profile.email_address}}</dd></dl></li>
-      {% endif %}
+ 
+      <li><dl><dt >Email:</dt><dd class='editable' id='{{profile.edit_key}}email_address'>
+	    {% if profile.email_address %}{{profile.email_address}}{% else %}My email{% endif %}
+      </dd></dl></li>
+ 
     </ul>
 
     <h3>Links</h3>
     <ul>
       <li><dl><dt >Website:</dt>
-	  <dd class='editable' id='{{profile.edit_key}}website'><a href="#"></a>{{profile.website}}</dd></dl>
+	  <dd class='editable' id='{{profile.edit_key}}website'><a href="#"></a>
+	    {% if profile.website %}{{profile.website}}{% else %}My site{% endif %}
+	</dd></dl>
       </li>
     </ul>
  
@@ -103,22 +121,22 @@
     
     <h3>Host Questions (Private)</h3>
     <ul>
-      <li><dl><dt>How did you find out about the Network?</dt>
+      <li><dl><dt>How did you find out about the Hub?</dt>
 	  <dd class='editable' id='{{host_info.edit_key}}find_out'>{{host_info.find_out}}</dd></dl>
       </li>
-      <li><dl><dt>What would you like to get from being involved with the network?</dt>
+      <li><dl><dt>What would you like to get from being a member?</dt>
 	  <dd class='editable' id='{{host_info.edit_key}}project_stage'>{{host_info.project_stage}}</dd></dl>
       </li>
       
-      <li><dl><dt>What's your aim for the next 6 months?</dt>
+      <li><dl><dt>What is your project?</dt>
 	  <dd class='editable' id='{{host_info.edit_key}}project'>{{host_info.project}}</dd></dl>
       </li>
- <!--     <li><dl><dt>What stage is your project at?:</dt>
+      <li><dl><dt>What stage is your project at?:</dt>
 	  <dd class='editable' id='{{host_info.edit_key}}project_stage'>{{host_info.project_stage}}</dd></dl>
       </li>
       <li><dl><dt>What assistence would you like to offer other members?</dt>
 	  <dd class='editable' id='{{host_info.edit_key}}assisstance_offered'>{{host_info.assistance_offered}}</dd></dl>
-      </li> -->
+      </li> 
     </ul>
     {% include "profiles/profile_host_info_form.html" %}
 </div>
