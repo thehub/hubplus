@@ -63,6 +63,8 @@ urlpatterns = patterns('',
     (r'^feeds/posts/(.*)/$', 'django.contrib.syndication.views.feed', blogs_feed_dict),
     (r'^feeds/bookmarks/(.*)/?$', 'django.contrib.syndication.views.feed', bookmarks_feed_dict),
 
+    (r'^testing/sliders/$', direct_to_template, {'template' : 'plus_permissions/tester.html'}),
+    (r'^testing/sliders/p$', direct_to_template, {'template' : 'plus_permissions/permissions.html'}), # temp
 
 )
 

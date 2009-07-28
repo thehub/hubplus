@@ -65,13 +65,12 @@ def profile(request, username, template_name="profiles/profile.html"):
     other_user = get_object_or_404(User, username=username)
     ps = get_permission_system()
 
-    try:
-        p = other_user.get_profile()
-    except Exception : 
-        other_user.save()
-        p = other_user.get_profile()
-        p.save()
+    other_user.save()
+    p = other_user.get_profile()
+    p.save()
 
+    if not ps.has_permissions(p) :
+        ps.get_permission_manager(Profile).setup_defaults(p,p.user,p.user)
 
     if request.user.is_authenticated():
 
@@ -214,7 +213,7 @@ def profile_field(request,username,classname,fieldname,*args,**kwargs) :
     ps = get_permission_system()
     p = other_user.get_profile()
     if not ps.has_access(request.user,p,ps.get_interface_id(Profile,'Editor')) :
-        return HttpResponse("You aren't authorized to access %s in %s for %s. You are %s" % (fieldname,kwargs['class'],username,request.user),status=401)
+        return HttpResponse("You aren't authorized to access %s in %s for %s. You are %s" % (fieldname,classname,username,request.user),status=401)
     else :
         if classname == 'Profile' :
             return one_model_field(request,p,ProfileForm,fieldname, kwargs.get('default', ''),[p.user])

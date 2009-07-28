@@ -15,3 +15,5 @@ def clear_search_url(request):
     else:
         return request.path
 register.simple_tag(clear_search_url)
+
+
