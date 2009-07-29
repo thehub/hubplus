@@ -68,31 +68,71 @@ HUB PLUS 2009
 
 /* Page Tab Content */
 
-.section_tab_navigation {
-	font-size	: 1.4em;
+.tabbed ul.tabbed_navigation {
+	background	: #fff url('../images/tabbed_nav_bg.gif') 0 100% repeat-x;
+	font-size	: 1.8em;
 	line-height	: 1.4em;
 	list-style	: none;
-	margin		: 0 0 -1px;
+	margin		: 0 0 1em;
 	overflow	: hidden;
+	padding		: 0;
 }
 
-.section_tab_navigation li {
+.tabbed ul.tabbed_navigation li {
 	float		: left;
+	margin		: 0 20px 0 0;
+	padding		: 0;
 }
 
-.section_tab_navigation li a {
-	background	: #fff;
-	border		: 1px solid #000;
-	color		: #000;
+.tabbed ul.tabbed_navigation li a {
+	color		: #999999;
 	display		: block;
-	margin-right: -1px;
-	padding		: 1px 10px;
+	margin		: 0;
+	padding		: 0 0 10px;
 }
 
-.section_tab_navigation li a.active {
-	background	: #666;
-	color		: #fff;
+
+.tabbed ul.tabbed_navigation li a:hover,
+.tabbed ul.tabbed_navigation li.selected a {
+	background	: url('../images/tabbed_nav_indicator.gif') 50% 100% no-repeat;
 }
+
+.tabbed ul.tabbed_navigation li.selected a {
+	color		: #5a0000;	
+}
+
+/*
+.tabbed ul.tabbed_navigation {
+	background	: #fff url('../images/tabbed_nav_bg.gif') 0 100% repeat-x;
+	font-size	: 1.8em;
+	line-height	: 1.4em;
+	list-style	: none;
+	margin		: 0 0 1em;
+	overflow	: hidden;
+	padding		: 0;
+}
+
+.tabbed ul.tabbed_navigation li {
+	float		: left;
+	margin		: 0 3px 0 0;
+	padding		: 0;
+}
+
+.tabbed ul.tabbed_navigation li a {
+	border		: 1px solid #ddd;
+	border-width: 1px 1px 0;
+	color		: #999999;
+	display		: block;
+	margin		: 0;
+	padding		: 3px 10px 1px;
+}
+
+.tabbed ul.tabbed_navigation li.selected a {
+	border-bottom	: 1px solid #fff;
+	color		: #5a0000;
+}
+*/
+
 
 /* Block: Updates */
 
