@@ -2,6 +2,8 @@ import unittest
 import datetime
 
 from django.db import models
+from django.contrib.contenttypes.models import ContentType
+from django.contrib.contenttypes import generic
 
 from django.contrib.auth.models import User
 try :
@@ -160,6 +162,38 @@ class TestPermissions(unittest.TestCase) :
 
         self.assertFalse(ps.has_access(u,blog,ps.get_interface_id(OurPost,'Viewer')))
 
+
+    def testTypeId(self) :
+        u = User(username='sara')
+        u.save()
+        p = u.get_profile()
+        p.save()
+        u = p.user
+        blog= OurPost(title='post')
+        blog.save()
+        ps = get_permission_system()
+        t = SecurityTag(name='type-test',agent=u,resource=blog,interface=ps.get_interface_id(OurPost,'Viewer'))
+        t.save()
+
+        resource_type = ContentType.objects.get_for_model(blog)
+
+        self.assertEquals(resource_type,t.get_resource_type())
+        self.assertEquals(blog.id,t.get_resource_id())
+        agent_type = ContentType.objects.get_for_model(u)
+
+        self.assertEquals(agent_type,t.get_agent_type())
+        self.assertEquals(u.id,t.get_agent_id())
+
+        objects = SecurityTag.objects.get_by_agent_and_resource_type_and_id(agent_type,u.id,resource_type,blog.id)
+        count = 0
+        for x in objects : count = count+1
+        self.assertEquals(count,1)
+        objects = SecurityTag.objects.get_by_agent_and_resource_type_and_id(agent_type,u.id,resource_type,blog.id)
+        self.assertEquals(objects[0].name,'type-test')
+        
+            
+            
+        
 
     def makeInterfaceFactory(self) :
         ps = PermissionSystem()

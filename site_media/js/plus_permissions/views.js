@@ -1,9 +1,12 @@
 
 	
 (function() {
-    var Event = YAHOO.util.Event;
+   var Event = YAHOO.util.Event;
     var Dom   = YAHOO.util.Dom;
     var lang  = YAHOO.lang;
+    var Y     = YAHOO.util.Selector;
+
+
     var on_slider_model_changed = new YAHOO.util.CustomEvent('slider_model_change');
     
     var valuearea="slider-value", textfield="slider-converted-value";
@@ -14,10 +17,11 @@
 	var bottom = (20 * (no_options-1));
 	var key_increment = 20;
 
-	alert('fff');
-	var slider = YAHOO.widget.Slider.getVertSlider(el_bg, el_thumb, top, bottom, step_size);
-	alert('ggg '+slider);
 
+	var slider = YAHOO.widget.Slider.getVertSlider(el_bg, el_thumb, top, bottom, step_size);
+
+	var match = jq('#'+slider.id);
+	
 	slider.setValue(init);
 	
 	var scale = Transform(top,bottom,0,no_options-2,1);
@@ -34,7 +38,6 @@
 	    });
 	
 	slider.callback = function(slider_model) {
-
 	    // this lets the slider_model call us back to update constraints
 	    $('#scratch2').html('model changed '+slider_model.title+" min: "+slider_model.get_limit());
 	}
@@ -50,25 +53,29 @@
        	return slider;
     }
  
+
+   Event.onDOMReady( function() {
+            options = ['Public','Plus Members','Hub Islington Members','Tech Team','Me'];
+
+
+            sg = SliderGroup({'title':'Permissions',
+		      'intro':'Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut',
+		      'options':['all','members','group','me'],
+		      'sliders':['read','write','execute'],
+		      'current':[0,3,3],
+		      'mins':[0,0,0],
+		      'constraints':[[0,1],[0,2]]
+	    });
+
+	    alert('AAA');
+	    h = sg.sliders_as_html('slider_group1',setup_YUI_slider);
+	    alert(h);
+            $('#inserted_table').html(h);
+	    alert('BBB');
+
+            sg.update_slider_ticks('slider_group1');
+            
+        });
     
-    Event.onDOMReady( function() {
-	options = ['Public','Plus Members','Hub Islington Members','Tech Team','Me'];
-	
-	sg = SliderGroup('Permissions','Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut ',
-	   [
-	    SliderModel('Read',options,0,0),
-	    SliderModel('Write',options,3,0),
-	    SliderModel('Publish',options,3,0),
-	    SliderModel('Manage',options,3,0),
-	    SliderModel('Other',options,2,2)
-	    ],[[0,1],[0,2]]);
-
-	$('#inserted_table').html('Hello World');
-	$('#inserted_table').html(sg.sliders_as_html('slider_group1',setup_YUI_slider));
-	$('#inserted_table').html('Good Bye');
-	sg.update_slider_ticks('slider_group1');
-
-
-	});
 
 })();

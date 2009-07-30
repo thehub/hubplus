@@ -222,6 +222,12 @@ def default_admin_for(resource) :
         return ds[0].agent
 
 
+class SecurityTagManager(models.Manager):
+    def get_by_agent_and_resource_type_and_id(self, agent_type, agent_id, resource_type, resource_id) :
+        return self.filter(agent_content_type=agent_type,
+                           agent_object_id=agent_id,
+                           resource_content_type=resource_type,
+                           resource_object_id=resource_id)
  
 class SecurityTag(models.Model) :
     name = models.CharField(max_length='50') 
@@ -235,12 +241,19 @@ class SecurityTag(models.Model) :
     resource_object_id = models.PositiveIntegerField()
     resource = generic.GenericForeignKey('resource_content_type', 'resource_object_id')
 
+    objects = SecurityTagManager()
+
     def all_named(self) : 
         return (x for x in SecurityTag.objects.all() if x.name == self.name)
 
     def has_access(self,agent,resource,interface) :
-        #ipdb.set_trace()
-        for x in (x for x in SecurityTag.objects.all() if x.resource == resource and x.interface == interface) :
+        # The following would be better, but for some reason, doesn't work
+        for x in SecurityTag.objects.get_by_agent_and_resource_type_and_id(
+            ContentType.objects.get_for_model(agent), agent.id, 
+            ContentType.objects.get_for_model(resource), resource.id).filter(interface=interface):
+        # so stick to this
+            print x
+        #for x in (x for x in SecurityTag.objects.all() if x.resource == resource and x.interface == interface) :
             if x.agent == get_permission_system().get_anon_group() : 
                 # in other words, if this resource is matched with anyone, we don't have to test that user is in the "anyone" group
                 return True
@@ -250,8 +263,23 @@ class SecurityTag(models.Model) :
                 return True
         return False
 
+
+    def get_resource_type(self) :
+        return ContentType.objects.get_for_model(self.resource)
+
+    def get_resource_id(self) :
+        return self.resource.id
+
+    def get_agent_type(self) :
+        return ContentType.objects.get_for_model(self.agent)
+    
+    def get_agent_id(self) :
+        return self.agent.id
+
     def __str__(self) :
         return """Agent : %s, Resource : %s, Interface : %s""" % (self.agent,self.resource,self.interface)
+
+
 
 
 _ONLY_INTERFACE_FACTORY = InterfaceFactory()

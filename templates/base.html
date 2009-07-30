@@ -70,8 +70,14 @@
       <script src="{{ MEDIA_URL }}js/yui/build/slider/slider-min.js"></script>
 
       <script src="{{ MEDIA_URL }}js/plus_libs/html.js"></script>
+      <script src="{{ MEDIA_URL }}js/plus_libs/utils.js"></script>
+
       <script src="{{ MEDIA_URL }}js/plus_permissions/models.js"></script>
       <script src="{{ MEDIA_URL }}js/plus_permissions/views.js"></script>    
+
+      <!-- Put your "on load" functions that fire it all off in here -->
+      <script src="{{ MEDIA_URL }}js/ready.js"></script>    
+
 	
       {% if LANGUAGE_BIDI %}
         <style type="text/css" media="screen">
@@ -85,7 +91,7 @@
       {% endblock %}
     </head>
     
-    <body>
+    <body >
       <iframe id="yui-history-iframe" src="assets/blank.html"></iframe> 
       <input id="yui-history-field" type="hidden"> 
       <div id='wrapper'>

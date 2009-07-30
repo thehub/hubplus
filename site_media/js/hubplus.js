@@ -103,11 +103,11 @@ var setup_tag_lists = function () {
 	tag_list(ele);
     });
 };
-var profile = function () {
+
+var profile_ready = function () {
     editing();
     setup_tag_lists();
     //jq.getJSON('map_tags/', {}, init_rgraph);
 };
-jq(document).ready(function () {
-    profile();
-});
+
+

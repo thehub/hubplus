@@ -90,7 +90,7 @@ function test_all(dom_element) {
 
     sm = SliderModel('read',options,0,0);
     sg = SliderGroup({'title':'Permissions',
-		      'description':'Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut',
+		      'intro':'Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut',
 		      'options':['all','members','group','me'],
 		      'sliders':['read','write','execute'],
 		      'current':[0,3,3],

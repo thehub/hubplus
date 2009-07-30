@@ -148,6 +148,13 @@ function SliderGroup(json) {
 	return this.sliders[0].get_length();
     }
 
+    o.new_current = function(json) {
+	xs=json['current'];
+	for (var i=0;i<xs.length;i++) {
+	    this.sliders[i].set_current_idx(xs[i]);
+	}
+    }
+
     o.slice = function(idx, label_col, is_first_row, make_slider_controller) {
 
 	var td_active   = function(x) { return "<td class='setting active'>"+x+"</td>"; }
@@ -166,6 +173,7 @@ function SliderGroup(json) {
 		    Yahoo_slider = make_slider_controller(slider,slider.labels,bg_name,slide_name,slider.get_current_idx());
 		    slider.add_observer(Yahoo_slider);
 		    this.Yahoo_sliders.push( Yahoo_slider );
+
 		}
 	    } else {
 		slider_div = '';
