@@ -247,13 +247,10 @@ class SecurityTag(models.Model) :
         return (x for x in SecurityTag.objects.all() if x.name == self.name)
 
     def has_access(self,agent,resource,interface) :
-        # The following would be better, but for some reason, doesn't work
-        for x in SecurityTag.objects.get_by_agent_and_resource_type_and_id(
-            ContentType.objects.get_for_model(agent), agent.id, 
-            ContentType.objects.get_for_model(resource), resource.id).filter(interface=interface):
-        # so stick to this
-            print x
-        #for x in (x for x in SecurityTag.objects.all() if x.resource == resource and x.interface == interface) :
+        # NB : we have to loop through this explicitly rather than use some kind of ORM filter
+        # because we're going to test our SecurityTag objects not just against THIS agent but 
+        # the groups which it belongs to.
+        for x in (x for x in SecurityTag.objects.all() if x.resource == resource and x.interface == interface) :
             if x.agent == get_permission_system().get_anon_group() : 
                 # in other words, if this resource is matched with anyone, we don't have to test that user is in the "anyone" group
                 return True
