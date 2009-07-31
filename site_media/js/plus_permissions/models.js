@@ -1,67 +1,33 @@
 
 
-function SliderModel(title, options, default_idx, min) {
+function SliderModel(id, init, min) {
     var o = Object();
-    o.title = title;
-    o.options = options;
-    o.current_idx = default_idx;
+    o.id = id;
+    o.current = init;
     o.min = min;
     o.observers = [];
 
-    o.get_length = function() {
-	return this.options.length;
+    o.get_current = function() {
+	return this.current;
     }
 
-    o.get_title = function() {
-        return this.title; 
-    }
- 
-    o.get_current_option = function() {
-	return this.options[this.get_current_idx()];
-    }
-
-    o.get_current_label = function() {
-	return (this.get_current_option())[0];
-    }
-
-    o.get_current_content_type = function() {
-	return (this.get_current_option())[1];
-    }
-
-    o.get_current_id = function() {
-	return (this.get_current_option())[2];
-    }
-
-    o.get_labels = function() {
-	var a=[];
-	for (var i=0;i<this.get_length();i++) {
-	    a.push(this.options[0]);
-	}
-	return a;
-    }
-
-    o.set_current_idx = function(idx) {
-	if (idx >= this.get_limit()) {
-	    this.current_idx = idx;
+    o.set_current = function(idx) {
+	if (idx >= this.min) {
+	    this.current = idx;
 	} else {
-	    this.current_idx = this.get_limit();
+	    this.current = this.min;
         }
 	this.changed();
-
     }
 
-    o.get_current_idx = function() {
-	return this.current_idx;
-    }
-
-    o.set_limit = function(limit) {
-	this.min = limit;
+    o.set_min = function(min) {
+	this.min = min;
+	if (this.current < this.min) { 
+	    this.set_current(this.min);
+	}
 	this.changed();
     }
 
-    o.get_limit = function() { 
-	return this.min;
-    }
 
     o.has_observers = function() {
         return (this.observers.length > 0);
@@ -79,7 +45,7 @@ function SliderModel(title, options, default_idx, min) {
     o.changed = function() {
 	for (var i=0;i<this.observers.length;i++) {
 	    try {
-		this.observers[i]['callback'];
+		//this.observers[i]['callback'];
 		this.observers[i].callback(this);
 	    } catch (e) {
 		// we don't care
@@ -92,7 +58,7 @@ function SliderModel(title, options, default_idx, min) {
     }
     
     o.callback = function(other) {
-	this.set_limit(other.get_current_idx());
+	this.set_min(other.get_current());
     }
 
     return o;
@@ -124,11 +90,21 @@ function joiner(sep) {
 }
 
 
+function copy_dict(keys,d1,d2) {
+    // copy the elements with keys from d1 to d2
+    for (var i=0;i<keys.length;i++) {
+	d2[keys[i]]=d1[keys[i]];
+    }
+
+}
+
 function SliderGroup(json) {
     // json format is
     //{'title':'a title',
     // 'intro':'a description',
-    // 'options':['options','on','the','sliders'],
+    // 'option_labels':['options','on','the','sliders'],
+    // 'option_types':[content_type, content_type, content_type, content_type],
+    // 'option_ids': [content_id, content_id, content_id, content_id],
     // 'sliders':['slider','names'],
     // 'current':[0,1,2], // current settings
     // 'mins':[0,0,0],    // minima for each slider
@@ -137,51 +113,37 @@ function SliderGroup(json) {
     // }
 
     var o = Object();
-    o.title = json['title'];
-    o.intro = json['intro'];
-    o.sliders = [];
+
+    copy_dict(['title','intro','option_labels','option_types','option_ids'],json,o);
+    o.titles = json['sliders'];
     
+    o.sliders = [];    
     for (var i=0;i<json['sliders'].length;i++) {
-	o.sliders.push(SliderModel(
-				   [json['option_labels'][i],json['option_types'][i],json['option_ids'][i]],
-				   json['options'],json['current'][i],json['mins'][i]));
+	s=SliderModel(i,json['current'][i],json['mins'][i]);
+	s.add_observer(o);
+	o.sliders.push(s);
     }
 
     o.constraints = json['constraints'];
     for (var i=0;i<o.constraints.length;i++) {
         c = o.constraints[i];
 	o.sliders[c[0]].add_observer(o.sliders[c[1]]);
-    }
-
-
-    o.labels = []
+    }    
 
     o.Yahoo_sliders=[];
-
-    o.slider_titles_as_array = function() {
-	var titles = [];
-	for (var i=0;i<this.sliders.length;i++) {
-	    titles.push(this.sliders[i].title);
-	}
-	return titles;
-    }
 
     o.get_width = function() {
 	return this.sliders.length;
     }
 
     o.get_length = function() {
-	return this.sliders[0].get_length();
-    }
-
-    o.get_label = function(i) {
-	return "XXX";
+	return this.option_labels.length;
     }
 
     o.new_current = function(json) {
 	xs=json['current'];
 	for (var i=0;i<xs.length;i++) {
-	    this.sliders[i].set_current_idx(xs[i]);
+	    this.sliders[i].set_current(xs[i]);
 	}
     }
 
@@ -193,14 +155,14 @@ function SliderGroup(json) {
 	var b=[label_col];
 	for (var i=0;i<this.sliders.length;i++) {
 	    slider = this.sliders[i];
-	    bg_name = slider.title+"-bg";
-	    slide_name = slider.title+"-slide";
+	    bg_name = this.titles[i]+"-bg";
+	    slide_name = this.titles[i]+"-slide";
 	    if (is_first_row) {
 		handle_img = "<img src='/site_media/images/slider_handle.gif' />";
 		handle_div = div({'id':slide_name,'class':'yui-slider-thumb'},handle_img);
 		slider_div = div({'id':bg_name,'class':'yui-v-slider','title':'Slider'},handle_div);
 		if (make_slider_controller) {
-		    Yahoo_slider = make_slider_controller(slider,slider.get_labels(),bg_name,slide_name,slider.get_current_idx());
+		    Yahoo_slider = make_slider_controller(slider,this.option_labels,bg_name,slide_name,slider.get_current());
 		    slider.add_observer(Yahoo_slider);
 		    this.Yahoo_sliders.push( Yahoo_slider );
 
@@ -219,18 +181,15 @@ function SliderGroup(json) {
 	header = h2(this.title);
 	intro = p(this.intro);
        
-     
-	titles = this.slider_titles_as_array();
-
 	var th =function(x) { return "<th class='attribute_column'>"+x+"</th>"; }
-	titles = "<th class='group_column'>Group</th>"+join(map(th,this.slider_titles_as_array()));
+	titles = "<th class='group_column'>Group</th>"+join(map(th,this.titles));
 
 	if (this.sliders.length == 0) { 
 	    t = table(tr(titles)); 
 	} else {
 	    b=[];
-	    for (var i=0;i<this.sliders[0].get_labels().length;i++) {
-		sl = this.slice(i,td({'class':'group_label'},this.get_label(i)),i==0,make_slider_controller);
+	    for (var i=0;i<this.option_labels.length;i++) {
+		sl = this.slice(i,td({'class':'group_label'},this.option_labels[i]),i==0,make_slider_controller);
 		b.push(join(sl));
 	    }
 	    t = table({'class':'permissions_slider','id':table_id},tr(titles)+join(map(tr,b)));
@@ -251,6 +210,32 @@ function SliderGroup(json) {
 	    step = height / (this.get_length()+1);
 	    thumb.setYConstraint(0,height,step);
 	}
+    }
+    
+   
+    o.get_current_option_id = function(idx) {
+	c = this.sliders[idx];
+	return c.get_current();
+    }
+
+    o.get_current_label = function(idx) {
+	c = this.sliders[idx];
+	return this.option_labels[c.get_current()];
+    }
+
+    o.get_current_type = function(idx) {
+	c = this.sliders[idx];
+	return this.option_types[c.get_current()];
+    }
+
+    o.get_current_id = function(idx) {
+	c = this.sliders[idx];
+	return this.option_ids[c.get_current()];
+    }
+
+
+    o.callback = function(slider) {
+	// now the SliderGroup observes all sliders to reset globally
     }
 
     return o;

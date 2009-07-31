@@ -35,6 +35,26 @@ function TestCase(report) {
     }
 
 
+    o.assertKey = function(e,d,k) {
+	try {
+	    x = d[k];
+	    return true;
+	} catch (e) {
+	    report("error "+e+" no key "+k);
+	    return false;
+	}
+    }
+
+    o.assertNotKey = function(e,d,k) {
+	try {
+	    x = d[k];
+	    report("error "+e+" has key "+k);
+	    return false;
+	} catch (e) {
+	    return true;
+	}
+    }
+
     o.assertStarts = function(e,match,s) {
 	if ( s.substr(0,match.length) == match) {
 	    return true; 

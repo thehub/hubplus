@@ -53,44 +53,56 @@ function test_scaling(ut) {
 }
 
 
-function test_sliders(ut) {
+function test_copy_dict(ut) {
+    var d1, d2;
+    d1 = {'a':1,'b':2,'c':3 };
+    d2 = {};
+    copy_dict(['a','b'],d1,d2);
+    ut.assertEquals('copy_dict1',1,d2['a']);
+    ut.assertEquals('copy_dict2',2,d2.b);
+    ut.assertEquals('copy_dict3',undefined,d2['c']);
+}
+    
+
+function test_slider(ut) {
     options = [['all',1,1],['members',1,2],['group',1,3],['me',2,1]];
 
-    sm = SliderModel('test',options,0,0);
+    sm = SliderModel(987,0,0);
 
-    ut.assertEquals('A','test',sm.get_title());
-    ut.assertEquals(0,4,sm.options.length);
-    ut.assertEquals(1,0,sm.current_idx);
-    ut.assertEquals(2,'all',sm.get_current_label());
-    ut.assertEquals(2.1,1,sm.get_current_content_type());
-    ut.assertEquals(2.2,1,sm.get_current_id());
-    sm.set_current_idx(1);
-    ut.assertEquals(3,1,sm.current_idx);
-    ut.assertEquals(4,'members',sm.get_current_label());
-    ut.assertEquals(4.1,1,sm.get_current_content_type());
-    ut.assertEquals(4.2,2,sm.get_current_id());
+    ut.assertEquals(0.5,987,sm.id);
 
-    ut.assertEqualArrays(4.5,['all','members','group','me'],sm.get_labels())
+    ut.assertEquals(1,0,sm.get_current());
 
-    ut.assertEquals(5,1,sm.get_current_idx());
-    sm.set_current_idx(-1);
-    ut.assertEquals(6,0,sm.get_current_idx());
+    sm.set_current(1);
+    ut.assertEquals(3,1,sm.get_current());
+
+    sm.set_current(-1);
+    ut.assertEquals(6,0,sm.get_current());
     
-    sm2 = SliderModel('test2',options,2,2);
-    ut.assertEquals(7,2,sm2.get_current_idx());
-    sm2.set_current_idx(3);
-    ut.assertEquals(8,3,sm2.get_current_idx());
-    sm2.set_current_idx(1);
-    
-    ut.assertEquals(9,2,sm2.get_current_idx());
+    sm2 = SliderModel(4334,2,2);
+    ut.assertEquals(7,2,sm2.get_current());
+    sm2.set_current(3);
+    ut.assertEquals(8,3,sm2.get_current());
 
-    sm2.set_limit(1);
-    sm2.set_current_idx(1);
-    ut.assertEquals(10,1,sm2.get_current_idx());
+    sm2.set_current(1);    
+    ut.assertEquals(9,2,sm2.get_current());
 
-    ut.assertFalse(sm2.has_observers());
+    sm2.set_min(1);
+    ut.assertEquals(99,1,sm2.min);
 
-    sm = SliderModel('read',options,0,0);
+    sm2.set_current(1);
+    ut.assertEquals(10,1,sm2.get_current());
+
+    ut.assertFalse(101,sm2.has_observers());
+
+    sm.set_min(0);
+    sm.set_current(1);
+    sm.set_min(2);
+    ut.assertEquals(1101,2,sm.get_current());
+}
+
+function test_slider_group(ut,element){
+
     sg = SliderGroup({'title':'Permissions',
 		      'intro':'Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut',
 		      'option_labels':['all','members','group','me'],
@@ -104,43 +116,58 @@ function test_sliders(ut) {
 
     ut.assertEquals(100,'Permissions',sg.title);
 
-    ut.assertEquals(10.1,3,sg.get_width());
-    ut.assertEquals(10.2,4,sg.get_length());
+    ut.assertEquals(101,3,sg.get_width());
+    ut.assertEquals(102,4,sg.get_length());
 
-    ut.assertEquals(11,3,sg.sliders.length);    
-    ut.assertEquals(12,2,sg.constraints.length);
+    ut.assertEquals(110,3,sg.sliders.length);    
+    ut.assertEquals(120,2,sg.constraints.length);
 
-    ut.assertEquals(13,'all',sg.get_label(0));
-    ut.assertEquals(13.1,'me',sg.get_label(3));
-
+    ut.assertEquals(130,'all',sg.option_labels[0]);
+    ut.assertEquals(131,'me',sg.option_labels[3]);
 
     sm = sg.sliders[0];
-    ut.assertTrue(14,sm.has_observers());
+    ut.assertTrue(140,sm.has_observers());
+
+    ut.assertEquals(145,sg,sm.get_observers()[0]);
 
     sm2 = sg.sliders[1];
-    ut.assertEquals(15,sm2,sm.get_observers()[0]);
-
+    ut.assertEquals(150,sm2,sm.get_observers()[1]);
     
     to = test_observer(sm);
     sm.add_observer(to);
-    ut.assertEquals(15.5,3,sm.get_observers().length);
+    ut.assertEquals(155,4,sm.get_observers().length);
 
-    sm.set_current_idx(2);
+    sm.set_current(2);
 
-    ut.assertTrue(16,to.flag);
-    ut.assertEquals(17,2,sm2.get_limit());
+    ut.assertTrue(160,to.flag);
+    
+    ut.assertEquals(170,2,sm2.min);
 
-    sm.set_current_idx(3);
-    ut.assertEquals(18,3,sm2.get_limit());
+    sm.set_current(3);
+    ut.assertEquals(180,3,sm2.min);
 
     html = sg.sliders_as_html('test_id',function(a,b,c) {});
 
-    ut.assertEqualArrays(20,['read','write','execute'],sg.slider_titles_as_array());
+ 
+    ut.assertEqualArrays(200,['read','write','execute'],sg.titles);
+  
+    ut.assertEqualArrays(210,[1,1,1,2],sg.option_types);
+    ut.assertEqualArrays(220,[1,2,3,1],sg.option_ids);
+    ut.assertEquals(300,3,sg.get_current_option_id(0));
+    ut.assertEquals(305,'me',sg.get_current_label(0));
+    ut.assertEquals(310,2,sg.get_current_type(0));
+    ut.assertEquals(320,1,sg.get_current_id(0));
 
     $('#element').html(html);
 
     //ut.assertStarts('xxxx',"<table class='permission_slider'><tr><th>",html);
 
+    
+    //ut.assertEquals(500,[{
+    //	'read':{'':},
+    //	    'write':{},
+    //		'execute':{}
+    //		}],sg.status_json());
     ut.report();
 
 }
@@ -152,5 +179,7 @@ function test_all(dom_element) {
     test_buffer(ut);
     test_higher_order(ut);
     test_scaling(ut);
-    test_sliders(ut,dom_element);
+    test_copy_dict(ut);
+    test_slider(ut);
+    test_slider_group(ut,dom_element);
 }
