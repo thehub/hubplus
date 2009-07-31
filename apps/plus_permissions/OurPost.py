@@ -19,6 +19,8 @@ class OurPost(models.Model) :
     def __str__(self) :
         return "OurPost %s,%s" % (self.title,self.body)
 
+
+
 # Here's the wrapping we have to put around it.
 
 class OurPostViewer(Interface) : 
@@ -73,6 +75,7 @@ class OurPostPermissionManager(PermissionManager) :
 
     def setup_defaults(self,resource, owner, creator) :
         options = self.make_slider_options(resource,owner,creator)
+        self.save_defaults(resource,owner,creator)
         interfaces = self.get_interfaces()
         s = interfaces['Viewer'].make_slider_for(resource,options,owner,0)
         s = interfaces['Editor'].make_slider_for(resource,options,owner,2)

@@ -6,6 +6,8 @@ from django.contrib.contenttypes import generic
 from django.contrib.auth.models import User
 from apps.hubspace_compatibility.models import TgGroup, Location
 
+import pickle
+
 import datetime
 import ipdb
 
@@ -59,6 +61,8 @@ class Interface :
         s.set_current_option(selected)
         return s
 
+
+
 class NullInterface :
     """
     Empty interface, wraps models in a shell, which only lets explicitly named properties through
@@ -69,6 +73,7 @@ class NullInterface :
         
         self.__dict__['_exceptions'] = [ # these always go through
             lambda x : x[0]=='_', # starts with _
+            lambda x : x=='id',
         ]
 
     def get_inner(self) :
@@ -248,8 +253,8 @@ class SecurityTag(models.Model) :
 
     def has_access(self,agent,resource,interface) :
         # NB : we have to loop through this explicitly rather than use some kind of ORM filter
-        # because we're going to test our SecurityTag objects not just against THIS agent but 
-        # the groups which it belongs to.
+        # because we're going to test our SecurityTag not just against THIS agent but 
+        # the groups which the agent belongs to.
         for x in (x for x in SecurityTag.objects.all() if x.resource == resource and x.interface == interface) :
             if x.agent == get_permission_system().get_anon_group() : 
                 # in other words, if this resource is matched with anyone, we don't have to test that user is in the "anyone" group
@@ -363,6 +368,29 @@ class UseSubclassException(Exception) :
         self.cls = cls
         self.msg = msg
 
+class PermissionSliderDefaults(models.Model) :
+    # we need to remember for any resource, who the owner and creators are
+    # for when we recreate the permission sliders
+    resource_content_type = models.ForeignKey(ContentType,related_name='permission_slider_resource')
+    resource_object_id = models.PositiveIntegerField()
+    resource = generic.GenericForeignKey('resource_content_type', 'resource_object_id')
+
+    owner_content_type = models.ForeignKey(ContentType,related_name='permission_slider_owner')
+    owner_object_id = models.PositiveIntegerField()
+    owner = generic.GenericForeignKey('owner_content_type', 'owner_object_id')
+
+    creator_content_type = models.ForeignKey(ContentType,related_name='permission_slider_creator')
+    creator_object_id = models.PositiveIntegerField()
+    creator = generic.GenericForeignKey('creator_content_type', 'creator_object_id')
+    
+class PermissionSliderDefaultException(Exception) :
+    def __init__(self,resource,request,msg) :
+        self.resource=resource
+        self.msg = msg
+    
+    def __str__(self):
+        return "%s (resource=%s)" % (self.msg,self.resource)
+
 class PermissionManager :
     def __init__(self,target_class) :
         self.target_class = target_class # what class does this manager provide permissions for
@@ -372,6 +400,50 @@ class PermissionManager :
 
     def get_interfaces(self) :
         return self.get_permission_system().get_interface_factory().get_type(self.target_class)
+
+    def save_defaults(self, resource, owner, creator) :
+        resource_type = ContentType.objects.get_for_model(resource)
+        owner_type = ContentType.objects.get_for_model(owner)
+        creator_type = ContentType.objects.get_for_model(creator)
+        psd,created = PermissionSliderDefaults.objects.get_or_create(
+            resource_content_type=resource_type,
+            owner_content_type=owner_type,
+            creator_content_type=creator_type,
+            resource_object_id=resource.id,
+            owner_object_id=owner.id,
+            creator_object_id=creator.id)
+        psd.save()
+
+
+    def get_defaults(self,resource,interface) :
+        resource_type = ContentType.objects.get_for_model(resource)
+        o= PermissionSliderDefaults.objects.get(resource_content_type=resource_type,resource_object_id=resource.id)
+        if not o :
+            raise PermissionSliderDefaultException(resource,'owner','no defaults could be found for this resource')
+        return o
+
+    def get_owner(self,resource,interface=None) :
+        return self.get_defaults(resource,interface).owner
+
+    def get_creator(self,resource,interface=None) :
+        return self.get_defaults(resource,interface).creator
+
+
+    def make_slider_group_from(self,title,intro,resource,interfaces) :
+        owner = self.get_owner(resource)
+        creator = self.get_creator(resource)
+        ps = self.get_permission_system()
+
+        options = self.make_slider_options(resource,owner,creator)
+        for tag in (t for t in ps.get_permissions_for(resource) if t.interface.split('.')[1] in interfaces) : 
+            print tag, options.index(tag.agent) 
+
+        sg = SliderGroup({'title':title,
+                         'intro':intro,
+                         'options':options,
+                         'sliders':interfaces}
+                         )
+        return sg
 
 
 class NoSliderException(Exception) :
@@ -456,3 +528,38 @@ class SliderOption :
         self.name = name
         self.agent = agent
 
+
+
+class FromJson :
+    def __init__(self,*args,**kwargs) :
+        x=args[0]
+        if x.__class__ == {}.__class__ :
+            for key,val in x.iteritems() :
+                setattr(self,key,val)
+        else :
+            for key,val in kwargs.iteritems():
+                setattr(self,key,val)
+    
+
+class SliderGroup(FromJson) :
+    # json format is
+    # {'title':'a title',
+    # 'intro':'a description',
+    # 'options':['options','on','the','sliders'],
+    # 'sliders':['slider','names'],
+    # 'current':[0,1,2], // current settings
+    # 'mins':[0,0,0],    // minima for each slider
+    # 'constraints':[[0,1],[0,2]] // pairs of dependencies, the second is constrained by the first
+
+    def as_json(self) :
+        return {
+            'title':self.title,
+            'intro':self.intro,
+            'options': [o.name for o in self.options],
+            'sliders': [s for s in self.sliders],
+            'current' : self.current,
+            'mins' : self.mins,
+            'constraints' : self.constraints
+            }
+
+        

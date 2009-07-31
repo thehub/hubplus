@@ -70,6 +70,7 @@ class TgGroupPermissionManager(PermissionManager) :
         return options
 
     def setup_defaults(self,resource, owner, creator) :
+        self.save_defaults(resource,owner,creator)
         print "AAA %s, %s, %s" % (resource,owner,creator)
         options = self.make_slider_options(resource,owner,creator)
         interfaces = self.get_interfaces()
