@@ -70,8 +70,8 @@ HUB PLUS 2009
 
 .tabbed ul.tabbed_navigation {
 	background	: #fff url('../images/tabbed_nav_bg.gif') 0 100% repeat-x;
-	font-size	: 1.8em;
-	line-height	: 1.4em;
+	font-size	: 1.6em;
+	line-height	: 1em;
 	list-style	: none;
 	margin		: 0 0 1em;
 	overflow	: hidden;
@@ -85,15 +85,16 @@ HUB PLUS 2009
 }
 
 .tabbed ul.tabbed_navigation li a {
-	color		: #999999;
+	color		: #999;
 	display		: block;
 	margin		: 0;
-	padding		: 0 0 10px;
+	padding		: 0 0 12px;
 }
 
 
 .tabbed ul.tabbed_navigation li a:hover,
 .tabbed ul.tabbed_navigation li.selected a {
+	color		: #777;
 	background	: url('../images/tabbed_nav_indicator.gif') 50% 100% no-repeat;
 }
 
@@ -101,35 +102,23 @@ HUB PLUS 2009
 	color		: #5a0000;	
 }
 
-/*
-.tabbed ul.tabbed_navigation {
-	background	: #fff url('../images/tabbed_nav_bg.gif') 0 100% repeat-x;
-	font-size	: 1.8em;
-	line-height	: 1.4em;
-	list-style	: none;
-	margin		: 0 0 1em;
-	overflow	: hidden;
-	padding		: 0;
-}
 
+/* Page Tab Content: Alternative */
+
+/*
 .tabbed ul.tabbed_navigation li {
-	float		: left;
 	margin		: 0 3px 0 0;
-	padding		: 0;
 }
 
 .tabbed ul.tabbed_navigation li a {
 	border		: 1px solid #ddd;
 	border-width: 1px 1px 0;
-	color		: #999999;
-	display		: block;
 	margin		: 0;
 	padding		: 3px 10px 1px;
 }
 
 .tabbed ul.tabbed_navigation li.selected a {
 	border-bottom	: 1px solid #fff;
-	color		: #5a0000;
 }
 */
 
@@ -186,7 +175,7 @@ HUB PLUS 2009
 
 #intro #info {
 	float		: left;
-	margin-right: 10px;
+	margin-left	: 10px;
 	width		: 388px;
 }
 
@@ -215,7 +204,7 @@ HUB PLUS 2009
 }
 
 
-/* Tag Block */
+/* Block: About */
 
 #about_block {
 	
@@ -301,9 +290,9 @@ HUB PLUS 2009
 
 .tag_list a.tag,
 .tag_list a.delete_tag {
-	background	: #eee url('../images/tag_bg.gif') 0 0 repeat-x;
+	background	: #f5f5f5 url('../images/tag_bg.gif') 0 0 repeat-x;
 	border		: 1px solid #bbb;
-	border-color: #bbb #999 #999 #bbb;
+	border-color: #ddd #bbb #bbb #ddd;
 	display		: block;
 	float		: left;
 	padding		: 3px 3px 4px;
@@ -336,18 +325,27 @@ HUB PLUS 2009
 
 /* Forms & Buttons */
 
+input.text{
+	background	: #fff url('../images/input_bg.gif') 0 0 repeat-x;
+	border		: 1px solid #999;
+	border-color: #777 #bbb #ddd #aaa;
+	padding		: 2px 3px;
+	margin-bottom	: 3px;
+}
+
 .button {
 	background	: #e2e2e2 url('../images/button_bg.gif') 0 0 repeat-x;
 	border		: 1px solid #bbb;
 	border-color: #bbb #999 #999 #bbb;
 	cursor		: pointer;
+	margin-bottom	: 3px;
 	padding		: 2px 5px 2px !important;	
 	text-transform	: uppercase;
 }
 
 .button::-moz-focus-inner {
-	padding		: 0;
 	border		: none;
+	padding		: 0;
 }
 
 .button:hover {
@@ -355,13 +353,7 @@ HUB PLUS 2009
 	border-color: #aaa #999 #aaa #999;
 }
 
-input.text{
-	background	: #fff url('../images/input_bg.gif') 0 0 repeat-x;
-	border		: 1px solid #999;
-	border-color: #777 #bbb #ddd #aaa;
 
-	padding		: 2px 3px;
-}
 
 
 /* Side Blocks: Members Online */
