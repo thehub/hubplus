@@ -66,8 +66,8 @@ class TgGroupPermissionManager(PermissionManager) :
         print options
         print interfaces 
 
-        slide = interfaces['Viewer'].make_slider_for(resource,options,owner,0)
-        slide = interfaces['Editor'].make_slider_for(resource,options,owner,2)
+        slide = interfaces['Viewer'].make_slider_for(resource,options,owner,0,creator)
+        slide = interfaces['Editor'].make_slider_for(resource,options,owner,2,creator)
 
         #ipdb.set_trace()
 
