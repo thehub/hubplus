@@ -129,7 +129,6 @@ class Location(models.Model):
 
 try :
   class TgGroup(models.Model):
-    #id = models.IntegerField(primary_key=True)
     group_name = models.CharField(unique=True, max_length=40)
     display_name = models.CharField(max_length=255)
     created = models.DateTimeField()

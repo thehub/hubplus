@@ -1,23 +1,43 @@
 
 
-function SliderModel(title, labels, default_idx, min) {
+function SliderModel(title, options, default_idx, min) {
     var o = Object();
     o.title = title;
-    o.labels = labels;
+    o.options = options;
     o.current_idx = default_idx;
     o.min = min;
     o.observers = [];
 
     o.get_length = function() {
-	return this.labels.length;
+	return this.options.length;
     }
 
     o.get_title = function() {
         return this.title; 
     }
+ 
+    o.get_current_option = function() {
+	return this.options[this.get_current_idx()];
+    }
 
     o.get_current_label = function() {
-	return this.labels[this.get_current_idx()];
+	return (this.get_current_option())[0];
+    }
+
+    o.get_current_content_type = function() {
+	return (this.get_current_option())[1];
+    }
+
+    o.get_current_id = function() {
+	return (this.get_current_option())[2];
+    }
+
+    o.get_labels = function() {
+	var a=[];
+	for (var i=0;i<this.get_length();i++) {
+	    a.push(this.options[0]);
+	}
+	return a;
     }
 
     o.set_current_idx = function(idx) {
@@ -122,7 +142,9 @@ function SliderGroup(json) {
     o.sliders = [];
     
     for (var i=0;i<json['sliders'].length;i++) {
-	o.sliders.push(SliderModel(json['sliders'][i],json['options'],json['current'][i],json['mins'][i]));
+	o.sliders.push(SliderModel(
+				   [json['option_labels'][i],json['option_types'][i],json['option_ids'][i]],
+				   json['options'],json['current'][i],json['mins'][i]));
     }
 
     o.constraints = json['constraints'];
@@ -130,6 +152,10 @@ function SliderGroup(json) {
         c = o.constraints[i];
 	o.sliders[c[0]].add_observer(o.sliders[c[1]]);
     }
+
+
+    o.labels = []
+
     o.Yahoo_sliders=[];
 
     o.slider_titles_as_array = function() {
@@ -146,6 +172,10 @@ function SliderGroup(json) {
 
     o.get_length = function() {
 	return this.sliders[0].get_length();
+    }
+
+    o.get_label = function(i) {
+	return "XXX";
     }
 
     o.new_current = function(json) {
@@ -170,7 +200,7 @@ function SliderGroup(json) {
 		handle_div = div({'id':slide_name,'class':'yui-slider-thumb'},handle_img);
 		slider_div = div({'id':bg_name,'class':'yui-v-slider','title':'Slider'},handle_div);
 		if (make_slider_controller) {
-		    Yahoo_slider = make_slider_controller(slider,slider.labels,bg_name,slide_name,slider.get_current_idx());
+		    Yahoo_slider = make_slider_controller(slider,slider.get_labels(),bg_name,slide_name,slider.get_current_idx());
 		    slider.add_observer(Yahoo_slider);
 		    this.Yahoo_sliders.push( Yahoo_slider );
 
@@ -199,8 +229,8 @@ function SliderGroup(json) {
 	    t = table(tr(titles)); 
 	} else {
 	    b=[];
-	    for (var i=0;i<this.sliders[0].labels.length;i++) {
-		sl = this.slice(i,td({'class':'group_label'},this.sliders[0].labels[i]),i==0,make_slider_controller);
+	    for (var i=0;i<this.sliders[0].get_labels().length;i++) {
+		sl = this.slice(i,td({'class':'group_label'},this.get_label(i)),i==0,make_slider_controller);
 		b.push(join(sl));
 	    }
 	    t = table({'class':'permissions_slider','id':table_id},tr(titles)+join(map(tr,b)));

@@ -191,6 +191,7 @@ class TestPermissions(unittest.TestCase) :
         objects = SecurityTag.objects.get_by_agent_and_resource_type_and_id(agent_type,u.id,resource_type,blog.id)
         self.assertEquals(objects[0].name,'type-test')
         
+        
             
             
         
@@ -231,6 +232,7 @@ class TestPermissions(unittest.TestCase) :
         class BodyViewer(Interface) :
             body = InterfaceReadProperty('body')
 
+        
         blog.add_interface(BodyViewer)
         self.assertEquals(blog.body,"Here's what")
         self.assertRaises(PlusPermissionsNoAccessException,f,blog)
@@ -357,6 +359,7 @@ class TestPermissions(unittest.TestCase) :
         self.assertTrue(ps.has_access(adminGroup,blog,tif.get_id(OurPost,'Viewer')))
 
 
+
     def testProfileSignals(self) :
         from Profile import *
         u = User(username='jesson',email='',password='abc')
@@ -421,3 +424,44 @@ class TestPermissions(unittest.TestCase) :
 
         
 
+    def testSliderGroup(self) :
+        u= User(username='paulo')
+        u.save()
+        p = u.get_profile()
+        u = p.user
+        
+        ps = PermissionSystem()
+
+        l = Location(name='biosphere2')
+        l.save()
+
+        group = TgGroup(group_name='organiccooks',display_name='Organic Cooks', place=l,created=datetime.date.today())
+        group.save()
+        adminGroup = TgGroup(group_name='ocadmin', display_name='Organic Cook Admin', place=l,created=datetime.date.today())
+        adminGroup.save()
+        da = DefaultAdmin(agent=adminGroup,resource=group)
+        da.save()
+        blog = OurPost(title='slider testing')
+        blog.save()
+
+
+        pm = ps.get_permission_manager(OurPost)
+        pm.setup_defaults(blog,group,u)
+
+        # our permission manager, when it makes the sliders, needs to be able to report the default owner and admins etc.
+        self.assertEquals(pm.get_owner(blog,ps.get_interface_id(OurPost,'Viewer')),group)
+        self.assertEquals(pm.get_creator(blog,ps.get_interface_id(OurPost,'Viewer')),u)
+        
+        sg = pm.make_slider_group_from('title','intro',blog,['Viewer','Editor'])
+        json = sg.as_json()
+        print json
+        
+
+    def testJson(self) :
+        x = FromJson(False,a=1,b=2)
+        self.assertEquals(x.b,2)
+        y = FromJson({'a':3,'b':3})
+        self.assertEquals(y.b,3)
+        
+        
+        

@@ -103,12 +103,10 @@ class ProfilePermissionManager(PermissionManager) :
         return options
 
     def setup_defaults(self,resource, owner, creator) :
-        print "AAA %s, %s, %s" % (resource,owner,creator)
         options = self.make_slider_options(resource,owner,creator)
+        self.save_defaults(resource,owner,creator)
+
         interfaces = self.get_interfaces()
-        print "BBB"
-        print options
-        print interfaces 
 
         slide = interfaces['Viewer'].make_slider_for(resource,options,owner,0)
         slide = interfaces['Editor'].make_slider_for(resource,options,owner,2)
@@ -121,7 +119,7 @@ class ProfilePermissionManager(PermissionManager) :
         slide = interfaces['AddressViewer'].make_slider_for(resource,options,owner,2)
         slide = interfaces['SkypeViewer'].make_slider_for(resource,options,owner,1)
 
-
+        
         #ipdb.set_trace()
 
 

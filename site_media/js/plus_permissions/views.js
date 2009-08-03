@@ -67,11 +67,8 @@
 		      'constraints':[[0,1],[0,2]]
 	    });
 
-	    alert('AAA');
 	    h = sg.sliders_as_html('slider_group1',setup_YUI_slider);
-	    alert(h);
             $('#inserted_table').html(h);
-	    alert('BBB');
 
             sg.update_slider_ticks('slider_group1');
             

@@ -52,24 +52,26 @@ function test_scaling(ut) {
     ut.assertEquals('scale 4',100,unscale(10));
 }
 
-function test_all(dom_element) {
-    ut = TestCase(writer);
 
-    options = ['all','members','group','me'];
-
-    test_buffer(ut);
-    test_higher_order(ut);
-    test_scaling(ut);
-
+function test_sliders(ut) {
+    options = [['all',1,1],['members',1,2],['group',1,3],['me',2,1]];
 
     sm = SliderModel('test',options,0,0);
+
     ut.assertEquals('A','test',sm.get_title());
-    ut.assertEquals(0,4,sm.labels.length);
+    ut.assertEquals(0,4,sm.options.length);
     ut.assertEquals(1,0,sm.current_idx);
     ut.assertEquals(2,'all',sm.get_current_label());
+    ut.assertEquals(2.1,1,sm.get_current_content_type());
+    ut.assertEquals(2.2,1,sm.get_current_id());
     sm.set_current_idx(1);
     ut.assertEquals(3,1,sm.current_idx);
     ut.assertEquals(4,'members',sm.get_current_label());
+    ut.assertEquals(4.1,1,sm.get_current_content_type());
+    ut.assertEquals(4.2,2,sm.get_current_id());
+
+    ut.assertEqualArrays(4.5,['all','members','group','me'],sm.get_labels())
+
     ut.assertEquals(5,1,sm.get_current_idx());
     sm.set_current_idx(-1);
     ut.assertEquals(6,0,sm.get_current_idx());
@@ -91,7 +93,9 @@ function test_all(dom_element) {
     sm = SliderModel('read',options,0,0);
     sg = SliderGroup({'title':'Permissions',
 		      'intro':'Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut',
-		      'options':['all','members','group','me'],
+		      'option_labels':['all','members','group','me'],
+		      'option_types':[1,1,1,2],
+		      'option_ids':[1,2,3,1],
 		      'sliders':['read','write','execute'],
 		      'current':[0,3,3],
 		      'mins':[0,0,0],
@@ -100,18 +104,22 @@ function test_all(dom_element) {
 
     ut.assertEquals(100,'Permissions',sg.title);
 
-
     ut.assertEquals(10.1,3,sg.get_width());
     ut.assertEquals(10.2,4,sg.get_length());
 
     ut.assertEquals(11,3,sg.sliders.length);    
     ut.assertEquals(12,2,sg.constraints.length);
 
+    ut.assertEquals(13,'all',sg.get_label(0));
+    ut.assertEquals(13.1,'me',sg.get_label(3));
+
+
     sm = sg.sliders[0];
     ut.assertTrue(14,sm.has_observers());
 
     sm2 = sg.sliders[1];
     ut.assertEquals(15,sm2,sm.get_observers()[0]);
+
     
     to = test_observer(sm);
     sm.add_observer(to);
@@ -138,3 +146,11 @@ function test_all(dom_element) {
 }
 
 
+function test_all(dom_element) {
+    ut = TestCase(writer);
+
+    test_buffer(ut);
+    test_higher_order(ut);
+    test_scaling(ut);
+    test_sliders(ut,dom_element);
+}
