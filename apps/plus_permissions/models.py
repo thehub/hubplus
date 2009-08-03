@@ -7,6 +7,7 @@ from django.contrib.auth.models import User
 from apps.hubspace_compatibility.models import TgGroup, Location
 
 import pickle
+import simplejson
 
 import datetime
 import ipdb
@@ -50,12 +51,13 @@ class Interface :
         raise UseSubclassException(Interface,'You need a subclass of Interface that implements its get_id')
         
     @classmethod
-    def make_slider_for(cls,resource,options,default_agent,selected) :
+    def make_slider_for(cls,resource,options,default_agent,selected,creator) :
         s = Slider(
             tag_name='%s slider'%cls.__name__,
             resource=resource,
             interface_id=cls.get_id(),
             default_agent=default_agent,
+            creator=creator,
             options=options
         )
         s.set_current_option(selected)
@@ -224,7 +226,7 @@ def default_admin_for(resource) :
     if len(ds) < 1 : 
         return None
     else :
-        return ds[0].agent
+        return ds[0].agentContentType.objects.get_for_model
 
 
 class SecurityTagManager(models.Manager):
@@ -233,7 +235,26 @@ class SecurityTagManager(models.Manager):
                            agent_object_id=agent_id,
                            resource_content_type=resource_type,
                            resource_object_id=resource_id)
+
  
+
+    def is_in(self,options,agent) :
+        a_type = ContentType.objects.get_for_model(agent)
+        for (typ,id) in options :
+            if typ == a_type and agent.id==id :
+                return True
+
+    def agent_list_filter(self,options,**kwargs) :
+        return (t for t in self.filter(**kwargs) if self.is_in(options, t.agent))
+
+
+    def kill_list(self,kill_list,resource_type, resource_id,interface) :
+        for t in self.filter(interface=interface,resource_content_type=resource_type,resource_object_id=resource_id) :
+            for (typ,id) in kill_list :
+                if t.agent_content_type == typ and t.agent_object_id == id :
+                    t.delete()
+
+
 class SecurityTag(models.Model) :
     name = models.CharField(max_length='50') 
     agent_content_type = models.ForeignKey(ContentType,related_name='security_tag_agent')
@@ -245,6 +266,11 @@ class SecurityTag(models.Model) :
     resource_content_type = models.ForeignKey(ContentType,related_name='security_tag_resource')
     resource_object_id = models.PositiveIntegerField()
     resource = generic.GenericForeignKey('resource_content_type', 'resource_object_id')
+
+    creator_content_type = models.ForeignKey(ContentType,related_name='security_tag_creator')
+    creator_object_id = models.PositiveIntegerField()
+    creator = generic.GenericForeignKey('creator_content_type', 'creator_object_id')
+
 
     objects = SecurityTagManager()
 
@@ -316,7 +342,7 @@ class PermissionSystem :
 
 
     def get_permissions_for(self,resource) :
-        return (x for x in SecurityTag.objects.all() if x.resource == strip(resource))
+        return (x for x in SecurityTag.objects.filter(resource_object_id=resource.id) if x.resource == strip(resource))
 
     def has_permissions(self,resource) :
         return len(set(self.get_permissions_for(resource))) > 0 
@@ -401,6 +427,23 @@ class PermissionManager :
     def get_interfaces(self) :
         return self.get_permission_system().get_interface_factory().get_type(self.target_class)
 
+
+    def make_slider_options(self,resource,owner,creator) :
+        options = [
+            SliderOption('root',get_permission_system().get_anon_group()),
+            SliderOption('all_members',get_permission_system().get_all_members_group()),
+            SliderOption('%s (owner)' % owner.display_name,owner),
+            SliderOption('%s (creator)' % creator.display_name,creator)
+        ]
+
+        default_admin = default_admin_for(owner)
+
+        if not default_admin is None :
+            options.append( SliderOption(default_admin.display_name,default_admin) )
+
+        return options
+
+
     def save_defaults(self, resource, owner, creator) :
         resource_type = ContentType.objects.get_for_model(resource)
         owner_type = ContentType.objects.get_for_model(owner)
@@ -417,10 +460,10 @@ class PermissionManager :
 
     def get_defaults(self,resource,interface) :
         resource_type = ContentType.objects.get_for_model(resource)
-        o= PermissionSliderDefaults.objects.get(resource_content_type=resource_type,resource_object_id=resource.id)
-        if not o :
+        try :
+            return PermissionSliderDefaults.objects.get(resource_content_type=resource_type,resource_object_id=resource.id)
+        except :
             raise PermissionSliderDefaultException(resource,'owner','no defaults could be found for this resource')
-        return o
 
     def get_owner(self,resource,interface=None) :
         return self.get_defaults(resource,interface).owner
@@ -429,21 +472,60 @@ class PermissionManager :
         return self.get_defaults(resource,interface).creator
 
 
-    def make_slider_group_from(self,title,intro,resource,interfaces) :
+    def json_slider_group(self, title, intro, resource, interfaces, mins, constraints) :
         owner = self.get_owner(resource)
         creator = self.get_creator(resource)
         ps = self.get_permission_system()
 
-        options = self.make_slider_options(resource,owner,creator)
-        for tag in (t for t in ps.get_permissions_for(resource) if t.interface.split('.')[1] in interfaces) : 
-            print tag, options.index(tag.agent) 
+        group_type = ContentType.objects.get_for_model(ps.get_anon_group())
 
-        sg = SliderGroup({'title':title,
-                         'intro':intro,
-                         'options':options,
-                         'sliders':interfaces}
-                         )
-        return sg
+        options = self.make_slider_options(resource,owner,creator)
+
+        option_labels = [o.name for o in options]
+        option_types = [ContentType.objects.get_for_model(o.agent) for o in options]
+        option_ids = [o.agent.id for o in options]
+
+        resource_type = ContentType.objects.get_for_model(resource)
+        json = {
+          'title':title,
+          'intro':intro,
+          'resource_id':resource.id,
+          'resource_type':resource_type.id,
+          'option_labels':option_labels,
+          'option_types':[type.id for type in option_types],
+          'option_ids':option_ids,
+          'sliders':interfaces,
+          'interface_ids':[ps.get_interface_id(resource.__class__,i) for i in interfaces],
+          'mins':mins,
+          'constraints':constraints,
+          'extras': {} # use for non-slider permissions
+          }
+
+
+        current=[]
+        for i in json['interface_ids'] :
+            for s in SecurityTag.objects.filter(interface=i,resource_content_type=resource_type,resource_object_id=resource.id) :
+                if s.agent in [o.agent for o in options] :
+                    # we've found a SecurityTag which maps one of the agents on the slider, therefore 
+                    # it's THIS agent which is the official slider setting
+                    # map from this agent to position on the slider
+                    j=0
+                    agent_type = ContentType.objects.get_for_model(s.agent)
+                    for (typ,ids) in zip(option_types,option_ids) :
+                        if (typ==agent_type and ids==s.agent.id) :
+                            current.append(j)
+                            break
+                        j=j+1            
+
+        json['current'] = current
+        return simplejson.dumps({'sliders':json})
+
+    def update_permissions_from_slider_group(self, group) :
+        for interface_id,val in group.iteritems() :
+            resource_type,resource_id,agent_type,agent_id = val.split(',')
+            #resource = ContentType.objects.get(model=)
+            #s = Slider('created by plus_permissions.models.update_permissions_from_slider_group',
+            #           resource,interface_id,default_agent,options=[]
 
 
 class NoSliderException(Exception) :
@@ -475,11 +557,12 @@ class Slider :
     
     """
 
-    def __init__(self, tag_name, resource,interface_id,default_agent,options=[]) :
+    def __init__(self, tag_name, resource,interface_id,default_agent,creator,options=[],) :
         self.resource = resource
         self.interface_id = interface_id
         self.options = options
         self.tag_name = tag_name
+        self.creator = creator
 
         # start with the default agent
         try :
@@ -519,7 +602,7 @@ class Slider :
         self.current_idx=idx
         _ONLY_PERMISSION_SYSTEM.delete_access(self.agent,self.resource,self.interface_id)
         self.agent = self.options[self.current_idx].agent
-        t = SecurityTag(name=self.tag_name,agent=self.agent,resource=self.resource,interface=self.interface_id)
+        t = SecurityTag(name=self.tag_name,agent=self.agent,resource=self.resource,interface=self.interface_id, creator=self.creator)
         t.save()
 
 
@@ -529,37 +612,3 @@ class SliderOption :
         self.agent = agent
 
 
-
-class FromJson :
-    def __init__(self,*args,**kwargs) :
-        x=args[0]
-        if x.__class__ == {}.__class__ :
-            for key,val in x.iteritems() :
-                setattr(self,key,val)
-        else :
-            for key,val in kwargs.iteritems():
-                setattr(self,key,val)
-    
-
-class SliderGroup(FromJson) :
-    # json format is
-    # {'title':'a title',
-    # 'intro':'a description',
-    # 'options':['options','on','the','sliders'],
-    # 'sliders':['slider','names'],
-    # 'current':[0,1,2], // current settings
-    # 'mins':[0,0,0],    // minima for each slider
-    # 'constraints':[[0,1],[0,2]] // pairs of dependencies, the second is constrained by the first
-
-    def as_json(self) :
-        return {
-            'title':self.title,
-            'intro':self.intro,
-            'options': [o.name for o in self.options],
-            'sliders': [s for s in self.sliders],
-            'current' : self.current,
-            'mins' : self.mins,
-            'constraints' : self.constraints
-            }
-
-        

@@ -96,11 +96,14 @@
       <input id="yui-history-field" type="hidden"> 
       <div id='wrapper'>
 	
+
 	<!-- header -->
 	{% block header %}{% endblock %}
 	<!-- main -->
 	<div id='main'>
           {% block main %}
+	  <div id='permission_sliders'></div>
+      
 	  <h2>{{head_title}}</h2>
 	  <p class='disabled'>{{head_title_status}} - <span class="label_time">{{head_title_status.time}}</span></p>
 	  

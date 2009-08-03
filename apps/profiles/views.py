@@ -16,8 +16,6 @@ from microblogging.models import Following
 
 from apps.plus_permissions.Profile import *  # Essential to get signals working at the moment.
 from profiles.models import Profile, HostInfo
-  
-
 from profiles.forms import ProfileForm, HostInfoForm
 
 from avatar.templatetags.avatar_tags import avatar
@@ -28,6 +26,8 @@ from apps.plus_permissions.models import PermissionSystem, get_permission_system
 from django.contrib.auth.decorators import login_required
 
 from apps.plus_tags.models import  tag_add, tag_delete, get_tags, tag_autocomplete
+
+from django.contrib.contenttypes.models import ContentType
 
 
 # need 
@@ -243,4 +243,61 @@ def one_model_field(request, object, formClass, fieldname, default, other_object
     new_val = new_val and new_val or default
     return HttpResponse("%s" % new_val, mimetype='text/plain')
 
+@login_required
+def get_main_permission_sliders(request,username) :
+    ps = get_permission_system()
+    pm = ps.get_permission_manager(Profile)
+    p = request.user.get_profile()
+    json = pm.main_json_slider_group(p)
+    print json
+    return HttpResponse(json, mimetype='text/plain')
 
+@login_required
+def update_main_permission_sliders(request,username) :
+    ps = get_permission_system()
+    pm = ps.get_permission_manager(Profile)
+
+    p = request.user.get_profile()
+    post = request.POST
+
+    print post
+
+    kill = post['kill']
+    print kill.__class__
+    for x in kill :
+        print x
+        print x.__class__
+    kill = [x.split(',') for x in kill]
+    print 'kill-list %s' % kill
+
+    resource_type = post['resource_type']
+    resource_id = post['resource_id']
+
+    print 'resource %s (type) %s (id)' % (resource_type, resource_id)
+
+    r_type = ContentType.objects.get_for_id(resource_type)
+    resource = r_type.get_object_for_this_type(pk=resource_id)
+
+    print 'objects '
+    print resource
+    print 'RRR'
+    for v in post.iterkeys() :
+        if v != 'kill' and v != 'resource_type' and v != 'resource_id' : 
+
+            #SecurityTag.objects.kill(kill,options[v][0],options[v][1],v)
+            print "creating "
+
+            agent_type = post[v][0]
+            agent_id = post[v][1]
+
+            a_type = ContentType.objects.get_for_id(agent_type)
+            agent = a_type.get_object_for_this_type(pk=resource_id)
+
+            print resource, agent
+            s= SecurityTag(name='from update_main_permission_sliders',agent=agent,resource=resource,interface=v,creator=request.user)
+            s.save()
+
+            
+
+
+    return HttpResponse('ok', mimetype='text/plain')

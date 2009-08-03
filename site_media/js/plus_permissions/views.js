@@ -1,11 +1,63 @@
 
-	
-(function() {
-   var Event = YAHOO.util.Event;
+function permission_ready() {
+
+
+    el_sliders = jq('#permission_sliders');
+
+    // setting up click on the "edit" button
+
+    jq('#permission_button').click(
+        function() { 
+	    // Get the resource id,
+	    //jq('#resource_id') ...
+            var resource_id='phil'; // CHANGE
+
+	    var load_url = "/profiles/"+resource_id+"/get_main_permission_sliders/";
+	    var post_url = "/profiles/"+resource_id+"/update_main_permission_sliders/";
+
+	    v = $.getJSON(load_url,function(json){
+		    sg = SliderGroup(json['sliders']);
+		    h = sg.sliders_as_html('slider_group1', setup_YUI_slider);
+		    el_sliders.html(h);
+		    sg.update_slider_ticks('slider_group1');
+
+	            // submit
+	            el_sliders.find('#sliders_submit').one('click',function() {
+			ajax_submit();
+		       
+		    });
+		
+	            // cancel
+	            el_sliders.find('#sliders_cancel').one('click',function() {
+		       el_sliders.html('');
+		    });
+		
+            
+                    function ajax_submit() {			
+			var xhr = jq.ajax({
+			   type: 'post',
+                           url: post_url,
+			   data: sg.get_as_json(),
+                           success: function (response) { 
+				    el_sliders.html('');
+			   },
+                           error: function(response) {alert('failure'); }
+			});
+
+		    }
+		    
+		    
+		});
+
+          
+	});
+
+
+    // Pulling in the YUI libraries 
+    var Event = YAHOO.util.Event;
     var Dom   = YAHOO.util.Dom;
     var lang  = YAHOO.lang;
     var Y     = YAHOO.util.Selector;
-
 
     var on_slider_model_changed = new YAHOO.util.CustomEvent('slider_model_change');
     
@@ -57,31 +109,9 @@
 		YAHOO.log("slideEnd fired", "warn");
 	    });
 
-       	return slider;
+       	return slider;	
+
     }
- 
-
-   Event.onDOMReady( function() {
-            options = ['Public','Plus Members','Hub Islington Members','Tech Team','Me'];
 
 
-            sg = SliderGroup({'title':'Permissions',
-		      'intro':'Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut',
-		      'option_labels':['all','members','group','me'],
-		      'option_types':[1,1,1,2],
-		      'option_ids':[1,2,3,1],
-		      'sliders':['read','write','execute'],
-		      'current':[0,3,3],
-		      'mins':[0,0,0],
-		      'constraints':[[0,1],[0,2]]
-	});
-
-	    h = sg.sliders_as_html('slider_group1',setup_YUI_slider);
-            $('#inserted_table').html(h);
-
-            sg.update_slider_ticks('slider_group1');
-            
-        });
-    
-
-})();
+};

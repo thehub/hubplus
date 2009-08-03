@@ -17,4 +17,5 @@ function div(x,y) { return tag("div",x,y); }
 function h2(x,y) { return tag("h2",x,y); }
 function h1(x,y) { return tag("h1",x,y); }
 function p(x,y)  { return tag("p",x,y); }
+function form(x,y)  {return tag("table",x,y); }
 -->

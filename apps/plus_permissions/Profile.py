@@ -74,6 +74,12 @@ class ProfileEditor(Interface) :
         return 'Profile.Editor'
 
 
+def display_name(x) :
+    if x.display_name : return x.display_name 
+    if x.username : return x.username
+    if x.name : return x.name
+    return '%s'%x
+
 class ProfilePermissionManager(PermissionManager) :
     def register_with_interface_factory(self,interface_factory) :
         self.interface_factory = interface_factory
@@ -90,34 +96,27 @@ class ProfilePermissionManager(PermissionManager) :
         interface_factory.add_interface(Profile,'SkypeViewer',ProfileSkypeViewer)
 
 
-    def make_slider_options(self,resource,owner,creator) :
-        options = [
-            SliderOption('root',get_permission_system().get_anon_group()),
-            SliderOption('all_members',get_permission_system().get_all_members_group()),
-            SliderOption(owner.display_name,owner),
-            SliderOption(creator.display_name,creator)
-        ]
-        default_admin = default_admin_for(owner)
-        if not default_admin is None :
-            options.append( SliderOption(default_admin.display_name,default_admin) )
-        return options
-
     def setup_defaults(self,resource, owner, creator) :
         options = self.make_slider_options(resource,owner,creator)
         self.save_defaults(resource,owner,creator)
 
         interfaces = self.get_interfaces()
 
-        slide = interfaces['Viewer'].make_slider_for(resource,options,owner,0)
-        slide = interfaces['Editor'].make_slider_for(resource,options,owner,2)
-        slide = interfaces['EmailAddressViewer'].make_slider_for(resource,options,owner,1)
-        slide = interfaces['HomeViewer'].make_slider_for(resource,options,owner,2)
-        slide = interfaces['WorkViewer'].make_slider_for(resource,options,owner,2)
-        slide = interfaces['MobileViewer'].make_slider_for(resource,options,owner,2)
-        slide = interfaces['FaxViewer'].make_slider_for(resource,options,owner,2)
+        slide = interfaces['Viewer'].make_slider_for(resource,options,owner,0,creator)
+        slide = interfaces['Editor'].make_slider_for(resource,options,owner,2,creator)
+        slide = interfaces['EmailAddressViewer'].make_slider_for(resource,options,owner,1,creator)
+        slide = interfaces['HomeViewer'].make_slider_for(resource,options,owner,2,creator)
+        slide = interfaces['WorkViewer'].make_slider_for(resource,options,owner,2,creator)
+        slide = interfaces['MobileViewer'].make_slider_for(resource,options,owner,2,creator)
+        slide = interfaces['FaxViewer'].make_slider_for(resource,options,owner,2,creator)
 
-        slide = interfaces['AddressViewer'].make_slider_for(resource,options,owner,2)
-        slide = interfaces['SkypeViewer'].make_slider_for(resource,options,owner,1)
+        slide = interfaces['AddressViewer'].make_slider_for(resource,options,owner,2,creator)
+        slide = interfaces['SkypeViewer'].make_slider_for(resource,options,owner,1,creator)
+
+
+    def main_json_slider_group(self,resource) :
+        json = self.json_slider_group('Profile Permissions', 'Use these sliders to set overall permissions on your profile', resource, ['Viewer','Editor'], [0,0], [[0,1]])
+        return json
 
         
         #ipdb.set_trace()

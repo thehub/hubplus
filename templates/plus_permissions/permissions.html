@@ -1,6 +1,37 @@
 
 {% extends "site_base.html" %}
 
+<script>
+(function() {
+    var Event = YAHOO.util.Event;
+    var Dom   = YAHOO.util.Dom;
+    var lang  = YAHOO.lang;
+    var Y     = YAHOO.util.Selector;
+
+    Event.XonDOMReady( function() {
+            options = ['Public','Plus Members','Hub Islington Members','Tech Team','Me'];
+
+
+            sg = SliderGroup({'title':'Permissions',
+		      'intro':'Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod ',
+		      'option_labels':['all','members','group','me'],
+		      'option_types':[1,1,1,2],
+		      'option_ids':[1,2,3,1],
+		      'sliders':['read','write','execute'],
+		      'current':[0,3,3],
+		      'mins':[0,0,0],
+		      'constraints':[[0,1],[0,2]]
+	});
+
+	    h = sg.sliders_as_html('slider_group1',setup_YUI_slider);
+            $('#inserted_table').html(h);
+            sg.update_slider_ticks('slider_group1');
+            
+        });
+
+})();
+
+</script>
 
 {% block body %}
   <div id='inserted_table'></div>

@@ -99,22 +99,24 @@ function copy_dict(keys,d1,d2) {
 }
 
 function SliderGroup(json) {
-    // json format is
-    //{'title':'a title',
-    // 'intro':'a description',
-    // 'option_labels':['options','on','the','sliders'],
-    // 'option_types':[content_type, content_type, content_type, content_type],
-    // 'option_ids': [content_id, content_id, content_id, content_id],
-    // 'sliders':['slider','names'],
-    // 'current':[0,1,2], // current settings
-    // 'mins':[0,0,0],    // minima for each slider
-    // 'constraints':[[0,1],[0,2]] // pairs of dependencies, the second is constrained by the first
-
-    // }
-
+    // example json format is
+    //  { 'title':'Permissions',
+    //	  'intro':'Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismt',
+    //	  'resource_id':456,
+    //	  'resource_type':243,
+    //	  'option_labels':['all','members','group','me'],
+    //	  'option_types':[1,1,1,2],
+    //	  'option_ids':[1,2,3,1],
+    //	  'sliders':['read','write','execute'],
+    //	  'interface_ids':['Class.Reader','Class.Writer','Class.Executor'],
+    //	  'current':[0,3,3],
+    //	  'mins':[0,0,0],
+    //	  'constraints':[[0,1],[0,2]]
+    //  }
     var o = Object();
 
-    copy_dict(['title','intro','option_labels','option_types','option_ids'],json,o);
+    copy_dict(['title','intro','option_labels','option_types','option_ids','interface_ids','resource_id','resource_type'],
+	      json,o);
     o.titles = json['sliders'];
     
     o.sliders = [];    
@@ -184,6 +186,7 @@ function SliderGroup(json) {
 	var th =function(x) { return "<th class='attribute_column'>"+x+"</th>"; }
 	titles = "<th class='group_column'>Group</th>"+join(map(th,this.titles));
 
+	
 	if (this.sliders.length == 0) { 
 	    t = table(tr(titles)); 
 	} else {
@@ -194,9 +197,9 @@ function SliderGroup(json) {
 	    }
 	    t = table({'class':'permissions_slider','id':table_id},tr(titles)+join(map(tr,b)));
 	}
-	
+	submit = form({},'<input type="image" value="ok" class="submit" id="sliders_submit" src="/site_media/images/button_save.gif"/><input type="image" value="cancel" class="cancel" id="sliders_cancel" src="/site_media/images/button_cancel.gif"/>');
 
-	return div({'id':'permissions','class':'block'},join([header,intro,t]));
+	return div({'id':'permissions','class':'block'},join([header,intro,t,submit]));
     }
 
     o.update_slider_ticks = function(table_id) {
@@ -233,10 +236,24 @@ function SliderGroup(json) {
 	return this.option_ids[c.get_current()];
     }
 
-
     o.callback = function(slider) {
-	// now the SliderGroup observes all sliders to reset globally
+	// now the SliderGroup observes all sliders. Maybe used to enforce constraints
     }
+
+    o.get_as_json = function() {
+	d = {'resource_type' : this.resource_type, 'resource_id' : this.resource_id};
+	for (var i=0;i<this.sliders.length;i++) {
+	    d[this.interface_ids[i]]= [ this.get_current_type(i), this.get_current_id(i)]
+	}
+	kills=[];
+	for (var i=0;i<this.option_types.length;i++) {
+	    kills.push([this.option_types[i],this.option_ids[i]]);
+	}
+
+	d['kill']=kills
+	return d;
+    }
+
 
     return o;
 }

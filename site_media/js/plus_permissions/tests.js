@@ -105,10 +105,13 @@ function test_slider_group(ut,element){
 
     sg = SliderGroup({'title':'Permissions',
 		      'intro':'Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut',
+		      'resource_id':456,
+		      'resource_type':243,
 		      'option_labels':['all','members','group','me'],
 		      'option_types':[1,1,1,2],
 		      'option_ids':[1,2,3,1],
 		      'sliders':['read','write','execute'],
+		      'interface_ids':['Class.Reader','Class.Writer','Class.Executor'],
 		      'current':[0,3,3],
 		      'mins':[0,0,0],
 		      'constraints':[[0,1],[0,2]]
@@ -116,11 +119,16 @@ function test_slider_group(ut,element){
 
     ut.assertEquals(100,'Permissions',sg.title);
 
-    ut.assertEquals(101,3,sg.get_width());
-    ut.assertEquals(102,4,sg.get_length());
+    ut.assertEquals(101,456,sg.resource_id);
+    ut.assertEquals(102,243,sg.resource_type);
 
-    ut.assertEquals(110,3,sg.sliders.length);    
+
+    ut.assertEquals(110,3,sg.get_width());
+    ut.assertEquals(111,4,sg.get_length());
+
+    ut.assertEquals(115,3,sg.sliders.length);    
     ut.assertEquals(120,2,sg.constraints.length);
+    ut.assertEquals(121,3,sg.interface_ids.length);
 
     ut.assertEquals(130,'all',sg.option_labels[0]);
     ut.assertEquals(131,'me',sg.option_labels[3]);
@@ -162,12 +170,15 @@ function test_slider_group(ut,element){
 
     //ut.assertStarts('xxxx',"<table class='permission_slider'><tr><th>",html);
 
+    //json = sg.status_json();
+    //alert(json);
+    // should look like this :
+    // {
+    //	'read':{'interface_id':'Class.Reader','':},
+    //	'write':{},
+    //	'execute':{}
+    // },sg.status_json());
     
-    //ut.assertEquals(500,[{
-    //	'read':{'':},
-    //	    'write':{},
-    //		'execute':{}
-    //		}],sg.status_json());
     ut.report();
 
 }

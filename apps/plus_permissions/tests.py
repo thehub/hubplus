@@ -1,5 +1,6 @@
 import unittest
 import datetime
+import simplejson
 
 from django.db import models
 from django.contrib.contenttypes.models import ContentType
@@ -130,20 +131,20 @@ class TestPermissions(unittest.TestCase) :
         # confirm that there are no permissions currently relating to this resource
         self.assertFalse(ps.has_permissions(blog))
 
-        t = SecurityTag(name='tag1',agent=u,resource=blog,interface=tif.get_id(OurPost,'Viewer'))
+        t = SecurityTag(name='tag1',agent=u,resource=blog,interface=tif.get_id(OurPost,'Viewer'),creator=u)
         t.save()
 
         # confirm that there now are permissions for the resource
         self.assertTrue(ps.has_permissions(blog))
 
-        t2 = SecurityTag(name='tag1',agent=u,resource=blog,interface=tif.get_id(OurPost,'Commentor'))
+        t2 = SecurityTag(name='tag1',agent=u,resource=blog,interface=tif.get_id(OurPost,'Commentor'),creator=u)
         t2.save()
 
         self.assertTrue(ps.has_access(u,blog,tif.get_id(OurPost,'Commentor')))
 
         self.assertFalse(ps.has_access(u,blog,tif.get_id(OurPost,'Editor')))
 
-        t3 = SecurityTag(name='tag1',agent=editors,resource=blog2,interface=tif.get_id(OurPost,'Editor'))
+        t3 = SecurityTag(name='tag1',agent=editors,resource=blog2,interface=tif.get_id(OurPost,'Editor'),creator=u)
         t3.save()
         
         self.assertTrue(ps.has_access(editors,blog2,tif.get_id(OurPost,'Editor')))
@@ -172,7 +173,7 @@ class TestPermissions(unittest.TestCase) :
         blog= OurPost(title='post')
         blog.save()
         ps = get_permission_system()
-        t = SecurityTag(name='type-test',agent=u,resource=blog,interface=ps.get_interface_id(OurPost,'Viewer'))
+        t = SecurityTag(name='type-test',agent=u,resource=blog,interface=ps.get_interface_id(OurPost,'Viewer'),creator=u)
         t.save()
 
         resource_type = ContentType.objects.get_for_model(blog)
@@ -323,7 +324,7 @@ class TestPermissions(unittest.TestCase) :
 
         # let's see them
         ops = s.get_options()
-        self.assertEquals([a.name for a in ops],['root','all_members','Green Architects','author','Green Architecture Admin'])
+        self.assertEquals([a.name for a in ops],['root','all_members','Green Architects (owner)','author (creator)','Green Architecture Admin'])
 
         # and check that it gave us "root" (ie. the everyone group) as the view default. (we assume that blogs default to allowing non members to read them)
         self.assertEquals(s.get_current_option().name,'root')
@@ -342,13 +343,13 @@ class TestPermissions(unittest.TestCase) :
 
         # and again
         s.set_current_option(2) # group level
-        self.assertEquals(s.get_current_option().name,'Green Architects')
+        self.assertEquals(s.get_current_option().name,'Green Architects (owner)')
         self.assertFalse(ps.has_access(all_members,blog,tif.get_id(OurPost,'Viewer')))
         self.assertTrue(ps.has_access(group,blog,tif.get_id(OurPost,'Viewer'))) 
 
         # and again
         s.set_current_option(3) # author
-        self.assertEquals(s.get_current_option().name,'author')
+        self.assertEquals(s.get_current_option().name,'author (creator)')
         self.assertFalse(ps.has_access(group,blog,tif.get_id(OurPost,'Viewer')))
         self.assertTrue(ps.has_access(author,blog,tif.get_id(OurPost,'Viewer')))
 
@@ -426,21 +427,24 @@ class TestPermissions(unittest.TestCase) :
 
     def testSliderGroup(self) :
         u= User(username='paulo')
+        u.display_name=u.username
         u.save()
+        
         p = u.get_profile()
         u = p.user
         
         ps = PermissionSystem()
+
 
         l = Location(name='biosphere2')
         l.save()
 
         group = TgGroup(group_name='organiccooks',display_name='Organic Cooks', place=l,created=datetime.date.today())
         group.save()
-        adminGroup = TgGroup(group_name='ocadmin', display_name='Organic Cook Admin', place=l,created=datetime.date.today())
-        adminGroup.save()
-        da = DefaultAdmin(agent=adminGroup,resource=group)
-        da.save()
+        #admin_group = TgGroup(group_name='ocadmin', display_name='Organic Cook Admin', place=l,created=datetime.date.today())
+        #admin_group.save()
+        #da = DefaultAdmin(agent=admin_group,resource=group)
+        #da.save()
         blog = OurPost(title='slider testing')
         blog.save()
 
@@ -451,17 +455,81 @@ class TestPermissions(unittest.TestCase) :
         # our permission manager, when it makes the sliders, needs to be able to report the default owner and admins etc.
         self.assertEquals(pm.get_owner(blog,ps.get_interface_id(OurPost,'Viewer')),group)
         self.assertEquals(pm.get_creator(blog,ps.get_interface_id(OurPost,'Viewer')),u)
+
+        group_type = ContentType.objects.get_for_model(ps.get_anon_group()).id
         
-        sg = pm.make_slider_group_from('title','intro',blog,['Viewer','Editor'])
-        json = sg.as_json()
+        match = simplejson.dumps(
+         {'sliders':{
+          'title':'title',
+          'intro':'intro',
+          'resource_id':blog.id,
+          'resource_type':ContentType.objects.get_for_model(blog).id, 
+          'option_labels':['root','all_members','Organic Cooks (owner)','paulo (creator)' ],
+          'option_types':[group_type,group_type,group_type,ContentType.objects.get_for_model(u).id],
+          'option_ids':[ps.get_anon_group().id,ps.get_all_members_group().id,group.id,u.id],
+          'sliders':['Viewer','Editor'],
+          'interface_ids':[ps.get_interface_id(OurPost,'Viewer'),ps.get_interface_id(OurPost,'Editor')],
+          'mins':[0,0],
+          'constraints':[[0,1]],
+          'current':[0,2],
+          'extras':{}
+          }}
+        )
+
+        json = pm.json_slider_group('title','intro',blog,['Viewer','Editor'],[0,0],[[0,1]])
+
+        print match
         print json
+
+        self.assertEquals(json,match)
+
+        
+    def test_agent_constraint(self) :
+        # there can only one agent from a collection of options
+        # functions to find which option exists and to replace it with another from the set
+        ps = get_permission_system()
+        u=User(username='hermit')
+        u.save()
+        b=OurPost(title='post')
+        b.save()
+        interface=ps.get_interface_id(OurPost,'Viewer')
+        anon = ps.get_anon_group()
+        all = ps.get_all_members_group()
+
+
+        def kl(o) : return (ContentType.objects.get_for_model(o),o.id)
+        kill_list = [kl(o) for o in [u, anon, all]]
+        options = kill_list
+
+        s=SecurityTag(name='blaaaah',agent=u,resource=b,interface=interface,creator=u)
+        s.save()
+
+        s2=SecurityTag(name='blaaaah',agent=anon,resource=b,interface=interface,creator=u)
+        s2.save()
+
+        u2=User(username='harry')
+        u2.save()
+
+        s2=SecurityTag(name='blaaaah',agent=u2,resource=b,interface=interface,creator=u)
+        s2.save()
+
+        u_type = ContentType.objects.get_for_model(u)
+        an_type = ContentType.objects.get_for_model(anon)
+        r_type = ContentType.objects.get_for_model(b)
+
+        # check there are three permissions for this
+        self.assertEquals(SecurityTag.objects.filter(resource_content_type=r_type,resource_object_id=b.id).count(),3)
+
+        # but only 2 show up in the agent_list_filter
+        count=0
+        for x in SecurityTag.objects.agent_list_filter(options,resource_content_type=r_type,interface=interface,resource_object_id=b.id) :
+            count=count+1
+        self.assertEquals(count,2)
+
+        # and then when we kill them, there's only one left
+        SecurityTag.objects.kill_list(kill_list,r_type,b.id,interface) 
+        self.assertEquals(SecurityTag.objects.filter(resource_content_type=r_type,resource_object_id=b.id).count(),1)
+
         
 
-    def testJson(self) :
-        x = FromJson(False,a=1,b=2)
-        self.assertEquals(x.b,2)
-        y = FromJson({'a':3,'b':3})
-        self.assertEquals(y.b,3)
-        
-        
         

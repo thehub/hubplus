@@ -57,18 +57,6 @@ class TgGroupPermissionManager(PermissionManager) :
         interface_factory.add_interface(TgGroup,'Viewer',TgGroupViewer)
         interface_factory.add_interface(TgGroup,'Editor',TgGroupEditor)
 
-    def make_slider_options(self,resource,owner,creator) :
-        options = [
-            SliderOption('root',get_permission_system().get_anon_group()),
-            SliderOption('all_members',get_permission_system().get_all_members_group()),
-            SliderOption(owner.display_name,owner),
-            SliderOption(creator.display_name,creator)
-        ]
-        default_admin = default_admin_for(owner)
-        if not default_admin is None :
-            options.append( SliderOption(default_admin.display_name,default_admin) )
-        return options
-
     def setup_defaults(self,resource, owner, creator) :
         self.save_defaults(resource,owner,creator)
         print "AAA %s, %s, %s" % (resource,owner,creator)
