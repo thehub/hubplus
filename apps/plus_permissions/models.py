@@ -337,8 +337,8 @@ class PermissionSystem :
         if created :
             self.root_location.save()
 
-        self.root_group = self.get_or_create_group('root','root',self.root_location)
-        self.all_members_group = self.get_or_create_group('all_members','all members',self.root_location)
+        self.root_group = self.get_or_create_group('root','World',self.root_location)
+        self.all_members_group = self.get_or_create_group('all_members','All Members',self.root_location)
 
 
     def get_permissions_for(self,resource) :
@@ -430,8 +430,8 @@ class PermissionManager :
 
     def make_slider_options(self,resource,owner,creator) :
         options = [
-            SliderOption('root',get_permission_system().get_anon_group()),
-            SliderOption('all_members',get_permission_system().get_all_members_group()),
+            SliderOption('World',get_permission_system().get_anon_group()),
+            SliderOption('All Members',get_permission_system().get_all_members_group()),
             SliderOption('%s (owner)' % owner.display_name,owner),
             SliderOption('%s (creator)' % creator.display_name,creator)
         ]

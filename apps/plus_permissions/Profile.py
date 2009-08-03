@@ -118,6 +118,21 @@ class ProfilePermissionManager(PermissionManager) :
         json = self.json_slider_group('Profile Permissions', 'Use these sliders to set overall permissions on your profile', resource, ['Viewer','Editor'], [0,0], [[0,1]])
         return json
 
+    def make_slider_options(self,resource,owner,creator) :
+        options = [
+            SliderOption('World',get_permission_system().get_anon_group()),
+            SliderOption('All Members',get_permission_system().get_all_members_group()),
+            SliderOption('Me',owner),
+            SliderOption('Hosts',creator)
+
+        ]
+
+        default_admin = default_admin_for(owner)
+
+        if not default_admin is None :
+            options.append( SliderOption(default_admin.display_name,default_admin) )
+
+        return options
         
         #ipdb.set_trace()
 
