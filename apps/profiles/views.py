@@ -252,6 +252,11 @@ def get_main_permission_sliders(request,username) :
     print json
     return HttpResponse(json, mimetype='text/plain')
 
+def content_object(c_type, c_id) :
+    a_type = ContentType.objects.get_for_id(c_type)
+    return a_type.get_object_for_this_type(pk=c_id)
+
+
 @login_required
 def update_main_permission_sliders(request,username) :
     ps = get_permission_system()
@@ -261,43 +266,20 @@ def update_main_permission_sliders(request,username) :
     post = request.POST
 
     print post
+    kill = [(x[0],x[1]) for x in eval(post.get('kill'))]
 
-    kill = post['kill']
-    print kill.__class__
-    for x in kill :
-        print x
-        print x.__class__
-    kill = [x.split(',') for x in kill]
-    print 'kill-list %s' % kill
+    resource = content_object(post['resource_type'], post['resource_id'])
 
-    resource_type = post['resource_type']
-    resource_id = post['resource_id']
+    for iface in post.iterkeys() :
+        print "interface ",iface
+        if iface != 'kill' and iface != 'resource_type' and iface != 'resource_id' : 
+            opt = eval(post.get(iface))
+            agent = content_object(opt[0], opt[1])
+            print "AA"
 
-    print 'resource %s (type) %s (id)' % (resource_type, resource_id)
-
-    r_type = ContentType.objects.get_for_id(resource_type)
-    resource = r_type.get_object_for_this_type(pk=resource_id)
-
-    print 'objects '
-    print resource
-    print 'RRR'
-    for v in post.iterkeys() :
-        if v != 'kill' and v != 'resource_type' and v != 'resource_id' : 
-
-            #SecurityTag.objects.kill(kill,options[v][0],options[v][1],v)
-            print "creating "
-
-            agent_type = post[v][0]
-            agent_id = post[v][1]
-
-            a_type = ContentType.objects.get_for_id(agent_type)
-            agent = a_type.get_object_for_this_type(pk=resource_id)
-
-            print resource, agent
-            s= SecurityTag(name='from update_main_permission_sliders',agent=agent,resource=resource,interface=v,creator=request.user)
-            s.save()
-
-            
+            SecurityTag.objects.update(name='from update_main_permission_sliders',new=agent,resource=resource,interface=iface,creator=request.user,kill=kill)
+            print "BB"
 
 
+    for x in ps.get_permissions_for(resource) :  print x
     return HttpResponse('ok', mimetype='text/plain')

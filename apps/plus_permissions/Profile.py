@@ -45,8 +45,8 @@ ProfileWorkViewer = read_interface('work','Profile.WorkViewer')
 ProfileMobileViewer = read_interface('mobile','Profile.MobileViewer')
 ProfileFaxViewer = read_interface('fax','Profile.FaxViewer')
 ProfileAddressViewer = read_interface('address','Profile.AddressViewer')
-ProfileSkypeViewer = read_interface('skype_id','SkypeViewer')
-ProfileSipViewer = read_interface('sip_id','SipViewer')
+ProfileSkypeViewer = read_interface('skype_id','Profile.SkypeViewer')
+ProfileSipViewer = read_interface('sip_id','Profile.SipViewer')
 
 
 class ProfileEditor(Interface) : 
@@ -94,6 +94,7 @@ class ProfilePermissionManager(PermissionManager) :
 
         interface_factory.add_interface(Profile,'AddressViewer',ProfileAddressViewer)
         interface_factory.add_interface(Profile,'SkypeViewer',ProfileSkypeViewer)
+        interface_factory.add_interface(Profile,'SipViewer',ProfileSipViewer)
 
 
     def setup_defaults(self,resource, owner, creator) :

@@ -46,7 +46,7 @@ class Profile(models.Model):
         return self.user.username
 
     def __str__(self) :
-       return "this is a profile %s" % self.user.username
+       return "this is a profile for %s" % self.user.username
 
     
     def get_absolute_url(self):

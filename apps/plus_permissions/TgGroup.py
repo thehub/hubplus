@@ -59,15 +59,13 @@ class TgGroupPermissionManager(PermissionManager) :
 
     def setup_defaults(self,resource, owner, creator) :
         self.save_defaults(resource,owner,creator)
-        print "AAA %s, %s, %s" % (resource,owner,creator)
+
         options = self.make_slider_options(resource,owner,creator)
         interfaces = self.get_interfaces()
-        print "BBB"
-        print options
-        print interfaces 
 
-        slide = interfaces['Viewer'].make_slider_for(resource,options,owner,0,creator)
-        slide = interfaces['Editor'].make_slider_for(resource,options,owner,2,creator)
+
+        slide = interfaces['Viewer'].make_slider_for(resource,options,owner,0,creator,creator)
+        slide = interfaces['Editor'].make_slider_for(resource,options,owner,2,creator,creator)
 
         #ipdb.set_trace()
 

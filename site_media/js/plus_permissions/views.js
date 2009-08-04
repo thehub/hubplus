@@ -23,8 +23,7 @@ function permission_ready() {
 
 	            // submit
 	            el_sliders.find('#sliders_submit').one('click',function() {
-			ajax_submit();
-		       
+			ajax_submit();    
 		    });
 		
 	            // cancel
@@ -32,7 +31,6 @@ function permission_ready() {
 		       el_sliders.html('');
 		    });
 		
-            
                     function ajax_submit() {			
 			var xhr = jq.ajax({
 			   type: 'post',

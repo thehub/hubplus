@@ -243,14 +243,14 @@ function SliderGroup(json) {
     o.get_as_json = function() {
 	d = {'resource_type' : this.resource_type, 'resource_id' : this.resource_id};
 	for (var i=0;i<this.sliders.length;i++) {
-	    d[this.interface_ids[i]]= [ this.get_current_type(i), this.get_current_id(i)]
+	    d[this.interface_ids[i]]= JSON.stringify([ this.get_current_type(i), this.get_current_id(i)]);
 	}
 	kills=[];
 	for (var i=0;i<this.option_types.length;i++) {
 	    kills.push([this.option_types[i],this.option_ids[i]]);
 	}
 
-	d['kill']=kills
+	d['kill']=JSON.stringify(kills);
 	return d;
     }
 

@@ -226,7 +226,7 @@ def default_admin_for(resource) :
     if len(ds) < 1 : 
         return None
     else :
-        return ds[0].agentContentType.objects.get_for_model
+        return ds[0].agent
 
 
 class SecurityTagManager(models.Manager):
@@ -237,23 +237,28 @@ class SecurityTagManager(models.Manager):
                            resource_object_id=resource_id)
 
  
-
-    def is_in(self,options,agent) :
-        a_type = ContentType.objects.get_for_model(agent)
-        for (typ,id) in options :
-            if typ == a_type and agent.id==id :
-                return True
-
-    def agent_list_filter(self,options,**kwargs) :
-        return (t for t in self.filter(**kwargs) if self.is_in(options, t.agent))
-
-
     def kill_list(self,kill_list,resource_type, resource_id,interface) :
         for t in self.filter(interface=interface,resource_content_type=resource_type,resource_object_id=resource_id) :
-            for (typ,id) in kill_list :
-                if t.agent_content_type == typ and t.agent_object_id == id :
+            for typ,id in kill_list:
+                if t.agent_content_type.id == typ and t.agent_object_id == id :
+                    print "deleting %s" % t
                     t.delete()
+                    break
 
+    def update(self,**kwargs) :
+        agent=kwargs['new']
+        resource=kwargs['resource']
+        interface=kwargs['interface']
+        name = kwargs['name']
+        creator = kwargs['creator']
+        
+        if kwargs.has_key('kill') :
+            kill_list=kwargs['kill']
+            self.kill_list(kill_list,ContentType.objects.get_for_model(resource),resource.id,interface)
+        s = SecurityTag(name=name,creator=creator,resource=resource,interface=interface,agent=agent)
+        s.save()
+                
+ 
 
 class SecurityTag(models.Model) :
     name = models.CharField(max_length='50') 
@@ -305,7 +310,7 @@ class SecurityTag(models.Model) :
         return self.agent.id
 
     def __str__(self) :
-        return """Agent : %s, Resource : %s, Interface : %s""" % (self.agent,self.resource,self.interface)
+        return """(%s)Interface: %s, Resource: %s, Agent: %s, Name: %s""" % (self.id, self.interface,self.resource,self.agent,self.name)
 
 
 

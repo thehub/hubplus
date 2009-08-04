@@ -63,8 +63,8 @@ class OurPostPermissionManager(PermissionManager) :
         options = self.make_slider_options(resource,owner,creator)
         self.save_defaults(resource,owner,creator)
         interfaces = self.get_interfaces()
-        s = interfaces['Viewer'].make_slider_for(resource,options,owner,0)
-        s = interfaces['Editor'].make_slider_for(resource,options,owner,2)
-        s = interfaces['Commentor'].make_slider_for(resource,options,owner,1)
+        s = interfaces['Viewer'].make_slider_for(resource,options,owner,0,creator)
+        s = interfaces['Editor'].make_slider_for(resource,options,owner,2,creator)
+        s = interfaces['Commentor'].make_slider_for(resource,options,owner,1,creator)
  
 
