@@ -118,6 +118,9 @@ def tag_autocomplete(tag_type, tag_value, limit):
     tags = get_tags(tag_type=tag_type, partial_tag_value=tag_value)
     return [tag.keyword for tag in tags[0:10]]
 
+def get_tagged_resources(tag_type=None, tag_value=None, tagger=None):
+    return [tag.subject for tag in get_tags(tag_type=tag_type, tag_value=tag_value, tagger=tagger)]
+
 def get_tags(tagged=None, tag_type=None, tag_value=None, tagger=None, partial_tag_value=None):
     given = {}
     if tagged != None:

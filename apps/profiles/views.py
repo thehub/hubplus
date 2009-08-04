@@ -15,7 +15,7 @@ from friends.models import FriendshipInvitation, Friendship
 from microblogging.models import Following
 
 from apps.plus_permissions.Profile import *  # Essential to get signals working at the moment.
-from profiles.models import Profile, HostInfo, tag_add, tag_delete, get_tags, tag_autocomplete
+from profiles.models import Profile, HostInfo, tag_add, tag_delete, get_tags, tag_autocomplete, get_tagged_resources
   
 
 from profiles.forms import ProfileForm, HostInfoForm
@@ -184,8 +184,16 @@ def our_profile_permission_test(fn) :
         if not ps.has_access(request.user,profile,ps.get_interface_id(Profile,'Editor')) :
             return HttpResponse("You don't have permission to do that to %s, you are %s" % (username,request.user),status=401)
         else :
-            return fn(request, profile, *args, **kwargs)
+            return fn(request, username, *args, **kwargs)
     return our_fn
+
+def name_to_profile(fn):
+    def our_fn(request,username,*args,**kwargs):
+        other_user = get_object_or_404(User,username=username)
+        return fn(request, other_user.get_profile(), *args, **kwargs)
+    return our_fn
+    
+    
 
 @login_required
 @transaction.commit_on_success
@@ -202,6 +210,7 @@ def update_profile_form(request,username) :
 
 @login_required
 @our_profile_permission_test
+@name_to_profile
 @transaction.commit_on_success
 def add_tag(request, tagged_resource):
     """ This is actually a way to add typed keywords (e.g. skills, interests, needs) as well as 'free tags'"""
@@ -214,6 +223,7 @@ def add_tag(request, tagged_resource):
 
 @login_required
 @our_profile_permission_test
+@name_to_profile
 @transaction.commit_on_success
 def autocomplete_tag(request, tagged_resource, tag_type):
     q = request.GET['q']
@@ -226,6 +236,7 @@ def autocomplete_tag(request, tagged_resource, tag_type):
 
 @login_required
 @our_profile_permission_test
+@name_to_profile
 @transaction.commit_on_success
 def delete_tag(request, tagged_resource):
     tag_type = request.POST['tag_type']
@@ -235,27 +246,44 @@ def delete_tag(request, tagged_resource):
     data = simplejson.dumps({'deleted':deleted})
     return HttpResponse(data, mimetype='application/json')
 
-@login_required
-@our_profile_permission_test
-def map_tags(request, tagged_resource):
-    json = {  
-         "id": tagged_resource.__class__.__name__ + "-" +str(tagged_resource.id),  
-         "name": tagged_resource.name,  
-         "children": [{"id": 'tag' + "-" +str(tag.id),  
-                       "name": tag.keyword,  
-                       "data": {  
-                           'relation': "<h4>%s tagged as %s</h4> " %(tagged_resource.name, tag.keyword)  
-                           },  
-                       "children": []} for tag in get_tags(tagged = tagged_resource, tagger = request.user, tag_type = 'skill')],
-         "data": {'relation':"<h4>%s</h4>" %(tagged_resource.name)}
+
+def plot_tag(tag, depth=0):
+    if depth:
+        children = [plot_resource(resource, depth=depth-1) for resource in get_tagged_resources(tag.tag_type, tag.keyword)]
+    else:
+        children = []
+
+    return {"id": 'tag' + "-" +str(tag.id),  
+           "name": tag.keyword,  
+           "data": {  
+            'relation': "<h4>tag: %s </h4> " %(tag.keyword)  
+            },  
+           "children": children
+           }
+
+def plot_resource(resource, depth=0):
+    if depth:
+        children = [plot_tag(tag, depth=depth-1) for tag in get_tags(tagged = resource, tagger = resource.user, tag_type = 'skill')]
+    else:
+        children = []
+    return {  
+        "id": resource.__class__.__name__ + "-" +str(resource.id),  
+        "name": resource.name,  
+        "children": children,
+        "data": {'relation':"<h4>%s</h4>" %(resource.name)}
      }
-    
+
+@login_required
+@name_to_profile
+def map_tags(request, tagged_resource):
+    json = plot_resource(tagged_resource, depth=2)
     json = simplejson.dumps(json)
     return HttpResponse(json, mimetype='application/json')
 
 
 @login_required
 @transaction.commit_on_success
+@name_to_profile
 def profile_field(request,username,fieldname,*args,**kwargs) :
     """ Get the value of one field from the user profile, so we can write an ajaxy editor """
     other_user = get_object_or_404(User,username=username)
