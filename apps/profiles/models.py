@@ -42,7 +42,6 @@ class Profile(models.Model):
     homeplace = DelegateToUser('homeplace')
     location = DelegateToUser('location')
 
-    psn_id = models.CharField(max_length=100)
 
     def __unicode__(self):
         return self.user.username
@@ -98,6 +97,8 @@ class HostInfo(models.Model):
     project = models.TextField(_('project'),max_length=250, null=True,blank=True)
     project_stage = models.TextField(max_length=250,null=True,blank=True)
     assistance_offered = models.TextField(max_length=250,null=True,blank=True)
+
+
 
  
 def create_host_info(sender, instance=None, **kwargs) :

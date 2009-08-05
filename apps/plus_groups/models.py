@@ -16,6 +16,12 @@ class GroupExtras(models.Model) :
     about = models.TextField('about', null=True, blank=True)
     group_type = models.CharField('type',max_length=30)
     
+    psn_id = models.CharField(max_length=120)
+    path = models.CharField(max_length=120)
+
+    title = models.CharField(max_length=60)
+    description = models.TextField()
+
 
  
 def create_group_extras(sender, instance=None, **kwargs) :

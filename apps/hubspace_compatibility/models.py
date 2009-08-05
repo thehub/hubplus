@@ -137,6 +137,7 @@ try :
     #if level is host, set member of to Hub Islington Host Group.
     level = models.CharField(max_length=9)
     psn_id = models.CharField(max_length=100)
+    path = models.CharField(max_length=120)
 
     class Meta:
         db_table = u'tg_group'
