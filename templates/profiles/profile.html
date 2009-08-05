@@ -80,12 +80,12 @@
       </li>
       <br />
       <li>
-	<dl><dt >{% trans "Location" %} : </dt><dd class='editable' id='{{profile.edit_key}}location'>{% if profile.location %}{{profile.location}}{% else %}Your location{% endif  %}</dd></dl>
+	<dl class="disabled"><dt >{% trans "Location" %} : </dt><dd class='editable_temp_off' id='{{profile.edit_key}}location'>{% if profile.location %}{{profile.location}}{% else %}Your location{% endif  %}</dd></dl>
       </li>
       <li>
-	<dl><dt >{% trans "Region" %} : </dt>
+	<dl class="disabled"><dt >{% trans "Region" %} : </dt>
 	  <dd>
-	    <a href="hub.html" class='editable' id='{{profile.edit_key}}hub'>{{profile.get_hub}}</a>
+	    <a href="hub.html" class='editable_temp_off' id='{{profile.edit_key}}hub'>{{profile.get_hub}}</a>
 	</dd></dl>
       </li>	
     </ul>
@@ -123,7 +123,7 @@
   </ol>
 </div>
 
-<div id="feature_members_online" class="block">
+<!--div id="feature_members_online" class="block">
   <h3>Who's online</h3>
   <ul id="members_list">
     <li class="first"><a href="#"><img class="member_thumb" src="image/member.jpg" /></a></li>
@@ -133,7 +133,7 @@
     <li class="last" ><a href="#"><img class="member_thumb" src="image/member.jpg" /></a></li>
   </ul>
   <a href="#">Show all (43)</a>
-</div>
+</div-->
 
 <div id="feature_my_hub" class="block">
   <h3>My Hub</h3>
