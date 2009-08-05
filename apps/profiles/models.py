@@ -42,6 +42,8 @@ class Profile(models.Model):
     homeplace = DelegateToUser('homeplace')
     location = DelegateToUser('location')
 
+    psn_id = models.CharField(max_length=100)
+
     def __unicode__(self):
         return self.user.username
 

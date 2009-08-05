@@ -136,6 +136,7 @@ try :
     #if place is Hub Islington then set member of toHub Islington group if level is member
     #if level is host, set member of to Hub Islington Host Group.
     level = models.CharField(max_length=9)
+    psn_id = models.CharField(max_length=100)
 
     class Meta:
         db_table = u'tg_group'
