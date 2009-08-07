@@ -1,0 +1,27 @@
+/* Layout */
+
+body {
+	background	: #fff url('../images/header_bg.gif') 0 0 repeat-x;
+}
+
+
+/* Elements */
+a {
+	color		: #540000;
+}
+
+
+/* Layout: Header */
+
+#header h1 a {
+	background	: url('../images/hub_plus_logo.gif') 0 0 no-repeat;
+	height		: 90px;
+	overflow	: hidden;
+	padding-top	: 0;
+	text-indent	: -2000px;
+	width		: 123px;
+}
+
+#header #main_navigation li a {
+	color		: #f7efef;
+}

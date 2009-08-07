@@ -14,9 +14,9 @@ class DelegateToUser(object) :
    def __init__(self,attr_name) : self.attr_name = attr_name
    def __get__(self,obj,typ=None) : return getattr(obj.user,self.attr_name)
    def __set__(self,obj,val) : 
-       print "setting %s to %s for %s (class %s (user = %s, cls = %s))" % (self.attr_name,val,obj,obj.__class__,obj.user, obj.user.__class__)
+       #print "setting %s to %s for %s (class %s (user = %s, cls = %s))" % (self.attr_name,val,obj,obj.__class__,obj.user, obj.user.__class__)
        setattr(obj.user,self.attr_name,val)
-       print "Getting from inner %s" % getattr(obj.user,self.attr_name)
+       #print "Getting from inner %s" % getattr(obj.user,self.attr_name)
 
 class Profile(models.Model):    
     user = models.ForeignKey(User, unique=True, verbose_name=_('user'))
@@ -101,62 +101,3 @@ def create_host_info(sender, instance=None, **kwargs) :
 
 post_save.connect(create_host_info,sender=User) 
 
-class GenericTag(models.Model) :
-    keyword = models.TextField(max_length=50)
-    tag_type = models.TextField(max_length=30, default=None)
-
-    agent_content_type = models.ForeignKey(ContentType, related_name='generic_tag_agent')
-    agent_object_id = models.PositiveIntegerField()
-    agent = generic.GenericForeignKey('agent_content_type', 'agent_object_id')
-
-    subject_content_type = models.ForeignKey(ContentType, related_name='generic_tag_subject')
-    subject_object_id = models.PositiveIntegerField()
-    subject = generic.GenericForeignKey('subject_content_type', 'subject_object_id')
-
-
-def tag_autocomplete(tag_type, tag_value, limit):
-    tags = get_tags(tag_type=tag_type, partial_tag_value=tag_value)
-    return [tag.keyword for tag in tags[0:10]]
-
-def get_tagged_resources(tag_type=None, tag_value=None, tagger=None):
-    return [tag.subject for tag in get_tags(tag_type=tag_type, tag_value=tag_value, tagger=tagger)]
-
-def get_tags(tagged=None, tag_type=None, tag_value=None, tagger=None, partial_tag_value=None):
-    given = {}
-    if tagged != None:
-       tagged_type = ContentType.objects.get_for_model(tagged)
-       given.update(dict(subject_object_id = tagged.id,
-                         subject_content_type__pk = tagged_type.id))
-    if tagger != None:
-       tagger_type = ContentType.objects.get_for_model(tagger)
-       given.update(dict(agent_object_id = tagger.id, 
-                         agent_content_type__pk = tagger_type.id))
-    if tag_type != None:
-       given['tag_type'] = tag_type
-    if tag_value != None:
-       given['keyword'] = tag_value
-    elif partial_tag_value != None:
-       given['keyword__startswith'] = partial_tag_value
-    tags = GenericTag.objects.filter(**given)
-    tags.order_by('keyword')
-    return tags
-
-def tag_add(tagged, tag_type, tag_value, tagger):
-    existing_tag = get_tags(tagged, tag_type, tag_value, tagger)
-
-    if existing_tag:
-       return (existing_tag[0], False)
-
-    new_tag = GenericTag(keyword = tag_value,
-                         tag_type = tag_type,
-                         agent = tagger,
-                         subject = tagged)
-    new_tag.save()
-    return (new_tag, True) 
-
-def tag_delete(tagged, tag_type, tag_value, tagger):
-    existing_tag = get_tags(tagged, tag_type, tag_value, tagger)
-    if not existing_tag:
-       return (None, False)
-    existing_tag.delete()
-    return (None, True)

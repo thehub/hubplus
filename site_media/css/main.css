@@ -7,11 +7,15 @@ HUB PLUS 2009
 /* Main Generic */
 
 #main h2 {
-	padding-bottom	: 10px;
+	font-size	: 2.6em;
+	font-weight	: normal;
+	margin-bottom	: 25px;
 }
 
 #main h3 {
+	font-size	: 1.1em;
 	padding-bottom	: .5em;
+	text-transform	: uppercase;
 }
 
 #main p {
@@ -165,30 +169,30 @@ HUB PLUS 2009
 
 /* Tag Block */
 
-#about {
+#about_block {
 	
 }
 
-#about dl {
+#about_block dl {
 	overflow	: hidden;
 }
 
-#about dt {
+#about_block dt {
 	float		: left;
 	width		: 30%;
 }
 
-#about dd {
+#about_block dd {
 	float		: left;
 	width		: 70%;
 }
 
-#about ul {
+#about_block ul {
 	list-style	: none;
 	padding-bottom	: 1em;
 }
 
-#about ul li ul {
+#about_block ul li ul {
 	list-style	: none;
 	padding-bottom	: 0;
 }

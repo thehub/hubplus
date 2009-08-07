@@ -22,84 +22,22 @@ class TestProfileSubsidiaries(unittest.TestCase):
         self.assertEquals(hi.user,u)
         
 
-    def testInterestsNeedsAndSkills(self) :
-        # Needs, Skills and Interests all work the same way
-        # But have their own Model classes (NeedTag,SkillTag,InterestTag respectively)
-        u = User(username='gustavo')
-        u.save()
-        p = u.get_profile()
-
-        # Interests
-        self.assertFalse(p.has_interests())
-        self.assertEquals(gensize(p.get_interests()),0)
-
-        il = InterestTag(label='green architecture')
-        il.save()
-
-        p.add_interest(il)
-
-        self.assertTrue(p.has_interests())
-        self.assertEquals(gensize(p.get_interests()),1)
-        self.assertTrue(p.has_interest(il))
-        
-        self.assertEquals(get_or_create_interest('green architecture')[0],il)
-        x, created = get_or_create_interest('ethical jewelry')
-        self.assertEquals(get_or_create_interest('ethical jewelry')[0],x)
-        self.assertTrue(created)
-                          
-        # Skills
-        self.assertFalse(p.has_skills())
-        self.assertEquals(gensize(p.get_skills()),0)
-        
-        sl = SkillTag(label='grass roofs')
-        sl.save()
-        
-        p.add_skill(sl)
-
-        self.assertTrue(p.has_skills())
-        self.assertEquals(gensize(p.get_skills()),1)
-        self.assertTrue(p.has_skill(sl))
-        
-        self.assertEquals(get_or_create_skill('grass roofs')[0],sl)
-        x,created = get_or_create_skill('plumbing')
-        self.assertEquals(get_or_create_skill('plumbing')[0],x)
-        self.assertTrue(created)
-
-    
-        # Needs
-        nl = NeedTag(label='botany')
-        nl.save()
-
-        self.assertFalse(p.has_needs())
-        self.assertEquals(gensize(p.get_needs()),0)
-
-        p.add_need(nl)
-
-        self.assertTrue(p.has_needs())
-        self.assertEquals(gensize(p.get_needs()),1)
-        self.assertTrue(p.has_need(nl))
-
-        self.assertEquals(get_or_create_need('botany')[0],nl)
-        x, created = get_or_create_need('history')
-        self.assertEquals(get_or_create_need('history')[0],x)
-        self.assertTrue(created)
 
     def testDelegates(self) :
         u = User(username='ck')
         u.save()
         p=u.get_profile()
+        u=p.user
 
         p.name = 'ck-name'
         self.assertEquals(p.name,'ck-name')
-        p.title ='mr'
+
         p.display_name = p.name
-        p.save()
-        u.save()
+
         self.assertEquals(p.display_name,p.name)
         self.assertEquals(p.user.display_name,p.name)
         self.assertEquals(p.user,u)
-        print `u.display_name`
-        print `p.user.display_name`
+
         self.assertEquals(u.display_name,p.name)
 
         p.save()

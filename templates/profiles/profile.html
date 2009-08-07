@@ -1,7 +1,5 @@
 
-{% extends "profiles/base.html" %}
-
-
+{% extends "site_base.html" %}
 
 {% load i18n %}
 {% load avatar_tags %}
@@ -10,130 +8,127 @@
 
 {% block body %}
 
-<div id='main_column'>
-  <div id="intro" class="block">
-    <div id="extra" class="block_column">
-
-      <div>{% avatar other_user 180 %}</div>
-      {% if is_me %}
-         <a href="{% url avatar_change %}" id="avatar_replace">(replace)</a>
-      {% endif %}
-
-	 <ul id="actions" class="link_list">
-	   <li class="first"><a href="#">Follow {{other_user.get_profile.name}}</a></li>
-	   <li class="last"><a href="#">Message {{other_user.get_profile.name}}</a></li>
-	 </ul>
-    </div>
-
-    <div id="info" class="block_column">
-      <ul>
-	<li>
-	  <dl>
-	    {% if other_user.get_profile.has_interests %}
-	    <dt>{% trans "Interests" %}:</dt>
-	    <dd>
-	      {% for i in other_user.get_profile.get_interests %}
-	        <a class="tag">{{i.label}}</a> 
-	      {% endfor %}
-	      <form method='post' action='/profiles/{{other_user.username}}/interests/'>
-		<input name='interest' />
-		<input type='submit'/>
-	      </form>
-	    </dd>
-
-	    {% endif %}
-	  </dl>
-	</li>
-
-	<li>
-	  <dl>
-	    <dt>{% trans "Groups" %} :</dt>
-	    <dd>
-	      {% for g in other_user.get_enclosures %}
-	      <a href="#">{{g.get_permission_agent_name}}</a> | 
-	      {% endfor %}
-	    </dd>
-	  </dl>
-	</li>
-	<br />
-	<li>
-
-              <dl><dt >{% trans "Organisation" %} :</dt><dd class='editable' id='{{profile.edit_key}}organisation'>{% if profile.organisation %}{{profile.organisation}}{% else %}Your organisation{% endif  %}</dd></dl>
-	</li>
-	<li>
-	  <dl><dt >{% trans "Role" %} : </dt><dd  class='editable' id='{{profile.edit_key}}role'>{% if profile.role %}{{profile.role}}{% else %}Your role{% endif  %}</dd></dl>
-	</li>
-	<br />
-	<li>
-	  <dl><dt >{% trans "Location" %} : </dt><dd class='editable' id='{{profile.edit_key}}location'>{% if profile.location %}{{profile.location}}{% else %}Your location{% endif  %}</dd></dl>
-	</li>
-	<li>
-	  <dl><dt >{% trans "Hubs" %} : </dt>
-	    <dd>
-	      <a href="hub.html" class='editable' id='{{profile.edit_key}}hub'>{{profile.get_hub}}</a>
-	  </dd></dl>
-	</li>	
-      </ul>
-    </div>
+<div id="intro" class="block">
+  <div id="extra" class="block_column">
+    
+    <div>{% avatar other_user 180 %}</div>
+    {% if is_me %}
+    <a href="{% url avatar_change %}" id="avatar_replace">(replace)</a>
+    {% endif %}
+    
+    <ul id="actions" class="link_list">
+      <li class="first disabled"><a href="#">Follow {{other_user.get_profile.name}}</a></li>
+      <li class="last disabled"><a href="#">Message {{other_user.get_profile.name}}</a></li>
+    </ul>
   </div>
-  {% include "profiles/tabbed_subs.html" %}
-
+  
+  <div id="info" class="block_column">
+    <ul>
+      <li>
+	<dl>
+	  <dt>{% trans "Interests" %}:</dt>
+          <dd class="tag_manager" id="interests">
+            <span class="tag_list">
+              {% for s in interests %}
+              <span><a href="/plus_tags/tag/{{s.keyword}}/" class="tag option">{{s.keyword}}</a><a class="delete_tag" href="/plus_tags/Profile/{{profile.p\
+															    k}}/delete/">X</a></span>
+              {% endfor %}
+            </span>
+            <span class="error_message"></span>
+            <form method='post' class="add_tag_form" action='/plus_tags/add_tag/' >
+              <input name="target_class" class="target_class" value="Profile" type="hidden" />
+              <input name="target_id" class="target_id" value="{{profile.pk}}" type="hidden" />
+              <input name="tag_type" class="tag_type" value="interest" type="hidden" />
+              <input name="tag_value" class="tag_value" />
+              <input class="add_tag" type="submit" value="add an interest" />
+            </form>
+          </dd>
+	</dl>
+      </li>
+      
+      <li>
+	<dl>
+	  <dt>{% trans "Groups" %} :</dt>
+	  <dd>
+	    {% for g in other_user.get_enclosures %}
+	    <a href="/groups/{{g.pk}}/">{{g.get_permission_agent_name}}</a> | 
+	    {% endfor %}
+	  </dd>
+	</dl>
+      </li>
+      <br />
+      <li>
+	
+        <dl><dt >{% trans "Organisation" %} :</dt><dd class='editable' id='{{profile.edit_key}}organisation'>{% if profile.organisation %}{{profile.organisation}}{% else %}Your organisation{% endif  %}</dd></dl>
+      </li>
+      <li>
+	<dl><dt >{% trans "Role" %} : </dt><dd  class='editable' id='{{profile.edit_key}}role'>{% if profile.role %}{{profile.role}}{% else %}Your role{% endif  %}</dd></dl>
+      </li>
+      <br />
+      <li>
+	<dl><dt >{% trans "Location" %} : </dt><dd class='editable' id='{{profile.edit_key}}location'>{% if profile.location %}{{profile.location}}{% else %}Your location{% endif  %}</dd></dl>
+      </li>
+      <li>
+	<dl><dt >{% trans "Region" %} : </dt>
+	  <dd>
+	    <a href="hub.html" class='editable' id='{{profile.edit_key}}hub'>{{profile.get_hub}}</a>
+	</dd></dl>
+      </li>	
+    </ul>
+  </div>
 </div>
-
+{% include "profiles/tabbed_subs.html" %}
 
 {% endblock %}
 
 
 {% block side_bar %}
-<div id="right_column" class="disabled">
 
-  <div id="feature_search" class="block">
+<div id="feature_search" class="block">
     <h3>Search</h3>
     <form>
       <input name="search_term" type="text" /> <input type="submit" value="Search" /><br />
       <input name="current_area" type="checkbox" checked="checked" /> Members only<br />      
     </form>
-  </div>
+</div>
 
-  <div id="feature_explore" class="block">
-    <h3>Explore Members</h3>
-    <div class="tags">
-      <a href="#" class="tag">green</a> <a href="#" class="tag">environment</a> 
-      <a href="#" class="tag">fairtrade</a> <a href="#" class="tag">reference</a> 
-      <a href="#" class="tag">clothes</a> <a href="#" class="tag">design</a> 
-      <a href="#" class="tag">sustainability</a> <a href="#" class="tag">energy</a> 
-      <a href="#" class="tag">shopping</a> <a href="#" class="tag">climatechange</a> 
-      <a href="#" class="tag">science</a> <a href="#" class="tag">activism</a> 
-      <a href="#" class="tag">health</a> <a href="#" class="tag">architecture</a> 
-      <a href="#" class="tag">shopping</a> <a href="#" class="tag">green</a> 
-      <a href="#" class="tag">environment</a> <a href="#" class="tag">fairtrade</a> 
-      <a href="#" class="tag">reference</a> <a href="#" class="tag">clothes</a> <a href="#" class="tag">design</a>
-    </div>
+<div id="feature_explore" class="block">
+  <h3>Explore Members</h3>
+  <div class="tags">
+    <a href="#" class="tag">green</a> <a href="#" class="tag">environment</a> 
+    <a href="#" class="tag">fairtrade</a> <a href="#" class="tag">reference</a> 
+    <a href="#" class="tag">clothes</a> <a href="#" class="tag">design</a> 
+    <a href="#" class="tag">sustainability</a> <a href="#" class="tag">energy</a> 
+    <a href="#" class="tag">shopping</a> <a href="#" class="tag">climatechange</a> 
+    <a href="#" class="tag">science</a> <a href="#" class="tag">activism</a> 
+    <a href="#" class="tag">health</a> <a href="#" class="tag">architecture</a> 
+    <a href="#" class="tag">shopping</a> <a href="#" class="tag">green</a> 
+    <a href="#" class="tag">environment</a> <a href="#" class="tag">fairtrade</a> 
+    <a href="#" class="tag">reference</a> <a href="#" class="tag">clothes</a> <a href="#" class="tag">design</a>
   </div>
+</div>
 
-  <div id="feature_members_online" class="block">
-    <h3>Who's online</h3>
-    <ul id="members_list">
-      <li class="first"><a href="#"><img class="member_thumb" src="image/member.jpg" /></a></li>
-      <li><a href="#"><img class="member_thumb" src="image/member.jpg" /></a></li>
-      <li><a href="#"><img class="member_thumb" src="image/member.jpg" /></a></li>
-      <li><a href="#"><img class="member_thumb" src="image/member.jpg" /></a></li>
-      <li class="last" ><a href="#"><img class="member_thumb" src="image/member.jpg" /></a></li>
-    </ul>
-    <a href="#">Show all (43)</a>
-  </div>
+<div id="feature_members_online" class="block">
+  <h3>Who's online</h3>
+  <ul id="members_list">
+    <li class="first"><a href="#"><img class="member_thumb" src="image/member.jpg" /></a></li>
+    <li><a href="#"><img class="member_thumb" src="image/member.jpg" /></a></li>
+    <li><a href="#"><img class="member_thumb" src="image/member.jpg" /></a></li>
+    <li><a href="#"><img class="member_thumb" src="image/member.jpg" /></a></li>
+    <li class="last" ><a href="#"><img class="member_thumb" src="image/member.jpg" /></a></li>
+  </ul>
+  <a href="#">Show all (43)</a>
+</div>
 
-  <div id="feature_my_hub" class="block">
-    <h3>My Hub</h3>
-    <img class="hub_thumb" src="image/group.jpg" />
-
-    <p><a href="#">Hub Kings Cross</a> is having a bit of a spring clean.</p>
-    <ul class="links">
-      <li class="first"><a href="#">Hub page</a></li>
-      <li class="last" ><a href="#">Book space</a></li>
-    </ul>
-  </div>
+<div id="feature_my_hub" class="block">
+  <h3>My Hub</h3>
+  <img class="hub_thumb" src="image/group.jpg" />
   
+  <p><a href="#">Hub Kings Cross</a> is having a bit of a spring clean.</p>
+  <ul class="links">
+    <li class="first"><a href="#">Hub page</a></li>
+    <li class="last" ><a href="#">Book space</a></li>
+    </ul>
 </div>
 
 {% endblock %}

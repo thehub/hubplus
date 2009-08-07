@@ -154,11 +154,17 @@ INSTALLED_APPS = (
     
     # internal (for now)
     'about',
+    'plus_lib',
     'hubspace_compatibility',
     'plus_permissions',
 
     'analytics',
+    
+    'plus_tags',
     'profiles',
+
+    'plus_groups',
+
     'staticfiles',
     'account',
     'tribes',
@@ -254,14 +260,10 @@ except ImportError:
     pass
 
 
-import pdb
-#pdb.set_trace()
-
 try:
     from hubspace_compatibility import *
 except ImportError, e:
     print "import hubspace_compatibility failed :: " + `e`
-    pass
 
 
 import logging

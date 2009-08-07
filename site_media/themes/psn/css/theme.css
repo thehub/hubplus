@@ -1,0 +1,27 @@
+/* Layout */
+
+body {
+	background	: #fff url('../images/header_bg.gif') 0 0 repeat-x;
+}
+
+
+/* Elements */
+a {
+	color		: #0b439f;
+}
+
+
+/* Layout: Header */
+
+#header h1 a {
+	background	: url('../images/psychosocialnetwork_logo.gif') 0 22px no-repeat;
+	height		: 66px;
+	overflow	: hidden;
+	padding-top	: 22px;
+	text-indent	: -2000px;
+	width		: 220px;
+}
+
+#header #main_navigation li a {
+	color		: #e8eef3;
+}

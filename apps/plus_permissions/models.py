@@ -7,19 +7,22 @@ from django.contrib.auth.models import User
 from apps.hubspace_compatibility.models import TgGroup, Location
 
 import datetime
+import ipdb
 
 class PlusPermissionsNoAccessException(Exception):
     def __init__(self,cls,id,msg) :
         self.cls=cls
         self.id=id
         self.msg=msg
+        self.silent_variable_failure = True
 
 class PlusPermissionsReadOnlyException(Exception) : 
     def __init__(self,cls,msg) :
         self.cls = cls
         self.msg = msg
 
-class Interface : 
+class Interface :
+
     @classmethod
     def delete(self) :
         return False
@@ -40,6 +43,21 @@ class Interface :
     def has_read(self,name) :
         return self.has_property_name_and_class(name,InterfaceReadProperty)
         
+    @classmethod
+    def get_id(cls) : 
+        raise UseSubclassException(Interface,'You need a subclass of Interface that implements its get_id')
+        
+    @classmethod
+    def make_slider_for(cls,resource,options,default_agent,selected) :
+        s = Slider(
+            tag_name='%s slider'%cls.__name__,
+            resource=resource,
+            interface_id=cls.get_id(),
+            default_agent=default_agent,
+            options=options
+        )
+        s.set_current_option(selected)
+        return s
 
 class NullInterface :
     """
@@ -48,6 +66,10 @@ class NullInterface :
     def __init__(self, inner) :
         self.__dict__['_inner'] = inner
         self.__dict__['_interfaces'] = []
+        
+        self.__dict__['_exceptions'] = [ # these always go through
+            lambda x : x[0]=='_', # starts with _
+        ]
 
     def get_inner(self) :
         return self.__dict__['_inner']
@@ -57,6 +79,23 @@ class NullInterface :
 
     def get_interfaces(self) :
         return self.__dict__['_interfaces']
+
+    def load_interfaces_for(self,agent) :
+        """Load interfaces for the wrapped inner content that are available to the agent"""
+        ps = get_permission_system()
+        resource = self.get_inner()
+        cls = resource.__class__
+        tif = ps.get_interface_factory()
+        try :
+            types = tif.get_type(cls)
+        except :
+            pm = ps.get_permission_manager(cls)
+            pm.register_with_interface_factory(tif)
+            types = tif.get_type(cls)
+        for k,v in types.iteritems() :
+            if ps.has_access(agent=agent,resource=resource,interface=ps.get_interface_id(self.get_inner().__class__,k)) :
+                self.add_interface(v)
+
 
     def fold_interfaces(self, f,init) :
         for i in self.get_interfaces() :
@@ -71,6 +110,9 @@ class NullInterface :
             raise PlusPermissionsNoAccessException(self.get_inner_class(),'delete','trying to delete')
 
     def __getattr__(self,name) :
+        for rule in self.__dict__['_exceptions'] :
+            if rule(name) :
+                return self.get_inner().__getattribute__(name)
         if self.fold_interfaces(lambda a, i : a or i.has_read(name),False) :
             return self.get_inner().__getattribute__(name)
         raise PlusPermissionsNoAccessException(self.get_inner_class(),name,'from __getattr__')
@@ -90,6 +132,11 @@ class NullInterface :
 
     def save(self) :
         self.get_inner().save()
+
+    def edit_key(self) :
+        print "In edit key %s" % self.get_inner().edit_key()
+        return self.get_inner().edit_key()
+
 
     def __str__(self) :
         return self.get_inner()
@@ -118,6 +165,13 @@ class InterfaceWriteProperty(InterfacePropertyBase) :
         return True
 
 
+def strip(x) :
+    """If x is really a Null interface, return the inner value, otherwise, return itself"""
+    try : 
+        return x.get_inner()
+    except :
+        return x
+
 class InterfaceFactory :
 
     def __init__(self) :
@@ -130,6 +184,7 @@ class InterfaceFactory :
 
     def get_type(self,cls) :
         return self.all[cls.__name__]
+
 
     def add_interface(self,cls,name,interfaceClass) :
         self.add_type(cls)
@@ -167,28 +222,6 @@ def default_admin_for(resource) :
         return ds[0].agent
 
 
-class AgentNameWrap(object) :
-    def __init__(self,inner) :
-        self.__dict__['inner'] = inner
-
-    def __getattr__(self, name) :
-        if name == 'name' :
-            if self.inner.__class__ == User :
-                return self.inner.username
-            else :
-                return self.inner.display_name
-        else :
-            return getattr(self.inner,name,None)
-
-    def __setattr__(self,name,val) :
-        if name != 'name' :
-            setattr(self.inner,name,val)
-        else :
-            if self.inner.__class__ == User :
-                self.inner.username = val
-            else :
-                self.inner.display_name = val
-    
  
 class SecurityTag(models.Model) :
     name = models.CharField(max_length='50') 
@@ -206,6 +239,7 @@ class SecurityTag(models.Model) :
         return (x for x in SecurityTag.objects.all() if x.name == self.name)
 
     def has_access(self,agent,resource,interface) :
+        #ipdb.set_trace()
         for x in (x for x in SecurityTag.objects.all() if x.resource == resource and x.interface == interface) :
             if x.agent == get_permission_system().get_anon_group() : 
                 # in other words, if this resource is matched with anyone, we don't have to test that user is in the "anyone" group
@@ -221,6 +255,7 @@ class SecurityTag(models.Model) :
 
 
 _ONLY_INTERFACE_FACTORY = InterfaceFactory()
+
 
 class PermissionSystem :
     """ This is a high-level interface to the permission system. Can answer questions about permissions without involving 
@@ -251,7 +286,7 @@ class PermissionSystem :
 
 
     def get_permissions_for(self,resource) :
-        return (x for x in SecurityTag.objects.all() if x.resource == resource)
+        return (x for x in SecurityTag.objects.all() if x.resource == strip(resource))
 
     def has_permissions(self,resource) :
         return len(set(self.get_permissions_for(resource))) > 0 
@@ -270,7 +305,7 @@ class PermissionSystem :
 
     def delete_access(self,agent,resource,interface) :
         for tag in SecurityTag.objects.filter(interface=interface) :
-            if tag.agent == agent and tag.resource==resource : 
+            if tag.agent == agent and tag.resource==strip(resource) : 
                 tag.delete()
 
     def get_interface_factory(self) : 
@@ -281,6 +316,10 @@ class PermissionSystem :
 
     def get_permission_manager(self,cls) :
         return self.get_interface_factory().get_permission_manager(cls)
+
+    def add_permission_manager(self,cls,pm) :
+        self.get_interface_factory().add_permission_manager(cls,pm)
+        
 
 _ONLY_PERMISSION_SYSTEM = None
 
@@ -300,11 +339,15 @@ class UseSubclassException(Exception) :
         self.msg = msg
 
 class PermissionManager :
+    def __init__(self,target_class) :
+        self.target_class = target_class # what class does this manager provide permissions for
+
     def get_permission_system(self) :
         return get_permission_system()
 
-    def make_slider(self,**args) :
-        raise UseSubclassException(PermissionManager,'Only a subclass of PermissionManager can make sliders')
+    def get_interfaces(self) :
+        return self.get_permission_system().get_interface_factory().get_type(self.target_class)
+
 
 class NoSliderException(Exception) :
     def __init__(self,cls,name) :
@@ -366,7 +409,7 @@ class Slider :
 
     def print_relevant_tags(self) :
         for t in self.get_relevant_tags():
-            print ">> %s, %s, %s, %s" % (AgentNameWrap(t.agent).name, t.interface, t.resource, t.name)
+            print ">> %s, %s, %s, %s" % (agent.display_name, t.interface, t.resource, t.name)
 
     def get_options(self) :
         return self.options

@@ -1,4 +1,4 @@
-from django.contrib.auth.models import User,UserManager
+from django.contrib.auth.models import User,AnonymousUser,UserManager
 from django.db import models
 
 
@@ -26,7 +26,7 @@ except :
     # Patching the User class
 
     User.add_to_class('user_name', UserNameField(unique=True, max_length=255))
-    User.add_to_class('email_address', models.CharField(max_length=20))
+    User.add_to_class('email_address', models.CharField(max_length=255))
 
     #User.add_to_class('active',models.SmallIntegerField(null=True)) # not shown
  
@@ -61,4 +61,7 @@ except :
     User.save = user_save
    
     print "Monkey Patched User Class ... gulp!"
+
+    AnonymousUser.is_member_of = lambda *args, **kwargs : False
+    AnonymousUser.is_direct_member_of = lambda *args, **kwarg : False
     # Finished the User Patch

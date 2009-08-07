@@ -11,7 +11,7 @@ except Exception, e:
 
 from models import *
 
-import pdb
+import ipdb
 
 # Permission Management by Content Types
 from OurPost import *
@@ -137,12 +137,13 @@ class TestPermissions(unittest.TestCase) :
         t2 = SecurityTag(name='tag1',agent=u,resource=blog,interface=tif.get_id(OurPost,'Commentor'))
         t2.save()
 
-        self.assertTrue(t2.has_access(u,blog,tif.get_id(OurPost,'Commentor')))
-        self.assertFalse(t2.has_access(u,blog,tif.get_id(OurPost,'Editor')))
+        self.assertTrue(ps.has_access(u,blog,tif.get_id(OurPost,'Commentor')))
+
+        self.assertFalse(ps.has_access(u,blog,tif.get_id(OurPost,'Editor')))
 
         t3 = SecurityTag(name='tag1',agent=editors,resource=blog2,interface=tif.get_id(OurPost,'Editor'))
         t3.save()
-
+        
         self.assertTrue(ps.has_access(editors,blog2,tif.get_id(OurPost,'Editor')))
 
         editors.add_member(u)
@@ -159,12 +160,11 @@ class TestPermissions(unittest.TestCase) :
 
         self.assertFalse(ps.has_access(u,blog,ps.get_interface_id(OurPost,'Viewer')))
 
-        
 
     def makeInterfaceFactory(self) :
         ps = PermissionSystem()
         tif = ps.get_interface_factory()        
-        tif.add_permission_manager(OurPost,OurPostPermissionManager())
+        tif.add_permission_manager(OurPost,OurPostPermissionManager(OurPost))
         return tif
 
 
@@ -185,7 +185,14 @@ class TestPermissions(unittest.TestCase) :
         
         blog = NullInterface(blog)
         def f(blog) : return blog.title
-        self.assertRaises(PlusPermissionsNoAccessException,f,blog)
+        
+        self.assertRaises(PlusPermissionsNoAccessException,f,blog) 
+        try : f(blog)
+        except PlusPermissionsNoAccessException, e :
+            self.assertEquals(e.silent_variable_failure,True)
+
+
+
 
         class BodyViewer(Interface) :
             body = InterfaceReadProperty('body')
@@ -255,6 +262,7 @@ class TestPermissions(unittest.TestCase) :
 
         # another user (called 'author') who is set as the creator of our blog
         author = User(username='author')
+        author.display_name = 'author'
         author.save()
 
         # a group which is the top-level of our hierarchy of permission groups. everybody and anybody (even non-authenticated members of the public) 
@@ -271,7 +279,8 @@ class TestPermissions(unittest.TestCase) :
         # we need to pass to it the resource itself, the name of the interface, 
         #     the agent which is the "owner" of the resource (in this case "group") and 
         #     the agent which is the "creator" of the resource (in this case "author")
-        s = pm.make_slider(blog,'Viewer',group,author)
+        
+        s = pm.get_interfaces()['Viewer'].make_slider_for(blog,pm.make_slider_options(blog,group,author),u,0)
 
         # now we're just testing that OurPost.Viewer has 5 options for the slider
         self.assertEquals(len(s.get_options()),5)
@@ -284,7 +293,7 @@ class TestPermissions(unittest.TestCase) :
         self.assertEquals(s.get_current_option().name,'root')
 
         tif = ps.get_interface_factory()
-
+        
         self.assertTrue(ps.has_access(everyone,blog,tif.get_id(OurPost,'Viewer')))
         self.assertFalse(ps.has_access(everyone,blog,tif.get_id(OurPost,'Editor')))
         self.assertTrue(ps.has_access(u,blog,tif.get_id(OurPost,'Viewer')))
@@ -322,13 +331,59 @@ class TestPermissions(unittest.TestCase) :
         p.about='about jesson'
         p.save()
         ps = PermissionSystem()
-        for t in ps.get_permissions_for(p):
-          print t
         self.assertTrue(ps.has_access(ps.get_anon_group(),p,ps.get_interface_factory().get_id(Profile,'Viewer')))
 
 
+    def testUserWrapping(self) :
+        u=User(username='oli')
+        u.save()
+        blog = OurPost(title='test wrapping')
+        blog.save()
 
+        blog = NullInterface(blog)
+
+        ps = PermissionSystem()
+        pm = ps.get_permission_manager(OurPost)
+
+        #ipdb.set_trace()
+        pm.setup_defaults(blog,u,u)
+        perms = ps.get_permissions_for(blog)
+        count = 0
+        for x in perms :
+            count=count+1
+        self.assertEquals(count,3)
+
+        # in this case, because of the defaults for blog u has access to all interfaces
+
+        ps.get_all_members_group().add_member(u)
+
+        blog.load_interfaces_for(u) 
+
+        self.assertEquals(len(blog.get_interfaces()),3)
+
+        u2=User(username='holly')
+        u2.save()
+        blog2=OurPost(title='test rapping')
+        blog2.save()
+        blog2=NullInterface(blog2)
+        
+        pm.setup_defaults(blog2,u2,u2)
+
+        # in this case, u is only getting access to the Viewer & Commentor interfaces
+        blog2.load_interfaces_for(u)
+
+        self.assertEquals(len(blog2.get_interfaces()),2)
         
         
+    def testProfile(self) :
+        ps = get_permission_system()
+        u= User(username='dermot')
+        u.save()
+        p = u.get_profile()
+        p.save()
+        for tag in ps.get_permissions_for(p) :
+            tag.delete()
+        p.save()
 
+        
 

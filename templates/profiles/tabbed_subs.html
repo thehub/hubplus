@@ -1,57 +1,20 @@
 
-
 <div id="section_tab_navigation" class="section yui-navset">
+
   <ul class="yui-nav">
     <li class="selected" ><a href="#about"><span>About</span></a></li>
     <li><a href="#updates_feed"><span>Activity</span></a></li>
-    <li><a href="#membership"><span>Membership</span></a></li>
     <li><a href="#tags"><span>Tags</span></a></li>
     <li><a href="#news"><span>News</span></a></li>
   </ul>
-<div  class="yui-content">
-   {% include "profiles/about.html" %}
- 
-   <div id="updates_feed" class="block">
-    <!--<div id="feed_customise_link"><a href="#">Customise my feed (Admin only)</a></div>-->
-    <ul id="feed" class="content_list">
-      <li class="first"><img class="thumb" src="image/member.jpg" /><a href="#">Andrew</a> is taking a giant step forward. <span class="label_time">2 minutes ago.</span></li>
-      <li><img class="thumb" src="image/group.jpg" /><a href="#">Sexy salad club</a> has two new members. Auto republished by <a href="#">Andrew</a>. <span class="label_time">Today.</span></li>
+  
+  <div  class="yui-content">
+	{% include "profiles/about.html" %}
+	{% include "profiles/update.html" %}
+	{% include "profiles/tags.html" %}
+	{% include "profiles/news.html" %}
 
-      <li><img class="thumb" src="image/group.jpg" /><a href="#">Andrew</a> joined <a href="#">Space Design</a>. <span class="label_time">22 minutes ago.</span></li>
-      <li><img class="thumb" src="image/member.jpg" /><a href="#">Andrew</a> tagged a post by <a href="#">Collin Phillips</a>... <span class="label_time">35 minutes ago.</span>
-	<div class="preview">
-
-	  <h3><a href="#">5 Crucial Elements for Great Spaces</a></h3>
-	  <p>What can you do with an outdated fireplace? Rip it out, patch the walls with drywall, redesign the surround, the mantel and the hearth?</p>
-	  </div>
-	</li>
-      <li><img class="thumb" src="image/member.jpg" /><a href="#">Andrew</a> is now following <a href="#">Alex Smith</a> <span class="label_time">1 hour ago.</span></li>
-
-      <li><img class="thumb" src="image/group.jpg" /><a href="#">Andrew</a> joined <a href="#">Sexy salad club</a>. <span class="label_time">1 hour ago.</span></li>
-      <li><img class="thumb" src="image/member.jpg" /><a href="#">Andrew</a> is working from home today. <span class="label_time">3 hours a.</span></li>
-      <li class="last"><img class="thumb" src="image/member.jpg" /><a href="#">Andrew</a> is trying to switch career into the non profit sector. <span class="label_time">4 hours ago.</span></li>
-
-      </ul>
-    <a href="#">More updates</a>
-    </div>
-
-  <div id="membership" class="block">
-    Andrews membership table and billing section here
-    </div>
-
-  <div id="tags" class="block">
-    List of content tagged by Andrew (explorable by tag)
-    <div id="container">
-      <div id="center_container">
-	<div id="infovis"></div>
-      </div>
-      <div id="inner-details"></div>
-
-    </div>
+	
   </div>
-  <div id="news" class="block">
-    List of news posts by Andrew
-  </div>
+</div>
 
-</div>
-</div>

@@ -1,33 +1,23 @@
-html, body {
-    margin:0;
-    padding:0;
-    font-family: "Lucida Grande", Verdana;
-    font-size: 0.9em;
-    text-align: center;
-    background-color:#F2F2F2;
-}
 
-input, select {
+
+#tags input, select {
     font-size:0.9em;
 }
 
-table {
+#tags table {
     margin-top:-10px;
     margin-left:7px;
 }
 
-h4 {
+#tags h4 {
     font-size:1.1em;
     text-decoration:none;
     font-weight:normal;
     color:#23A4FF;
 }
 
-a {
-    color:#23A4FF;
-}
 
-#container {
+#tags #container {
     width: 6x00px;
     height: 600px;
     margin:0 auto;
@@ -35,15 +25,15 @@ a {
     background-color: black;
 }
 
-#left-container, 
-#right-container, 
-#center-container {
+#tags #left-container, 
+#tags #right-container, 
+#tags #center-container {
     height:600px;
     position:absolute;
     top:0;
 }
 
-#left-container, #right-container {
+#tags #left-container, #right-container {
     width:200px;
     color:#686c70;
     text-align: left;
@@ -53,7 +43,7 @@ a {
     border-bottom:1px solid #ddd;
 }
 
-#left-container {
+#tags #left-container {
     left:0;
     background-image:url('col2.png');
     background-position:center right;
@@ -61,35 +51,37 @@ a {
     
 }
 
-#right-container {
+#tags #right-container {
     right:0;
     background-image:url('col1.png');
     background-position:center left;
     border-right:1px solid #ddd;
 }
 
-#right-container h4{
+#tags #right-container h4{
     text-indent:8px;
 }
 
-#center-container {
+#tags #center-container {
     width:600px;
     left:200px;
     background-color:#1a1a1a;
     color:#ccc;
 }
 
-.text {
+
+#tags .text {
     margin: 7px;
 }
 
-#inner-details {
+#tags #inner-details {
     font-size:0.8em;
     list-style:none;
     margin:7px;
 }
 
-#log {
+
+#tags #log {
     position:absolute;
     top:10px;
     font-size:1.0em;
@@ -98,7 +90,7 @@ a {
 }
 
 
-#infovis {
+#tags #infovis {
     position:relative;
     width:600px;
     height:600px;

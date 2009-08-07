@@ -1,10 +1,3 @@
-
-/*
-HUB PLUS 2009
-*/
-
-
-
 /* Reset */
 
 * {
@@ -12,7 +5,12 @@ HUB PLUS 2009
 	padding		: 0;
 }
 
+
 /* Elements */
+
+a {
+	text-decoration	: none;
+}
 
 a img {
 	border		: 0;
@@ -26,14 +24,15 @@ img {
 /* Layout */
 
 body {
-	font		: 62.5%/1.8em arial, verdana, sans-serif;
+	background	: #fff url('../images/header_bg.gif') 0 0 repeat-x;
+	color		: #222222;
+	font		: 62.5%/1.8em 'helvetica neue', 'helvetica', 'verdana', sans-serif;
 	text-align	: center;
 }
 
 #wrapper {
 	font-size	: 1.2em;
-	height		: 408px;
-	margin		: 0 auto 0;
+	margin		: 0 auto;
 	position	: relative;
 	text-align	: left;
 	width		: 900px;
@@ -67,6 +66,7 @@ body {
 .disabled {
 	opacity:.4;
 }
+
 #yui-history-iframe {
   position:absolute;
   top:0; left:0;

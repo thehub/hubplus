@@ -1,6 +1,6 @@
 {% load i18n %}
 
-  <div id="about" class="block">
+  <div id="about_block" class="block">
   
     <h3>About me</h3>
     <ul class="yui-skin-sam">
@@ -11,27 +11,44 @@
             {% autoescape off %} 
 	       {{profile.about}}
             {% endautoescape %}
-	    <a href="#">more</a>
-	  </dd>
+	    </dd>
+	  <a href="#">more</a>
 	</dl>
       </li>
     </ul>
 
     <h3>Contact</h3>
     <ul>
+      {% if profile.mobile %}
       <li><dl><dt >Phone (Mobile):</dt><dd class='editable' id='{{profile.edit_key}}mobile'>{{profile.mobile}}</dd></dl></li>
+      {% endif %}
+
+      {% if profile.work %}
       <li><dl><dt >Phone (Work):</dt><dd class='editable' id='{{profile.edit_key}}work'>{{profile.work}}</dd></dl></li>
+      {% endif %}
+
+      {% if profile.home %}
       <li><dl><dt >Phone (Home):</dt><dd class='editable' id='{{profile.edit_key}}home'>{{profile.home}}</dd></dl></li>
+      {% endif %}
+
+      {% if profile.fax %}
       <li><dl><dt >Phone (Fax):</dt><dd class='editable' id='{{profile.edit_key}}fax'>{{profile.fax}}</dd></dl></li>
+      {% endif %}
 
+      {% if profile.address %}
       <li><dl><dt >Address:</dt><dd class='editable' id='{{profile.edit_key}}address'>{{profile.address}}</dd></dl></li>
+      {% endif %}
 
-      <li><dl><dt >Email:</dt><dd class='editable' id='{{profile.edit_key}}email'>{{profile.email_address}}</dd></dl></li>
+      {% if profile.email_address %}
+      <li><dl><dt >Email:</dt><dd class='editable' id='{{profile.edit_key}}email_address'>{{profile.email_address}}</dd></dl></li>
+      {% endif %}
     </ul>
 
     <h3>Links</h3>
     <ul>
-      <li><dl><dt >Website:</dt><dd class='editable' id='{{profile.edit_key}}website'><a href="#"></a>{{profile.website}}</dd></dl></li>
+      <li><dl><dt >Website:</dt>
+	  <dd class='editable' id='{{profile.edit_key}}website'><a href="#"></a>{{profile.website}}</dd></dl>
+      </li>
     </ul>
  
     
@@ -44,11 +61,13 @@
 	  <dd class="tag_manager" id="skills">
               <span class="tag_list">
 		{% for s in skills %}
-		<span><a href="tag/{{s.keyword}}/" class="tag option">{{s.keyword}}</a><a class="delete_tag" href="./delete/">X</a></span>
+		<span><a href="/plus_tags/tag/{{s.keyword}}/" class="tag option">{{s.keyword}}</a><a class="delete_tag" href="/plus_tags/Profile/{{profile.pk}}/delete/">X</a></span>
 		{% endfor %}
 	      </span>
               <span class="error_message"></span>
-             <form method='post' class="add_tag_form" action='./add_tag/' >
+             <form method='post' class="add_tag_form" action='/plus_tags/add_tag/' >
+	       <input name="target_class" class="target_class" value="Profile" type="hidden" />
+	       <input name="target_id" class="target_id" value="{{profile.pk}}" type="hidden" />
                <input name="tag_type" class="tag_type" value="skill" type="hidden" />
                <input name="tag_value" class="tag_value" />
                <input class="add_tag" type="submit" value="add a skill" />
@@ -63,11 +82,13 @@
 	  <dd class="tag_manager" id="needs">
               <span class="tag_list">
 		{% for s in needs %}
-		<span><a href="tag/{{s.keyword}}/" class="tag option">{{s.keyword}}</a><a class="delete_tag" href="./delete/">X</a></span>
+		<span><a href="/plus_tags/tag/{{s.keyword}}/" class="tag option">{{s.keyword}}</a><a class="delete_tag" href="/plus_tags/Profile/{{profile.pk}}/delete/">X</a></span>
 		{% endfor %}
 	      </span>
               <span class="error_message"></span>
-             <form method='post' class="add_tag_form" action='./add_tag/'>
+             <form method='post' class="add_tag_form" action=''>
+               <input name="target_class" class="target_class" value="Profile" type="hidden" />
+               <input name="target_id" class="target_id" value="{{profile.pk}}" type="hidden" />
                <input name="tag_type" class="tag_type" value="need" type="hidden" />
                <input name="tag_value" class="tag_value" />
                <input class="add_tag" type="submit" value="add a need" />
@@ -82,12 +103,22 @@
     
     <h3>Host Questions (Private)</h3>
     <ul>
-      <li><dl><dt >How did you find out about the Hub?</dt><dd class='editable' id='{{host_info.edit_key}}find_out'>{{host_info.find_out}}</dd></dl></li>
-      <li><dl><dt >Are you interested in peer mentoring?</dt><dd class='editable' id='{{host_info.edit_key}}peer_mentoring'>{{host_info.peer_mentoring}}</dd></dl></li>
+      <li><dl><dt>How did you find out about the Network?</dt>
+	  <dd class='editable' id='{{host_info.edit_key}}find_out'>{{host_info.find_out}}</dd></dl>
+      </li>
+      <li><dl><dt>What would you like to get from being involved with the network?</dt>
+	  <dd class='editable' id='{{host_info.edit_key}}project_stage'>{{host_info.project_stage}}</dd></dl>
+      </li>
       
-      <li><dl><dt >Tell us a bit about your project?</dt><dd class='editable' id='{{host_info.edit_key}}project'>{{host_info.project}}</dd></dl></li>
-      <li><dl><dt >What stage is your project at?:</dt><dd class='editable' id='{{host_info.edit_key}}project_stage'>{{host_info.project_stage}}</dd></dl></li>
-    <li><dl><dt >What assistence would you like to offer other members?</dt><dd class='editable' id='{{host_info.edit_key}}assisstance_offered'>{{host_info.assistance_offered}}</dd></dl></li>
+      <li><dl><dt>What's your aim for the next 6 months?</dt>
+	  <dd class='editable' id='{{host_info.edit_key}}project'>{{host_info.project}}</dd></dl>
+      </li>
+ <!--     <li><dl><dt>What stage is your project at?:</dt>
+	  <dd class='editable' id='{{host_info.edit_key}}project_stage'>{{host_info.project_stage}}</dd></dl>
+      </li>
+      <li><dl><dt>What assistence would you like to offer other members?</dt>
+	  <dd class='editable' id='{{host_info.edit_key}}assisstance_offered'>{{host_info.assistance_offered}}</dd></dl>
+      </li> -->
     </ul>
     {% include "profiles/profile_host_info_form.html" %}
 </div>

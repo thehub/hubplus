@@ -17,11 +17,29 @@ class ProfileHostInfoForm(forms.Form) :
     pass
 
 
+
 class ProfileForm(forms.ModelForm):
-    class Meta:
-        model = Profile
-        exclude = ('user', 'blogrss', 'timezone', 'language',
-            'twitter_user', 'twitter_password')
+    
+    about = forms.CharField(max_length=500)
+    email_address = forms.CharField(max_length=100)
+    name = forms.CharField(max_length=100)
+    display_name = forms.CharField(max_length=100)
+    first_name = forms.CharField(max_length=100)
+    last_name = forms.CharField(max_length=100)
+    organisation = forms.CharField(max_length=100)
+    role = forms.CharField(max_length=100)
+    mobile = forms.CharField(max_length=100)
+    home = forms.CharField(max_length=100)
+    work = forms.CharField(max_length=100)
+    fax = forms.CharField(max_length=100)
+
+    email2 = forms.CharField(max_length=100)
+    address = forms.CharField(max_length=100)
+    skype_id = forms.CharField(max_length=100)
+    sip_id = forms.CharField(max_length=100)
+    website = forms.CharField(max_length=100)
+    homeplace = forms.CharField(max_length=100)
+    location = forms.CharField(max_length=100)
 
 class HostInfoForm(forms.ModelForm) :
     class Meta:
