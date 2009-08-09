@@ -39,9 +39,8 @@ body {
 }
 
 #main {
-	background	: #EEE;
 	overflow 	: hidden;
-	padding		: 10px 10px 0;
+	padding		: 10px 0 0;
 	margin-bottom	: 10px;
 }
 
@@ -56,11 +55,17 @@ body {
 	width		: 250px;
 }
 
-.block {
-	background	: #FFF;
-	border		: 1px solid #000;
+.block,
+.section.tabbed {
+	border-top	: 12px solid #e5e5e5;
 	margin-bottom	: 10px;
-	padding		: 10px;
+	padding		: 10px 0 10px;
+}
+
+#side_bar .block {
+	background	: #fff url('../images/block_header_right.gif') 0 0 repeat-x;
+	border-top	: 0;
+	padding-top	: 22px;
 }
 
 .disabled {

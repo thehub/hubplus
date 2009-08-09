@@ -1,0 +1,73 @@
+/*
+HUB PLUS 2009
+*/
+
+
+
+/* Layout: Permissions */
+
+.permissions_slider {
+	border-collapse	:collapse;
+	list-style	: none;
+	overflow	: hidden;
+	text-align	: center;
+	position:relative;	
+	width		: 100%;
+	vertical-align: top;
+}
+
+.permissions_slider tr {
+	/*border-bottom	: 1px solid #DDD;*/
+	background	: url('../images/hr.gif') 0 100% repeat-x;
+	overflow: visible;
+}
+
+.group_column {
+	color		: #FFF;
+}
+
+.attribute_column {
+	width		: 15%;
+}
+
+.group_column,
+.group_label {
+	text-align	: left;
+}
+
+.setting {
+	background: url('../images/slider_bar.gif') no-repeat 50% 0;
+	vertical-align: top;
+}
+
+.setting.active {
+	background-position	: 50% -200px;
+}
+
+.setting.inactive {
+	background-position	: 50% -100px;
+}
+
+th {
+	font-weight	: normal;
+}
+
+th,
+td.group_label {
+	padding		: 4px 0 5px 0;;
+}
+
+.slider_holder {
+	position:relative;
+}
+
+.slider {
+	cursor: pointer;
+	position: absolute;
+	background: url('../images/slider_handle.gif') no-repeat;
+	height:13px;
+	width:17px;
+	left:50%;
+	margin-left:-9px;
+	left:50%;
+}

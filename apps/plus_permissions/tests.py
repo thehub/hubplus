@@ -1,7 +1,10 @@
 import unittest
 import datetime
+import simplejson
 
 from django.db import models
+from django.contrib.contenttypes.models import ContentType
+from django.contrib.contenttypes import generic
 
 from django.contrib.auth.models import User
 try :
@@ -128,20 +131,20 @@ class TestPermissions(unittest.TestCase) :
         # confirm that there are no permissions currently relating to this resource
         self.assertFalse(ps.has_permissions(blog))
 
-        t = SecurityTag(name='tag1',agent=u,resource=blog,interface=tif.get_id(OurPost,'Viewer'))
+        t = SecurityTag(name='tag1',agent=u,resource=blog,interface=tif.get_id(OurPost,'Viewer'),creator=u)
         t.save()
 
         # confirm that there now are permissions for the resource
         self.assertTrue(ps.has_permissions(blog))
 
-        t2 = SecurityTag(name='tag1',agent=u,resource=blog,interface=tif.get_id(OurPost,'Commentor'))
+        t2 = SecurityTag(name='tag1',agent=u,resource=blog,interface=tif.get_id(OurPost,'Commentor'),creator=u)
         t2.save()
 
         self.assertTrue(ps.has_access(u,blog,tif.get_id(OurPost,'Commentor')))
 
         self.assertFalse(ps.has_access(u,blog,tif.get_id(OurPost,'Editor')))
 
-        t3 = SecurityTag(name='tag1',agent=editors,resource=blog2,interface=tif.get_id(OurPost,'Editor'))
+        t3 = SecurityTag(name='tag1',agent=editors,resource=blog2,interface=tif.get_id(OurPost,'Editor'),creator=u)
         t3.save()
         
         self.assertTrue(ps.has_access(editors,blog2,tif.get_id(OurPost,'Editor')))
@@ -160,6 +163,39 @@ class TestPermissions(unittest.TestCase) :
 
         self.assertFalse(ps.has_access(u,blog,ps.get_interface_id(OurPost,'Viewer')))
 
+
+    def testTypeId(self) :
+        u = User(username='sara')
+        u.save()
+        p = u.get_profile()
+        p.save()
+        u = p.user
+        blog= OurPost(title='post')
+        blog.save()
+        ps = get_permission_system()
+        t = SecurityTag(name='type-test',agent=u,resource=blog,interface=ps.get_interface_id(OurPost,'Viewer'),creator=u)
+        t.save()
+
+        resource_type = ContentType.objects.get_for_model(blog)
+
+        self.assertEquals(resource_type,t.get_resource_type())
+        self.assertEquals(blog.id,t.get_resource_id())
+        agent_type = ContentType.objects.get_for_model(u)
+
+        self.assertEquals(agent_type,t.get_agent_type())
+        self.assertEquals(u.id,t.get_agent_id())
+
+        objects = SecurityTag.objects.get_by_agent_and_resource_type_and_id(agent_type,u.id,resource_type,blog.id)
+        count = 0
+        for x in objects : count = count+1
+        self.assertEquals(count,1)
+        objects = SecurityTag.objects.get_by_agent_and_resource_type_and_id(agent_type,u.id,resource_type,blog.id)
+        self.assertEquals(objects[0].name,'type-test')
+        
+        
+            
+            
+        
 
     def makeInterfaceFactory(self) :
         ps = PermissionSystem()
@@ -192,11 +228,10 @@ class TestPermissions(unittest.TestCase) :
             self.assertEquals(e.silent_variable_failure,True)
 
 
-
-
         class BodyViewer(Interface) :
             body = InterfaceReadProperty('body')
 
+        
         blog.add_interface(BodyViewer)
         self.assertEquals(blog.body,"Here's what")
         self.assertRaises(PlusPermissionsNoAccessException,f,blog)
@@ -280,17 +315,17 @@ class TestPermissions(unittest.TestCase) :
         #     the agent which is the "owner" of the resource (in this case "group") and 
         #     the agent which is the "creator" of the resource (in this case "author")
         
-        s = pm.get_interfaces()['Viewer'].make_slider_for(blog,pm.make_slider_options(blog,group,author),u,0)
+        s = pm.get_interfaces()['Viewer'].make_slider_for(blog,pm.make_slider_options(blog,group,author),u,0,u)
 
         # now we're just testing that OurPost.Viewer has 5 options for the slider
         self.assertEquals(len(s.get_options()),5)
 
         # let's see them
         ops = s.get_options()
-        self.assertEquals([a.name for a in ops],['root','all_members','Green Architects','author','Green Architecture Admin'])
+        self.assertEquals([a.name for a in ops],['World','All Members','Green Architects (owner)','author (creator)','Green Architecture Admin'])
 
-        # and check that it gave us "root" (ie. the everyone group) as the view default. (we assume that blogs default to allowing non members to read them)
-        self.assertEquals(s.get_current_option().name,'root')
+        # and check that it gave us "World" (ie. the everyone group) as the view default. (we assume that blogs default to allowing non members to read them)
+        self.assertEquals(s.get_current_option().name,'World')
 
         tif = ps.get_interface_factory()
         
@@ -300,19 +335,19 @@ class TestPermissions(unittest.TestCase) :
 
         # now use the slider to *change* the permission. Behind the scenes this is manipulating SecurityTags.
         s.set_current_option(1) # is it ok to set option using numeric index? Or better with name?
-        self.assertEquals(s.get_current_option().name,'all_members')
+        self.assertEquals(s.get_current_option().name,'All Members')
         self.assertFalse(ps.has_access(everyone,blog,tif.get_id(OurPost,'Viewer')))
         self.assertTrue(ps.has_access(all_members,blog,tif.get_id(OurPost,'Viewer')))
 
         # and again
         s.set_current_option(2) # group level
-        self.assertEquals(s.get_current_option().name,'Green Architects')
+        self.assertEquals(s.get_current_option().name,'Green Architects (owner)')
         self.assertFalse(ps.has_access(all_members,blog,tif.get_id(OurPost,'Viewer')))
         self.assertTrue(ps.has_access(group,blog,tif.get_id(OurPost,'Viewer'))) 
 
         # and again
         s.set_current_option(3) # author
-        self.assertEquals(s.get_current_option().name,'author')
+        self.assertEquals(s.get_current_option().name,'author (creator)')
         self.assertFalse(ps.has_access(group,blog,tif.get_id(OurPost,'Viewer')))
         self.assertTrue(ps.has_access(author,blog,tif.get_id(OurPost,'Viewer')))
 
@@ -321,6 +356,7 @@ class TestPermissions(unittest.TestCase) :
         self.assertEquals(s.get_current_option().name,'Green Architecture Admin')
         self.assertFalse(ps.has_access(author,blog,tif.get_id(OurPost,'Viewer')))
         self.assertTrue(ps.has_access(adminGroup,blog,tif.get_id(OurPost,'Viewer')))
+
 
 
     def testProfileSignals(self) :
@@ -387,3 +423,128 @@ class TestPermissions(unittest.TestCase) :
 
         
 
+    def testSliderGroup(self) :
+        u= User(username='paulo')
+        u.display_name=u.username
+        u.save()
+        
+        p = u.get_profile()
+        u = p.user
+        
+        ps = PermissionSystem()
+
+
+        l = Location(name='biosphere2')
+        l.save()
+
+        group = TgGroup(group_name='organiccooks',display_name='Organic Cooks', place=l,created=datetime.date.today())
+        group.save()
+        #admin_group = TgGroup(group_name='ocadmin', display_name='Organic Cook Admin', place=l,created=datetime.date.today())
+        #admin_group.save()
+        #da = DefaultAdmin(agent=admin_group,resource=group)
+        #da.save()
+        blog = OurPost(title='slider testing')
+        blog.save()
+
+
+        pm = ps.get_permission_manager(OurPost)
+        pm.setup_defaults(blog,group,u)
+
+        # our permission manager, when it makes the sliders, needs to be able to report the default owner and admins etc.
+        self.assertEquals(pm.get_owner(blog,ps.get_interface_id(OurPost,'Viewer')),group)
+        self.assertEquals(pm.get_creator(blog,ps.get_interface_id(OurPost,'Viewer')),u)
+
+        group_type = ContentType.objects.get_for_model(ps.get_anon_group()).id
+        
+        match = simplejson.dumps(
+         {'sliders':{
+          'title':'title',
+          'intro':'intro',
+          'resource_id':blog.id,
+          'resource_type':ContentType.objects.get_for_model(blog).id, 
+          'option_labels':['World','All Members','Organic Cooks (owner)','paulo (creator)' ],
+          'option_types':[group_type,group_type,group_type,ContentType.objects.get_for_model(u).id],
+          'option_ids':[ps.get_anon_group().id,ps.get_all_members_group().id,group.id,u.id],
+          'sliders':['Viewer','Editor'],
+          'interface_ids':[ps.get_interface_id(OurPost,'Viewer'),ps.get_interface_id(OurPost,'Editor')],
+          'mins':[0,0],
+          'constraints':[[0,1]],
+          'current':[0,2],
+          'extras':{}
+          }}
+        )
+
+        json = pm.json_slider_group('title','intro',blog,['Viewer','Editor'],[0,0],[[0,1]])
+
+        print match
+        print json
+
+        self.assertEquals(json,match)
+
+        
+    def test_agent_constraint(self) :
+        # there can only one agent from a collection of options
+        # functions to find which option exists and to replace it with another from the set
+        ps = get_permission_system()
+        u=User(username='hermit')
+        u.save()
+        b=OurPost(title='post')
+        b.save()
+        interface=ps.get_interface_id(OurPost,'Viewer')
+        anon = ps.get_anon_group()
+        all = ps.get_all_members_group()
+
+
+        def kl(o) : return (ContentType.objects.get_for_model(o).id,o.id)
+        
+        kill_list = [kl(o) for o in [u, anon, all]]
+
+        print "UUU",kill_list
+
+        s=SecurityTag(name='blaaaah',agent=u,resource=b,interface=interface,creator=u)
+        s.save()
+
+        s2=SecurityTag(name='blaah',agent=anon,resource=b,interface=interface,creator=u)
+        s2.save()
+
+        u2=User(username='harry')
+        u2.save()
+
+        s2=SecurityTag(name='aae',agent=u2,resource=b,interface=interface,creator=u)
+        s2.save()
+
+        u_type = ContentType.objects.get_for_model(u)
+        an_type = ContentType.objects.get_for_model(anon)
+        r_type = ContentType.objects.get_for_model(b)
+
+        # check there are three permissions for this
+        for x in ps.get_permissions_for(b) : print x
+        self.assertEquals(SecurityTag.objects.filter(resource_content_type=r_type,resource_object_id=b.id).count(),3)
+
+        # and then when we kill them, there's only one left
+        SecurityTag.objects.kill_list(kill_list,r_type,b.id,interface) 
+
+        for x in ps.get_permissions_for(b) : print x
+        self.assertEquals(SecurityTag.objects.filter(resource_content_type=r_type,resource_object_id=b.id).count(),1)
+
+        u3 = User(username='jon')
+        u3.save()
+
+        s2=SecurityTag(name='bleaaaah',agent=u3,resource=b,interface=interface,creator=u)
+        s2.save()
+        self.assertTrue(ps.has_access(u3,b,interface))
+   
+        kill_list = [kl(o) for o in [u3, anon, all]]
+
+        SecurityTag.objects.update(resource=b,interface=interface,new=all,kill=kill_list,name='boo',creator=u)
+
+        self.assertFalse(ps.has_access(u3,b,interface))
+        all.add_member(u3)
+        self.assertTrue(ps.has_access(u3,b,interface))
+
+        SecurityTag.objects.update(resource=b,interface=interface,new=u3,kill=kill_list,name='boo2',creator=u)
+        self.assertTrue(ps.has_access(u3,b,interface))
+        self.assertFalse(ps.has_access(all,b,interface))
+
+        
+        

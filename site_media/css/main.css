@@ -7,13 +7,15 @@ HUB PLUS 2009
 /* Main Generic */
 
 #main h2 {
+	color		: #5a0000;
 	font-size	: 2.6em;
 	font-weight	: normal;
-	margin-bottom	: 25px;
+	line-height	: 1.1em;
+	margin-bottom	: 10px;
 }
 
 #main h3 {
-	font-size	: 1.1em;
+	font-size	: 1.0em;
 	padding-bottom	: .5em;
 	text-transform	: uppercase;
 }
@@ -30,18 +32,32 @@ HUB PLUS 2009
 	font-size	: 1.5em; 
 }
 
+
+
+
+
+
+#permission_button {
+	text-align:right;
+	margin-bottom:1.5em;
+}
+
+
+
+
+
 /* Divided lists */
 
 .content_list,
 .link_list {
-	border-bottom	: 1px solid #DDD;
+	border-bottom	: 1px solid #ddd;
 	list-style	: none;
 	overflow	: hidden;
 }
 
 .content_list li,
 .link_list li {
-	border-top	: 1px solid #DDD;
+	border-top	: 1px solid #ddd;
 	padding		: 5px 0;
 	overflow	: hidden;
 }
@@ -65,31 +81,60 @@ HUB PLUS 2009
 
 /* Page Tab Content */
 
-.section_tab_navigation {
-	font-size	: 1.4em;
-	line-height	: 1.4em;
+.tabbed ul.tabbed_navigation {
+	background	: #fff url('../images/tabbed_nav_bg.gif') 0 100% repeat-x;
+	font-size	: 1.6em;
+	line-height	: 1em;
 	list-style	: none;
-	margin		: 0 0 -1px;
+	margin		: 0 0 1em;
 	overflow	: hidden;
+	padding		: 0;
 }
 
-.section_tab_navigation li {
+.tabbed ul.tabbed_navigation li {
 	float		: left;
+	margin		: 0 20px 0 0;
+	padding		: 0;
 }
 
-.section_tab_navigation li a {
-	background	: #FFF;
-	border		: 1px solid #000;
-	color		: #000;
+.tabbed ul.tabbed_navigation li a {
+	color		: #999;
 	display		: block;
-	margin-right: -1px;
-	padding		: 1px 10px;
+	margin		: 0;
+	padding		: 0 0 12px;
 }
 
-.section_tab_navigation li a.active {
-	background	: #666;
-	color		: #FFF;
+
+.tabbed ul.tabbed_navigation li a:hover,
+.tabbed ul.tabbed_navigation li.selected a {
+	color		: #777;
+	background	: url('../images/tabbed_nav_indicator.gif') 50% 100% no-repeat;
 }
+
+.tabbed ul.tabbed_navigation li.selected a {
+	color		: #5a0000;	
+}
+
+
+/* Page Tab Content: Alternative */
+
+/*
+.tabbed ul.tabbed_navigation li {
+	margin		: 0 3px 0 0;
+}
+
+.tabbed ul.tabbed_navigation li a {
+	border		: 1px solid #ddd;
+	border-width: 1px 1px 0;
+	margin		: 0;
+	padding		: 3px 10px 1px;
+}
+
+.tabbed ul.tabbed_navigation li.selected a {
+	border-bottom	: 1px solid #fff;
+}
+*/
+
 
 /* Block: Updates */
 
@@ -131,6 +176,11 @@ HUB PLUS 2009
 	width		: 200px;
 }
 
+#intro #member_image {
+	border		: 1px solid #ddd;
+	padding		: 10px;
+}
+
 #intro #extra {
 	float		: left;
 	width		: 200px;
@@ -138,7 +188,7 @@ HUB PLUS 2009
 
 #intro #info {
 	float		: left;
-	margin-right: 10px;
+	margin-left	: 10px;
 	width		: 388px;
 }
 
@@ -167,7 +217,7 @@ HUB PLUS 2009
 }
 
 
-/* Tag Block */
+/* Block: About */
 
 #about_block {
 	
@@ -232,39 +282,94 @@ HUB PLUS 2009
 	overflow	: hidden;
 }
 
-a.tag {
-	background	: #fff;
-	border		: 1px solid #BBB;
-	margin		: 0 0 5px 0;
-	padding		: 1px 3px;
-}
-a.delete_tag {
-        color: #FF0000;
-}
-form.add_tag_form {
-    display: inline;
-}
-.error_message {
-    color: #FF0000;
-}
 #resources a.active {
 	background	: #666;
 	color		: #fff;
 }
 
 
+/* Tags */
+
+.tag_list {
+	line-height	: 1em;
+	list-style	: none;
+	overflow	: hidden;
+}
+
+.tag_list li {
+	float		: left;
+	margin		: 0 3px 3px 0;
+}
+
+.tag_list a.tag,
+.tag_list a.delete_tag {
+	background	: #f5f5f5 url('../images/tag_bg.gif') 0 0 repeat-x;
+	border		: 1px solid #bbb;
+	border-color: #ddd #bbb #bbb #ddd;
+	display		: block;
+	float		: left;
+	padding		: 3px 3px 4px;
+}
+
+.tag_list a.delete_tag {
+	background	: #eee url('../images/button_bg.gif') 0 0 repeat-x;
+	border-left	: 0;
+	color		: #000;
+	font-family	: verdana;
+	text-align	: center;
+	width		: 1.0em;
+}
+
+.tag_list a.tag:hover {
+	background	: #5a0000;
+	border-color: #500000 #300000 #300000 #500000;
+	color		: #eee;
+}
+
+.tag_list a.delete_tag:hover {
+	background	: #ccc;
+	border-color: #aaa #999 #aaa #999;
+}
+
+.error_message {
+	color: #FF0000;
+}
+
+
+/* Forms & Buttons */
+
+input.text{
+	background	: #fff url('../images/input_bg.gif') 0 0 repeat-x;
+	border		: 1px solid #999;
+	border-color: #777 #bbb #ddd #aaa;
+	padding		: 2px 3px;
+	margin-bottom	: 3px;
+}
+
+.button {
+	background	: #e2e2e2 url('../images/button_bg.gif') 0 0 repeat-x;
+	border		: 1px solid #bbb;
+	border-color: #bbb #999 #999 #bbb;
+	cursor		: pointer;
+	margin-bottom	: 3px;
+	padding		: 2px 5px 2px !important;	
+	text-transform	: uppercase;
+}
+
+.button::-moz-focus-inner {
+	border		: none;
+	padding		: 0;
+}
+
+.button:hover {
+	background	: #ccc;
+	border-color: #aaa #999 #aaa #999;
+}
 
 
 
 
-
-
-
-
-
-
-
-/* Right Blocks: Members Online */
+/* Side Blocks: Members Online */
 
 #feature_members_online ul {
 	list-style	: none;
@@ -281,7 +386,7 @@ form.add_tag_form {
 }
 
 
-/* Right Blocks: My Hub */
+/* Side Blocks: My Hub */
 
 #feature_my_hub .hub_thumb {
 	float		: left;

@@ -16,8 +16,6 @@ from microblogging.models import Following
 
 from apps.plus_permissions.Profile import *  # Essential to get signals working at the moment.
 from profiles.models import Profile, HostInfo
-  
-
 from profiles.forms import ProfileForm, HostInfoForm
 
 from avatar.templatetags.avatar_tags import avatar
@@ -28,6 +26,8 @@ from apps.plus_permissions.models import PermissionSystem, get_permission_system
 from django.contrib.auth.decorators import login_required
 
 from apps.plus_tags.models import  tag_add, tag_delete, get_tags, tag_autocomplete
+
+from django.contrib.contenttypes.models import ContentType
 
 
 # need 
@@ -65,13 +65,12 @@ def profile(request, username, template_name="profiles/profile.html"):
     other_user = get_object_or_404(User, username=username)
     ps = get_permission_system()
 
-    try:
-        p = other_user.get_profile()
-    except Exception : 
-        other_user.save()
-        p = other_user.get_profile()
-        p.save()
+    other_user.save()
+    p = other_user.get_profile()
+    p.save()
 
+    if not ps.has_permissions(p) :
+        ps.get_permission_manager(Profile).setup_defaults(p,p.user,p.user)
 
     if request.user.is_authenticated():
 
@@ -224,7 +223,7 @@ def profile_field(request,username,classname,fieldname,*args,**kwargs) :
     ps = get_permission_system()
     p = other_user.get_profile()
     if not ps.has_access(request.user,p,ps.get_interface_id(Profile,'Editor')) :
-        return HttpResponse("You aren't authorized to access %s in %s for %s. You are %s" % (fieldname,kwargs['class'],username,request.user),status=401)
+        return HttpResponse("You aren't authorized to access %s in %s for %s. You are %s" % (fieldname,classname,username,request.user),status=401)
     else :
         if classname == 'Profile' :
             return one_model_field(request,p,ProfileForm,fieldname, kwargs.get('default', ''),[p.user])
@@ -254,4 +253,43 @@ def one_model_field(request, object, formClass, fieldname, default, other_object
     new_val = new_val and new_val or default
     return HttpResponse("%s" % new_val, mimetype='text/plain')
 
+@login_required
+def get_main_permission_sliders(request,username) :
+    ps = get_permission_system()
+    pm = ps.get_permission_manager(Profile)
+    p = request.user.get_profile()
+    json = pm.main_json_slider_group(p)
+    print json
+    return HttpResponse(json, mimetype='text/plain')
 
+def content_object(c_type, c_id) :
+    a_type = ContentType.objects.get_for_id(c_type)
+    return a_type.get_object_for_this_type(pk=c_id)
+
+
+@login_required
+def update_main_permission_sliders(request,username) :
+    ps = get_permission_system()
+    pm = ps.get_permission_manager(Profile)
+
+    p = request.user.get_profile()
+    post = request.POST
+
+    print post
+    kill = [(x[0],x[1]) for x in eval(post.get('kill'))]
+
+    resource = content_object(post['resource_type'], post['resource_id'])
+
+    for iface in post.iterkeys() :
+        print "interface ",iface
+        if iface != 'kill' and iface != 'resource_type' and iface != 'resource_id' : 
+            opt = eval(post.get(iface))
+            agent = content_object(opt[0], opt[1])
+            print "AA"
+
+            SecurityTag.objects.update(name='from update_main_permission_sliders',new=agent,resource=resource,interface=iface,creator=request.user,kill=kill)
+            print "BB"
+
+
+    for x in ps.get_permissions_for(resource) :  print x
+    return HttpResponse('ok', mimetype='text/plain')

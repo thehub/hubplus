@@ -50,7 +50,7 @@ var tag_list = function (ele) {
     var target_id = manager.find('.target_id').val();
     var target_class = manager.find('.target_class').val();
 
-    console.log(tag_type+","+target_id+","+target_class);
+    //console.log(tag_type+","+target_id+","+target_class);
 
     var append_tag = function (data) {
 	if (data.added === false) {
@@ -103,11 +103,11 @@ var setup_tag_lists = function () {
 	tag_list(ele);
     });
 };
-var profile = function () {
+
+var profile_ready = function () {
     editing();
     setup_tag_lists();
     //jq.getJSON('map_tags/', {}, init_rgraph);
 };
-jq(document).ready(function () {
-    profile();
-});
+
+

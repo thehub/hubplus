@@ -3,7 +3,6 @@ from django.db import models
 
 from django.contrib.auth.models import User, UserManager, check_password
 
-
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes import generic
 
@@ -13,7 +12,7 @@ import datetime
 def getHubspaceUser(username) :
     """ Returns the hubspace user. None if doesn't exist"""
     try :
-        tu = User.objects.filter(username=username)[0]
+        tu = User.objects.get(username=username)
         return  tu
     except Exception,e:
         print "Error in getHubspaceUser %s" % e
@@ -130,7 +129,6 @@ class Location(models.Model):
 
 try :
   class TgGroup(models.Model):
-    #id = models.IntegerField(primary_key=True)
     group_name = models.CharField(unique=True, max_length=40)
     display_name = models.CharField(max_length=255)
     created = models.DateTimeField()
@@ -138,6 +136,8 @@ try :
     #if place is Hub Islington then set member of toHub Islington group if level is member
     #if level is host, set member of to Hub Islington Host Group.
     level = models.CharField(max_length=9)
+    psn_id = models.CharField(max_length=100)
+    path = models.CharField(max_length=120)
 
     class Meta:
         db_table = u'tg_group'
@@ -216,3 +216,23 @@ def user_save(self) :
         self.created = datetime.date.today()
     super(User,self).save()
     
+
+# ======================================
+# The hubspace object reference model
+
+class ObjectReference(models.Model):
+    """ Generic object reference, based on version in Hubspace"""
+    content_type = models.ForeignKey(ContentType)
+    object_id = models.PositiveIntegerField()
+    object = generic.GenericForeignKey('content_type', 'object_id')
+
+
+def make_object_reference(object) :
+    if not object.pk : 
+        object.save()
+    o = ObjectReference(object=object)
+    o.save()
+    return o
+
+def get_referenced_object(id) :
+    return ObjectReference.objects.get(pk=id).object

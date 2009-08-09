@@ -19,6 +19,8 @@ class OurPost(models.Model) :
     def __str__(self) :
         return "OurPost %s,%s" % (self.title,self.body)
 
+
+
 # Here's the wrapping we have to put around it.
 
 class OurPostViewer(Interface) : 
@@ -55,27 +57,14 @@ class OurPostPermissionManager(PermissionManager) :
         interface_factory.add_interface(OurPost,'Editor',OurPostEditor)
         interface_factory.add_interface(OurPost,'Commentor',OurPostCommentor)
 
-    def make_slider_options(self,resource,owner,creator) :
-        options = [
-            SliderOption('root',get_permission_system().get_anon_group()),
-            SliderOption('all_members',get_permission_system().get_all_members_group()),
-            SliderOption(owner.display_name,owner),
-            SliderOption(creator.display_name,creator)
-        ]
-
-        default_admin = default_admin_for(owner)
-
-        if not default_admin is None :
-            options.append( SliderOption(default_admin.display_name,default_admin) )
-
-        return options
 
 
     def setup_defaults(self,resource, owner, creator) :
         options = self.make_slider_options(resource,owner,creator)
+        self.save_defaults(resource,owner,creator)
         interfaces = self.get_interfaces()
-        s = interfaces['Viewer'].make_slider_for(resource,options,owner,0)
-        s = interfaces['Editor'].make_slider_for(resource,options,owner,2)
-        s = interfaces['Commentor'].make_slider_for(resource,options,owner,1)
+        s = interfaces['Viewer'].make_slider_for(resource,options,owner,0,creator)
+        s = interfaces['Editor'].make_slider_for(resource,options,owner,2,creator)
+        s = interfaces['Commentor'].make_slider_for(resource,options,owner,1,creator)
  
 
