@@ -165,6 +165,7 @@ INSTALLED_APPS = (
 
     'plus_groups',
     'plus_links',
+    'plus_contacts',
 
     'staticfiles',
     'account',

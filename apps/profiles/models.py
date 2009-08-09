@@ -20,7 +20,7 @@ class DelegateToUser(object) :
 
 class Profile(models.Model):    
     user = models.ForeignKey(User, unique=True, verbose_name=_('user'))
-
+    
     about = DelegateToUser('description')
     email_address = DelegateToUser('email_address')
     name = DelegateToUser('username')
@@ -42,6 +42,8 @@ class Profile(models.Model):
     homeplace = DelegateToUser('homeplace')
     location = DelegateToUser('location')
 
+    invited_by = models.ForeignKey(User, related_name='invited_users', null=True)
+    accepted_by = models.ForeignKey(User, related_name='accepted_users', null=True)
 
     def __unicode__(self):
         return self.user.username
@@ -49,6 +51,11 @@ class Profile(models.Model):
     def __str__(self) :
        return "this is a profile for %s" % self.user.username
 
+    def was_invited(self):
+       return not self.invited_by is None
+
+    def was_accepted(self):
+       return not self.accepted_by is None
     
     def get_absolute_url(self):
         return ('profile_detail', None, {'username': self.user.username})
