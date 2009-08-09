@@ -188,8 +188,16 @@ def our_profile_permission_test(fn) :
         if not ps.has_access(request.user,profile,ps.get_interface_id(Profile,'Editor')) :
             return HttpResponse("You don't have permission to do that to %s, you are %s" % (username,request.user),status=401)
         else :
-            return fn(request, profile, *args, **kwargs)
+            return fn(request, username, *args, **kwargs)
     return our_fn
+
+def name_to_profile(fn):
+    def our_fn(request,username,*args,**kwargs):
+        other_user = get_object_or_404(User,username=username)
+        return fn(request, other_user.get_profile(), *args, **kwargs)
+    return our_fn
+    
+    
 
 @login_required
 @transaction.commit_on_success
@@ -202,6 +210,8 @@ def update_profile_form(request,username) :
         raise PlusPermissionsNoAccessException(Profile,p.pk,'update_profile_form')
     else :
         profile_form = ProfileForm(request.POST, p)
+
+
 
 @login_required
 @transaction.commit_on_success

@@ -17,7 +17,7 @@ def read_interface(name,id) :
         @classmethod
         def get_id(self):
             return id
-    setattr(ReadInterface,name,InterfaceReadProperty(name))
+    setattr(ReadInterface, name, InterfaceReadProperty(name))
     return ReadInterface
         
 class TgGroupViewer(Interface) : 
@@ -50,12 +50,19 @@ class TgGroupEditor(Interface) :
         return 'TgGroup.Editor'
 
 
+class TgGroupAcceptMember(Interface):
+    pk = InterfaceReadProperty('pk')
+    @classmethod
+    def get_id(self) :
+        return 'TgGroup.AcceptMember'   
+
 class TgGroupPermissionManager(PermissionManager) :
     def register_with_interface_factory(self,interface_factory) :
         self.interface_factory = interface_factory
         interface_factory.add_type(TgGroup)
         interface_factory.add_interface(TgGroup,'Viewer',TgGroupViewer)
         interface_factory.add_interface(TgGroup,'Editor',TgGroupEditor)
+        interface_factory.add_interface(TgGroup,'MemberAccept',TgGroupMemberAccept)
 
     def setup_defaults(self,resource, owner, creator) :
         self.save_defaults(resource,owner,creator)
@@ -63,13 +70,16 @@ class TgGroupPermissionManager(PermissionManager) :
         options = self.make_slider_options(resource,owner,creator)
         interfaces = self.get_interfaces()
 
-
         slide = interfaces['Viewer'].make_slider_for(resource,options,owner,0,creator,creator)
         slide = interfaces['Editor'].make_slider_for(resource,options,owner,2,creator,creator)
-
+        slide = interfaces['AcceptMember'].make_slider_for(resource,options,owner,2,creator,creator)
+        slide = interfaces['InviteMember'].make_slider_for(resource,options,owner,2,creator,creator)
+        slide = interfaces['RemoveMember'].make_slider_for(resource,options,owner,2,creator,creator)
+        slide = interfaces['Join'].make_slider_for(resource,options,owner,2,creator,creator)
+        slide = interfaces['Leave'].make_slider_for(resource,options,owner,2,creator,creator)
         #ipdb.set_trace()
 
-get_permission_system().add_permission_manager(TgGroup,TgGroupPermissionManager(TgGroup))
+get_permission_system().add_permission_manager(TgGroup, TgGroupPermissionManager(TgGroup))
 
 # ========= Signal handlers
 
@@ -85,10 +95,10 @@ def setup_default_permissions(sender,**kwargs):
     try :
         ps.get_permission_manager(TgGroup)
     except :
-        ps.add_permission_manager(TgGroup,TgGroupPermissionManager(TgGroup))
+        ps.add_permission_manager(TgGroup, TgGroupPermissionManager(TgGroup))
         
     if not get_permission_system().has_permissions(group) :
-        ps.get_permission_manager(TgGroup).setup_defaults(group,group,group)
+        ps.get_permission_manager(TgGroup).setup_defaults(group, group, group)
 
 post_save.connect(setup_default_permissions,sender=TgGroup)
 

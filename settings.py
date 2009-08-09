@@ -167,6 +167,7 @@ INSTALLED_APPS = (
     'state_machine',
     'plus_groups',
     'plus_links',
+    'plus_contacts',
 
     'staticfiles',
     'account',

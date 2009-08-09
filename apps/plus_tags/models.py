@@ -20,6 +20,8 @@ def tag_autocomplete(tag_type, tag_value, limit):
     tags = get_tags(tag_type=tag_type, partial_tag_value=tag_value)
     return [tag.keyword for tag in tags[0:10]]
 
+def get_tagged_resources(tag_type=None, tag_value=None, tagger=None):
+    return [tag.subject for tag in get_tags(tag_type=tag_type, tag_value=tag_value, tagger=tagger)]
 
 def get_tags(tagged=None, tag_type=None, tag_value=None, tagger=None, partial_tag_value=None):
     given = {}
@@ -29,7 +31,7 @@ def get_tags(tagged=None, tag_type=None, tag_value=None, tagger=None, partial_ta
                          subject_content_type__pk = tagged_type.id))
     if tagger != None:
        tagger_type = ContentType.objects.get_for_model(tagger)
-       given.update(dict(agent_object_id = tagger.id,
+       given.update(dict(agent_object_id = tagger.id, 
                          agent_content_type__pk = tagger_type.id))
     if tag_type != None:
        given['tag_type'] = tag_type
@@ -52,7 +54,7 @@ def tag_add(tagged, tag_type, tag_value, tagger):
                          agent = tagger,
                          subject = tagged)
     new_tag.save()
-    return (new_tag, True)
+    return (new_tag, True) 
 
 def tag_delete(tagged, tag_type, tag_value, tagger):
     existing_tag = get_tags(tagged, tag_type, tag_value, tagger)
@@ -60,5 +62,3 @@ def tag_delete(tagged, tag_type, tag_value, tagger):
        return (None, False)
     existing_tag.delete()
     return (None, True)
-
-
