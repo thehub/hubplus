@@ -1,8 +1,10 @@
 
 from apps.hubspace_compatibility.models import TgGroup, Location
 from models import *
+
 import unittest
 import datetime
+
 
         
 class TestPlusModels(unittest.TestCase):
@@ -37,5 +39,18 @@ class TestPlusModels(unittest.TestCase):
 
         self.assertEquals(e2.about,"this is about my group")
 
+
+    
+    def test_sign_up_sm(self) :
+        sm = get_sm_register()['NonUserRequestSM']
+        u = User(username='admin')
+        u.save()
+
+        a = NonUserApplication(username='wander',machine=sm)
+        a.save()
+        # hardwired status
+        self.assertEquals(a.get_status(),_REQUEST)
+        a.
+        
 
 
