@@ -13,6 +13,7 @@ except Exception, e:
     print "*** %s" % e
 
 from models import *
+from apps.plus_groups.models import create_hub, create_site_group
 
 import ipdb
 
@@ -26,17 +27,14 @@ class TestPermissions(unittest.TestCase) :
         # Test the group hierarchies stuff ...
 
         # make a user
-        u = User()
-        u.username = 'nils'
+        u = User(username='nils',email_address='nils@the-hub.net')
         u.save()
 
         # and a couple more
-        u2 = User()
-        u2.username='tom'
+        u2 = User(username='tom',email_address='tom@the-hub.net')
         u2.save()
     
-        u3 = User()
-        u3.username = 'jesson'
+        u3 = User(username='jesson',email_address='jesson@the-hub.net')
         u2.save()
 
         # we need location for TgGroups
@@ -112,7 +110,7 @@ class TestPermissions(unittest.TestCase) :
     def testPermissions(self) :
         ps = PermissionSystem()
 
-        u = User(username='synnove')
+        u = User(username='synnove',email_address='synnove@the-hub.net')
         u.save()
 
         blog= OurPost(title='my post')
@@ -165,7 +163,7 @@ class TestPermissions(unittest.TestCase) :
 
 
     def testTypeId(self) :
-        u = User(username='sara')
+        u = User(username='sara',email_address='sara@the-hub.net')
         u.save()
         p = u.get_profile()
         p.save()
@@ -259,7 +257,17 @@ class TestPermissions(unittest.TestCase) :
         
         self.assertRaises(PlusPermissionsNoAccessException,try_delete,blog)
         blog.add_interface(tif.get_interface(OurPost,'Editor'))
+
+        def foo(r) :
+            r.foo()
+        self.assertRaises(PlusPermissionsNoAccessException,foo,blog)
         
+        class FooRunner(Interface) :
+            foo = InterfaceCallProperty('foo')
+        
+        blog.add_interface(FooRunner)
+        blog.foo()
+
         blog.delete()
         
         
@@ -292,11 +300,11 @@ class TestPermissions(unittest.TestCase) :
         blog.save()
 
         # create a user 
-        u = User(username='phil')
+        u = User(username='phil',email_address='phil@the-hub.net')
         u.save()
 
         # another user (called 'author') who is set as the creator of our blog
-        author = User(username='author')
+        author = User(username='author',email_address='the-hub.net')
         author.display_name = 'author'
         author.save()
 
@@ -371,7 +379,7 @@ class TestPermissions(unittest.TestCase) :
 
 
     def testUserWrapping(self) :
-        u=User(username='oli')
+        u=User(username='oli',email_address='oli@the-hub.net')
         u.save()
         blog = OurPost(title='test wrapping')
         blog.save()
@@ -397,7 +405,7 @@ class TestPermissions(unittest.TestCase) :
 
         self.assertEquals(len(blog.get_interfaces()),3)
 
-        u2=User(username='holly')
+        u2=User(username='holly',email_address='holly@the-hub.net')
         u2.save()
         blog2=OurPost(title='test rapping')
         blog2.save()
@@ -413,7 +421,7 @@ class TestPermissions(unittest.TestCase) :
         
     def testProfile(self) :
         ps = get_permission_system()
-        u= User(username='dermot')
+        u= User(username='dermot',email_address='dermot@the-hub.net')
         u.save()
         p = u.get_profile()
         p.save()
@@ -424,7 +432,7 @@ class TestPermissions(unittest.TestCase) :
         
 
     def testSliderGroup(self) :
-        u= User(username='paulo')
+        u= User(username='paulo',email_address='paulo@the-hub.net')
         u.display_name=u.username
         u.save()
         
@@ -476,9 +484,6 @@ class TestPermissions(unittest.TestCase) :
 
         json = pm.json_slider_group('title','intro',blog,['Viewer','Editor'],[0,0],[[0,1]])
 
-        print match
-        print json
-
         self.assertEquals(json,match)
 
         
@@ -486,7 +491,7 @@ class TestPermissions(unittest.TestCase) :
         # there can only one agent from a collection of options
         # functions to find which option exists and to replace it with another from the set
         ps = get_permission_system()
-        u=User(username='hermit')
+        u=User(username='hermit',email_address='hermit@the-hub.net')
         u.save()
         b=OurPost(title='post')
         b.save()
@@ -499,15 +504,13 @@ class TestPermissions(unittest.TestCase) :
         
         kill_list = [kl(o) for o in [u, anon, all]]
 
-        print "UUU",kill_list
-
         s=SecurityTag(name='blaaaah',agent=u,resource=b,interface=interface,creator=u)
         s.save()
 
         s2=SecurityTag(name='blaah',agent=anon,resource=b,interface=interface,creator=u)
         s2.save()
 
-        u2=User(username='harry')
+        u2=User(username='harry',email_address='harry@the-hub.net')
         u2.save()
 
         s2=SecurityTag(name='aae',agent=u2,resource=b,interface=interface,creator=u)
@@ -527,7 +530,7 @@ class TestPermissions(unittest.TestCase) :
         for x in ps.get_permissions_for(b) : print x
         self.assertEquals(SecurityTag.objects.filter(resource_content_type=r_type,resource_object_id=b.id).count(),1)
 
-        u3 = User(username='jon')
+        u3 = User(username='jon',email_address='jon@the-hub.net')
         u3.save()
 
         s2=SecurityTag(name='bleaaaah',agent=u3,resource=b,interface=interface,creator=u)
@@ -544,7 +547,13 @@ class TestPermissions(unittest.TestCase) :
 
         SecurityTag.objects.update(resource=b,interface=interface,new=u3,kill=kill_list,name='boo2',creator=u)
         self.assertTrue(ps.has_access(u3,b,interface))
-        self.assertFalse(ps.has_access(all,b,interface))
+        self.assertFalse(ps.has_access(all,b,interface))        
 
-        
+
+    def test_group_admin(self) :
+        l = Location(name='Dalston')
+        l.save()
+        g, h = create_hub(name='hub-dalston',display_name='Hub Dalston', location=l, create_hosts=True)
+
+
         

@@ -19,6 +19,8 @@ class OurPost(models.Model) :
     def __str__(self) :
         return "OurPost %s,%s" % (self.title,self.body)
 
+    def foo(self) :
+        pass
 
 
 # Here's the wrapping we have to put around it.

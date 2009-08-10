@@ -42,7 +42,7 @@ post_save.connect(create_group_extras,sender=TgGroup)
 HUB     = 'HUB'
 GROUP   = 'GROUP'
 MEMBERS = 'MEMBERS'
-ADMIN   = 'ADMIN'
+HOSTS   = 'HOSTS'
 
 def my_create_group(name, display_name, location, type, *argv, **kwargs) :
     g = TgGroup(group_name=name, display_name=display_name, place=location, created=datetime.datetime.today())
@@ -51,32 +51,30 @@ def my_create_group(name, display_name, location, type, *argv, **kwargs) :
     e.group_type = type
     e.save()
 
-    if 'admin' in kwargs :
-        if kwargs['admin'] :
+    if 'create_hosts' in kwargs :
+        if kwargs['create_hosts'] :
             k = {}
             k.update(kwargs)
-            del k['admin']
-            a,bb = my_create_group('%s-admin'%name, '%s Admin'%display_name, location, ADMIN, *argv, **k) 
-            a.save()
+            del k['create_hosts']
+            h,bb = my_create_group('%s-admin'%name, '%s Admin'%display_name, location, HOSTS, *argv, **k) 
+            h.save()
     
     else :
-        a = g # if no admin flag, we make the group its own admin
+        h = g # if no admin flag, we make the group its own admin
         
-    da = DefaultAdmin(agent=a,resource=g)
+    da = DefaultAdmin(agent=h,resource=g)
     da.save()
 
-    return g,a
+    return g,h
 
 def create_hub(name, display_name, location, *argv, **kwargs) :
-    g,a = my_create_group(name, display_name, location, HUB, *argv, **kwargs)
-    m,bb = my_create_group('%s-members'%name, '%s Members'%display_name, location, MEMBERS, *argv, **kwargs) 
-    g.add_member(m)
-    g.add_member(a)
-    return g,m,a
+    g,h = my_create_group(name, display_name, location, HUB, *argv, **kwargs)
+    g.add_member(h)
+    return g,h
 
     
 def create_site_group(name, display_name, location, *argv, **kwargs) :
-    g,a = my_create_group(name, display_name, location, GROUP, *argv, **kwargs)
-    g.add_member(a)
-    return g,a
+    g,h = my_create_group(name, display_name, location, GROUP, *argv, **kwargs)
+    g.add_member(h)
+    return g,h
 

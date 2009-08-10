@@ -45,6 +45,10 @@ class Interface :
     @classmethod
     def has_read(self,name) :
         return self.has_property_name_and_class(name,InterfaceReadProperty)
+
+    @classmethod
+    def has_call(self,name) :
+        return self.has_property_name_and_class(name,InterfaceCallProperty)
         
     @classmethod
     def get_id(cls) : 
@@ -120,7 +124,7 @@ class NullInterface :
         for rule in self.__dict__['_exceptions'] :
             if rule(name) :
                 return self.get_inner().__getattribute__(name)
-        if self.fold_interfaces(lambda a, i : a or i.has_read(name),False) :
+        if self.fold_interfaces(lambda a, i : a or i.has_read(name) or i.has_call(name),False) :
             return self.get_inner().__getattribute__(name)
         raise PlusPermissionsNoAccessException(self.get_inner_class(),name,'from __getattr__')
 
@@ -170,6 +174,16 @@ class InterfaceWriteProperty(InterfacePropertyBase) :
 
     def can_write(self) :
         return True
+
+
+class InterfaceCallProperty(InterfacePropertyBase) :
+    """ Add this to a NullInterface to allow a property to be called """
+    def __init__(self,name) :
+        self.name = name
+
+    def can_write(self) :
+        return False
+
 
 
 def strip(x) :

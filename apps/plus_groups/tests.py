@@ -44,21 +44,27 @@ class TestPlusModels(unittest.TestCase):
     def test_make_hub(self) :
         mile_end = Location(name='mile end')
         mile_end.save()
-        hub,members,admin = create_hub('mile_end', 'Mile End Hub', location=mile_end, admin=True)
+        hub, hosts = create_hub('mile_end', 'Mile End Hub', location=mile_end, create_hosts=True)
         self.assertEquals(hub.group_name,'mile_end')
         self.assertEquals(hub.display_name,'Mile End Hub')
         self.assertEquals(hub.place,mile_end)
         self.assertEquals(hub.get_extras().group_type,HUB)
-        self.assertEquals(hub.get_default_admin(),admin)
-        self.assertTrue(members.is_member_of(hub))
-        self.assertTrue(admin.is_member_of(hub))
+        self.assertEquals(hosts.get_extras().group_type,HOSTS)
+        self.assertEquals(hub.get_default_admin(),hosts)
+        self.assertTrue(hosts.is_member_of(hub))
 
+        self.hub.get_default
 
     def test_make_group(self) :
         online = Location(name='online')
         online.save()
-        group, admin = create_site_group('greenarchitects', 'Green Architects', location=online)
+        group, hosts = create_site_group('greenarchitects', 'Green Architects', location=online)
         self.assertEquals(group.get_extras().group_type,GROUP)
         self.assertEquals(group.group_name,'greenarchitects')
         self.assertEquals(group.get_default_admin(),group)
+        self.assertEquals(hosts,group)
 
+
+
+
+    
