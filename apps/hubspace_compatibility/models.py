@@ -170,6 +170,15 @@ try :
     def get_permission_agent_name(self) : 
         return self.display_name
 
+
+    def get_extras(self) :
+        # if there are extras for this class, return them
+        return self.groupextras
+
+    def get_default_admin(self) :
+        from apps.plus_permissions.models import default_admin_for
+        return default_admin_for(self)
+        
     def __str__(self) : return "<TgGroup : %s>" % self.group_name
 
   class HCGroupMapping(models.Model) :
