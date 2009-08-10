@@ -6,6 +6,10 @@ from models import Interface, Slider, SliderOption, SecurityTag, PermissionManag
 from models import InterfaceReadProperty, InterfaceWriteProperty
 from models import get_permission_system, default_admin_for
 
+from django.contrib.contenttypes.models import ContentType
+from django.contrib.contenttypes import generic
+
+
 from apps.hubspace_compatibility.models import TgGroup
 
 import ipdb
@@ -16,8 +20,23 @@ class OurPost(models.Model) :
     title = models.CharField(max_length='20')
     body = models.CharField(max_length='20')
 
+    security_context_content_type = models.ForeignKey(ContentType,related_name='our_post_security_context', null=True)
+    security_context_object_id = models.PositiveIntegerField(null=True)
+    security_context = generic.GenericForeignKey('security_context_content_type', 'security_context_object_id')
+
+    container_content_type = models.ForeignKey(ContentType,related_name='our_post_container', null=True)
+    container_object_id = models.PositiveIntegerField(null=True)
+    container = generic.GenericForeignKey('container_content_type', 'container_object_id')
+
     def __str__(self) :
         return "OurPost %s,%s" % (self.title,self.body)
+
+    def set_security_context(self,context) :
+        self.security_context = context
+
+    def set_container(self,context) :
+        self.container = context
+
 
     def foo(self) :
         pass

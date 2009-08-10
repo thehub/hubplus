@@ -4,6 +4,8 @@ from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes import generic
 
 from django.contrib.auth.models import User
+from django.db.models.signals import post_save
+
 from apps.hubspace_compatibility.models import TgGroup, Location
 
 import pickle
@@ -271,48 +273,43 @@ class SecurityTagManager(models.Manager):
             self.kill_list(kill_list,ContentType.objects.get_for_model(resource),resource.id,interface)
         s = SecurityTag(name=name,creator=creator,resource=resource,interface=interface,agent=agent)
         s.save()
-                
- 
 
-class SecurityTag(models.Model) :
-    name = models.CharField(max_length='50') 
+                
+class Agent(models.Model) :
     agent_content_type = models.ForeignKey(ContentType,related_name='security_tag_agent')
     agent_object_id = models.PositiveIntegerField()
     agent = generic.GenericForeignKey('agent_content_type', 'agent_object_id')
- 
-    interface = models.CharField(max_length='50')
 
-    resource_content_type = models.ForeignKey(ContentType,related_name='security_tag_resource')
-    resource_object_id = models.PositiveIntegerField()
-    resource = generic.GenericForeignKey('resource_content_type', 'resource_object_id')
+    def get_type_and_id(self) :
+        return ContentType.objects.get_for_model(self), self.id
 
-    creator_content_type = models.ForeignKey(ContentType,related_name='security_tag_creator')
-    creator_object_id = models.PositiveIntegerField()
-    creator = generic.GenericForeignKey('creator_content_type', 'creator_object_id')
 
+def create_agent(sender, instance=None, **kwargs):
+    if instance is None:
+        return
+    instance_type = ContentType.objects.get_for_model(instance)
+    agent, created = Agent.objects.get_or_create(agent_content_type=instance_type,agent_object_id=instance.id)
+    agent.save()
+
+post_save.connect(create_agent, sender=User)
+
+
+class SecurityTag(models.Model) :
+    interface = models.CharField(max_length=100)
+
+    context_content_type = models.ForeignKey(ContentType,related_name='security_tag_context')
+    context_object_id = models.PositiveIntegerField()
+    context = generic.GenericForeignKey('context_content_type', 'context_object_id')
+
+    agents = models.ManyToManyField(Agent)
 
     objects = SecurityTagManager()
 
-    def all_named(self) : 
-        return (x for x in SecurityTag.objects.all() if x.name == self.name)
+    def all_interfaces(self) : 
+        return (x for x in SecurityTag.objects.all() if x.interface == self.interface)
 
-    def has_access(self,agent,resource,interface) :
-        # NB : we have to loop through this explicitly rather than use some kind of ORM filter
-        # because we're going to test our SecurityTag not just against THIS agent but 
-        # the groups which the agent belongs to.
-        for x in (x for x in SecurityTag.objects.all() if x.resource == resource and x.interface == interface) :
-            if x.agent == get_permission_system().get_anon_group() : 
-                # in other words, if this resource is matched with anyone, we don't have to test that user is in the "anyone" group
-                return True
-            if x.agent == agent : 
-                return True
-            if agent.is_member_of(x.agent) : 
-                return True
-        return False
-
-
-    def get_resource_type(self) :
-        return ContentType.objects.get_for_model(self.resource)
+    def get_context_type(self) :
+        return ContentType.objects.get_for_model(self.context)
 
     def get_resource_id(self) :
         return self.resource.id
@@ -360,8 +357,15 @@ class PermissionSystem :
         self.all_members_group = self.get_or_create_group('all_members','All Members',self.root_location)
 
 
-    def get_permissions_for(self,resource) :
-        return (x for x in SecurityTag.objects.filter(resource_object_id=resource.id) if x.resource == strip(resource))
+    def create_security_tag(self,context,interface,agents) :
+        tag = SecurityTag(context=context,interface=interface)
+        tag.save()
+        for agent in agents :
+            agent_type = ContentType.objects.get_from_model(agent)
+            t.agents.add(Agent.objects.get(agent_content_type=agent_type,agent_object_id=agent.id))
+        tag.save()
+        return tag
+
 
     def has_permissions(self,resource) :
         return len(set(self.get_permissions_for(resource))) > 0 
@@ -374,9 +378,39 @@ class PermissionSystem :
         """ The group to which all account-holding "hub-members" belong"""
         return TgGroup.objects.filter(group_name='all_members')[0]
 
-    def has_access(self,agent,resource,interface) :
-        t = SecurityTag()
-        return t.has_access(agent,resource,interface)
+    def has_access(self, agent, resource, interface) :
+        """Does the agent have access to this interface in this context
+        """
+        # NB : we have to loop through this explicitly rather than use some kind of ORM filter
+        # because we're going to test our SecurityTag not just against THIS agent but 
+        # the groups which the agent belongs to.
+        context = resource.security_context
+
+        context_type = ContentType.objects.get_for_model(context)
+        # which agents have access?
+        allowed_agents = Agent.objects.filter(securitytag__interface=interface,
+                                              securitytag__context_content_type=context_type,
+                                              securitytag__context_object_id=context.id)
+
+        allowed_agents = set([agent.agent for agent in allowed_agents])
+
+        if get_permission_system().get_anon_group() in allowed_agents: 
+            # in other words, if this resource is matched with anyone, we don't have to test 
+            #that user is in the "anyone" group
+            return True
+
+        agents_held = set([agent])
+        def get_agents(agent):
+            next_level = agent.agent.get_enclosures()
+            agents_held.union(next_level)
+            for agent in next_level:
+                get_agents(agent)
+        get_agents(agent)
+        
+        if allowed_agents.intersection(agents_held):
+            return True
+        return False
+
 
     def delete_access(self,agent,resource,interface) :
         for tag in SecurityTag.objects.filter(interface=interface) :

@@ -29,6 +29,9 @@ class TgGroupViewer(Interface) :
     display_name = InterfaceReadProperty('display_name')
     groupextras = InterfaceReadProperty('groupextras')
 
+    apply = InterfaceCallProperty('join')
+    leave = InterfaceCallProperty('leave')
+
     @classmethod
     def get_id(self) : 
         return 'TgGroup.Viewer'
@@ -50,15 +53,6 @@ class TgGroupEditor(Interface) :
         return 'TgGroup.Editor'
 
 
-
-class TgGroupApply(Interface):
-    pk = InterfaceReadProperty('pk')
-    apply = InterfaceCallProperty('apply')
-
-    @classmethod
-    def get_id(self) :
-        return 'TgGroup.Apply'   
-
 class TgGroupJoin(Interface):
     pk = InterfaceReadProperty('pk')
     join = InterfaceCallProperty('join')
@@ -68,41 +62,24 @@ class TgGroupJoin(Interface):
         return 'TgGroup.Join'   
 
 
-
 class TgGroupInviteMember(Interface):
     pk = InterfaceReadProperty('pk')
     invite_member = InterfaceCallProperty('invite_member')
 
     @classmethod
     def get_id(self) :
-        return 'TgGroup.InviteMember'   
-
-class TgGroupAcceptMember(Interface):
-    pk = InterfaceReadProperty('pk')
-    accept_member = InterfaceCallProperty('accept_member')
-
-    @classmethod
-    def get_id(self) :
-        return 'TgGroup.AcceptMember'   
+        return 'TgGroup.Invite'
 
 
-
-class TgGroupAddMember(Interface):
+class TgGroupManageMembers(Interface):
     pk = InterfaceReadProperty('pk')
     add_member = InterfaceCallProperty('add_member')
-
-    @classmethod
-    def get_id(self) :
-        return 'TgGroup.AddMember'   
-
-class TgGroupRemoveMember(Interface):
-    pk = InterfaceReadProperty('pk')
+    accept_member = InterfaceCallProperty('accept_member')
     remove_member = InterfaceCallProperty('remove_member')
 
     @classmethod
     def get_id(self) :
-        return 'TgGroup.RemoveMember'   
-
+        return 'TgGroup.ManageMembers'
 
 
 
@@ -113,12 +90,23 @@ class TgGroupPermissionManager(PermissionManager) :
         interface_factory.add_interface(TgGroup,'Viewer',TgGroupViewer)
         interface_factory.add_interface(TgGroup,'Editor',TgGroupEditor)
 
-        interface_factory.add_interface(TgGroup,'Apply',TgGroupApply)
         interface_factory.add_interface(TgGroup,'Join',TgGroupJoin)
         interface_factory.add_interface(TgGroup,'InviteMember',TgGroupInviteMember)
-        interface_factory.add_interface(TgGroup,'AcceptMember',TgGroupAcceptMember)
-        interface_factory.add_interface(TgGroup,'AddMember',TgGroupAddMember)
-        interface_factory.add_interface(TgGroup,'RemoveMember',TgGroupRemoveMember)
+
+        interface_factory.add_interface(TgGroup,'ManageMembers',TgGroupManageMembers)
+
+
+    def make_slider_options(self,resource,owner,creator) :
+        options = [
+            SliderOption('World',get_permission_system().get_anon_group()),
+            SliderOption('All Site Members',get_permission_system().get_all_members_group()),
+            SliderOption(owner.display_name,owner),
+        ]
+
+        default_admin = default_admin_for(owner)
+        if not default_admin is None :
+            options.append( SliderOption(default_admin.display_name,default_admin) )
+        return options
 
 
     def setup_defaults(self,resource, owner, creator) :
@@ -128,21 +116,17 @@ class TgGroupPermissionManager(PermissionManager) :
         interfaces = self.get_interfaces()
 
         slide = interfaces['Viewer'].make_slider_for(resource,options,owner,0,creator,creator)
-        slide = interfaces['Editor'].make_slider_for(resource,options,owner,2,creator,creator)
-
-        slide = interfaces['Apply'].make_slider_for(resource,options,owner,2,creator,creator)
-        slide = interfaces['Join'].make_slider_for(resource,options,owner,2,creator,creator)
-
-        slide = interfaces['InviteMember'].make_slider_for(resource,options,owner,2,creator,creator)
-        slide = interfaces['AcceptMember'].make_slider_for(resource,options,owner,2,creator,creator)
- 
-        slide = interfaces['AddMember'].make_slider_for(resource,options,owner,2,creator,creator)
-        slide = interfaces['RemoveMember'].make_slider_for(resource,options,owner,2,creator,creator)
-
-
+        slide = interfaces['Editor'].make_slider_for(resource,options,owner,3,creator,creator)
+        slide = interfaces['Join'].make_slider_for(resource,options,owner,1,creator,creator)
+        slide = interfaces['Invite'].make_slider_for(resource,options,owner,2,creator,creator)
+        slide = interfaces['ManageMembers'].make_slider_for(resource,options,owner,3,creator,creator)
 
     def main_json_slider_group(self,resource) :
-        json = self.json_slider_group('Group Permissions', 'Use these sliders to set overall permissions on your group', resource, ['Viewer','Editor'], [0,0], [[0,1]])
+        json = self.json_slider_group('Group Permissions', 'Use these sliders to set overall permissions on your group', 
+               resource, 
+               ['Viewer', 'Editor', 'Apply', 'Join', 'ManageMembers'], 
+               [0, 3, 1, 2, 3], 
+               [[0,1], [0,2], [0,3], [0,4]])
         return json
 
 
