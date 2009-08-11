@@ -142,8 +142,6 @@ class TestPermissions(unittest.TestCase) :
         blog.save()
         blog.set_security_context(blog)
 
-        print "GGG ",blog.get_security_context()
-
         blog2 = OurPost(title='another post')
         blog2.save()
         blog2.set_security_context(blog2)
@@ -167,7 +165,6 @@ class TestPermissions(unittest.TestCase) :
         ICommentor = tif.get_id(OurPost,'Commentor')
         IEditor = ps.get_interface_id(OurPost,'Editor')
 
-        print "HHH ", blog.get_security_context()
         self.assertTrue(ps.has_access(u,blog,IViewer))
 
         t2 = ps.create_security_tag(blog,ICommentor,[u])
@@ -300,8 +297,6 @@ class TestPermissions(unittest.TestCase) :
         blog.save()
         blog.set_security_context(group)
         blog.set_context(hosts)
-
-        print "blog, group, hosts  %s,%s,%s" % (blog.id,group.id,hosts.id)
 
         self.assertEquals(Context.objects.get_security_context(blog).id, group.id)
         self.assertEquals(Context.objects.get_security_context(blog).__class__, group.__class__)
