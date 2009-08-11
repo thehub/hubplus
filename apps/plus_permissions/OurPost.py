@@ -3,7 +3,7 @@
 
 from django.db import models
 
-from models import Interface, Slider, SliderOption, SecurityTag, PermissionManager
+from models import Interface, Slider, SecurityTag, PermissionManager
 from models import InterfaceReadProperty, InterfaceWriteProperty
 from models import get_permission_system, default_admin_for, PermissionableMixin
 

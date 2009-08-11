@@ -1,7 +1,7 @@
 
 from django.db import models
 
-from models import Interface, Slider, SliderOption, SecurityTag, PermissionManager
+from models import Interface, Slider, SecurityTag, PermissionManager
 from models import get_permission_system, default_admin_for, InterfaceReadProperty, InterfaceWriteProperty
 
 from apps.hubspace_compatibility.models import TgGroup
@@ -99,7 +99,7 @@ class TgGroupPermissionManager(PermissionManager) :
     def make_slider_options(self,resource,owner,creator) :
         options = [
             SliderOption('World',get_permission_system().get_anon_group()),
-            SliderOption('All Site Members',get_permission_system().get_all_members_group()),
+            SliderOption('All Site Members',get_permission_system().get_site_members()),
             SliderOption(owner.display_name,owner),
         ]
 

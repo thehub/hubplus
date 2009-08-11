@@ -55,4 +55,4 @@ class TestContact(unittest.TestCase):
         self.assertEquals(p.accepted_by.username, u2.username)
 
         ps = get_permission_system()
-        self.assertTrue(u3.is_member_of(ps.get_all_members_group()))
+        self.assertTrue(u3.is_member_of(ps.get_site_members()))

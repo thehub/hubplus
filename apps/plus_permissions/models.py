@@ -368,7 +368,7 @@ class PermissionSystem :
         """ The anon_group is the root of all groups, representing permissions given even to non members; plus everyone else"""
         return TgGroup.objects.filter(group_name='root')[0]
 
-    def get_all_members_group(self) :
+    def get_site_members(self) :
         """ The group to which all account-holding "hub-members" belong"""
         return TgGroup.objects.filter(group_name='all_members')[0]
 
@@ -514,7 +514,7 @@ class PermissionManager :
     def make_slider_options(self,resource,owner,creator) :
         options = [
             SliderOption('World',get_permission_system().get_anon_group()),
-            SliderOption('All Members',get_permission_system().get_all_members_group()),
+            SliderOption('All Members',get_permission_system().get_site_members()),
             SliderOption('%s (owner)' % owner.display_name,owner),
             SliderOption('%s (creator)' % creator.display_name,creator)
         ]
@@ -618,94 +618,86 @@ class NoSliderException(Exception) :
 
 
 class Slider :
-    """ A Slider is a specialized view of the underlying PermissionSystem.
-    As such, it isn't an entity in the database in it's own right, but is used to manipulate 
-    the existence or otherwise of particular SecurityTags ...
 
-    A slider is created when a user needs to manipulate the PermissionSystem, and destroyed 
-    when no longer relevant.
-
-    The creation or destruction of a slider object represents no change to the permissions.
-
-    When a slider is created, two pieces of fixed information define it : 
-      - the resource to which it refers
-      - the interface of the resource by which it refers
-    These do not change during its life-time.
-
-    The third dimension of the (agent,resource,interface), the agent, is changed by the slider.
-    Changing the agent mapped to the resource / interface involves destroying the existing SecurityTag 
-    and creating a new one.
-
-    On creation, the slider may infer its status from the database
-    
-    """
-
-    def __init__(self, tag_name, resource,interface_id,default_agent,creator,options=[],) :
-        self.resource = resource
-        self.interface_id = interface_id
+    def __init__(self, title, type, options, hard_min, soft_min, current, default) :
+        self.title = title
+        self.type = type
         self.options = options
-        self.tag_name = tag_name
-        self.creator = creator
+        self.hard_min = hard_min
+        self.soft_min = soft_min
+        self.current = current
+        self.default = default
 
-        # start with the default agent
-        try :
-            self.current_idx = self.options.index(default_agent)
-            self.agent = default_agent
-        except : 
-            self.current_idx = -1
-            self.agent = None
+    def generate_permissions(self, context) :
+        if not self.options.index(self.current)>=0 :
+            raise Exception("Current not in my options") # XXX
+        ps = get_permission_system()
+        for o in self.options[:self.options.index(self.current)] :
+            # from top of the list to the current
+            ps.delete_access(o,context,self.type)
 
-        # and over-ride if there's an existing SecurityTag which references one of the agents in our defaults
-        for a in (tag.agent for tag in SecurityTag.objects.filter(interface=interface_id) if tag.resource == resource) :
-            try : 
-                self.current_idx = self.get_options().index(a)
-                self.agent = a
-                break
-            except :
-                pass
+        # from the current to the bottom of the list
+        tag = ps.create_security_tag(context,self.type,[o for o in self.options[self.options.index(self.current):]])
 
-        if not self.agent is None : # we found a valid default_agent or current value in the database
-            self.set_current_option(self.current_idx) # Warning, updates SecurityTag in database
+    def change(new_setting) :
+        if new_setting >= self.soft_min and new_setting >= self.hard_min :
+            self.current = new_setting
+            self.generate_permissions()
 
-    def get_relevant_tags(self) :
-        return (t for t in SecurityTag.objects.filter(interface=self.interface_id) if t.resource == self.resource)
-
-    def print_relevant_tags(self) :
-        for t in self.get_relevant_tags():
-            print ">> %s, %s, %s, %s" % (agent.display_name, t.interface, t.resource, t.name)
-
-    def get_options(self) :
-        return self.options
-
-    def get_current_option(self) :
-        return self.options[self.current_idx]
-
-    def set_current_option(self,idx) :
-        # set as index of the slider .... is this right? Probably.
-        self.current_idx=idx
-        _ONLY_PERMISSION_SYSTEM.delete_access(self.agent,self.resource,self.interface_id)
-        self.agent = self.options[self.current_idx].agent
-        t = SecurityTag(name=self.tag_name,agent=self.agent,resource=self.resource,interface=self.interface_id, creator=self.creator)
-        t.save()
+            
 
 
-class SliderOption :
-    def __init__(self,name,agent) :
-        self.name = name
-        self.agent = agent
+class SliderSetObject(object) :
+
+    def __init__(self,context, all) :
+        self.context = context
+
+        def trans(key) :
+            setattr(self,key,all[key])
+        
+        def cross(newkey,key) :
+            setattr(self, newkey,[s[key] for s in self.sliders])
+
+        trans('title')
+        trans('description')
+        trans('options')
+
+        self.sliders = [
+            Slider(s['title'], s['type'], self.options, s['hard_min'], s['soft_min'], s['current'],s['default']) 
+                for s in all['sliders'] ]
+
+        self.extras = []
+
+    def generate_permissions(self) :
+        for s in self.sliders :
+            print "generate permissions from slider %s" % s
+            s.generate_permissions(self.context)
 
 
+    def change_slider(self,interface,new_setting) :
+        for s in self.sliders :
+            if s.type == interface :
+                return s.change(new_setting)
+            else :
+                raise Exception('slider %s not in this slider_set'% interface)
 
-class SliderObject(object) :
-    pass
 
+        
+
+            
+# persist it
 
 class SlidersField(models.Field):
     def __init__(self, *args, **kwargs):
-        kwargs['max_length'] = 104
-        #super(, self).__init__(*args, **kwargs)
+        kwargs['max_length'] = 1000
+        super(SlidersField, self).__init__(*args, **kwargs)
 
 
+class SliderSet(models.Model) :
+    sliders = SlidersField()
+    
+    
+    
 
 
     

@@ -317,6 +317,71 @@ class TestPermissions(unittest.TestCase) :
         g, h = create_hub(name='hub-dalston',display_name='Hub Dalston', location=l, create_hosts=True)
 
 
-
     def test_new_slider_set(self) :
-        pass
+        ps = get_permission_system()
+        group, hosts = create_site_group('solar cooking', 'Solar Chefs', create_hosts=True)
+        blog= OurPost(title='parabolic pancakes')
+        blog.save()
+
+        # blog belongs to this group's security_context
+        blog.set_security_context(group)
+
+        u = User(username='chris',email_address='chris@the_hub.net')
+        u.save()
+        
+
+        options = [ps.get_anon_group(), ps.get_site_members(), group, hosts]
+        
+        # slider context is for group
+        so = SliderSetObject(group, {'title' : 'My Sliders', 
+                           'description' : 'description',
+                           'options' : options,
+                           'sliders':[ 
+                    {
+                        'type' : ps.get_interface_id(OurPost,'Viewer'),
+                        'title': 'Viewer',
+                        'hard_min' : options[0],
+                        'soft_min' : options[0],
+                        'default' : options[1],
+                        'current' : options[1]                 
+                    }
+                                     ]})
+        self.assertEquals(so.context,group)
+
+        self.assertEquals(so.title,'My Sliders')
+        self.assertEquals(so.description,'description')
+        self.assertEquals(so.options,options)
+
+        
+        IViewer = ps.get_interface_id(OurPost,'Viewer')
+        slider = so.sliders[0]
+
+
+        self.assertEquals(slider.type,ps.get_interface_id(OurPost,'Viewer'))
+        self.assertEquals(slider.title,'Viewer')
+        self.assertEquals(slider.hard_min,options[0])
+        self.assertEquals(slider.default,options[1])
+        self.assertEquals(slider.current,options[1])
+        self.assertEquals(slider.soft_min,options[0])
+
+        ps = get_permission_system()
+
+        # slide up to anybody (remember security_context of sliders are "group")
+        so.change_slider(IViewer,ps.get_anon_group())
+
+        # anyone should now have access to blog under IViewer, given that 
+        # a) its security_context is group, and b) group has IViewer set to 0 (anybody)
+        self.assertTrue(ps.has_access(u,blog,IViewer))
+
+        # now we change through the sliders, by interface and the new setting
+        so.change_slider(IViewer,group)
+        # and now u lost access
+        self.assertFalse(ps.has_access(u,blog,IViewer))
+
+        # but if u joins site_members and the slider is pushed up
+        ps.get_site_members().add_member(u)
+        so.change_slider(IViewer,ps.get_site_members())
+        self.assertTrue(ps.has_access(u,blog,IViewer))
+
+        ss = SliderSet(sliders=so)
+        ss.save()

@@ -69,8 +69,6 @@ def profile(request, username, template_name="profiles/profile.html"):
     p = other_user.get_profile()
     p.save()
 
-    if not ps.has_permissions(p) :
-        ps.get_permission_manager(Profile).setup_defaults(p,p.user,p.user)
 
     if request.user.is_authenticated():
 
