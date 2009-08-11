@@ -292,29 +292,16 @@ class TestPermissions(unittest.TestCase) :
         
 
 
-    def testProfileSignals(self) :
-        from Profile import *
-        u = User(username='jesson2',email='',password='abc')
-        u.save()
-        p = u.get_profile()
-        p.about='about jesson'
-        p.save()
-        p.set_security_context(p)
-        print "KKLL", p.get_security_context() 
-
-        ps = PermissionSystem()
-        self.assertTrue(ps.has_access(ps.get_anon_group(),p,ps.get_interface_factory().get_id(Profile,'Viewer')))
-
-
-
     def test_contexts(self) :
         location = Location(name='world')
         location.save()
         group,hosts = create_site_group('group','Our Group',location=location,create_hosts=True)
         blog = OurPost(title='hello')
+        blog.save()
         blog.set_security_context(group)
         blog.set_context(hosts)
-        blog.save()
+
+        print "blog, group, hosts  %s,%s,%s" % (blog.id,group.id,hosts.id)
 
         self.assertEquals(Context.objects.get_security_context(blog).id, group.id)
         self.assertEquals(Context.objects.get_security_context(blog).__class__, group.__class__)
@@ -324,7 +311,7 @@ class TestPermissions(unittest.TestCase) :
 
         Context.objects.set_security_context(blog,blog)
         self.assertEquals(blog.get_security_context().id, blog.id)
-        self.assertEquals(blog.get_context().id, group.id)
+        self.assertEquals(blog.get_context().id, hosts.id)
     
         
     def test_mixin(self) :
