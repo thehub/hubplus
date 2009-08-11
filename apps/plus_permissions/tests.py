@@ -319,7 +319,9 @@ class TestPermissions(unittest.TestCase) :
 
 
     def test_new_slider_set(self) :
-        so = SliderObject( all = [])
+        so = SliderObject( all = [
+                                ])
+
         ss = SliderSet(sliders=so)
         ss.save()
         
