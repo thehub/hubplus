@@ -1,6 +1,11 @@
 Tuesday-Wednesday
 -----------------
 - Phil + Tom - finish permissions
+  * implement SliderSet
+  ** SliderSet to manage creation and deletion of SecurityTags / agent-mapping
+  ** SliderSet also manages creating or deleting custom over-rides
+  ** SliderSet to generate json for javascript sliders-set
+  ** adapt json returned by javascript library
 - Tom - hubspace group compatibility
 - Phil + Tom - sign-up, invite and apply logic
 - Phil - sign-up, invite and apply form
