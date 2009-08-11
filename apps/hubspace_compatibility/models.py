@@ -9,6 +9,21 @@ from django.contrib.contenttypes import generic
 import hashlib
 import datetime
 
+"""TODO:
+1. Respect hubspace memberships
+i)  define user_group many-to-many
+ii) define group is member_of group as a many-to-many
+iii) deprecate HC
+iv) Implement is_user_of()
+v) "is_member_of", "get_enclosures", "is direct member of" should check for "is_user_of"
+
+2.. Bring in Location Data for Hub
+3. Define Hub as the Hub's members group object with an associated Location
+6. Where is group's extra?? why not just extend
+7. Implement the hubspace metadata framework - add typed metadata and language along the way
+8. Implement the Hub Microsites list functionality
+"""
+
 def getHubspaceUser(username) :
     """ Returns the hubspace user. None if doesn't exist"""
     try :
@@ -50,7 +65,7 @@ class UserNameField(models.CharField) :
 def encrypt_password(password) :
     return hashlib.md5(password).hexdigest()
 
-# The following will be patched into the User object in the 
+# The following will be patched into the User object in the  --- WHERE! Tom
 def set_password(self,raw) :
     self.password = encrypt_password(raw)
 
@@ -182,10 +197,18 @@ try :
     def __str__(self) : return "<TgGroup : %s>" % self.group_name
 
   class HCGroupMapping(models.Model) :
-    content_type = models.ForeignKey(ContentType)
-    object_id = models.PositiveIntegerField()
-    child = generic.GenericForeignKey('content_type', 'object_id')
-    parent = models.ForeignKey(TgGroup)
+      """XXX Effectively this is a many-to-many relationship between a group and its members.
+      I guess it is explicit because of the need for a GenericForeignKey to reference User and Group tables for the child.
+      I find this unnecessary and undesirable because:
+      a) we already have a user_group relation in hubspace 
+      b) it might sometimes be useful to distinguish group memberships from user membership relations
+      Therfore I will add a many-to-many relation for groups called is_parent_of. And user the existing user_group relation from hubspace. This will also enhance hubspace's access to HubPlus defined groups.
+      This relationship should then be deprecated.
+      """
+      content_type = models.ForeignKey(ContentType)
+      object_id = models.PositiveIntegerField()
+      child = generic.GenericForeignKey('content_type', 'object_id')
+      parent = models.ForeignKey(TgGroup)
 
 except Exception, e:
   print "##### %s" % e
@@ -201,10 +224,14 @@ def is_member_of(self,group) :
     return False
     
 # add it to TgGroup too
-TgGroup.is_member_of= is_member_of
+TgGroup.is_member_of = is_member_of
 
 # to be added to User class
 def get_enclosures(self) :
+    """Give us all the things of which this user is a member_of
+    XXX parent should not be called "parent", it is the current node
+    XXX implement in SQL it is not so hard I think
+    """
     return (x.parent for x in HCGroupMapping.objects.all() if x.child == self)
 
 TgGroup.get_enclosures = get_enclosures

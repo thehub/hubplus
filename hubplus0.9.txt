@@ -1,0 +1,127 @@
+Tuesday-Wednesday
+-----------------
+- Phil + Tom - finish permissions
+- Tom - hubspace group compatibility
+- Phil + Tom - sign-up, invite and apply logic
+- Phil - sign-up, invite and apply form
+- Phil + Jesson - sign-up template integration s
+- Phil + Tom - sign-up UI - js elements
+- Jesson + Tom - wiki design
+- Tom wiki + group tests - security_context and context/container
+
+
+Thursday
+--------
+- Tom wiki backend implementation
+- Phil - Group's UI  + create Hubs (with location object)
+
+Friday - Sunday
+---------------
+- Tom wiki UI
+- Phil + Jesson - Group permissions dashboard
+- Phil + Jesson - tweets, messaging and comments (on documents) from pinax + ui enhancements
+                - set status of a group
+
+
+
+Permissions
+-----------
+finish off contextual permissions
+switch context of object from group to object
+respect hubspace group memberships
+
+* add checkbox based miscellaneous group/user access
+
+Groups to "delegate" tasks, allowing things to be done "through it"
+
+Tweets
+------
+From pinax
+
+Groups
+------
+HP - 0.9
+
+Join/Leave/Invite/Apply to Join/Set Status/Edit Home Page, interfaces with permissions control 
+Sign up Process
+Inplace Fields / Attributes
+tag group as "about ..."
+
+
+- Place item in owning AGENT
+- control permissions based on security context 
+Group permissions Dashboard (slider group for each type)
+Host Group (default to only visible to its members)
+
+Hubs
+----
+Create Hub object (members group with associated location)
+
+Invoicing - HP 0.9/1.0
+---------
+tick box selection when invoicing
+invoice redesign + pisa
+
+
+Tags, Feed and Search
+---------------------
+HP 0.9
+- copy ohloh.net for design inspiration
+- fix existing tagging
+- tag refinements search ... urls: ${}/tag/sustainability+renewable_energy  '+' is AND  and _ is "separator"
+  - maintain table of tag relations with intersection counts - map this by the amount of objects actually accessible. 
+- tag tweets, pages, events
+- only see the tagged items you have permission to
+- your feed / group feed - customise with multiple searches, tags of the users and groups you are following. 
+- Filter feed by tags, "user as group"? (author), title, fulltext (keyword),  - Order by date, author, title. Save filter + sorting combination
+- field search/filter - attribute:value
+- fulltext search/filter
+
+
+Wiki
+----
+HP 0.9
+------
+- Page editing - wysiwyg
+- page title to page name
+- tweet - description of changes (enable tweeting)
+- Preview functionality
+- autocomplete wiki linking (this group first then related groups, then all groups), with create page functionality - see HubKnowledge
+- file upload to page and attachment (see hubknowledge) - image previews (cropping) 
+- comments (enable)
+- permissions control
+
+
+Events
+------
+HP 0.9
+------
+Allow creation of calendars, on user, group, Hub or resource.
+Create event type which appears in calendar according to its tags.
+If calendar represents a resource, create rusage with event - booking wizard = first add event -> confirm rusage details
+tag an event with the "calendar" tag to make it appear in a calendar
+
+ical / atom cal feed
+
+Messaging
+---------
+HP 0.9
+------
+- autocomplete (must complete) messaging
+- message people who are following you
+
+Users
+-----
+HP 0.9
+------
+allow registration of users with . in username
+include hubspace notes
+
+
+Speed up pinax HP 0.9
+--------------
+concat js and serve as gzipped
+use lightty for static files 
+
+Financial + User data export HP 0.9
+----------------------------

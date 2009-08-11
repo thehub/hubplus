@@ -8,7 +8,8 @@ from datetime import datetime
 from timezones.fields import TimeZoneField
 
 class Account(models.Model):
-    
+    """XXX These should default to the timezone and language of the user's homehub
+    """
     user = models.ForeignKey(User, unique=True, verbose_name=_('user'))
     
     timezone = TimeZoneField(_('timezone'))
