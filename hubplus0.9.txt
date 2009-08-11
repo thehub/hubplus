@@ -1,7 +1,7 @@
 Tuesday-Wednesday
 -----------------
 - Phil + Tom - finish permissions
-- Tom - hubspace group compatibility
+- Tom - hubspace group compatibility + Group model
 - Phil + Tom - sign-up, invite and apply logic
 - Phil - sign-up, invite and apply form
 - Phil + Jesson - sign-up template integration s
