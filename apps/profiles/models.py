@@ -7,6 +7,7 @@ from django.contrib.contenttypes import generic
 from django.contrib.contenttypes.models import ContentType
 
 from timezones.fields import TimeZoneField
+from apps.plus_permissions.models import ContextMixin
 
 import itertools
 
@@ -18,7 +19,7 @@ class DelegateToUser(object) :
        setattr(obj.user,self.attr_name,val)
        #print "Getting from inner %s" % getattr(obj.user,self.attr_name)
 
-class Profile(models.Model):    
+class Profile(models.Model,ContextMixin):    
     user = models.ForeignKey(User, unique=True, verbose_name=_('user'))
     
     about = DelegateToUser('description')
@@ -44,6 +45,11 @@ class Profile(models.Model):
 
     invited_by = models.ForeignKey(User, related_name='invited_users', null=True)
     accepted_by = models.ForeignKey(User, related_name='accepted_users', null=True)
+
+
+
+
+
 
     def __unicode__(self):
         return self.user.username

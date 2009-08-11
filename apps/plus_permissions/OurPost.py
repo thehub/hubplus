@@ -4,7 +4,11 @@ from django.db import models
 
 from models import Interface, Slider, SliderOption, SecurityTag, PermissionManager
 from models import InterfaceReadProperty, InterfaceWriteProperty
-from models import get_permission_system, default_admin_for
+from models import get_permission_system, default_admin_for, ContextMixin
+
+from django.contrib.contenttypes.models import ContentType
+from django.contrib.contenttypes import generic
+
 
 from apps.hubspace_compatibility.models import TgGroup
 
@@ -12,12 +16,13 @@ import ipdb
 
 # This represents a typical model type from another django or pinax app
 
-class OurPost(models.Model) :
+class OurPost(models.Model, ContextMixin) :
     title = models.CharField(max_length='20')
     body = models.CharField(max_length='20')
 
     def __str__(self) :
         return "OurPost %s,%s" % (self.title,self.body)
+
 
     def foo(self) :
         pass
