@@ -5,6 +5,7 @@ from django.contrib.auth.models import User, UserManager, check_password
 
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes import generic
+from django.db.models.signals import post_save
 
 import hashlib
 import datetime
@@ -209,6 +210,20 @@ def get_enclosures(self) :
 
 TgGroup.get_enclosures = get_enclosures
 
+# set of all enclosures
+# to be added to User class
+
+
+def get_enclosure_set(self) :
+    es = set([self])
+    for e in self.get_enclosures() :
+        if e != self :
+            es = es.union(e.get_enclosure_set())
+    return es
+    
+
+TgGroup.get_enclosure_set = get_enclosure_set
+
 # to be added to User class
 def is_direct_member_of(self, group) :
     return group.has_member(self)
@@ -219,12 +234,43 @@ TgGroup.is_direct_member_of = is_direct_member_of
 def get_permission_agent_name(self) :
     return self.username
 
+# to be added to user class
+def corresponding_agent(self) :
+    agent_type = ContentType.objects.get_for_model(self)
+    return Agent.objects.get(agent_content_type=agent_type,agent_object_id=self.id)
+
+TgGroup.corresponding_agent = corresponding_agent
 
 def user_save(self) :
     if not self.created :
         self.created = datetime.date.today()
     super(User,self).save()
     
+
+
+# Agents are used by plus_permissions.SecurityTag to make a many-to-many relationship with agents such as 
+# Users and TgGroups
+
+class Agent(models.Model) :
+    agent_content_type = models.ForeignKey(ContentType,related_name='security_tag_agent')
+    agent_object_id = models.PositiveIntegerField()
+    agent = generic.GenericForeignKey('agent_content_type', 'agent_object_id')
+
+    def get_type_and_id(self) :
+        return ContentType.objects.get_for_model(self), self.id
+
+
+def create_agent(sender, instance=None, **kwargs):
+    if instance is None:
+        return
+    instance_type = ContentType.objects.get_for_model(instance)
+    agent, created = Agent.objects.get_or_create(agent_content_type=instance_type,agent_object_id=instance.id)
+    agent.save()
+
+post_save.connect(create_agent, sender=User)
+post_save.connect(create_agent, sender=TgGroup)
+
+
 
 # ======================================
 # The hubspace object reference model

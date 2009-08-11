@@ -6,7 +6,7 @@ from django.contrib.contenttypes import generic
 from django.contrib.auth.models import User
 from django.db.models.signals import post_save
 
-from apps.hubspace_compatibility.models import TgGroup, Location
+from apps.hubspace_compatibility.models import TgGroup, Location, Agent
 
 import pickle
 import simplejson
@@ -275,23 +275,6 @@ class SecurityTagManager(models.Manager):
         s.save()
 
                 
-class Agent(models.Model) :
-    agent_content_type = models.ForeignKey(ContentType,related_name='security_tag_agent')
-    agent_object_id = models.PositiveIntegerField()
-    agent = generic.GenericForeignKey('agent_content_type', 'agent_object_id')
-
-    def get_type_and_id(self) :
-        return ContentType.objects.get_for_model(self), self.id
-
-
-def create_agent(sender, instance=None, **kwargs):
-    if instance is None:
-        return
-    instance_type = ContentType.objects.get_for_model(instance)
-    agent, created = Agent.objects.get_or_create(agent_content_type=instance_type,agent_object_id=instance.id)
-    agent.save()
-
-post_save.connect(create_agent, sender=User)
 
 
 class SecurityTag(models.Model) :
@@ -358,11 +341,11 @@ class PermissionSystem :
 
 
     def create_security_tag(self,context,interface,agents) :
+        # agents here is a list of something like User or TgGroup, NOT an Agent
         tag = SecurityTag(context=context,interface=interface)
         tag.save()
         for agent in agents :
-            agent_type = ContentType.objects.get_from_model(agent)
-            t.agents.add(Agent.objects.get(agent_content_type=agent_type,agent_object_id=agent.id))
+            tag.agents.add(agent.corresponding_agent())
         tag.save()
         return tag
 
@@ -384,6 +367,7 @@ class PermissionSystem :
         # NB : we have to loop through this explicitly rather than use some kind of ORM filter
         # because we're going to test our SecurityTag not just against THIS agent but 
         # the groups which the agent belongs to.
+
         context = resource.security_context
 
         context_type = ContentType.objects.get_for_model(context)
@@ -392,22 +376,46 @@ class PermissionSystem :
                                               securitytag__context_content_type=context_type,
                                               securitytag__context_object_id=context.id)
 
-        allowed_agents = set([agent.agent for agent in allowed_agents])
+        allowed_agents = set([a.agent for a in allowed_agents])
 
         if get_permission_system().get_anon_group() in allowed_agents: 
             # in other words, if this resource is matched with anyone, we don't have to test 
             #that user is in the "anyone" group
             return True
 
-        agents_held = set([agent])
-        def get_agents(agent):
-            next_level = agent.agent.get_enclosures()
-            agents_held.union(next_level)
-            for agent in next_level:
-                get_agents(agent)
-        get_agents(agent)
-        
+        #agents_held = set([agent])
+
+        #def get_agents(agent):
+        #    next_level = agent.agent.get_enclosures()
+        #    agents_held.union(next_level)
+        #    for agent in next_level:
+        #       get_agents(agent)
+        #get_agents(agent)
+
+        agents_held = agent.get_enclosure_set()
+        print "Agents Held "
+        for a in agents_held : print a
+
+        print "Allowed agents"
+        for a in allowed_agents : print a
+
         if allowed_agents.intersection(agents_held):
+            return True
+        return False
+
+    def direct_access(self, agent, resource, interface) :
+        """Does the agent have direct access to this interface in this context
+           ie. is there a SecurityTag explicitly linking this agent?
+        """
+
+        context = resource.security_context
+        context_type = ContentType.objects.get_for_model(context)
+        # which agents have access?
+        allowed_agents = Agent.objects.filter(securitytag__interface=interface,
+                                              securitytag__context_content_type=context_type,
+                                              securitytag__context_object_id=context.id)
+
+        if agent in allowed_agents:
             return True
         return False
 

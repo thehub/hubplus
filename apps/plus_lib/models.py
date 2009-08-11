@@ -15,4 +15,3 @@ def add_edit_key(cls) :
        return '%s-%s-' % (self.__class__.__name__,self.pk)
    cls.edit_key = edit_key
 
-

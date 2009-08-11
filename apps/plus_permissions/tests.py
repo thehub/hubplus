@@ -103,23 +103,47 @@ class TestPermissions(unittest.TestCase) :
         self.assertTrue(u.is_direct_member_of(hubMembers))
         self.assertTrue(u.is_member_of(hubMembers))
 
+
+        another_group,ag_hosts = create_site_group('site_group','Another Site Group', location=l, create_hosts=True)
+        another_group.add_member(hubMembers)
+        self.assertTrue(ag_hosts.is_member_of(another_group))
+        self.assertFalse(another_group.is_member_of(ag_hosts))
+
+
+        # Now, if we ask for enclosure_set of u, we should get hubMembers and hosts
+        es = u.get_enclosure_set()
+        print "LL "
+        print es
+        self.assertTrue(u in es)
+        self.assertTrue(hosts in es)
+        self.assertTrue(hubMembers in es)
+        self.assertTrue(another_group in es)
+        self.assertFalse(ag_hosts in es)
+        self.assertFalse(u2 in es)
+
+
         # now let's see what happens when we remove membership
         hosts.remove_member(u)
         self.assertFalse(u.is_direct_member_of(hosts))
         self.assertFalse(u.is_member_of(hosts))
 
+        
+
 
     def test_content_and_security_context(self) :
         blog = OurPost(title='my post')
-        self.assertTrue(getattr(blog,'container'))
-        self.assertTrue(getattr(blog,'security_context'))
+        blog.save()
+
+        self.assertTrue(blog.__dict__.has_key('container_object_id'))
+        self.assertTrue(blog.__dict__.has_key('security_context_object_id'))
 
         l = Location(name='HanburyStreet')
         l.save()
-        hub = create_hub(name='hanbury',display_name='Hanbury Street', location=l)
+        hub,hosts = create_hub(name='hanbury',display_name='Hanbury Street', location=l)
 
         blog.set_security_context(hub)
         self.assertEquals(blog.security_context,hub)
+
         blog.set_container(hub)
         self.assertEquals(blog.container,hub)
 
@@ -130,6 +154,11 @@ class TestPermissions(unittest.TestCase) :
         u = User(username='synnove',email_address='synnove@the-hub.net')
         u.save()
 
+        agent_type = ContentType.objects.get_for_model(u)
+        an_agent = Agent.objects.get(agent_content_type=agent_type,agent_object_id=u.id)
+        self.assertEquals(an_agent.agent.id,u.id)
+
+        # two resources, blog and blog2
         blog= OurPost(title='my post')
         blog.set_security_context(blog)
         blog.save()
@@ -145,23 +174,24 @@ class TestPermissions(unittest.TestCase) :
 
         tif = self.makeInterfaceFactory()
 
+        # explicit tag between u, blog, viewer
         t = SecurityTag(context=blog,interface=tif.get_id(OurPost,'Viewer'))
         t.save()
-        agent_type = ContentType.objects.get_for_model(u)
-        t.agents.add(Agent.objects.get(agent_content_type=agent_type,agent_object_id=u.id))
+
+        t.agents.add(u.corresponding_agent())
         t.save()
         
+
         self.assertTrue(ps.has_access(u,blog,tif.get_id(OurPost,'Viewer')))
 
-        t2 = ps.create_security_tag(context,tif.get_id(OurPost,'Commentor'),[u])
+        t2 = ps.create_security_tag(blog,tif.get_id(OurPost,'Commentor'),[u])
 
         self.assertTrue(ps.has_access(u,blog,tif.get_id(OurPost,'Commentor')))
 
         self.assertFalse(ps.has_access(u,blog,tif.get_id(OurPost,'Editor')))
 
 
-        t3 = SecurityTag(name='tag1',agent=editors,resource=blog2,interface=tif.get_id(OurPost,'Editor'),creator=u)
-        t3.save()
+        t3 = ps.create_security_tag(blog2,tif.get_id(OurPost,'Editor'),[editors])
         
         self.assertTrue(ps.has_access(editors,blog2,tif.get_id(OurPost,'Editor')))
 
@@ -170,48 +200,17 @@ class TestPermissions(unittest.TestCase) :
         self.assertTrue(ps.has_access(u,blog2,tif.get_id(OurPost,'Editor')))
         self.assertFalse(ps.has_access(u,blog,tif.get_id(OurPost,'Editor')))
 
-        self.assertEquals(len([x for x in t3.all_named()]),3)
+        self.assertFalse(ps.direct_access(u,blog2,tif.get_id(OurPost,'Editor')))
+        self.assertTrue(ps.direct_access(u,blog,tif.get_id(OurPost,'Viewer')))
 
         t2.delete()
-        
+       
         self.assertFalse(ps.has_access(u,blog,tif.get_id(OurPost,'Commentor')))
         ps.delete_access(u,blog,tif.get_id(OurPost,'Viewer'))
 
         self.assertFalse(ps.has_access(u,blog,ps.get_interface_id(OurPost,'Viewer')))
 
 
-    def XtestTypeId(self) :
-        u = User(username='sara',email_address='sara@the-hub.net')
-        u.save()
-        p = u.get_profile()
-        p.save()
-        u = p.user
-        blog= OurPost(title='post')
-        blog.save()
-        ps = get_permission_system()
-        t = SecurityTag(name='type-test',agent=u,resource=blog,interface=ps.get_interface_id(OurPost,'Viewer'),creator=u)
-        t.save()
-
-        resource_type = ContentType.objects.get_for_model(blog)
-
-        self.assertEquals(resource_type,t.get_resource_type())
-        self.assertEquals(blog.id,t.get_resource_id())
-        agent_type = ContentType.objects.get_for_model(u)
-
-        self.assertEquals(agent_type,t.get_agent_type())
-        self.assertEquals(u.id,t.get_agent_id())
-
-        objects = SecurityTag.objects.get_by_agent_and_resource_type_and_id(agent_type,u.id,resource_type,blog.id)
-        count = 0
-        for x in objects : count = count+1
-        self.assertEquals(count,1)
-        objects = SecurityTag.objects.get_by_agent_and_resource_type_and_id(agent_type,u.id,resource_type,blog.id)
-        self.assertEquals(objects[0].name,'type-test')
-        
-        
-            
-            
-        
 
     def makeInterfaceFactory(self) :
         ps = PermissionSystem()
@@ -436,20 +435,8 @@ class TestPermissions(unittest.TestCase) :
 
         self.assertEquals(len(blog2.get_interfaces()),2)
         
-        
-    def testProfile(self) :
-        ps = get_permission_system()
-        u= User(username='dermot',email_address='dermot@the-hub.net')
-        u.save()
-        p = u.get_profile()
-        p.save()
-        for tag in ps.get_permissions_for(p) :
-            tag.delete()
-        p.save()
 
-        
-
-    def XtestSliderGroup(self) :
+    def testSliderGroup(self) :
         u= User(username='paulo',email_address='paulo@the-hub.net')
         u.display_name=u.username
         u.save()

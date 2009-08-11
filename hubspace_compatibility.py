@@ -57,6 +57,8 @@ except :
     User.is_member_of = is_member_of
     User.is_direct_member_of = is_direct_member_of
     User.get_enclosures = get_enclosures
+    User.get_enclosure_set = get_enclosure_set
+    User.corresponding_agent = corresponding_agent
     User.is_group = lambda(self) : False
     User.save = user_save
    
