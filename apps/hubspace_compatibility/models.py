@@ -11,14 +11,13 @@ import hashlib
 import datetime
 
 """TODO:
-i) Implement is_user_of() - "is_member_of", "get_enclosures", "is direct member of" should check for "is_user_of"
-ii) add/remove member - add user etc
+1. Where is group's extra?? why not just extend
 
-2.. Bring in Location Data for Hub
-3. Define Hub as the Hub's members group object with an associated Location
-6. Where is group's extra?? why not just extend
-7. Implement the hubspace metadata framework - add typed metadata and language along the way
-8. Implement the Hub Microsites list functionality
+
+2. Bring in Location Data for Hub - define Hub as the Hub's members group object with an associated Location
+
+4. Implement the hubspace metadata framework - add typed metadata and language along the way
+5. Implement the Hub Microsites list functionality
 """
 
 def getHubspaceUser(username) :

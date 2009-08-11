@@ -1,8 +1,8 @@
 Tuesday-Wednesday
 -----------------
+- Tom Group model - group extra + tg_groups to plus_groups
+
 - Phil + Tom - finish permissions
-- Tom - hubspace group compatibility + Group model
-  * Phil finish break-out to Context object
   * Phil implement SliderSet
   ** SliderSet to manage creation and deletion of SecurityTags / agent-mapping
   ** SliderSet to represent and manage constraints
@@ -11,7 +11,8 @@ Tuesday-Wednesday
   ** adapt json returned by javascript library
   ** SliderSet default format (create from json?)
   ** Make sure working for Profile
-- Tom - hubspace group compatibility
+
+
 - Phil + Tom - sign-up, invite and apply logic
   ** create an Application class which holds things like the "request to join" message, the host's reply message
   ** similar Invite class which holds invite text 
@@ -19,8 +20,11 @@ Tuesday-Wednesday
 - Phil - sign-up, invite and apply form
 - Phil + Jesson - sign-up template integration s
 - Phil + Tom - sign-up UI - js elements
+
+
 - Jesson + Tom - wiki design
 - Tom wiki + group tests - security_context and context/container
+
 
 
 Thursday
@@ -111,6 +115,8 @@ Host Group (default to only visible to its members)
 Hubs
 ----
 Create Hub object (members group with associated location)
+Bring in Location Data for Hub 
+
 
 Invoicing - HP 0.9/1.0
 ---------
