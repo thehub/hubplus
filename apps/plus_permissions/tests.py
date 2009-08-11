@@ -7,10 +7,8 @@ from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes import generic
 
 from django.contrib.auth.models import User
-try :
-    from apps.hubspace_compatibility.models import TgGroup, Location, HCGroupMapping
-except Exception, e:
-    print "*** %s" % e
+
+from apps.hubspace_compatibility.models import TgGroup, Location
 
 from models import *
 from apps.plus_groups.models import create_hub, create_site_group

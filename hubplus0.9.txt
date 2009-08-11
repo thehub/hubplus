@@ -1,6 +1,7 @@
 Tuesday-Wednesday
 -----------------
 - Phil + Tom - finish permissions
+- Tom - hubspace group compatibility + Group model
   * Phil finish break-out to Context object
   * Phil implement SliderSet
   ** SliderSet to manage creation and deletion of SecurityTags / agent-mapping

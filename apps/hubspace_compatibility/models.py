@@ -9,16 +9,14 @@ from django.db.models.signals import post_save
 
 from apps.plus_permissions.permissionable import PermissionableMixin
 
+from itertools import chain
+
 import hashlib
 import datetime
 
 """TODO:
-1. Respect hubspace memberships
-i)  define user_group many-to-many
-ii) define group is member_of group as a many-to-many
-iii) deprecate HC
-iv) Implement is_user_of()
-v) "is_member_of", "get_enclosures", "is direct member of" should check for "is_user_of"
+i) Implement is_user_of() - "is_member_of", "get_enclosures", "is direct member of" should check for "is_user_of"
+ii) add/remove member - add user etc
 
 2.. Bring in Location Data for Hub
 3. Define Hub as the Hub's members group object with an associated Location
@@ -37,12 +35,12 @@ def getHubspaceUser(username) :
         return None
 
 
-class UserGroup(models.Model):
-    group_id = models.IntegerField()
-    user_id = models.IntegerField()
-    id = models.IntegerField(primary_key=True)
-    class Meta:
-        db_table = u'user_group'
+#class UserGroup(models.Model):
+#    group_id = models.IntegerField()
+#    user_id = models.IntegerField()
+#    id = models.IntegerField(primary_key=True)
+#    class Meta:
+#        db_table = u'user_group'
 
 
 
@@ -165,33 +163,42 @@ try :
     level = models.CharField(max_length=9)
     psn_id = models.CharField(max_length=100)
     path = models.CharField(max_length=120)
+    users = models.ManyToManyField(User)
+
+    def add_member(self, user_or_group):
+        if isinstance(user_or_group, User) and not self.users.filter(id=user_or_group.id):
+            self.users.add(user_or_group)
+
+        if isinstance(user_or_group, self.__class__) and not self.child_groups.filter(id=user_or_group.id):
+            self.child_groups.add(user_or_group)
 
     class Meta:
         db_table = u'tg_group'
 
     def is_group(self) : return True
 
-    def add_member(self,x) :
-        if not self.has_member(x) :
-            map = HCGroupMapping()
-            map.child=x
-            map.parent=self
-            map.save()
+    def remove_member(self, user_or_group):
+        if isinstance(user_or_group, User) and self.users.filter(id=user_or_group.id):
+            self.users.remove(user_or_group)
 
-
-    def remove_member(self,x) :
-        for map in HCGroupMapping.objects.filter(parent=self) :
-            if map.child == x :
-                map.delete()
+        if isinstance(user_or_group, self.__class__) and self.child_groups.filter(id=user_or_group.id):
+            self.child_groups.remove(user_or_group)
         
+    def get_users(self):
+        return self.users.all()
+
+    def get_member_groups(self):
+        return self.child_groups.all()
+
     def get_members(self) : 
-        return (x.child for x in HCGroupMapping.objects.filter(parent=self))
+        members = chain((x for x in self.get_users()), (x for x in self.get_member_groups()))
+        return members
 
     def has_member(self,x) :
         return (x in self.get_members())
 
     def get_no_members(self) :
-        return HCGroupMapping.objects.filter(parent=self).count()
+        return self.get_users().count() + self.get_member_groups().count()
 
 
     def get_permission_agent_name(self) : 
@@ -206,21 +213,24 @@ try :
         from apps.plus_permissions.models import default_admin_for
         return default_admin_for(self)
         
-    def __str__(self) : return "<TgGroup : %s>" % self.group_name
+    def __str__(self) : 
+        return "<TgGroup : %s>" % self.group_name
 
-  class HCGroupMapping(models.Model) :
-      """XXX Effectively this is a many-to-many relationship between a group and its members.
-      I guess it is explicit because of the need for a GenericForeignKey to reference User and Group tables for the child.
-      I find this unnecessary and undesirable because:
-      a) we already have a user_group relation in hubspace 
-      b) it might sometimes be useful to distinguish group memberships from user membership relations
-      Therfore I will add a many-to-many relation for groups called is_parent_of. And user the existing user_group relation from hubspace. This will also enhance hubspace's access to HubPlus defined groups.
-      This relationship should then be deprecated.
-      """
-      content_type = models.ForeignKey(ContentType)
-      object_id = models.PositiveIntegerField()
-      child = generic.GenericForeignKey('content_type', 'object_id')
-      parent = models.ForeignKey(TgGroup)
+    child_groups = models.ManyToManyField('self', symmetrical=False, related_name='parent_groups')
+
+  #class HCGroupMapping(models.Model) :
+  #    """XXX Effectively this is a many-to-many relationship between a group and its members.
+  #    I guess it is explicit because of the need for a GenericForeignKey to reference User and Group tables for the child.
+  #    I find this unnecessary and undesirable because:
+  #    a) we already have a user_group relation in hubspace 
+  #    b) it might sometimes be useful to distinguish group memberships from user membership relations
+  #    Therfore I will add a many-to-many relation for groups called is_parent_of. And user the existing user_group relation from hubspace. This will also enhance hubspace's access to HubPlus defined groups.
+  #    This relationship should then be deprecated.
+  #    """
+  #    content_type = models.ForeignKey(ContentType)
+  #    object_id = models.PositiveIntegerField()
+  #    child = generic.GenericForeignKey('content_type', 'object_id')
+  #    parent = models.ForeignKey(TgGroup)
 
 except Exception, e:
   print "##### %s" % e
@@ -240,11 +250,12 @@ TgGroup.is_member_of = is_member_of
 
 # to be added to User class
 def get_enclosures(self) :
-    """Give us all the things of which this user is a member_of
-    XXX parent should not be called "parent", it is the current node
-    XXX implement in SQL it is not so hard I think
+    """Give us all the things of which this user/group is a member_of
     """
-    return (x.parent for x in HCGroupMapping.objects.all() if x.child == self)
+    if isinstance(self, User):
+        return self.tggroup_set.all()
+    elif isinstance(self, TgGroup):
+        return self.parent_groups.all()
 
 TgGroup.get_enclosures = get_enclosures
 
