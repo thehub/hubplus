@@ -141,24 +141,6 @@ class ProfilePermissionManager(PermissionManager) :
         
 get_permission_system().add_permission_manager(Profile,ProfilePermissionManager(Profile))
 
-# ========= Signal handlers
 
 
-def setup_default_permissions(sender,**kwargs):
-    # This signalled by Profile.save()
-    # tests if there are already permissions for the profile and if not, creates defaults
-    profile = kwargs['instance']
-    signal = kwargs['signal']
-    
-    ps = get_permission_system()
-    print "In setup_default_permissions"
-    try :
-        ps.get_permission_manager(Profile)
-    except :
-        ps.add_permission_manager(Profile,ProfilePermissionManager(Profile))
-        
-    if not get_permission_system().has_permissions(profile) :
-        ps.get_permission_manager(Profile).setup_defaults(profile,profile.user,profile.user)
-
-post_save.connect(setup_default_permissions,sender=Profile)
 

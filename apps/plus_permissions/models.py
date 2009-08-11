@@ -308,36 +308,32 @@ class SecurityTag(models.Model) :
 
 
 class PermissionSystemContextManager(models.Manager) :
-    def get_record(self,target) :
+
+    def get_or_create(self,target) :
         target_type = ContentType.objects.get_for_model(target)
-        cn, created = Context.objects.get_or_create(target_content_type=target_type,target_object_id=target.id)
-        if created :
-            cn.target=target
+        if Context.objects.filter(target_content_type=target_type,target_object_id=target.id).count() == 0 :
+            cn = Context(target=target)
             cn.save()
-        return cn
+            return cn
+        else :
+            cn = Context.objects.get(target_content_type=target_type,target_object_id=target.id)
+            return cn
 
     def set_security_context(self,target,context) :
-        cn = self.get_record(target)
+        cn = self.get_or_create(target)
         cn.security_context = context
         cn.save()
-
     
     def set_context(self,target,context):
-        cn = self.get_record(target)
+        cn = self.get_or_create(target)
         cn.context = context
         cn.save()
 
-
     def get_security_context(self,target) :
-        cn = self.get_record(target)
-        print cn
-        return cn.security_context
+        return self.get_or_create(target).security_context
 
     def get_context(self,target) :
-        cn = self.get_record(target)
-        print cn
-        return cn.context
-
+        return self.get_or_create(target).context
 
 
 class Context(models.Model):
@@ -360,7 +356,13 @@ class Context(models.Model):
     def __str__(self) :
         return """target:%s, security context:%s, context:%s""" % (self.target,self.security_context,self.context)
 
-class ContextMixin :
+class MissingContextException(Exception): 
+    def __init__(self,cls,context) :
+        self.cls = cls
+        self.context = context
+        self.msg = 'Missing %s when creating a %s' % (context,cls)
+
+class PermissionableMixin :
     """ Use to add context handling to other classes """
     def set_security_context(self,context) :
         return Context.objects.set_security_context(self,context)
@@ -373,7 +375,7 @@ class ContextMixin :
 
     def get_context(self) :
         return Context.objects.get_context(self)
-    
+
     
 
 _ONLY_INTERFACE_FACTORY = InterfaceFactory()
@@ -418,7 +420,9 @@ class PermissionSystem :
 
 
     def get_tags_on(self,resource) :
+        print "resource is %s" % resource
         context = resource.get_security_context()
+        print "context is %s" % context
         context_type = ContentType.objects.get_for_model(context)
         return SecurityTag.objects.filter(context_content_type=context_type,context_object_id=context.id)
         
@@ -437,13 +441,11 @@ class PermissionSystem :
     def has_access(self, agent, resource, interface) :
         """Does the agent have access to this interface in this context
         """
-        # NB : we have to loop through this explicitly rather than use some kind of ORM filter
-        # because we're going to test our SecurityTag not just against THIS agent but 
-        # the groups which the agent belongs to.
-
+        
+        # we're always interested in the security_context of this resource
         context = resource.get_security_context()
-
         context_type = ContentType.objects.get_for_model(context)
+
         # which agents have access?
         allowed_agents = Agent.objects.filter(securitytag__interface=interface,
                                               securitytag__context_content_type=context_type,
@@ -480,7 +482,9 @@ class PermissionSystem :
         """Does the agent have direct access to this interface in this context
            ie. is there a SecurityTag explicitly linking this agent?
         """
+
         context = resource.get_security_context()
+
         context_type = ContentType.objects.get_for_model(context)
         # which agents have access?
         allowed_agents = Agent.objects.filter(securitytag__interface=interface,

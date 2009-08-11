@@ -7,7 +7,7 @@ from django.contrib.contenttypes import generic
 from django.contrib.contenttypes.models import ContentType
 
 from timezones.fields import TimeZoneField
-from apps.plus_permissions.models import ContextMixin
+from apps.plus_permissions.models import PermissionableMixin
 
 import itertools
 
@@ -19,85 +19,81 @@ class DelegateToUser(object) :
        setattr(obj.user,self.attr_name,val)
        #print "Getting from inner %s" % getattr(obj.user,self.attr_name)
 
-class Profile(models.Model,ContextMixin):    
-    user = models.ForeignKey(User, unique=True, verbose_name=_('user'))
+class Profile(PermissionableMixin,models.Model):    
+   user = models.ForeignKey(User, unique=True, verbose_name=_('user'))
+   
+   about = DelegateToUser('description')
+   email_address = DelegateToUser('email_address')
+   name = DelegateToUser('username')
+   display_name = DelegateToUser('display_name')
+   first_name = DelegateToUser('first_name')
+   last_name = DelegateToUser('last_name')
+   organisation = DelegateToUser('organisation')
+   role = DelegateToUser('title')
+   mobile = DelegateToUser('mobile')
+   home = DelegateToUser('home')
+   work = DelegateToUser('work')
+   fax = DelegateToUser('fax')
+   
+   email2 = DelegateToUser('email2')
+   address = DelegateToUser('address')
+   skype_id = DelegateToUser('skype_id')
+   sip_id = DelegateToUser('sip_id')
+   website = DelegateToUser('website')
+   homeplace = DelegateToUser('homeplace')
+   location = DelegateToUser('location')
+   
+   invited_by = models.ForeignKey(User, related_name='invited_users', null=True)
+   accepted_by = models.ForeignKey(User, related_name='accepted_users', null=True)
+
+   def __unicode__(self):
+       return self.user.username
+
+   def __str__(self) :
+      return "this is a profile for %s" % self.user.username
+
+   def was_invited(self):
+      return not self.invited_by is None
+
+   def was_accepted(self):
+      return not self.accepted_by is None
     
-    about = DelegateToUser('description')
-    email_address = DelegateToUser('email_address')
-    name = DelegateToUser('username')
-    display_name = DelegateToUser('display_name')
-    first_name = DelegateToUser('first_name')
-    last_name = DelegateToUser('last_name')
-    organisation = DelegateToUser('organisation')
-    role = DelegateToUser('title')
-    mobile = DelegateToUser('mobile')
-    home = DelegateToUser('home')
-    work = DelegateToUser('work')
-    fax = DelegateToUser('fax')
+   def get_absolute_url(self):
+      return ('profile_detail', None, {'username': self.user.username})
 
-    email2 = DelegateToUser('email2')
-    address = DelegateToUser('address')
-    skype_id = DelegateToUser('skype_id')
-    sip_id = DelegateToUser('sip_id')
-    website = DelegateToUser('website')
-    homeplace = DelegateToUser('homeplace')
-    location = DelegateToUser('location')
-
-    invited_by = models.ForeignKey(User, related_name='invited_users', null=True)
-    accepted_by = models.ForeignKey(User, related_name='accepted_users', null=True)
-
-
-
-
-
-
-    def __unicode__(self):
-        return self.user.username
-
-    def __str__(self) :
-       return "this is a profile for %s" % self.user.username
-
-    def was_invited(self):
-       return not self.invited_by is None
-
-    def was_accepted(self):
-       return not self.accepted_by is None
+   get_absolute_url = models.permalink(get_absolute_url)
     
-    def get_absolute_url(self):
-        return ('profile_detail', None, {'username': self.user.username})
-    get_absolute_url = models.permalink(get_absolute_url)
-    
-    def has_somethings(self,f) :
-        try :
-            first = f().next()
-        except StopIteration :
-            return False
-        else :
-            return True
+   def has_somethings(self,f) :
+      try :
+         first = f().next()
+      except StopIteration :
+         return False
+      else :
+         return True
 
-    def has_something(self,fun,match) :
-        return (match.label in (x.label for x in fun()))
+   def has_something(self,fun,match) :
+      return (match.label in (x.label for x in fun()))
+   
 
-
-    def get_host_info(self) :
-        hi, created = HostInfo.objects.get_or_create(user=self.user)
-        if created :
-            hi.save()
-        return hi
+   def get_host_info(self) :
+      hi, created = HostInfo.objects.get_or_create(user=self.user)
+      if created :
+         hi.save()
+      return hi
 
 
-    class Meta:
-        verbose_name = _('profile')
-        verbose_name_plural = _('profiles')
-
+   class Meta:
+      verbose_name = _('profile')
+      verbose_name_plural = _('profiles')
 
 import logging
 
+
+    
 def create_profile(sender, instance=None, **kwargs):
-    logging.debug("in create a profile signal %s" % instance)
-    if instance is None:
-        return
-    profile, created = Profile.objects.get_or_create(user=instance)
+   if instance is None:
+      return
+   profile, created = Profile.objects.get_or_create(user=instance)
 
 post_save.connect(create_profile, sender=User)
 
