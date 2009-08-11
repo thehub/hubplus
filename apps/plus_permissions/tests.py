@@ -37,7 +37,7 @@ class TestPermissions(unittest.TestCase) :
         u2.save()
     
         u3 = User(username='jesson',email_address='jesson@the-hub.net')
-        u2.save()
+        u3.save()
 
         # we need location for TgGroups
         l = Location(name='kingsX')
@@ -125,8 +125,6 @@ class TestPermissions(unittest.TestCase) :
         self.assertFalse(u.is_direct_member_of(hosts))
         self.assertFalse(u.is_member_of(hosts))
 
-        
-
 
 
     def testPermissions(self) :
@@ -140,12 +138,15 @@ class TestPermissions(unittest.TestCase) :
         self.assertEquals(an_agent.agent.id,u.id)
 
         # two resources, blog and blog2
-        blog= OurPost(title='my post')
-        blog.set_security_context(blog)
+        blog= OurPost(title='my post')    
         blog.save()
+        blog.set_security_context(blog)
+
+        print "GGG ",blog.get_security_context()
+
         blog2 = OurPost(title='another post')
-        blog2.set_security_context(blog2)
         blog2.save()
+        blog2.set_security_context(blog2)
 
         l = Location(name='da hub')
         l.save()
@@ -166,6 +167,7 @@ class TestPermissions(unittest.TestCase) :
         ICommentor = tif.get_id(OurPost,'Commentor')
         IEditor = ps.get_interface_id(OurPost,'Editor')
 
+        print "HHH ", blog.get_security_context()
         self.assertTrue(ps.has_access(u,blog,IViewer))
 
         t2 = ps.create_security_tag(blog,ICommentor,[u])
@@ -197,9 +199,10 @@ class TestPermissions(unittest.TestCase) :
         # now let's test contexts
         discussion_group,discussion_admin = create_site_group('discussion','Discussion',l)
         blog3 = OurPost(title='story')
-        blog3.set_container(discussion_group)
-        blog3.set_security_context(discussion_group)
         blog3.save()
+
+        blog3.set_context(discussion_group)
+        blog3.set_security_context(discussion_group)
         
         ps.create_security_tag(discussion_group,IViewer,[u])
         self.assertTrue(ps.has_access(u,blog3,IViewer))
@@ -291,11 +294,14 @@ class TestPermissions(unittest.TestCase) :
 
     def testProfileSignals(self) :
         from Profile import *
-        u = User(username='jesson',email='',password='abc')
+        u = User(username='jesson2',email='',password='abc')
         u.save()
         p = u.get_profile()
         p.about='about jesson'
         p.save()
+        p.set_security_context(p)
+        print "KKLL", p.get_security_context() 
+
         ps = PermissionSystem()
         self.assertTrue(ps.has_access(ps.get_anon_group(),p,ps.get_interface_factory().get_id(Profile,'Viewer')))
 
@@ -305,7 +311,9 @@ class TestPermissions(unittest.TestCase) :
         location = Location(name='world')
         location.save()
         group,hosts = create_site_group('group','Our Group',location=location,create_hosts=True)
-        blog = OurPost(title='hello',security_context=group,context=group)
+        blog = OurPost(title='hello')
+        blog.set_security_context(group)
+        blog.set_context(hosts)
         blog.save()
 
         self.assertEquals(Context.objects.get_security_context(blog).id, group.id)

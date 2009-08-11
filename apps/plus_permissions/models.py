@@ -375,24 +375,6 @@ class PermissionableMixin :
 
     def get_context(self) :
         return Context.objects.get_context(self)
-    
-
-    def __init__(self,**kwargs) :
-        # anything which has the PermissionableMixin MUST be created with a context and a security_context
-        
-        if kwargs.has_key('context') :
-            self.set_context(kwargs['context'])
-            kwargs.remove('context')
-        else :
-            raise MissingContextException(self.__class__,'context')
-
-        if kwargs.has_key('security_context') :
-            self.set_security_context(kwargs['security_context'])
-            kwargs.remove('security_context')
-        else :
-            raise MissingContextException(self.__class__,'security_context')
-
-        super().__init__(self,**kwargs)
 
     
 
@@ -438,7 +420,9 @@ class PermissionSystem :
 
 
     def get_tags_on(self,resource) :
+        print "resource is %s" % resource
         context = resource.get_security_context()
+        print "context is %s" % context
         context_type = ContentType.objects.get_for_model(context)
         return SecurityTag.objects.filter(context_content_type=context_type,context_object_id=context.id)
         
@@ -460,8 +444,8 @@ class PermissionSystem :
         
         # we're always interested in the security_context of this resource
         context = resource.get_security_context()
-
         context_type = ContentType.objects.get_for_model(context)
+
         # which agents have access?
         allowed_agents = Agent.objects.filter(securitytag__interface=interface,
                                               securitytag__context_content_type=context_type,
@@ -498,7 +482,9 @@ class PermissionSystem :
         """Does the agent have direct access to this interface in this context
            ie. is there a SecurityTag explicitly linking this agent?
         """
+
         context = resource.get_security_context()
+
         context_type = ContentType.objects.get_for_model(context)
         # which agents have access?
         allowed_agents = Agent.objects.filter(securitytag__interface=interface,
