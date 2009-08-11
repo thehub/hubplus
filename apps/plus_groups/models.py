@@ -44,19 +44,21 @@ GROUP   = 'GROUP'
 MEMBERS = 'MEMBERS'
 HOSTS   = 'HOSTS'
 
-def my_create_group(name, display_name, location, type, *argv, **kwargs) :
-    g = TgGroup(group_name=name, display_name=display_name, place=location, created=datetime.datetime.today())
+def my_create_group(name, display_name, type, *argv, **kwargs) :
+
+    g = TgGroup(group_name=name, display_name=display_name, place=None, created=datetime.datetime.today())
     g.save()
     e = g.get_extras()
     e.group_type = type
     e.save()
 
+
     if 'create_hosts' in kwargs :
         if kwargs['create_hosts'] :
-            k = {}
-            k.update(kwargs)
-            del k['create_hosts']
-            h,bb = my_create_group('%s-admin'%name, '%s Admin'%display_name, location, HOSTS, *argv, **k) 
+            kw2 = {}
+            kw2.update(kwargs)
+            del kw2['create_hosts']
+            h,bb = my_create_group('%s-admin'%name, '%s Admin'%display_name, HOSTS, *argv, **kw2) 
             h.save()
     
     else :
@@ -67,14 +69,14 @@ def my_create_group(name, display_name, location, type, *argv, **kwargs) :
 
     return g,h
 
-def create_hub(name, display_name, location, *argv, **kwargs) :
-    g,h = my_create_group(name, display_name, location, HUB, *argv, **kwargs)
+def create_hub(name, display_name,  *argv, **kwargs) :
+    g,h = my_create_group(name, display_name, HUB, *argv, **kwargs)
     g.add_member(h)
     return g,h
 
     
-def create_site_group(name, display_name, location, *argv, **kwargs) :
-    g,h = my_create_group(name, display_name, location, GROUP, *argv, **kwargs)
+def create_site_group(name, display_name, *argv, **kwargs) :
+    g,h = my_create_group(name, display_name, GROUP, *argv, **kwargs)
     g.add_member(h)
     return g,h
 

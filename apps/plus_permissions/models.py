@@ -703,7 +703,7 @@ class SliderObject(object) :
 class SlidersField(models.Field):
     def __init__(self, *args, **kwargs):
         kwargs['max_length'] = 104
-        super(, self).__init__(*args, **kwargs)
+        #super(, self).__init__(*args, **kwargs)
 
 
 
