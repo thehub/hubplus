@@ -23,16 +23,58 @@ Friday - Sunday
                 - set status of a group
 
 
+Monday 17th - Tuesday
+---------------------
+Phil + Tom - file upload + image previewing http://www.ohloh.net/p/django-thumbs ?
+Phil + Tom - full text search - backend
+Phil + Tom - field-value search
+Jesson - Search and tag filtering interface
+Phil + Tom - results batching and sorting
+
+Wednesday - Friday
+------------------
+Tom + Phil - tag search
+Jesson - Feed customisation design
+
+Saturday - Sunday
+-----------------
+Tom - Feeds and feed customisation
+
+Monday 25th - 1st September
+---------------------------
+- Phil + Jesson - Polishing, bugs and browser compatibility
+- Phil MHPSS imports
+- Tom - js browser issues
+- Tom + Shekhar - hubspace integration
+ 
+
+Tuesday 1st September
+---------------------
+Begin Testing! With Hosts and MHPSS. Data not stored 
+
+1st - 15th
+----------
+- just testing and improvements phase.
+- Tom to integrate speeqe or jw chat
+
+
+15th September
+--------------
+editor - image inclusion - flickr plugin - autoadjusting height - yui 
+Go live with whole Hub+ team + selection of members
+
+15th November
+-------------
+Hard launch with members! International hosted event conferenced between Hubs - with people testing.
+
+
 
 Permissions
 -----------
 finish off contextual permissions
 switch context of object from group to object
-respect hubspace group memberships
+respect hubspace user-group memberships
 
-* add checkbox based miscellaneous group/user access
-
-Groups to "delegate" tasks, allowing things to be done "through it"
 
 Tweets
 ------
@@ -67,6 +109,7 @@ Tags, Feed and Search
 ---------------------
 HP 0.9
 - copy ohloh.net for design inspiration
+- look at django-tagging
 - fix existing tagging
 - tag refinements search ... urls: ${}/tag/sustainability+renewable_energy  '+' is AND  and _ is "separator"
   - maintain table of tag relations with intersection counts - map this by the amount of objects actually accessible. 
@@ -75,22 +118,37 @@ HP 0.9
 - your feed / group feed - customise with multiple searches, tags of the users and groups you are following. 
 - Filter feed by tags, "user as group"? (author), title, fulltext (keyword),  - Order by date, author, title. Save filter + sorting combination
 - field search/filter - attribute:value
-- fulltext search/filter
+- fulltext search/filter - http://code.google.com/p/django-solr-search/  OR http://github.com/dcramer/django-sphinx/ http://haystacksearch.org/docs/
 
+http://pypi.python.org/pypi/pdfminer/ - get text from pdf docs - EASY
+http://www.unixuser.org/~euske/python/pdfminer/index.html 
+http://wiki.services.openoffice.org/wiki/PyUNO_bridge + openoffice - to extract word docs - HARD
+
+
+http://docs.djangoproject.com/en/dev/ref/generic-views/#django-views-generic-list-detail-object-list
+http://code.google.com/p/django-pagination/
 
 Wiki
 ----
 HP 0.9
 ------
+http://sct.sphene.net/wiki/show/Start/
+http://code.google.com/p/django-wikiapp/
+
+
 - Page editing - wysiwyg
 - page title to page name
 - tweet - description of changes (enable tweeting)
 - Preview functionality
 - autocomplete wiki linking (this group first then related groups, then all groups), with create page functionality - see HubKnowledge
-- file upload to page and attachment (see hubknowledge) - image previews (cropping) 
+- file upload to page and attachment (see hubknowledge) - image previews (cropping)  http://pypi.python.org/pypi/django-generic-images/0.15a
+http://pypi.python.org/pypi/django-attachments/0.3.1
 - comments (enable)
 - permissions control
 
+
+http://hg.piranha.org.ua/django-history/
+http://docs.djangoproject.com/en/dev/howto/outputting-pdf/
 
 Events
 ------
@@ -120,8 +178,9 @@ include hubspace notes
 
 Speed up pinax HP 0.9
 --------------
-concat js and serve as gzipped
+concat js and serve as gzipped  http://www.ohloh.net/p/django-compress ?
 use lightty for static files 
+django-mptt
 
 Financial + User data export HP 0.9
 ----------------------------
