@@ -290,7 +290,7 @@ class TestPermissions(unittest.TestCase) :
     def test_contexts(self) :
         location = Location(name='world')
         location.save()
-        group,hosts = create_site_group('group','Our Group',location=location,create_hosts=True)
+        group,hosts = create_site_group('group','Our Group', location=None, create_hosts=True)
         blog = OurPost(title='hello')
         blog.save()
         blog.set_security_context(group)
