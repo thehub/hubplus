@@ -4,11 +4,18 @@ Tuesday-Wednesday
 
 - Phil + Tom - finish permissions
   * Phil implement SliderSet
-  ** SliderSet to manage creation and deletion of SecurityTags / agent-mapping
+  ** Define a "Contextable" behaviour for things that can be "Contexts"
+  *** including some standard "create defaults" functions. Eg. if a Group can contain wiki-pages, then in a TgGroupPermissionManager, the "create_context_defaults" function will make SecurityTags for wiki-pages (ie. one for each Interface that a wiki has)
+  *** Now "sliders" will simply add and remove agents from these pre-existing SecurityTags. 
+  *** When a new wiki page is created and a group (say, "Hub Kings Cross") is set as its security_context, then the permission system will look at the Wiki SecurityTags for Hub Kings Cross to decide access to this wiki-page.
+  *** If we then customize the settings of the wiki page, the Page becomes its own security_context, and new Wiki-page SecurityTags are created for this page.
+  *** If the user then reverts this wiki to using the "defaults" from Kings Cross again, do we delete these custom SecurityTags? I think so.
+
+  ** SliderSet to manage creation and deletion of agent-mappings. (Never creates or destroys security tags)
   ** SliderSet to represent and manage constraints
-  ** SliderSet also manages creating or deleting custom over-rides
+  ** SliderSet also manages creating or deleting custom security tags
   ** SliderSet to generate json for javascript sliders-set
-  ** adapt json returned by javascript library
+  ** adapt json returned by javascript library to the server, it should be nothing more than a list of [ (Interface_id, Setting)
   ** SliderSet default format (create from json?)
   ** Make sure working for Profile
 
