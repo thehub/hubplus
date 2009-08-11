@@ -4,10 +4,12 @@ Tuesday-Wednesday
   * Phil finish break-out to Context object
   * Phil implement SliderSet
   ** SliderSet to manage creation and deletion of SecurityTags / agent-mapping
+  ** SliderSet to represent and manage constraints
   ** SliderSet also manages creating or deleting custom over-rides
   ** SliderSet to generate json for javascript sliders-set
   ** adapt json returned by javascript library
   ** SliderSet default format (create from json?)
+  ** Make sure working for Profile
 - Tom - hubspace group compatibility
 - Phil + Tom - sign-up, invite and apply logic
   ** create an Application class which holds things like the "request to join" message, the host's reply message

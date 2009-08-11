@@ -112,8 +112,6 @@ class TestPermissions(unittest.TestCase) :
 
         # Now, if we ask for enclosure_set of u, we should get hubMembers and hosts
         es = u.get_enclosure_set()
-        print "LL "
-        print es
         self.assertTrue(u in es)
         self.assertTrue(hosts in es)
         self.assertTrue(hubMembers in es)
@@ -304,29 +302,25 @@ class TestPermissions(unittest.TestCase) :
 
 
     def test_contexts(self) :
-        blog = OurPost(title='hello')
         location = Location(name='world')
         location.save()
         group,hosts = create_site_group('group','Our Group',location=location,create_hosts=True)
-        blog.set_security_context(group)
+        blog = OurPost(title='hello',security_context=group,context=group)
+        blog.save()
+
         self.assertEquals(Context.objects.get_security_context(blog).id, group.id)
+        self.assertEquals(Context.objects.get_security_context(blog).__class__, group.__class__)
+
         blog.set_context(hosts)
         self.assertEquals(Context.objects.get_context(blog).id,hosts.id)
-       
-        #ipdb.set_trace()
+
         Context.objects.set_security_context(blog,blog)
-        
-        print Context.objects.all()
-        
-        print "RR",blog.get_security_context()
-        
         self.assertEquals(blog.get_security_context().id, blog.id)
         self.assertEquals(blog.get_context().id, group.id)
     
-        class A(ContextMixin) : pass
         
-
-
+    def test_mixin(self) :
+        class A(PermissionableMixin) : pass
 
 
     def test_group_admin(self) :
