@@ -15,7 +15,7 @@ Tuesday-Wednesday
   ** SliderSet to represent and manage constraints
   ** SliderSet also manages creating or deleting custom security tags
   ** SliderSet to generate json for javascript sliders-set
-  ** adapt json returned by javascript library to the server, it should be nothing more than a list of [ (Interface_id, Setting)
+  ** adapt json returned by javascript library to the server, it should be nothing more than {'context_type':context_type,'context_id':context_id, 'settings':  [Interface_id, [agent_type, agent_id]]* } 
   ** SliderSet default format (create from json?)
   ** Make sure working for Profile
 
