@@ -94,6 +94,7 @@ def create_profile(sender, instance=None, **kwargs):
    if instance is None:
       return
    profile, created = Profile.objects.get_or_create(user=instance)
+   profile.set_security_context(profile)
 
 post_save.connect(create_profile, sender=User)
 
