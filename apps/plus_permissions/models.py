@@ -308,39 +308,40 @@ class SecurityTag(models.Model) :
 
 
 class PermissionSystemContextManager(models.Manager) :
-    def get_context(self,target) :
+    def get_record(self,target) :
         target_type = ContentType.objects.get_for_model(target)
         cn, created = Context.objects.get_or_create(target_content_type=target_type,target_object_id=target.id)
-        cn.target=target
-        cn.save()
+        if created :
+            cn.target=target
+            cn.save()
         return cn
 
     def set_security_context(self,target,context) :
-        cn = self.get_context(target)
+        cn = self.get_record(target)
         cn.security_context = context
         cn.save()
 
     
-    def set_container(self,target,context):
-        cn = self.get_context(target)
-        cn.container = context
+    def set_context(self,target,context):
+        cn = self.get_record(target)
+        cn.context = context
         cn.save()
 
 
     def get_security_context(self,target) :
-        cn self.get_context(target)
+        cn = self.get_record(target)
         print cn
         return cn.security_context
 
-
-    def get_container(self,target) :
-        cn self.get_context(target)
+    def get_context(self,target) :
+        cn = self.get_record(target)
         print cn
-        return cn.container
+        return cn.context
+
 
 
 class Context(models.Model):
-    """ Maps any content_type target to a security_context and container """
+    """ Maps any content_type target to a security_context and context """
     target_content_type = models.ForeignKey(ContentType,related_name='context_target', null=True)
     target_object_id = models.PositiveIntegerField(null=True)
     target = generic.GenericForeignKey('target_content_type', 'target_object_id')
@@ -349,15 +350,15 @@ class Context(models.Model):
     security_context_object_id = models.PositiveIntegerField(null=True)
     security_context = generic.GenericForeignKey('security_context_content_type', 'security_context_object_id')
 
-    container_content_type = models.ForeignKey(ContentType,related_name='container', null=True)
-    container_object_id = models.PositiveIntegerField(null=True)
-    container = generic.GenericForeignKey('container_content_type', 'container_object_id')
+    context_content_type = models.ForeignKey(ContentType,related_name='context', null=True)
+    context_object_id = models.PositiveIntegerField(null=True)
+    context = generic.GenericForeignKey('context_content_type', 'context_object_id')
 
 
     objects = PermissionSystemContextManager()
 
     def __str__(self) :
-        return """target:%s, security context:%s, container:%s""" % (self.target,self.security_context,self.container)
+        return """target:%s, security context:%s, context:%s""" % (self.target,self.security_context,self.context)
 
 class ContextMixin :
     """ Use to add context handling to other classes """
@@ -367,11 +368,11 @@ class ContextMixin :
     def get_security_context(self) :
         return Context.objects.get_security_context(self)
 
-    def set_container(self,context) :
-        return Context.objects.set_container(self,context)
+    def set_context(self,context) :
+        return Context.objects.set_context(self,context)
 
-    def get_container(self) :
-        return Context.objects.get_container(self)
+    def get_context(self) :
+        return Context.objects.get_context(self)
     
     
 

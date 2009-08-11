@@ -310,8 +310,8 @@ class TestPermissions(unittest.TestCase) :
         group,hosts = create_site_group('group','Our Group',location=location,create_hosts=True)
         blog.set_security_context(group)
         self.assertEquals(Context.objects.get_security_context(blog).id, group.id)
-        blog.set_container(hosts)
-        self.assertEquals(Context.objects.get_container(blog).id,hosts.id)
+        blog.set_context(hosts)
+        self.assertEquals(Context.objects.get_context(blog).id,hosts.id)
        
         #ipdb.set_trace()
         Context.objects.set_security_context(blog,blog)
@@ -321,7 +321,7 @@ class TestPermissions(unittest.TestCase) :
         print "RR",blog.get_security_context()
         
         self.assertEquals(blog.get_security_context().id, blog.id)
-        self.assertEquals(blog.get_container().id, group.id)
+        self.assertEquals(blog.get_context().id, group.id)
     
         class A(ContextMixin) : pass
         
