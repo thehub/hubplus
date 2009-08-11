@@ -9,10 +9,15 @@ try :
 except Exception, e:
     print e
 
-class AliasOf(object) :
-   def __init__(self,true) : self.true = true
-   def __get__(self,obj,typ=None) : return getattr(obj,self.true)
-   def __set__(self,obj,val) : setattr(obj,self.true,val)
+class AliasOf(object):
+   def __init__(self,name): 
+       self.name = name
+
+   def __get__(self,obj,typ=None): 
+       return getattr(obj,self.name)
+
+   def __set__(self,obj,val): 
+       setattr(obj,self.name,val)
 
 
 try :

@@ -1,0 +1,186 @@
+Tuesday-Wednesday
+-----------------
+- Phil + Tom - finish permissions
+- Tom - hubspace group compatibility
+- Phil + Tom - sign-up, invite and apply logic
+- Phil - sign-up, invite and apply form
+- Phil + Jesson - sign-up template integration s
+- Phil + Tom - sign-up UI - js elements
+- Jesson + Tom - wiki design
+- Tom wiki + group tests - security_context and context/container
+
+
+Thursday
+--------
+- Tom wiki backend implementation
+- Phil - Group's UI  + create Hubs (with location object)
+
+Friday - Sunday
+---------------
+- Tom wiki UI
+- Phil + Jesson - Group permissions dashboard
+- Phil + Jesson - tweets, messaging and comments (on documents) from pinax + ui enhancements
+                - set status of a group
+
+
+Monday 17th - Tuesday
+---------------------
+Phil + Tom - file upload + image previewing http://www.ohloh.net/p/django-thumbs ?
+Phil + Tom - full text search - backend
+Phil + Tom - field-value search
+Jesson - Search and tag filtering interface
+Phil + Tom - results batching and sorting
+
+Wednesday - Friday
+------------------
+Tom + Phil - tag search
+Jesson - Feed customisation design
+
+Saturday - Sunday
+-----------------
+Tom - Feeds and feed customisation
+
+Monday 25th - 1st September
+---------------------------
+- Phil + Jesson - Polishing, bugs and browser compatibility
+- Phil MHPSS imports
+- Tom - js browser issues
+- Tom + Shekhar - hubspace integration
+ 
+
+Tuesday 1st September
+---------------------
+Begin Testing! With Hosts and MHPSS. Data not stored 
+
+1st - 15th
+----------
+- just testing and improvements phase.
+- Tom to integrate speeqe or jw chat
+
+
+15th September
+--------------
+editor - image inclusion - flickr plugin - autoadjusting height - yui 
+Go live with whole Hub+ team + selection of members
+
+15th November
+-------------
+Hard launch with members! International hosted event conferenced between Hubs - with people testing.
+
+
+
+Permissions
+-----------
+finish off contextual permissions
+switch context of object from group to object
+respect hubspace user-group memberships
+
+
+Tweets
+------
+From pinax
+
+Groups
+------
+HP - 0.9
+
+Join/Leave/Invite/Apply to Join/Set Status/Edit Home Page, interfaces with permissions control 
+Sign up Process
+Inplace Fields / Attributes
+tag group as "about ..."
+
+
+- Place item in owning AGENT
+- control permissions based on security context 
+Group permissions Dashboard (slider group for each type)
+Host Group (default to only visible to its members)
+
+Hubs
+----
+Create Hub object (members group with associated location)
+
+Invoicing - HP 0.9/1.0
+---------
+tick box selection when invoicing
+invoice redesign + pisa
+
+
+Tags, Feed and Search
+---------------------
+HP 0.9
+- copy ohloh.net for design inspiration
+- look at django-tagging
+- fix existing tagging
+- tag refinements search ... urls: ${}/tag/sustainability+renewable_energy  '+' is AND  and _ is "separator"
+  - maintain table of tag relations with intersection counts - map this by the amount of objects actually accessible. 
+- tag tweets, pages, events
+- only see the tagged items you have permission to
+- your feed / group feed - customise with multiple searches, tags of the users and groups you are following. 
+- Filter feed by tags, "user as group"? (author), title, fulltext (keyword),  - Order by date, author, title. Save filter + sorting combination
+- field search/filter - attribute:value
+- fulltext search/filter - http://code.google.com/p/django-solr-search/  OR http://github.com/dcramer/django-sphinx/ http://haystacksearch.org/docs/
+
+http://pypi.python.org/pypi/pdfminer/ - get text from pdf docs - EASY
+http://www.unixuser.org/~euske/python/pdfminer/index.html 
+http://wiki.services.openoffice.org/wiki/PyUNO_bridge + openoffice - to extract word docs - HARD
+
+
+http://docs.djangoproject.com/en/dev/ref/generic-views/#django-views-generic-list-detail-object-list
+http://code.google.com/p/django-pagination/
+
+Wiki
+----
+HP 0.9
+------
+http://sct.sphene.net/wiki/show/Start/
+http://code.google.com/p/django-wikiapp/
+
+
+- Page editing - wysiwyg
+- page title to page name
+- tweet - description of changes (enable tweeting)
+- Preview functionality
+- autocomplete wiki linking (this group first then related groups, then all groups), with create page functionality - see HubKnowledge
+- file upload to page and attachment (see hubknowledge) - image previews (cropping)  http://pypi.python.org/pypi/django-generic-images/0.15a
+http://pypi.python.org/pypi/django-attachments/0.3.1
+- comments (enable)
+- permissions control
+
+
+http://hg.piranha.org.ua/django-history/
+http://docs.djangoproject.com/en/dev/howto/outputting-pdf/
+
+Events
+------
+HP 0.9
+------
+Allow creation of calendars, on user, group, Hub or resource.
+Create event type which appears in calendar according to its tags.
+If calendar represents a resource, create rusage with event - booking wizard = first add event -> confirm rusage details
+tag an event with the "calendar" tag to make it appear in a calendar
+
+ical / atom cal feed
+
+Messaging
+---------
+HP 0.9
+------
+- autocomplete (must complete) messaging
+- message people who are following you
+
+Users
+-----
+HP 0.9
+------
+allow registration of users with . in username
+include hubspace notes
+
+
+Speed up pinax HP 0.9
+--------------
+concat js and serve as gzipped  http://www.ohloh.net/p/django-compress ?
+use lightty for static files 
+django-mptt
+
+Financial + User data export HP 0.9
+----------------------------
