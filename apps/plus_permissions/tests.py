@@ -135,7 +135,7 @@ class TestPermissions(unittest.TestCase) :
         an_agent = Agent.objects.get(agent_content_type=agent_type,agent_object_id=u.id)
         self.assertEquals(an_agent.agent.id,u.id)
 
-        # two resources, blog and blog2
+        # two resources, blog and blog2, make sure that security_
         blog= OurPost(title='my post')    
         blog.save()
         blog.set_security_context(blog)
@@ -317,4 +317,9 @@ class TestPermissions(unittest.TestCase) :
         g, h = create_hub(name='hub-dalston',display_name='Hub Dalston', location=l, create_hosts=True)
 
 
+
+    def test_new_slider_set(self) :
+        so = SliderObject( all = [])
+        ss = SliderSet(sliders=so)
+        ss.save()
         

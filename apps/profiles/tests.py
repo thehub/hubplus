@@ -15,7 +15,7 @@ class TestProfileSubsidiaries(unittest.TestCase):
 
     def testHostInfo(self) :
         # make sure a HostInfo record is created when a User is saved
-        u = User(username='bob')
+        u = User(username='bob',email_address='bob@the-hub.net')
         u.save()
         p = u.get_profile()
         hi = p.get_host_info()

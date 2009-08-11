@@ -10,6 +10,7 @@ from models import get_permission_system, default_admin_for, PermissionableMixin
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes import generic
 
+from permissionable import *
 
 from apps.hubspace_compatibility.models import TgGroup
 
