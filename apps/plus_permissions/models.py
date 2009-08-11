@@ -304,10 +304,76 @@ class SecurityTag(models.Model) :
         return self.agent.id
 
     def __str__(self) :
-        return """(%s)Interface: %s, Resource: %s, Agent: %s, Name: %s""" % (self.id, self.interface,self.resource,self.agent,self.name)
+        return """(%s)Interface: %s, Contexte: %s, Agents: %s""" % (self.id, self.interface,self.context,self.agents)
 
 
+class PermissionSystemContextManager(models.Manager) :
+    def get_context(self,target) :
+        target_type = ContentType.objects.get_for_model(target)
+        cn, created = Context.objects.get_or_create(target_content_type=target_type,target_object_id=target.id)
+        cn.target=target
+        cn.save()
+        return cn
 
+    def set_security_context(self,target,context) :
+        cn = self.get_context(target)
+        cn.security_context = context
+        cn.save()
+
+    
+    def set_container(self,target,context):
+        cn = self.get_context(target)
+        cn.container = context
+        cn.save()
+
+
+    def get_security_context(self,target) :
+        cn self.get_context(target)
+        print cn
+        return cn.security_context
+
+
+    def get_container(self,target) :
+        cn self.get_context(target)
+        print cn
+        return cn.container
+
+
+class Context(models.Model):
+    """ Maps any content_type target to a security_context and container """
+    target_content_type = models.ForeignKey(ContentType,related_name='context_target', null=True)
+    target_object_id = models.PositiveIntegerField(null=True)
+    target = generic.GenericForeignKey('target_content_type', 'target_object_id')
+
+    security_context_content_type = models.ForeignKey(ContentType,related_name='security_context', null=True)
+    security_context_object_id = models.PositiveIntegerField(null=True)
+    security_context = generic.GenericForeignKey('security_context_content_type', 'security_context_object_id')
+
+    container_content_type = models.ForeignKey(ContentType,related_name='container', null=True)
+    container_object_id = models.PositiveIntegerField(null=True)
+    container = generic.GenericForeignKey('container_content_type', 'container_object_id')
+
+
+    objects = PermissionSystemContextManager()
+
+    def __str__(self) :
+        return """target:%s, security context:%s, container:%s""" % (self.target,self.security_context,self.container)
+
+class ContextMixin :
+    """ Use to add context handling to other classes """
+    def set_security_context(self,context) :
+        return Context.objects.set_security_context(self,context)
+
+    def get_security_context(self) :
+        return Context.objects.get_security_context(self)
+
+    def set_container(self,context) :
+        return Context.objects.set_container(self,context)
+
+    def get_container(self) :
+        return Context.objects.get_container(self)
+    
+    
 
 _ONLY_INTERFACE_FACTORY = InterfaceFactory()
 
@@ -350,8 +416,14 @@ class PermissionSystem :
         return tag
 
 
+    def get_tags_on(self,resource) :
+        context = resource.get_security_context()
+        context_type = ContentType.objects.get_for_model(context)
+        return SecurityTag.objects.filter(context_content_type=context_type,context_object_id=context.id)
+        
+
     def has_permissions(self,resource) :
-        return len(set(self.get_permissions_for(resource))) > 0 
+        return self.get_tags_on(resource).count() > 0
 
     def get_anon_group(self) : 
         """ The anon_group is the root of all groups, representing permissions given even to non members; plus everyone else"""
@@ -368,7 +440,7 @@ class PermissionSystem :
         # because we're going to test our SecurityTag not just against THIS agent but 
         # the groups which the agent belongs to.
 
-        context = resource.security_context
+        context = resource.get_security_context()
 
         context_type = ContentType.objects.get_for_model(context)
         # which agents have access?
@@ -407,23 +479,34 @@ class PermissionSystem :
         """Does the agent have direct access to this interface in this context
            ie. is there a SecurityTag explicitly linking this agent?
         """
-
-        context = resource.security_context
+        context = resource.get_security_context()
         context_type = ContentType.objects.get_for_model(context)
         # which agents have access?
         allowed_agents = Agent.objects.filter(securitytag__interface=interface,
                                               securitytag__context_content_type=context_type,
                                               securitytag__context_object_id=context.id)
 
-        if agent in allowed_agents:
+        if agent.corresponding_agent() in allowed_agents:
             return True
         return False
 
 
     def delete_access(self,agent,resource,interface) :
-        for tag in SecurityTag.objects.filter(interface=interface) :
-            if tag.agent == agent and tag.resource==strip(resource) : 
+        context = resource #.get_security_context() don't delete the context's permission, just this if we have one
+        context_type = ContentType.objects.get_for_model(context)
+        c_agent=agent.corresponding_agent()
+        agent_type=ContentType.objects.get_for_model(c_agent)
+        
+        print "deleting %s(%s),%s,%s,%s"%(agent_type,c_agent.agent,c_agent.id,context_type,context.id)
+        print SecurityTag.objects.all()
+        
+        for tag in SecurityTag.objects.filter(interface=interface,
+                                              context_content_type=context_type, context_object_id=context.id) :
+            print tag, tag.agents
+            if c_agent in tag.agents.all() :
+                print tag
                 tag.delete()
+
 
     def get_interface_factory(self) : 
         return _ONLY_INTERFACE_FACTORY
