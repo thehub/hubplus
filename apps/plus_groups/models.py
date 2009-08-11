@@ -6,7 +6,7 @@ from django.contrib.auth.models import User, UserManager, check_password
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes import generic
 
-from apps.hubspace_compatibility.models import TgGroup
+from apps.hubspace_compatibility.models import TgGroup, Location
 
 from apps.plus_permissions.models import DefaultAdmin
 
@@ -46,12 +46,13 @@ HOSTS   = 'HOSTS'
 
 def my_create_group(name, display_name, type, *argv, **kwargs) :
 
-    g = TgGroup(group_name=name, display_name=display_name, place=None, created=datetime.datetime.today())
+    location,created = Location.objects.get_or_create(name='virtual')
+
+    g = TgGroup(group_name=name, display_name=display_name, place=location, created=datetime.datetime.today())
     g.save()
     e = g.get_extras()
     e.group_type = type
     e.save()
-
 
     if 'create_hosts' in kwargs :
         if kwargs['create_hosts'] :
