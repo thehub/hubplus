@@ -15,10 +15,11 @@ import hashlib
 import datetime
 
 """TODO:
-1. Where is group's extra?? why not just extend
+1. Where is group's extra?? why not just extend 
+2. Move this to plus_permissions
 
 
-2. Bring in Location Data for Hub - define Hub as the Hub's members group object with an associated Location
+3. Bring in Location Data for Hub - define Hub as the Hub's members group object with an associated Location
 
 4. Implement the hubspace metadata framework - add typed metadata and language along the way
 5. Implement the Hub Microsites list functionality

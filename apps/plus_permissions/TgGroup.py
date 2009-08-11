@@ -2,7 +2,8 @@
 from django.db import models
 
 from models import Interface, Slider, SecurityTag, PermissionManager
-from models import get_permission_system, default_admin_for, InterfaceReadProperty, InterfaceWriteProperty
+from models import get_permission_system, default_admin_for, InterfaceReadProperty, InterfaceWriteProperty, InterfaceCallProperty
+
 
 from apps.hubspace_compatibility.models import TgGroup
 

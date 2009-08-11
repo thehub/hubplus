@@ -69,7 +69,6 @@ def profile(request, username, template_name="profiles/profile.html"):
     p = other_user.get_profile()
     p.save()
 
-
     if request.user.is_authenticated():
 
         is_friend = Friendship.objects.are_friends(request.user, other_user)
@@ -138,7 +137,7 @@ def profile(request, username, template_name="profiles/profile.html"):
     skills = get_tags(tagged = other_user.get_profile(), tagger = other_user, tag_type = 'skill')
     needs = get_tags(tagged = other_user.get_profile(), tagger = other_user, tag_type = 'need')
 
-    if ps.has_access(request.user,other_user.get_profile(),ps.get_interface_factory().get_id(Profile,'Viewer')) :
+    if ps.has_access(request.user, other_user.get_profile(), ps.get_interface_factory().get_id(Profile,'Viewer')) :
 
         dummy_status = DisplayStatus("Dummy Status"," about 3 hours ago")
 
@@ -173,7 +172,7 @@ def profile(request, username, template_name="profiles/profile.html"):
 Current Permissions
 <ul>%s</ul>...""" % (request.user, other_user.get_profile(),'Viewer', 
        ''.join([
-          ('<li>%s</li>'%x) for x in ps.get_permissions_for(other_user.get_profile())
+          ('<li>%s</li>'%x) for x in ps.get_tags_on(other_user.get_profile())
           ]),
        ), status=401 )
 
