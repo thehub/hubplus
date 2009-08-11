@@ -35,6 +35,15 @@ def getHubspaceUser(username) :
         return None
 
 
+class UserGroup(models.Model):
+    group_id = models.IntegerField()
+    user_id = models.IntegerField()
+    id = models.IntegerField(primary_key=True)
+    class Meta:
+        db_table = u'user_group'
+
+
+
 def to_db_encoding(s, encoding):
     if isinstance(s, str):
         pass
