@@ -1,4 +1,4 @@
-Tuesday-Wednesday
+#Tuesday-Wednesday
 -----------------
 - Tom Group model - group extra + tg_groups to plus_groups
 
@@ -21,13 +21,23 @@ Tuesday-Wednesday
 
 
 - Phil + Tom - sign-up, invite and apply logic
-  ** create an Application class which holds things like the "request to join" message, the host's reply message
-  ** similar Invite class which holds invite text 
-  ** tracking the state (maybe using Tracker or directly in the Application / Invitation classes)
+  ** 1)Application form (for non-site-members who want to join)
+  ** 2)view to handle the application, creates a record in the "Contacts" table with details, + a record in an "Application" class which holds things like the "request to join" message, the host's reply message etc.
+  ** 3)page, showing a list of outstanding applications to a host, giving a way to authorize them
+  ** 4)view for a host to accept the application. At this point :
+  *** 5)if the applicant is not currently a User, (but will still be a Contact), an hmac activation url is created and sent by email.
+  *** 6)if the applicant is an existing user, a confirmation notification is sent, and the user becomes a member of the group
+ 
+  ** 7)Invite form, which allows an existing member or admin to invite either an existing User or a non-site-member to join the site, and optionally further groups.
+  *** 8)the view for this form will create the hmac acceptance url to be sent as part of an invitation, either by email, to a non-user, or by notification to an existing user.
+  **** 9) as in step 6, when the acceptance url is clicked, if this is an existing user, we just add to the relevant group, if, it's just a contact, we create the User and Profile first (from the Contact data) and then add to groups
+  
+
+   
+
   *** Invites
   **** start by comparing pinax signup process which has a lot of similarities
   **** check mail facilities on server
-  **** A module which manages invites and remembers the site's secret key (get_secret_key) (maybe permissionable?)
   **** A "generate invite url" function which takes (inviter, invitee, the id of the thing being invited to (eg. all_members), the secret key) ==> returns a URL; this function tests that the inviter has permission to invite someone to this group
   **** An "invite" method which fires off an email containing the url
   **** urls.py which matches this URL and forwards to a view
