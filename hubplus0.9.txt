@@ -24,6 +24,13 @@ Tuesday-Wednesday
   ** create an Application class which holds things like the "request to join" message, the host's reply message
   ** similar Invite class which holds invite text 
   ** tracking the state (maybe using Tracker or directly in the Application / Invitation classes)
+  *** Invites
+  **** A module which manages invites and remembers the site's secret key (get_secret_key) (maybe permissionable?)
+  **** A "generate invite url" function which takes (inviter, invitee, the id of the thing being invited to (eg. all_members), the secret key) ==> returns a URL; this function tests that the inviter has permission to invite someone to this group
+  **** An "invite" method which fires off an email containing the url
+  **** urls.py which matches this URL and forwards to a view
+  **** view.py which a) creates a new user, if there isn't one already, and b) adds the user to the group
+  **** NO state is kept in the database UNTIL the acceptance link is clicked
 - Phil - sign-up, invite and apply form
 - Phil + Jesson - sign-up template integration s
 - Phil + Tom - sign-up UI - js elements
