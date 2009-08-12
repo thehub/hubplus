@@ -674,7 +674,7 @@ class SliderSetObject(object) :
             s.generate_permissions(self.context)
 
 
-    def change_slider(self,interface,new_setting) :
+    def change_slider(self, interface, new_setting) :
         for s in self.sliders :
             if s.type == interface :
                 return s.change(new_setting)
