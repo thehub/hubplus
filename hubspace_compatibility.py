@@ -7,6 +7,7 @@ import datetime
 try :
     from apps.hubspace_compatibility.models import *
 except Exception, e:
+    print "ABC"
     print e
 
 class AliasOf(object):

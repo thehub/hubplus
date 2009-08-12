@@ -1,4 +1,3 @@
-from django.conf.urls.defaults import *
 
 urlpatterns = patterns('',
     url(r'^username_autocomplete/$', 'misc.views.username_autocomplete_friends', name='profile_username_autocomplete'),

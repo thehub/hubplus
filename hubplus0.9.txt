@@ -1,8 +1,36 @@
-#Tuesday-Wednesday
+Tuesday-Wednesday
 -----------------
+- objects exist in an agents object-namespace, this determines "security context" and who will be able to 
+*set permissions*, i.e. the admin group of this group, and a necessary monotonic tag acquisition (sliders).
+- objects exist in a "container" which may not be the agent but will be in the agents namespace  
+e.g. comments on wikis
+
+- a security context has an agent and the agent has an "admin". The agents admin 
+
+- if security context isn't set, we should look up the containment hierarchy to find it
+- Whenever we create a group, user or set customize permissions the slider-set we create a new security context
+ 
+
+Example configuration
+---------------------
+a) A comment is in a wiki which is in a group
+b) The wiki page has set security context to itself.
+
+The comment is "contained" in the wiki. The wiki is "contained" in the group.
+If security context of the comment is not set it looks up through "containing object" i.e. wiki
+The agent - is found by going up the hierarchy until we find a user or a group, OR by associating an agent with a security context. The user or the group admin of the group get to set permissions  
+
+
+Define 1 to many containment relation.
+
+
+Wednesday
+---------
+
 - Tom Group model - group extra + tg_groups to plus_groups
 
 - Phil + Tom - finish permissions
+
   * Phil implement SliderSet
   ** Define a "Contextable" behaviour for things that can be "Contexts"
   *** including some standard "create defaults" functions. Eg. if a Group can contain wiki-pages, then in a TgGroupPermissionManager, the "create_context_defaults" function will make SecurityTags for wiki-pages (ie. one for each Interface that a wiki has)

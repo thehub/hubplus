@@ -288,5 +288,5 @@ def update_main_permission_sliders(request,username) :
             print "BB"
 
 
-    for x in ps.get_permissions_for(resource) :  print x
+    for x in ps.get_tags_on(resource) :  print x
     return HttpResponse('ok', mimetype='text/plain')
