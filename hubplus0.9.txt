@@ -25,6 +25,8 @@ Tuesday-Wednesday
   ** similar Invite class which holds invite text 
   ** tracking the state (maybe using Tracker or directly in the Application / Invitation classes)
   *** Invites
+  **** start by comparing pinax signup process which has a lot of similarities
+  **** check mail facilities on server
   **** A module which manages invites and remembers the site's secret key (get_secret_key) (maybe permissionable?)
   **** A "generate invite url" function which takes (inviter, invitee, the id of the thing being invited to (eg. all_members), the secret key) ==> returns a URL; this function tests that the inviter has permission to invite someone to this group
   **** An "invite" method which fires off an email containing the url
