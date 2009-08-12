@@ -258,6 +258,10 @@ django-mptt
 Financial + User data export HP 0.9
 ----------------------------
 
+==== Extra tasks ====
+
+1) Move GroupExtra fields back into TgGroups
+2) Patch script for hubspace database to add the extra fields
 
 ==== Dump of etherpad discussion ====
 
