@@ -668,7 +668,7 @@ class SliderSetObject(object) :
 
         self.extras = []
 
-    def generate_permissions(self) :
+    def generate_security_tag(self) :
         for s in self.sliders :
             print "generate permissions from slider %s" % s
             s.generate_permissions(self.context)
