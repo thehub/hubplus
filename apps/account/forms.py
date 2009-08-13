@@ -22,7 +22,9 @@ from timezones.forms import TimeZoneField
 
 from account.models import PasswordReset
 
-from plus_contacts.models import PlusContact
+from plus_contacts.models import PlusContact, PlusApplication
+
+
 
 
 alnum_re = re.compile(r'^[\w\.]+$')
@@ -370,19 +372,21 @@ class HubPlusApplicationForm(forms.Form):
             return self.cleaned_data["username"]
         raise forms.ValidationError(_("This username is already taken. Please choose another."))
 
-    def clean_email_address(self) :
-        print "in clean_email_address"
 
     def clean(self):
         return self.cleaned_data
 
         
     def save(self):
+
         username = self.cleaned_data["username"]
         email = self.cleaned_data["email_address"]
         if username.find(' ') > 0 :
             first_name, last_name = (username.split(' '))[0:1] # note that if users need > 2 names, we have to do something
             username = '%s.%s' % (first_name,last_name)
+        else : 
+            first_name=username
+            last_name = ''
         
         contact,created = PlusContact.objects.get_or_create(email_address=email)
         if created :
@@ -390,10 +394,26 @@ class HubPlusApplicationForm(forms.Form):
             contact.last_name = last_name
             contact.username = username
             contact.find_out = self.cleaned_data["find_out"]
+            contact.email_address = email
             contact.save()
+
+        import ipdb
+        #ipdb.set_trace()
         
-        application = Application(applicant=contact, request=self.cleaned_data["about_and_why"] )
+        print "AAA"
+        from django.contrib.contenttypes.models import ContentType
+        
+        print ContentType.objects.get_for_model(contact)
+
+        
+        application = PlusApplication()
+        print "BBB"
+        application.applicant=contact
+        print "CCC"
+        application.request=self.cleaned_data["about_and_why"]
+        print "JJJ",application
         application.save()
-            
+        print "KKK"
+        return contact, application
         
 

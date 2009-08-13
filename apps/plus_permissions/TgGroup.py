@@ -137,8 +137,6 @@ get_permission_system().add_permission_manager(TgGroup, TgGroupPermissionManager
 
 
 def setup_default_permissions(sender,**kwargs):
-    # This signalled by Profile.save()
-    # tests if there are already permissions for the profile and if not, creates defaults
     group = kwargs['instance']
     signal = kwargs['signal']
     

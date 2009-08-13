@@ -3,7 +3,11 @@ from django.db import models
 from django.contrib.auth.models import User, UserManager
 from django.contrib.contenttypes.models import ContentType
 from apps.plus_permissions.models import get_permission_system
-#from django.contrib.contenttypes import 
+
+from django.contrib.contenttypes.models import ContentType
+from django.contrib.contenttypes import generic
+
+from apps.hubspace_compatibility.models import TgGroup
 
 class PlusContact(models.Model):
     """Use this for the sign-up / invited sign-up process, provisional users"""
@@ -39,6 +43,21 @@ class PlusContact(models.Model):
         p.save()
         h.save()
         ps = get_permission_system()
-        ps.get_all_members_group().add_member(u)
+        ps.get_site_members().add_member(u)
         self.delete()
         return u
+
+
+PENDING = 0
+
+class PlusApplication(models.Model) :
+    applicant_content_type = models.ForeignKey(ContentType,related_name='applicant_type')
+    applicant_object_id = models.PositiveIntegerField()
+    applicant = generic.GenericForeignKey('applicant_content_type', 'applicant_object_id')
+
+    group = models.ForeignKey(TgGroup,null=True)
+    request = models.TextField()
+    status = models.PositiveIntegerField(default=PENDING)
+
+
+    
