@@ -22,6 +22,8 @@ from timezones.forms import TimeZoneField
 
 from account.models import PasswordReset
 
+from plus_contacts.models import PlusContact
+
 
 alnum_re = re.compile(r'^[\w\.]+$')
 
@@ -65,12 +67,6 @@ class SignupForm(forms.Form):
     password2 = forms.CharField(label=_("Password (again)"), widget=forms.PasswordInput(render_value=False))
     email = forms.EmailField(label=_("Email (optional)"), required=False, widget=forms.TextInput())
     confirmation_key = forms.CharField(max_length=40, required=False, widget=forms.HiddenInput())
-
-    organisation = forms.CharField(label=_("Organisation"),required=True,widget=forms.TextInput())
-    location = forms.CharField(label=_("Location"),required=False,widget=forms.TextInput())
-    about_and_why = forms.CharField(label=_("Tell us a bit about yourself what you do and why you're interested in the Hub?y"),required=True,widget=forms.TextInput())
-    find_out = forms.CharField(label=_("How did you find out about the Hub?"),required=True,widget=forms.TextInput())
-
 
     def clean_username(self):
         if not alnum_re.search(self.cleaned_data["username"]):
@@ -350,3 +346,54 @@ class TwitterForm(UserForm):
             twitter_password = get_twitter_password(settings.SECRET_KEY, self.cleaned_data['password']),
         )
         self.user.message_set.create(message=ugettext(u"Successfully authenticated."))
+
+
+# hubplus alternatives
+
+class HubPlusApplicationForm(forms.Form):
+
+    username = forms.CharField(label=_("Username"), max_length=30, widget=forms.TextInput())
+    email_address = forms.EmailField(label=_("Email (required)"), required=True, widget=forms.TextInput())
+
+    organisation = forms.CharField(label=_("Organisation"),required=False,widget=forms.TextInput())
+    location = forms.CharField(label=_("Location"),required=False,widget=forms.TextInput())
+    about_and_why = forms.CharField(label=_("Tell us a bit about yourself what you do and why you're interested in the Hub?"),required=True,widget=forms.TextInput())
+    find_out = forms.CharField(label=_("How did you find out about the Hub?"),required=True,widget=forms.TextInput())
+
+
+    def clean_username(self):
+        if not alnum_re.search(self.cleaned_data["username"]):
+            raise forms.ValidationError(_("Usernames can only contain letters, numbers and underscores."))
+        try:
+            user = User.objects.get(username__iexact=self.cleaned_data["username"])
+        except User.DoesNotExist:
+            return self.cleaned_data["username"]
+        raise forms.ValidationError(_("This username is already taken. Please choose another."))
+
+    def clean_email_address(self) :
+        print "in clean_email_address"
+
+    def clean(self):
+        return self.cleaned_data
+
+        
+    def save(self):
+        username = self.cleaned_data["username"]
+        email = self.cleaned_data["email_address"]
+        if username.find(' ') > 0 :
+            first_name, last_name = (username.split(' '))[0:1] # note that if users need > 2 names, we have to do something
+            username = '%s.%s' % (first_name,last_name)
+        
+        contact,created = PlusContact.objects.get_or_create(email_address=email)
+        if created :
+            contact.first_name = first_name
+            contact.last_name = last_name
+            contact.username = username
+            contact.find_out = self.cleaned_data["find_out"]
+            contact.save()
+        
+        application = Application(applicant=contact, request=self.cleaned_data["about_and_why"] )
+        application.save()
+            
+        
+
