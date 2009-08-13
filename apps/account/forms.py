@@ -68,8 +68,9 @@ class SignupForm(forms.Form):
 
     organisation = forms.CharField(label=_("Organisation"),required=True,widget=forms.TextInput())
     location = forms.CharField(label=_("Location"),required=False,widget=forms.TextInput())
-    about_and_why = forms.CharField(label=_(""),required=True,widget=forms.TextInput())
-    find_out = forms.CharField(label=_(""),required=True,widget=forms.TextInput())
+    about_and_why = forms.CharField(label=_("Tell us a bit about yourself what you do and why you're interested in the Hub?y"),required=True,widget=forms.TextInput())
+    find_out = forms.CharField(label=_("How did you find out about the Hub?"),required=True,widget=forms.TextInput())
+
 
     def clean_username(self):
         if not alnum_re.search(self.cleaned_data["username"]):
