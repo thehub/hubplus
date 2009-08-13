@@ -54,10 +54,13 @@ class PlusApplication(models.Model) :
     applicant_content_type = models.ForeignKey(ContentType,related_name='applicant_type')
     applicant_object_id = models.PositiveIntegerField()
     applicant = generic.GenericForeignKey('applicant_content_type', 'applicant_object_id')
-
+    
     group = models.ForeignKey(TgGroup,null=True)
     request = models.TextField()
     status = models.PositiveIntegerField(default=PENDING)
+
+    admin_comment = models.TextField(default='')
+    date = models.DateField(auto_now_add=True)
 
 
     

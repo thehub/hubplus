@@ -69,8 +69,10 @@ class TestApplication(unittest.TestCase) :
         application.save()
         application.group = group
         application.save()
+        self.assertEquals(application.date.date(),datetime.datetime.today().date())
         self.assertEquals(application.applicant, contact)
         self.assertEquals(application.request, 'I want to join in')
         self.assertEquals(application.group, group)
         self.assertEquals(application.status, PENDING)
+        self.assertEquals(application.admin_comment,'')
 
