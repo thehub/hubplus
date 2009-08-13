@@ -58,22 +58,11 @@ class OurPostCommentor(Interface) :
         return 'OurPost.Commentor'
 
 
-class OurPostPermissionManager(PermissionManager) :
-    def register_with_interface_factory(self,interface_factory) :
-        self.interface_factory = interface_factory
-        interface_factory.add_type(OurPost)
-        interface_factory.add_interface(OurPost,'Viewer',OurPostViewer)
-        interface_factory.add_interface(OurPost,'Editor',OurPostEditor)
-        interface_factory.add_interface(OurPost,'Commentor',OurPostCommentor)
+from apps.plus_permissions.interfaces import interface_map
 
+OurPostInterfaces = {'Viewer':OurPostViewer,
+                     'Editor':OurPostEditor,
+                     'Commentor':OurPostCommentor}
 
-
-    def setup_defaults(self,resource, owner, creator) :
-        options = self.make_slider_options(resource,owner,creator)
-        self.save_defaults(resource,owner,creator)
-        interfaces = self.get_interfaces()
-        s = interfaces['Viewer'].make_slider_for(resource,options,owner,0,creator)
-        s = interfaces['Editor'].make_slider_for(resource,options,owner,2,creator)
-        s = interfaces['Commentor'].make_slider_for(resource,options,owner,1,creator)
- 
+add_type_to_interface_map(OurPost, OurPostInterfaces)
 

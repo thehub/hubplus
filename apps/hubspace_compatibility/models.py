@@ -163,7 +163,9 @@ try :
     level = models.CharField(max_length=9)
     psn_id = models.CharField(max_length=100)
     path = models.CharField(max_length=120)
-    users = models.ManyToManyField(User)
+    users = models.ManyToManyField(User, db_table='user_group')
+    child_groups = models.ManyToManyField('self', symmetrical=False, related_name='parent_groups')
+
 
     def add_member(self, user_or_group):
         if isinstance(user_or_group, User) and not self.users.filter(id=user_or_group.id):
@@ -216,7 +218,6 @@ try :
     def __str__(self) : 
         return "<TgGroup : %s>" % self.group_name
 
-    child_groups = models.ManyToManyField('self', symmetrical=False, related_name='parent_groups')
 
   #class HCGroupMapping(models.Model) :
   #    """XXX Effectively this is a many-to-many relationship between a group and its members.

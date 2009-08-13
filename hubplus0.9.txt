@@ -1,11 +1,12 @@
 - objects exist in an agents object-namespace, this determines "security context" and who will be able to *set permissions*, i.e. the admin group of this group, and a necessary monotonic tag acquisition (sliders).
+
 - objects exist in a "container" which may not be the agent but will be in the agents namespace  e.g. comments on wikis
 
 - a security context has an agent and the agent has an "admin". The agents admin 
 
 - if security context isn't set, we should look up the containment hierarchy to find it
 - Whenever we create a group, user or set customize permissions the slider-set we create a new security context
-- 
+
 
 Example configuration
 ---------------------
@@ -244,94 +245,4 @@ django-mptt
 
 Financial + User data export HP 0.9
 ----------------------------
-
-
-==== Dump of etherpad discussion ====
-
-context_type_configs = {'TgGroup': {{ 'target' : target
-              'possible_types' : ['profile', 'tggroup', 'wikipage', 'etc'] # actually, maybe Django's "model name"  as in the "model" field of the ContentType class
-              'slider_agents': [[world_type,world_id],
-                                     [all_members_type,all_members_is],
-                                     [$context_agent_type,$context_agent_id], 
-                                     [ $this_admin_type,$this_admin_id]], 
-              'interfaces':{'profile':['Profile.Viewer','Profile.Editor','Profile.PhoneViewer','Profile.EmailViewer', ...],
-                               'tggroup':['TgGroup.Viewer','TgGroup.Editor','TgGroup.Join',...],...},
-              'constraints':{'profile':[['Profile.Viewer','Profile.Editor'],['Profile.Viewer','Profile.PhoneViewer'],['Profile.Viewer','Profile.EmailViewer'] ...],
-              'defaults':{'profile':['Profile.Viewer':$       
-                                                    }
-                                    'Wiki: }
-
-def create_group():
-     group =  Group(args)
-     group.save()
-     security = SecurityContext(group, config_type_configs['TgGrouip'])
- 
- #groups - has_members, is an agent, it has things in it, 
- 
-class SecurityContext :
-     """Target is the thing the context is associated with e.g. Group. The thing that we will metaphorically put things "in".
-     Context Agent is the 
-
-     """
-     target_content_type = models.ForeignKey(ContentType,related_name='blah')
-     target_object_id = models.PositiveIntegerField()
-     target = generic.GenericForeignKey('target_content_type', 'target_object_id') 
-     context_agent_content_type = models.ForeignKey(ContentType,related_name='blah')
-     context_agent_object_id = models.PositiveIntegerField()
-     context_agent = generic.GenericForeignKey('context_agent_content_type', 'context_angent_object_id')
-     # e.g. if permissions are set on a wiki page: context_agent is the group  and the wiki becomes its own context
-     #e.g.2 if permission are set on a profile: context_agent is the User and the context is the profile.
-     admin_content_type = models.ForeignKey(ContentType,related_name='blah')
-     admin_object_id = models.PositiveIntegerField()
-     admin_agent = generic.GenericForeignKey('admin_content_type', 'admin_object_id')
-     possible_types = []w
-     slider_agents = []   # order actually matters here
-     interfaces  = {}   # {type: [interface_order]}
-     contraints = {}    # {type: [contstraints]}  e.g. {wiki:['editor<viewer']}
-     defaults  = {}     #{ type: [{interface:default_group},{interface:default_group}}
-
-     def __init__(self, target, json, ):
-             """Setup security tags
-             """
-             self.target = target
-             self.json_to_context(json)
-             for type
-             SecurityTag.create(interface, self).add_agent(new_agent)
-
-     def json_to_context(self, json):
-            """Phil, please put json definition of context here. I guess this would be defined in associate with each class that can be a context"""
-
-How do we represent "dynamic agents"
-            Example json : 
-            { 'target' : target
-              'possible_types' : ['profile', 'tggroup', 'wikipage', 'etc'] # actually, maybe Django's "model name"  as in the "model" field of the ContentType class
-              'slider_agents': [[world_type,world_id],
-                                     [all_members_type,all_members_is],
-                                     [$context_agent_type,$context_agent_id], 
-                                     [ $this_admin_type,$this_admin_id]], 
-              'interfaces':{'profile':['Profile.Viewer','Profile.Editor','Profile.PhoneViewer','Profile.EmailViewer', ...],
-                               'tggroup':['TgGroup.Viewer','TgGroup.Editor','TgGroup.Join',...],...},
-              'constraints':{'profile':[['Profile.Viewer','Profile.Editor'],['Profile.Viewer','Profile.PhoneViewer'],['Profile.Viewer','Profile.EmailViewer'] ...],
-              'defaults':{'profile':['Profile.Viewer':$       
-            """
-            for agent in slider_agents:
-                if agent.startswith('$'):
-                    agent = getattr(context, agent[1:])
-                else:
-    
-     
-     
-     def move_slider(self, new_agent, interface):
-          for agent in slider_agents:
-              if agent not in SecurityTag.objects.filter(interface, self).agents:
-                
-              if agent == new_agent:
-              
-     def add_arbitrary_agent(self, new_agent, interface):
-              tag = SecurityTag.objects.filter(interface, self)
-              tag.add_agent(new_agent)
-              
-Now you have lists of possible types, and slider_agents, interfaces etc. ... are these different per instance of SecurityContext? 
-
-Slider agents are different, if you can only create certain types of things in certain contexts then interfaces are different. In reality constraints are probably relationships between certain interfaces. e.g. Group.View can't be lower than Group.Editor
 

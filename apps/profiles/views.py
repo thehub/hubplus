@@ -1,3 +1,4 @@
+
 from django.shortcuts import render_to_response, get_object_or_404
 from django.template import RequestContext
 from django.contrib.auth.models import User
@@ -21,7 +22,8 @@ from profiles.forms import ProfileForm, HostInfoForm
 from avatar.templatetags.avatar_tags import avatar
 
 from apps.plus_lib.models import DisplayStatus, add_edit_key
-from apps.plus_permissions.models import PermissionSystem, get_permission_system, SecurityTag, PlusPermissionsNoAccessException, NullInterface
+from apps.plus_permissions.models import PermissionSystem, get_permission_system, SecurityTag, 
+from apps.plus_permissions.models import interface_wrap, PlusPermissionsNoAccessException, PlusPermissionsReadOnlyException
 
 from django.contrib.auth.decorators import login_required
 
@@ -142,8 +144,7 @@ def profile(request, username, template_name="profiles/profile.html"):
         dummy_status = DisplayStatus("Dummy Status"," about 3 hours ago")
 
         profile = other_user.get_profile()
-        profile = NullInterface(profile)
-        profile.load_interfaces_for(request.user)
+        profile = interface_wrap(profile)
 
         return render_to_response(template_name, {
                 "profile_form": profile_form,

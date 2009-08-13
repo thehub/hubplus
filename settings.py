@@ -76,7 +76,6 @@ MIDDLEWARE_CLASSES = (
     'pagination.middleware.PaginationMiddleware',
     'misc.middleware.SortOrderMiddleware',
     'djangodblog.middleware.DBLogMiddleware',
-    'apps.plus_permissions.middleware.PlusPermissions',
     'django.middleware.transaction.TransactionMiddleware',
 )
 

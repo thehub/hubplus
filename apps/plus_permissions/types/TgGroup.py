@@ -11,7 +11,42 @@ from django.db.models.signals import post_save
 
 import ipdb
 
+
+
+context_default_configs = {'TgGroup': { 'target' : target
+                                        'possible_types' : ['profile', 'tggroup', 'wikipage', 'etc'] # actually, maybe Django's "model name"  as in the "model" field of the ContentType class
+                                        'slider_agents': [[world_type,world_id],
+                                                          [all_members_type,all_members_is],
+                                                          [$context_agent_type,$context_agent_id], 
+                                                          [ $this_admin_type,$this_admin_id]], 
+                                        'interfaces':{'profile':['Profile.Viewer','Profile.Editor','Profile.PhoneViewer','Profile.EmailViewer', ...],
+                                                      'tggroup':['TgGroup.Viewer','TgGroup.Editor','TgGroup.Join',...],...},
+                                        'constraints':{'profile':[['Profile.Viewer','Profile.Editor'],['Profile.Viewer','Profile.PhoneViewer'],['Profile.Viewer','Profile.EmailViewer'] ...]},
+                                        'defaults':{'profile':['Profile.Viewer':$       
+                                                               'Wiki':''},
+                                                    }
+                                        }
+                           }
+
+
+
 # Here's the wrapping we have to put around it. 
+
+def get_or_create_group(self, group_name, display_name, place) :
+    # note : we can't use get_or_create for TgGroup, because the created date clause won't match on a different day                                     
+    # from the day the record was created.                                                                                                              
+    xs = TgGroup.objects.filter(group_name=group_name)
+    if len(xs) > 0 :
+        g = xs[0]
+    else :
+        g = TgGroup(
+            group_name=group_name, display_name=display_name, level='member',
+            place=place,created=datetime.date.today()
+            )
+        g.save()
+    return g
+
+
 
 def read_interface(name,id) :
     class ReadInterface(Interface) : 
