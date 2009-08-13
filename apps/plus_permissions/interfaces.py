@@ -6,7 +6,7 @@ Interfaces are associated with a SecurityContext via a SecurityTag. Agents (user
 Interfaces are namespaced by the type they apply to e.g. "Wiki.Editor" allowing us to assign permissions on a type.  The syntax ".Editor" refers to the Editor Interface on the SecurityContext target object. The syntax *.Editor refers to the Editor interface on any objects in the security context.
 """
 
-__all__ = ['secure_wrap', 'PlusPermissionsNoAccessException', 'PlusPermissionsReadOnlyException', 'add_type_to_interface_map', 'add_interfaces_to_type']
+__all__ = ['secure_wrap', 'PlusPermissionsNoAccessException', 'PlusPermissionsReadOnlyException', 'add_type_to_interface_map', 'add_interfaces_to_type', 'strip']
 
 type_interfaces_map = {}  
 
@@ -32,6 +32,14 @@ def secure_wrap(content_obj, interface_names=None):
     access_obj.load_interfaces_for(request.user, interface_names=interface_names)
     return access_obj
 
+def strip(x) :
+    """If x is really a Null interface, return the inner value, otherwise, return itself"""
+    try : 
+        return x.get_inner()
+    except :
+        return x
+
+
 class PlusPermissionsNoAccessException(Exception):
     def __init__(self,cls,id,msg) :
         self.cls=cls
@@ -44,6 +52,20 @@ class PlusPermissionsReadOnlyException(Exception) :
         self.cls = cls
         self.msg = msg
 
+
+class InterfaceReadProperty:
+    """ Add this to a NullInterface to allow a property to be readable"""
+    pass
+
+class InterfaceWriteProperty:
+    """ Add this to a NullInterface to allow a property to be writable """
+    pass
+
+class InterfaceCallProperty:
+    """ Add this to a NullInterface to allow a property to be called """
+    pass
+
+
 class Interface :
 
     @classmethod
@@ -51,7 +73,7 @@ class Interface :
         return False
 
     @classmethod
-    def has_property_name_and_class(self,name,cls) :
+    def has_property_name_and_class(self, name, cls) :
         """Does this object have a property of name 'name' and class 'cls'?"""
         for k,v in self.__dict__.iteritems() :
             if k == name and v.__class__ == cls :
@@ -81,22 +103,22 @@ class NullInterface :
     Empty interface, wraps models in a shell, which only lets explicitly named properties through
     """
     def __init__(self, inner) :
-        self.__dict__['_inner'] = inner
-        self.__dict__['_interfaces'] = []        
-        self.__dict__['_exceptions'] = [ # these always go through p.j   What does it do? t.s
-            lambda x : x[0]=='_', # starts with _
-            lambda x : x=='id',
-            lambda x : x=='save',
+        self._inner = inner
+        self._interfaces = []        
+        self._exceptions = [ 
+            lambda x : x[0] == '_',
+            lambda x : x == 'id',
+            lambda x : x == 'save',
         ]
 
     def get_inner(self) :
-        return self.__dict__['_inner']
+        return self._inner
 
     def get_inner_class(self) :
         return self.get_inner().__class__
 
     def get_interfaces(self) :
-        return self.__dict__['_interfaces']
+        return self._interfaces
 
     def load_interfaces_for(self, agent, interface_names=None) :
         """Load interfaces for the wrapped inner content that are available to the agent"""
@@ -109,7 +131,11 @@ class NullInterface :
             interface = interface_map[name]
             if ps.has_access(agent=agent, resource=resource, interface=ps.get_interface_id(self.get_inner().__class__,k)) :
                 self.add_interface(v)
+    
+    def construct_permissions(self):
+        for interface in self.
 
+    
     def __getattr__(self,name) :
         for rule in self.__dict__['_exceptions'] :
             if rule(name) :
@@ -124,50 +150,17 @@ class NullInterface :
             return None      
         raise PlusPermissionsReadOnlyException(self.get_inner_class(),name)        
 
-    def add_interface(self,interface) :
-        self.get_interfaces().append(interface)
+    def add_interface(self, interface) :
+        """NOT USED atm, adds a new interface to the object whilst it is wrapped
+        """
+        self._interfaces.append(interface)
+        self.load_interfaces(interface)
 
-    def remove_interface(self,cls) :
-        ifs = [i for i in self.get_interfaces() if i != cls]
-        self.__dict__['_interfaces'] = ifs
-
+    def remove_interface(self, cls):
+        """NOT USED atm, emove an interface from the object whilst it is wrapped
+        """
+        self._interfaces.remove(interface)
+        self.load_interfaces(interface)
         
 
-class InterfacePropertyBase(object) :
-    def can_read(self) :
-        return True
-    def is_empty(self):
-        return False
 
-class InterfaceReadProperty(InterfacePropertyBase) :
-    """ Add this to a NullInterface to allow a property to be readable"""
-    def __init__(self,name) :
-        self.name = name
-
-    def can_write(self) :
-        return False
-
-
-class InterfaceWriteProperty(InterfacePropertyBase) :
-    """ Add this to a NullInterface to allow a property to be writable """
-    def __init__(self,name) :
-        self.name = name
-
-    def can_write(self) :
-        return True
-
-
-class InterfaceCallProperty(InterfacePropertyBase) :
-    """ Add this to a NullInterface to allow a property to be called """
-    def __init__(self,name) :
-        self.name = name
-
-    def can_write(self) :
-        return False
-
-def strip(x) :
-    """If x is really a Null interface, return the inner value, otherwise, return itself"""
-    try : 
-        return x.get_inner()
-    except :
-        return x

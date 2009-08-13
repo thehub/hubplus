@@ -37,20 +37,17 @@ class OurPostViewer(Interface) :
     def get_id(cls) :
         return 'OurPost.Viewer'
     
-    title = InterfaceReadProperty('title')
-    body = InterfaceReadProperty('body')
+    title = InterfaceReadProperty
+    body = InterfaceReadProperty
 
 class OurPostEditor(Interface) : 
     @classmethod 
     def get_id(cls) :
         return 'OurPost.Editor'
 
-    title = InterfaceWriteProperty('title')
-    body = InterfaceWriteProperty('body')
-
-    @classmethod
-    def delete(self) :
-        return True
+    title = InterfaceWriteProperty
+    body = InterfaceWriteProperty
+    delete = InterfaceCallProperty
 
 class OurPostCommentor(Interface) : 
     @classmethod
