@@ -14,7 +14,7 @@
 
 <!-- 
 <div id="intro" class="block">
-  <form class="full" id="signup_form" method="post" action="{% url acct_signup %}">
+  <form class="full" id="signup_form" method="post" action="{% url acct_apply %}">
     <h4>Your details</h4>
     <p>Please enter your details below to request an account.</p>
     <fieldset>
@@ -75,11 +75,11 @@
 
 -->
 
-        <form class="signup uniForm" id="signup_form" method="post" action="{% url acct_signup %}">
+        <form class="full uniForm" id="apply_form" method="post" action="{% url acct_apply %}">
             <fieldset class="inlineLabels">
                 {{ form|as_uni_form }}
                 <div  class="form_blick">
-                    <input type="submit" value="{% trans "Sign Up &raquo;" %}" />
+                    <input type="submit" value="{% trans "Apply to Join &raquo;" %}" />
                 </div>
             </fieldset>
         </form>
