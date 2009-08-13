@@ -221,6 +221,8 @@ CACHE_BACKEND = "locmem:///?max_entries=3000"
 FEEDUTIL_SUMMARY_LEN = 60*7 # 7 hours
 
 AUTHENTICATION_BACKENDS = ('hubspace_compatibility.models.HubspaceAuthenticationBackend',)
+ACCOUNT_OPEN_SIGNUP = False # signups must be accompanied by the appropriate token
+
 
 
 class NullStream(object):
