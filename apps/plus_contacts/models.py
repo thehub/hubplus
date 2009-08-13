@@ -10,11 +10,11 @@ class PlusContact(models.Model):
     first_name = models.CharField(max_length=60)
     last_name = models.CharField(max_length=60)
     organisation = models.CharField(max_length=255)
-    email = models.CharField(max_length=255,unique=True)
+    email_address = models.CharField(max_length=255,unique=True)
     location = models.CharField(max_length=100)
     apply_msg = models.TextField()
     find_out = models.TextField()
-    invited_by = models.ForeignKey(User)
+    invited_by = models.ForeignKey(User,null=True)
     
 
     def become_member(self, username, invited_by=None, accepted_by=None):
@@ -22,12 +22,12 @@ class PlusContact(models.Model):
         XXX If application is accepted trigger an email with confirmation page to set password
         XXX if invitation is accepted by user then they go straight to set password page
         """
-        u = User.objects.create_user(username, self.email)
+        u = User.objects.create_user(username, self.email_address)
         u.save()
         p = u.get_profile()
         p.first_name = self.first_name
         p.last_name = self.last_name
-        p.email_address = self.email
+        p.email_address = self.email_address
         p.organisation = self.organisation
         p.location = self.location
         if invited_by:
