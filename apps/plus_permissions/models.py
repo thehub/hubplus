@@ -247,36 +247,6 @@ def default_admin_for(resource) :
         return ds[0].agent
 
 
-class SecurityTagManager(models.Manager):
-    def get_by_agent_and_resource_type_and_id(self, agent_type, agent_id, resource_type, resource_id) :
-        return self.filter(agent_content_type=agent_type,
-                           agent_object_id=agent_id,
-                           resource_content_type=resource_type,
-                           resource_object_id=resource_id)
-
- 
-    def kill_list(self,kill_list,resource_type, resource_id,interface) :
-        for t in self.filter(interface=interface,resource_content_type=resource_type,resource_object_id=resource_id) :
-            for typ,id in kill_list:
-                if t.agent_content_type.id == typ and t.agent_object_id == id :
-                    print "deleting %s" % t
-                    t.delete()
-                    break
-
-    def update(self,**kwargs) :
-        agent=kwargs['new']
-        resource=kwargs['resource']
-        interface=kwargs['interface']
-        name = kwargs['name']
-        creator = kwargs['creator']
-        
-        if kwargs.has_key('kill') :
-            kill_list=kwargs['kill']
-            self.kill_list(kill_list,ContentType.objects.get_for_model(resource),resource.id,interface)
-        s = SecurityTag(name=name,creator=creator,resource=resource,interface=interface,agent=agent)
-        s.save()
-
-                
 
 
 class SecurityTag(models.Model) :
@@ -287,8 +257,6 @@ class SecurityTag(models.Model) :
     context = generic.GenericForeignKey('context_content_type', 'context_object_id')
 
     agents = models.ManyToManyField(Agent)
-
-    objects = SecurityTagManager()
 
     def all_interfaces(self) : 
         return (x for x in SecurityTag.objects.all() if x.interface == self.interface)
@@ -331,7 +299,9 @@ class PermissionSystem :
                 group_name=group_name, display_name=display_name, level='member',
                 place=place,created=datetime.date.today()
                 )
+            
             g.save()
+            
         return g
 
     def __init__(self) :
