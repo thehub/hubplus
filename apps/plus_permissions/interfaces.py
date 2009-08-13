@@ -28,7 +28,7 @@ def add_interfaces_to_type(cls, interfaces):
             raise "Interface "+ interface  +"was not added to "+ class +" because an interface of that name already exists"
 
 def secure_wrap(content_obj, interface_names=None):
-    access_obj = NullInterface(content_obj)
+    access_obj = SecureWrapper(content_obj)
     access_obj.load_interfaces_for(request.user, interface_names=interface_names)
     return access_obj
 
@@ -52,53 +52,50 @@ class PlusPermissionsReadOnlyException(Exception) :
         self.cls = cls
         self.msg = msg
 
+class NonExistentPermission(Exception) : 
+    pass
+
 
 class InterfaceReadProperty:
-    """ Add this to a NullInterface to allow a property to be readable"""
+    """ Add this to a SecureWrapper to allow a property to be readable"""
     pass
 
 class InterfaceWriteProperty:
-    """ Add this to a NullInterface to allow a property to be writable """
+    """ Add this to a SecureWrapper to allow a property to be writable """
+    pass
+
+class InterfaceReadWriteProperty:
+    """ Add this to a SecureWrapper to allow a property to be writable """
     pass
 
 class InterfaceCallProperty:
-    """ Add this to a NullInterface to allow a property to be called """
+    """ Add this to a SecureWrapper to allow a property to be called """
     pass
 
-
-class Interface :
-
-    @classmethod
-    def delete(self) :
-        return False
-
-    @classmethod
-    def has_property_name_and_class(self, name, cls) :
-        """Does this object have a property of name 'name' and class 'cls'?"""
-        for k,v in self.__dict__.iteritems() :
-            if k == name and v.__class__ == cls :
-                return True
-        return False
-
-    @classmethod
-    def has_write(self,name) :
-        return self.has_property_name_and_class(name,InterfaceWriteProperty)
-
-    @classmethod
-    def has_read(self,name) :
-        return self.has_property_name_and_class(name,InterfaceReadProperty)
-
-    @classmethod
-    def has_call(self,name) :
-        return self.has_property_name_and_class(name,InterfaceCallProperty)
         
+class NotViewable:
     @classmethod
-    def get_id(cls) : 
-        raise UseSubclassException(Interface,'You need a subclass of Interface that implements its get_id')
-        
+    def __str__(self):
+        return ""
+
+    @classmethod
+    def __repr__(self):
+        return ""
+    
+    
+class TemplateSecureWrapper:
+
+    def __init__(self, SecureWrapper):
+        self.SecureWrapper = SecureWrapper
+
+    def __getattr__(self, name):
+        try:
+            return getattr(self.SecureWrapper, name)
+        except:
+            return NotViewable
 
 
-class NullInterface :
+class SecureWrapper:
     """
     Empty interface, wraps models in a shell, which only lets explicitly named properties through
     """
@@ -110,6 +107,10 @@ class NullInterface :
             lambda x : x == 'id',
             lambda x : x == 'save',
         ]
+        self._permissions = {InterfaceReadProperty: set(),
+                             InterfaceCallProperty: set(),
+                             InterfaceWriteProperty: set(),
+                             InterfaceReadWriteProperty: set()}
 
     def get_inner(self) :
         return self._inner
@@ -127,25 +128,50 @@ class NullInterface :
         interface_map = type_interfaces_map[cls]
         if not interface_names:
             interface_names = interface_map.keys()
-        for name in interface_names:
-            interface = interface_map[name]
-            if ps.has_access(agent=agent, resource=resource, interface=ps.get_interface_id(self.get_inner().__class__,k)) :
-                self.add_interface(v)
+        for iname in interface_names:
+            interface = interface_map[iname]
+            if ps.has_access(agent=agent, resource=resource, interface=self.get_inner.__class__ + '.' + iname) :
+                self.add_permissions(interface)
     
-    def construct_permissions(self):
-        for interface in self.
+    def add_permissions(self, interface):
+        for attr, perm in interface.__dict__:
+            try:
+                permitted = self._permissions[perm]
+            except KeyError:
+                if attr.startswith('_'):
+                    pass
+                else:
+                    raise NonExistentPermission
+            else:
+                if attr not in permitted:
+                    perms.add(attr)
 
-    
-    def __getattr__(self,name) :
+    def has_permission(self, name, interface) :
+        """The moment of truth!"""
+        try: 
+            perms = self._permissions[interface]:
+        except KeyError:
+            raise NonExistentPermission
+        else:
+            if name in perms:
+                return True
+            return False
+                        
+    def __getattr__(self, name):
         for rule in self.__dict__['_exceptions'] :
             if rule(name) :
                 return self.get_inner().__getattribute__(name)
-        if self.fold_interfaces(lambda a, i : a or i.has_read(name) or i.has_call(name), False) :
+
+        if self.has_permission(name, InterfaceReadProperty) or self.has_permission(name, InterfaceReadWriteProperty):
             return self.get_inner().__getattribute__(name)
+
+        elif self.has_permission(name, InterfaceCallProperty):
+            return self.get_inner().__getattribute__(name)
+
         raise PlusPermissionsNoAccessException(self.get_inner_class(),name,'from __getattr__')
 
-    def __setattr__(self,name,val) :
-        if self.fold_interfaces(lambda a,i : a or i.has_write(name),False) :
+    def __setattr__(self, name, val):
+        if self.has_permission(name, InterfaceWriteProperty) or self.has_permission(name, InterfaceReadWriteProperty):
             self.get_inner().__setattr__(name,val)
             return None      
         raise PlusPermissionsReadOnlyException(self.get_inner_class(),name)        
@@ -161,6 +187,3 @@ class NullInterface :
         """
         self._interfaces.remove(interface)
         self.load_interfaces(interface)
-        
-
-

@@ -18,41 +18,30 @@ import ipdb
 
 # This represents a typical model type from another django or pinax app
 
-class OurPost(PermissionableMixin, models.Model) :
+class OurPost(PermissionableMixin, models.Model):
     title = models.CharField(max_length='20')
     body = models.CharField(max_length='20')
 
-    def __str__(self) :
+    def __str__(self):
         return "OurPost %s,%s" % (self.title,self.body)
 
-
-    def foo(self) :
+    def foo(self):
         pass
 
 
 # Here's the wrapping we have to put around it.
 
-class OurPostViewer(Interface) : 
-    @classmethod 
-    def get_id(cls) :
-        return 'OurPost.Viewer'
-    
+class OurPostViewer: 
     title = InterfaceReadProperty
     body = InterfaceReadProperty
 
-class OurPostEditor(Interface) : 
-    @classmethod 
-    def get_id(cls) :
-        return 'OurPost.Editor'
-
+class OurPostEditor: 
     title = InterfaceWriteProperty
     body = InterfaceWriteProperty
     delete = InterfaceCallProperty
 
-class OurPostCommentor(Interface) : 
-    @classmethod
-    def get_id(cls) :
-        return 'OurPost.Commentor'
+class OurPostCommentor:
+    pass
 
 
 from apps.plus_permissions.interfaces import interface_map

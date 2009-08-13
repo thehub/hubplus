@@ -155,15 +155,9 @@ class PermissionSystem :
         self.all_members_group = self.get_or_create_group('all_members','All Members',self.root_location)
         
 
-
     def get_anon_group(self) : 
         """ The anon_group is the root of all groups, representing permissions given even to non members; plus everyone else"""
         return TgGroup.objects.filter(group_name='anonymous')[0]
-
-    def get_site_members(self) :
-        """ The group to which all account-holding "hub-members" belong"""
-        return TgGroup.objects.filter(group_name='all_members')[0]
-
 
     def get_security_context(resource):
         
@@ -195,22 +189,8 @@ class PermissionSystem :
         return False
 
 
-
-    def get_interface_id(self,cls,name) :
-        return self.get_interface_factory().get_id(cls,name)
-
-    def get_permission_manager(self,cls) :
-        return self.get_interface_factory().get_permission_manager(cls)
-
     def add_permission_manager(self,cls,pm) :
         self.get_interface_factory().add_permission_manager(cls,pm)
         
 
-
-_ONLY_PERMISSION_SYSTEM = None
-
-def get_permission_system() :
-    global _ONLY_PERMISSION_SYSTEM
-    if not _ONLY_PERMISSION_SYSTEM :
-        _ONLY_PERMISSION_SYSTEM = PermissionSystem()
-    return _ONLY_PERMISSION_SYSTEM
+ps = PermissionSystem()
