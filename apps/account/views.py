@@ -1,4 +1,3 @@
-
 from django.conf import settings
 from django.shortcuts import render_to_response
 from django.http import HttpResponseRedirect, HttpResponseForbidden, Http404
@@ -257,6 +256,3 @@ def other_services_remove(request):
     request.user.message_set.create(message=ugettext(u"Removed twitter account information successfully."))
     return HttpResponseRedirect(reverse("acct_other_services"))
 other_services_remove = login_required(other_services_remove)
-
-
-
