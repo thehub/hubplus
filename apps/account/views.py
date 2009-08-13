@@ -270,8 +270,6 @@ other_services_remove = login_required(other_services_remove)
 def apply(request, form_class=HubPlusApplicationForm,
         template_name="account/apply_form.html", success_url=None):
 
-    print "apply to hubplus"
-
     if success_url is None:
         success_url = get_default_redirect(request)
 

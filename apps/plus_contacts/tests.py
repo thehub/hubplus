@@ -61,12 +61,18 @@ class TestContact(unittest.TestCase):
 
 class TestApplication(unittest.TestCase) :
 
+    def count(self,it) :
+        count = 0
+        for i in it :
+            count= count+1
+        return count
+
     def test_application(self) :
         contact = PlusContact(first_name='kate', last_name='smith', email_address='kate@z.x.com')
         contact.save()
         group, admin = create_site_group('singing', 'Singers')
-        application = PlusApplication(applicant=contact, request='I want to join in')
-        application.save()
+        # use make_plus_application to add security_context when creating an application object
+        application = make_plus_application(applicant=contact, request='I want to join in',security_context=group)
         application.group = group
         application.save()
         self.assertEquals(application.date.date(),datetime.datetime.today().date())
@@ -76,3 +82,21 @@ class TestApplication(unittest.TestCase) :
         self.assertEquals(application.status, PENDING)
         self.assertEquals(application.admin_comment,'')
 
+        ps = get_permission_system()
+        # adding a couple more 
+        ap2 = make_plus_application(applicant=contact,request='ap2',group=ps.get_anon_group(),security_context=group)
+        ap3 = make_plus_application(applicant=contact,request='ap3',group=ps.get_site_members(),security_context=group)
+        
+        self.assertEquals(self.count(Application.objects.filter()),3)
+        self.assertEquals(self.count(Application.objects.filter(request='ap2')),1)
+
+        u = User(username='mable',email_address='mable@b.com')
+        u.save()
+        self.assertEquals(self.count(Application.objects.filter(permission_agent=u)),0)
+
+        # now there's a security tag which links "group" as context to the interface "PlusApplicationViewer"
+        t = ps.create_security_tag(group,ps.get_interface_id(Application,'Viewer'),[u])
+        t.save()
+        
+        self.assertEquals(self.count(Application.objects.filter(permission_agent=u)),3)
+        

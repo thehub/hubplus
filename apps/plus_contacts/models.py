@@ -2,12 +2,18 @@ from django.db import models
 
 from django.contrib.auth.models import User, UserManager
 from django.contrib.contenttypes.models import ContentType
+
 from apps.plus_permissions.models import get_permission_system
 
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes import generic
 
 from apps.hubspace_compatibility.models import TgGroup
+
+from apps.plus_permissions.permissionable import PermissionableMixin
+
+
+
 
 class PlusContact(models.Model):
     """Use this for the sign-up / invited sign-up process, provisional users"""
@@ -50,11 +56,26 @@ class PlusContact(models.Model):
 
 PENDING = 0
 
-class PlusApplication(models.Model) :
+class ApplicationManager(models.Manager) :
+    # only show applications to those who have right permissions
+    # if query is done with "permission_agent" as argument
+
+    def filter(self,**kwargs) :
+        if not kwargs.has_key('permission_agent') :
+            return super(ApplicationManager,self).filter(**kwargs)
+        else :
+            agent = kwargs['permission_agent']
+            del kwargs['permission_agent']
+            ps = get_permission_system()
+            return (a for a in super(ApplicationManager,self).filter(**kwargs) if ps.has_access(agent,a,ps.get_interface_id(Application,'Viewer')))
+
+
+class Application(PermissionableMixin, models.Model) :
     applicant_content_type = models.ForeignKey(ContentType,related_name='applicant_type')
     applicant_object_id = models.PositiveIntegerField()
     applicant = generic.GenericForeignKey('applicant_content_type', 'applicant_object_id')
     
+
     group = models.ForeignKey(TgGroup,null=True)
     request = models.TextField()
     status = models.PositiveIntegerField(default=PENDING)
@@ -62,5 +83,21 @@ class PlusApplication(models.Model) :
     admin_comment = models.TextField(default='')
     date = models.DateField(auto_now_add=True)
 
+    objects = ApplicationManager()
 
-    
+def extract(d,key) :
+    if d.has_key(key) :
+        v = d[key]
+        del d[key]
+    else :
+        v = None
+    return v
+
+def make_plus_application(**kwargs) :
+    security_context = extract(kwargs,'security_context')
+    pa = Application(**kwargs)
+    pa.save()
+    if security_context :
+        pa.set_security_context(security_context)
+    return pa
+

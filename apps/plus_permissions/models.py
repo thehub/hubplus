@@ -423,6 +423,9 @@ class PermissionSystem :
     def get_interface_id(self,cls,name) :
         return self.get_interface_factory().get_id(cls,name)
 
+    def add_interface(self,cls,name,int_class) :
+        self.get_interface_factory().add_interface(cls,name,int_class)
+
     def get_permission_manager(self,cls) :
         return self.get_interface_factory().get_permission_manager(cls)
 

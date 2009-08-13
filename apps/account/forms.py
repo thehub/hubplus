@@ -22,7 +22,7 @@ from timezones.forms import TimeZoneField
 
 from account.models import PasswordReset
 
-from plus_contacts.models import PlusContact, PlusApplication
+from plus_contacts.models import PlusContact, Application
 
 
 
@@ -397,23 +397,11 @@ class HubPlusApplicationForm(forms.Form):
             contact.email_address = email
             contact.save()
 
-        import ipdb
-        #ipdb.set_trace()
-        
-        print "AAA"
-        from django.contrib.contenttypes.models import ContentType
-        
-        print ContentType.objects.get_for_model(contact)
-
-        
-        application = PlusApplication()
-        print "BBB"
+        application = Application()
         application.applicant=contact
-        print "CCC"
         application.request=self.cleaned_data["about_and_why"]
-        print "JJJ",application
         application.save()
-        print "KKK"
+
         return contact, application
         
 
