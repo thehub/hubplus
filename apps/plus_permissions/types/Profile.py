@@ -1,9 +1,9 @@
 
 # Permissions for OurPost, an example                                                                                                                        
-from django.db import models
+from django.db.models.manager import *
 
-from models import Interface, Slider, SecurityTag, PermissionManager
-from models import get_permission_system, default_admin_for, InterfaceReadProperty, InterfaceWriteProperty
+from apps.plus_permissions.models import SecurityTag
+from apps.plus_permissions.interfaces import InterfaceReadProperty, InterfaceWriteProperty
 
 from apps.profiles.models import Profile
 
@@ -14,65 +14,65 @@ from django.db.models.signals import post_save
 import ipdb
 
 # Here's the wrapping we have to put around it.                                                                                                              
-
-def read_interface(name,id) :
-    class ReadInterface(Interface) : 
-        @classmethod
-        def get_id(self):
-            return id
-    setattr(ReadInterface,name,InterfaceReadProperty(name))
-    return ReadInterface
         
-class ProfileViewer(Interface) : 
+class ProfileViewer: 
+    about = InterfaceReadProperty
+    location = InterfaceReadProperty
+    website = InterfaceReadProperty
+    homeplace = InterfaceReadProperty
+    organisation = InterfaceReadProperty
+    role = InterfaceReadProperty
 
-    about = InterfaceReadProperty('about')
-    location = InterfaceReadProperty('location')
-    website = InterfaceReadProperty('website')
-    homeplace = InterfaceReadProperty('homeplace')
-    organisation = InterfaceReadProperty('organisation')
-    role = InterfaceReadProperty('role')
-
-    display_name = InterfaceReadProperty('display_name')
-    title = InterfaceReadProperty('title')
+    display_name = InterfaceReadProperty
+    title = InterfaceReadProperty
 
     @classmethod
     def get_id(self) : 
         return 'Profile.Viewer'
 
-ProfileEmailAddressViewer = read_interface('email_address','Profile.EmailAddressViewer')
-ProfileHomeViewer = read_interface('home','Profile.HomeViewer')
-ProfileWorkViewer = read_interface('work','Profile.WorkViewer')
-ProfileMobileViewer = read_interface('mobile','Profile.MobileViewer')
-ProfileFaxViewer = read_interface('fax','Profile.FaxViewer')
-ProfileAddressViewer = read_interface('address','Profile.AddressViewer')
-ProfileSkypeViewer = read_interface('skype_id','Profile.SkypeViewer')
-ProfileSipViewer = read_interface('sip_id','Profile.SipViewer')
+class ProfileEmailAddressViewer:
+    email_address = InterfaceReadProperty
 
+class ProfileHomeViewer:
+    home = InterfaceReadProperty
 
-class ProfileEditor(Interface) : 
-    pk = InterfaceReadProperty('pk')
-    about = InterfaceWriteProperty('about')
-    location = InterfaceWriteProperty('location')
-    website = InterfaceWriteProperty('website')
+class ProfileWorkViewer:
+    work = InterfaceReadProperty
 
-    organisation = InterfaceWriteProperty('organisation')
-    role = InterfaceWriteProperty('role')
+class ProfileMobileViewer:
+    mobile = InterfaceReadProperty
 
-    display_name = InterfaceWriteProperty('display_name')
-    title = InterfaceWriteProperty('title')
+class ProfileFaxViewer:
+    fax = InterfaceReadProperty
 
-    mobile = InterfaceWriteProperty('mobile')
-    email_address = InterfaceWriteProperty('email_address')
-    address = InterfaceWriteProperty('address')
-    skype_id = InterfaceWriteProperty('skype_id')
-    sip_id = InterfaceWriteProperty('sip_id')
-    website = InterfaceWriteProperty('website')
-    homeplace = InterfaceWriteProperty('homeplace')
-    
-    @classmethod
-    def get_id(self) :
-        return 'Profile.Editor'
+class ProfileAddressViewer:
+    address = InterfaceReadProperty
 
+class ProfileSkypeViewer:
+    skype_id = InterfaceReadProperty
+
+class ProfileSipViewer:
+    sip_id = InterfaceReadProperty
+
+class ProfileEditor: 
+    pk = InterfaceReadProperty
+    about = InterfaceWriteProperty
+    location = InterfaceWriteProperty
+    website = InterfaceWriteProperty
+
+    organisation = InterfaceWriteProperty
+    role = InterfaceWriteProperty
+
+    display_name = InterfaceWriteProperty
+    title = InterfaceWriteProperty
+
+    mobile = InterfaceWriteProperty
+    email_address = InterfaceWriteProperty
+    address = InterfaceWriteProperty
+    skype_id = InterfaceWriteProperty
+    sip_id = InterfaceWriteProperty
+    website = InterfaceWriteProperty
+    homeplace = InterfaceWriteProperty
 
 def display_name(x) :
     if x.display_name : return x.display_name 
@@ -80,6 +80,7 @@ def display_name(x) :
     if x.name : return x.name
     return '%s'%x
 
+"""
 class ProfilePermissionManager(PermissionManager) :
     def register_with_interface_factory(self,interface_factory) :
         self.interface_factory = interface_factory
@@ -136,11 +137,4 @@ class ProfilePermissionManager(PermissionManager) :
         return options
         
         #ipdb.set_trace()
-
-
-        
-get_permission_system().add_permission_manager(Profile,ProfilePermissionManager(Profile))
-
-
-
-
+"""

@@ -268,6 +268,11 @@ try:
 except ImportError, e:
     print "import hubspace_compatibility failed :: " + `e`
 
+try:
+    from apps.plus_permissions.types import *
+except ImportError, e:
+    print "importing / setting up permissions system failed :: " + `e`
+
 
 import logging
 logging.basicConfig(

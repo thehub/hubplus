@@ -22,7 +22,7 @@ from profiles.forms import ProfileForm, HostInfoForm
 from avatar.templatetags.avatar_tags import avatar
 
 from apps.plus_lib.models import DisplayStatus, add_edit_key
-from apps.plus_permissions.models import PermissionSystem, get_permission_system, SecurityTag, 
+from apps.plus_permissions.models import SecurityTag
 from apps.plus_permissions.models import interface_wrap, PlusPermissionsNoAccessException, PlusPermissionsReadOnlyException
 
 from django.contrib.auth.decorators import login_required
@@ -65,8 +65,6 @@ def profiles(request, template_name="profiles/profiles.html"):
 
 def profile(request, username, template_name="profiles/profile.html"):
     other_user = get_object_or_404(User, username=username)
-    ps = get_permission_system()
-
     other_user.save()
     p = other_user.get_profile()
     p.save()
@@ -180,7 +178,6 @@ Current Permissions
 def our_profile_permission_test(fn) :
     """ Trying to put our permission testing into a decorator """
     def our_fn(request,username,*args,**kwargs) :
-        ps = get_permission_system()
         other_user = get_object_or_404(User,username=username)
         profile = other_user.get_profile()
         if not ps.has_access(request.user,profile,ps.get_interface_id(Profile,'Editor')) :
@@ -203,7 +200,6 @@ def update_profile_form(request,username) :
     """ Get a prefilled basic form for the profile """
     other_user = get_object_or_404(User,username=username)
     p = other_user.get_profile()
-    ps= get_permission_system()
     if not ps.has_access(request.user,p,ps.get_interface_id(Profile,'Editor')) :
         raise PlusPermissionsNoAccessException(Profile,p.pk,'update_profile_form')
     else :
@@ -218,7 +214,6 @@ def profile_field(request,username,classname,fieldname,*args,**kwargs) :
     print "In profile_field"
     print "username %s, classname %s, fieldname %s" % (username,classname,fieldname)
     other_user = get_object_or_404(User,username=username)
-    ps = get_permission_system()
     p = other_user.get_profile()
     if not ps.has_access(request.user,p,ps.get_interface_id(Profile,'Editor')) :
         return HttpResponse("You aren't authorized to access %s in %s for %s. You are %s" % (fieldname,classname,username,request.user),status=401)
@@ -252,8 +247,7 @@ def one_model_field(request, object, formClass, fieldname, default, other_object
     return HttpResponse("%s" % new_val, mimetype='text/plain')
 
 @login_required
-def get_main_permission_sliders(request,username) :
-    ps = get_permission_system()
+def get_main_permission_sliders(request,username):
     pm = ps.get_permission_manager(Profile)
     p = request.user.get_profile()
     json = pm.main_json_slider_group(p)
@@ -265,11 +259,10 @@ def content_object(c_type, c_id) :
     return a_type.get_object_for_this_type(pk=c_id)
 
 
+
 @login_required
 def update_main_permission_sliders(request,username) :
-    ps = get_permission_system()
-    pm = ps.get_permission_manager(Profile)
-
+    
     p = request.user.get_profile()
     post = request.POST
 

@@ -307,9 +307,6 @@ class TestPermissions(unittest.TestCase) :
         self.assertEquals(blog.get_context().id, hosts.id)
     
         
-    def test_mixin(self) :
-        class A(PermissionableMixin) : pass
-
 
     def test_group_admin(self) :
         l = Location(name='Dalston')

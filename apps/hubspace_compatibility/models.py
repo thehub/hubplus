@@ -7,8 +7,6 @@ from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes import generic
 from django.db.models.signals import post_save
 
-from apps.plus_permissions.permissionable import PermissionableMixin
-
 from itertools import chain
 
 import hashlib
@@ -153,7 +151,7 @@ class Location(models.Model):
         db_table = u'location'
 
 try :
-  class TgGroup(models.Model,PermissionableMixin):
+  class TgGroup(models.Model):
     group_name = models.CharField(unique=True, max_length=40)
     display_name = models.CharField(max_length=255)
     created = models.DateTimeField()

@@ -1,6 +1,4 @@
 from django.shortcuts import render_to_response, get_object_or_404
-
-from apps.plus_permissions.models import PermissionSystem, get_permission_system
 from django.contrib.auth.decorators import login_required
 from django.db import transaction
 from django.utils import simplejson

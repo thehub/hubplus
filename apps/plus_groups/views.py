@@ -13,14 +13,14 @@ from apps.hubspace_compatibility.models import TgGroup
 
 from microblogging.models import Following
 from apps.plus_lib.models import DisplayStatus, add_edit_key
-from apps.plus_permissions.models import PermissionSystem, get_permission_system, SecurityTag, PlusPermissionsNoAccessException, NullInterface
+from apps.plus_permissions.models import SecurityTag
+from apps.plus_permissions.interfaces import PlusPermissionsNoAccessException, SecureWrapper
 from apps.plus_permissions.TgGroup import *
 from django.contrib.auth.decorators import login_required
 
 
 def group(request, group_id, template_name="plus_groups/group.html"):
     group = get_object_or_404(TgGroup, pk=group_id)
-    ps = get_permission_system()
     group.save()
 
     if ps.has_access(request.user,group,ps.get_interface_factory().get_id(TgGroup,'Viewer')) :

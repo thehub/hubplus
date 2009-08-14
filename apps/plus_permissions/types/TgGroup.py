@@ -1,8 +1,5 @@
-
-from django.db import models
-
-from models import Interface, Slider, SecurityTag, PermissionManager
-from models import get_permission_system, default_admin_for, InterfaceReadProperty, InterfaceWriteProperty, InterfaceCallProperty
+from apps.plus_permissions.models import SecurityTag
+from apps.plus_permissions.interfaces import InterfaceReadProperty, InterfaceWriteProperty, InterfaceCallProperty
 
 
 from apps.hubspace_compatibility.models import TgGroup
@@ -10,25 +7,6 @@ from apps.hubspace_compatibility.models import TgGroup
 from django.db.models.signals import post_save
 
 import ipdb
-
-
-
-context_default_configs = {'TgGroup': { 'target' : target
-                                        'possible_types' : ['profile', 'tggroup', 'wikipage', 'etc'] # actually, maybe Django's "model name"  as in the "model" field of the ContentType class
-                                        'slider_agents': [[world_type,world_id],
-                                                          [all_members_type,all_members_is],
-                                                          [$context_agent_type,$context_agent_id], 
-                                                          [ $this_admin_type,$this_admin_id]], 
-                                        'interfaces':{'profile':['Profile.Viewer','Profile.Editor','Profile.PhoneViewer','Profile.EmailViewer', ...],
-                                                      'tggroup':['TgGroup.Viewer','TgGroup.Editor','TgGroup.Join',...],...},
-                                        'constraints':{'profile':[['Profile.Viewer','Profile.Editor'],['Profile.Viewer','Profile.PhoneViewer'],['Profile.Viewer','Profile.EmailViewer'] ...]},
-                                        'defaults':{'profile':['Profile.Viewer':$       
-                                                               'Wiki':''},
-                                                    }
-                                        }
-                           }
-
-
 
 # Here's the wrapping we have to put around it. 
 
@@ -46,79 +24,63 @@ def get_or_create_group(self, group_name, display_name, place) :
         g.save()
     return g
 
-
-
-def read_interface(name,id) :
-    class ReadInterface(Interface) : 
-        @classmethod
-        def get_id(self):
-            return id
-    setattr(ReadInterface, name, InterfaceReadProperty(name))
-    return ReadInterface
         
-class TgGroupViewer(Interface) : 
+class TgGroupViewer: 
 
-    pk = InterfaceReadProperty('pk')
-    about = InterfaceReadProperty('about')
-    location = InterfaceReadProperty('location')
-    website = InterfaceReadProperty('website')
-    display_name = InterfaceReadProperty('display_name')
-    groupextras = InterfaceReadProperty('groupextras')
+    pk = InterfaceReadProperty
+    about = InterfaceReadProperty
+    location = InterfaceReadProperty
+    website = InterfaceReadProperty
+    display_name = InterfaceReadProperty
+    groupextras = InterfaceReadProperty
 
-    apply = InterfaceCallProperty('join')
-    leave = InterfaceCallProperty('leave')
-
-    @classmethod
-    def get_id(self) : 
-        return 'TgGroup.Viewer'
-
-#example from Profile
-#ProfileEmailAddressViewer = read_interface('email_address','Profile.EmailAddressViewer')
+    apply = InterfaceCallProperty
+    leave = InterfaceCallProperty
 
 
-class TgGroupEditor(Interface) : 
-    pk = InterfaceReadProperty('pk')
-    about = InterfaceWriteProperty('about')
-    location = InterfaceWriteProperty('location')
-    website = InterfaceWriteProperty('website')
-
-    display_name = InterfaceWriteProperty('display_name')
+class TgGroupEditor: 
+    pk = InterfaceReadProperty
+    about = InterfaceWriteProperty
+    location = InterfaceWriteProperty
+    website = InterfaceWriteProperty
+    display_name = InterfaceWriteProperty
     
-    @classmethod
-    def get_id(self) :
-        return 'TgGroup.Editor'
 
+class TgGroupJoin:
+    pk = InterfaceReadProperty
+    join = InterfaceCallProperty
 
-class TgGroupJoin(Interface):
-    pk = InterfaceReadProperty('pk')
-    join = InterfaceCallProperty('join')
+class TgGroupInviteMember:
+    pk = InterfaceReadProperty
+    invite_member = InterfaceCallProperty
 
-    @classmethod
-    def get_id(self) :
-        return 'TgGroup.Join'   
-
-
-class TgGroupInviteMember(Interface):
-    pk = InterfaceReadProperty('pk')
-    invite_member = InterfaceCallProperty('invite_member')
-
-    @classmethod
-    def get_id(self) :
-        return 'TgGroup.Invite'
-
-
-class TgGroupManageMembers(Interface):
-    pk = InterfaceReadProperty('pk')
-    add_member = InterfaceCallProperty('add_member')
-    accept_member = InterfaceCallProperty('accept_member')
-    remove_member = InterfaceCallProperty('remove_member')
-
-    @classmethod
-    def get_id(self) :
-        return 'TgGroup.ManageMembers'
+class TgGroupManageMembers:
+    pk = InterfaceReadProperty
+    add_member = InterfaceCallProperty
+    accept_member = InterfaceCallProperty
+    remove_member = InterfaceCallProperty
 
 
 
+
+context_default_configs = {'TgGroup': { 'target' : "target",
+                                        'possible_types' : ['OurPost'],
+                                        'slider_agents': ['anonymous_group',
+                                                          'all_members_group',
+                                                          '$context_agent',
+                                                          '$creator',
+                                                          '$context_agent_admin'], 
+                                        'interfaces':{'Profile':['Profile.Viewer','Profile.Editor','Profile.PhoneViewer','Profile.EmailViewer'],
+                                                      'TgGroup':['TgGroup.Viewer','TgGroup.Editor','TgGroup.Join']},
+                                        'constraints':{'Profile':[]},
+                                        'defaults':{'Profile':{'Viewer':2, 
+                                                               'Editor':1}
+                                                    }
+                                        }
+                           }
+
+
+"""
 class TgGroupPermissionManager(PermissionManager) :
     def register_with_interface_factory(self,interface_factory) :
         self.interface_factory = interface_factory
@@ -186,6 +148,8 @@ def setup_default_permissions(sender,**kwargs):
         
     if not get_permission_system().has_permissions(group) :
         ps.get_permission_manager(TgGroup).setup_defaults(group, group, group)
+"""
 
-post_save.connect(setup_default_permissions,sender=TgGroup)
+
+#post_save.connect(setup_default_permissions, sender=TgGroup)
 

@@ -6,31 +6,34 @@ Interfaces are associated with a SecurityContext via a SecurityTag. Agents (user
 Interfaces are namespaced by the type they apply to e.g. "Wiki.Editor" allowing us to assign permissions on a type.  The syntax ".Editor" refers to the Editor Interface on the SecurityContext target object. The syntax *.Editor refers to the Editor interface on any objects in the security context.
 """
 
-__all__ = ['secure_wrap', 'PlusPermissionsNoAccessException', 'PlusPermissionsReadOnlyException', 'add_type_to_interface_map', 'add_interfaces_to_type', 'strip']
+__all__ = ['secure_wrap', 'PlusPermissionsNoAccessException', 'PlusPermissionsReadOnlyException', 'add_type_to_interface_map', 'add_interfaces_to_type', 'strip', 'TemplateSecureWrapper']
+
+def secure_wrap(content_obj, interface_names=None):
+    access_obj = SecureWrapper(content_obj)
+    access_obj.load_interfaces_for(request.user, interface_names=interface_names)
+    return access_obj
 
 type_interfaces_map = {}  
 
 def get_interface_map(cls):
-    return interface_map.get(cls.__name__, {})
+    if not isinstance(cls, basestring):
+        cls = cls.__name__
+    return type_interfaces_map.get(cls, {})
 
 def add_type_to_interface_map(cls, interfaces):
     type_interfaces_map[cls.__name__] = {}
     add_interfaces_to_type(cls, interfaces)
         
 def add_interfaces_to_type(cls, interfaces):
-    if not isinstance(list, interfaces):
+    if not isinstance(interfaces, dict):
         raise TypeError
     type_interfaces = type_interfaces_map[cls.__name__]
-    for interface in interfaces:
-        if interface[0] not in type_interfaces:
-            type_interfaces[interface[0], interface[1]]
+    for label, interface in interfaces.iteritems():
+        if label not in type_interfaces:
+            type_interfaces[label] = interface
         else:
-            raise "Interface "+ interface  +"was not added to "+ class +" because an interface of that name already exists"
+            raise "Interface "+ label  +"was not added to "+ `cls` +" because an interface of that name already exists"
 
-def secure_wrap(content_obj, interface_names=None):
-    access_obj = SecureWrapper(content_obj)
-    access_obj.load_interfaces_for(request.user, interface_names=interface_names)
-    return access_obj
 
 def strip(x) :
     """If x is really a Null interface, return the inner value, otherwise, return itself"""
@@ -149,7 +152,7 @@ class SecureWrapper:
     def has_permission(self, name, interface) :
         """The moment of truth!"""
         try: 
-            perms = self._permissions[interface]:
+            perms = self._permissions[interface]
         except KeyError:
             raise NonExistentPermission
         else:
@@ -158,7 +161,7 @@ class SecureWrapper:
             return False
                         
     def __getattr__(self, name):
-        for rule in self.__dict__['_exceptions'] :
+        for rule in self.__dict__['_exceptions']:
             if rule(name) :
                 return self.get_inner().__getattribute__(name)
 

@@ -7,7 +7,6 @@ from django.contrib.contenttypes import generic
 from django.contrib.contenttypes.models import ContentType
 
 from timezones.fields import TimeZoneField
-from apps.plus_permissions.models import PermissionableMixin
 
 import itertools
 
@@ -19,7 +18,7 @@ class DelegateToUser(object) :
        setattr(obj.user,self.attr_name,val)
        #print "Getting from inner %s" % getattr(obj.user,self.attr_name)
 
-class Profile(PermissionableMixin,models.Model):    
+class Profile(models.Model):    
    user = models.ForeignKey(User, unique=True, verbose_name=_('user'))
    
    about = DelegateToUser('description')
@@ -89,15 +88,10 @@ class Profile(PermissionableMixin,models.Model):
 import logging
 
 
-
-
-@set_security_context
 def create_profile(sender, instance=None, **kwargs):
    if instance is None:
       return
    profile, created = Profile.objects.get_or_create(user=instance)
-   profile.set_security_context(profile)
-create_profile = security_context(create_profile, *args, **kwargs)
 
 post_save.connect(create_profile, sender=User)
 
