@@ -115,7 +115,7 @@ class Application(PermissionableMixin, models.Model) :
     objects = ApplicationManager()
 
     def generate_accept_url(self, accepted_by) :
-        url = '/contacts/signup/%s/%s' % (self.applicant.id,accepted_by.id)
+        url = '/contacts/signup/%s-%s/' % (self.applicant.id,accepted_by.id)
         return url
 
 

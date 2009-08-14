@@ -47,10 +47,11 @@ def login(request, form_class=LoginForm,
         "url_required": url_required,
     }, context_instance=RequestContext(request))
 
-def signup(request, form_class=SignupForm,
+
+def signup(request, key, form_class=SignupForm,
         template_name="account/signup.html", success_url=None):
 
-    print "signup in account"
+
     if success_url is None:
         success_url = get_default_redirect(request)
     if request.method == "POST":
@@ -70,6 +71,7 @@ def signup(request, form_class=SignupForm,
             print "invalid form"
     else:
         form = form_class()
+
     return render_to_response(template_name, {
         "form": form,
     }, context_instance=RequestContext(request))

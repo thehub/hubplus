@@ -15,13 +15,11 @@ from django.template import RequestContext
 
 from apps.plus_contacts.models import Application, PENDING, WAITING_USER_SIGNUP
 
-
  
 # XXX temporary, ensure that the interface factory know about Application
 from apps.plus_permissions.models import get_permission_system, PlusPermissionsNoAccessException
 from apps.plus_permissions.Application import ApplicationViewer
 get_permission_system().add_interface(Application,'Viewer',ApplicationViewer)
-
 
 
 @login_required
@@ -41,17 +39,18 @@ def list_of_applications(request, template_name="plus_contacts/applicant_list.ht
 @login_required
 def accept_application(request,id) :
     application = Application.objects.get(id=id,permission_agent=request.user)
-    print "AAA"
+
     try :
         ps = get_permission_system()
         # now approved ... we need to send a confirmation mail, however, for the moment, we'll just 
         # create the login url and show it,
         # also, if the applicant already has an account, we can join him/her to a group
-        print "BBB"
+
         if application.is_site_application() :
-            print "CCC"
+
             # contact is not a user 
             msg,url = application.accept(request.user)
+            print url
             return render_to_response('plus_contacts/dummy_email.html',
                                           {'url':url, 'message':msg},                                      
                                           context_instance=RequestContext(request))
@@ -64,10 +63,10 @@ def accept_application(request,id) :
  
             try :
                 application.group.accept_member(application.get_user())
-                print "EEE"
+
                 return HttpResponseRedirect(reverse('list_open_applications'))
             except PlusPermissionsNoAccessException :
-                print "FFF"
+
                 return render_to_response('no_permission.html', {
                         'msg' : "You don't have permission to accept this application into %" %application.group,
                         'user' : request.user,
