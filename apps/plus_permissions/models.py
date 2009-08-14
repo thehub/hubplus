@@ -14,7 +14,7 @@ import pickle
 import simplejson
 
 import datetime
-import ipdb
+
 
 class PlusPermissionsNoAccessException(Exception):
     def __init__(self,cls,id,msg) :
@@ -204,11 +204,15 @@ class InterfaceFactory :
         self.permission_managers = {}
 
     def add_type(self,cls) :
-        if not self.all.has_key(cls.__name__) :
-            self.all[cls.__name__] = {}
+        if cls.__class__ != ' '.__class__ and cls.__class__ != u' '.__class__ :
+            cls = cls.__name__
+        if not self.all.has_key(cls) :
+            self.all[cls] = {}
 
     def get_type(self,cls) :
-        return self.all[cls.__name__]
+        if cls.__class__ != ' '.__class__ and cls.__class__ != u' '.__class__ :
+            cls = cls.__name__
+        return self.all[cls]
 
 
     def add_interface(self,cls,name,interfaceClass) :
@@ -220,7 +224,9 @@ class InterfaceFactory :
         return self.get_type(cls)[name]        
 
     def get_id(self,cls,name) : 
-        return '%s.%s' % (cls.__name__,name)
+        if cls.__class__ != ' '.__class__ and cls.__class__ != u' '.__class__ :
+            cls = cls.__name__
+        return '%s.%s' % (cls,name)
 
     def add_permission_manager(self,cls,pm) :
         self.permission_managers[cls.__name__] = pm
@@ -336,11 +342,11 @@ class PermissionSystem :
 
     def get_anon_group(self) : 
         """ The anon_group is the root of all groups, representing permissions given even to non members; plus everyone else"""
-        return TgGroup.objects.filter(group_name='root')[0]
+        return TgGroup.objects.get(group_name='root')
 
     def get_site_members(self) :
         """ The group to which all account-holding "hub-members" belong"""
-        return TgGroup.objects.filter(group_name='all_members')[0]
+        return TgGroup.objects.get(group_name='all_members')
 
     def has_access(self, agent, resource, interface) :
         """Does the agent have access to this interface in this context

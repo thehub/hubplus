@@ -1,5 +1,7 @@
 
-from models import *
+from models import Interface, InterfaceReadProperty, InterfaceCallProperty, get_permission_system
+
+from apps.plus_contacts.models import Application
 
 # === permission interfaces
 
@@ -22,6 +24,7 @@ class ApplicationViewer(Interface) :
         return 'Application.Viewer'
 
 
-get_permission_system().add_interface(Application,'Viewer',ApplicationViewer)
+
+get_permission_system().add_interface('Application','Viewer',ApplicationViewer)
 
 

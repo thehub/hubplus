@@ -24,7 +24,7 @@ from account.models import PasswordReset
 
 from plus_contacts.models import PlusContact, Application
 
-
+from hubspace_compatibility.models import TgGroup
 
 
 alnum_re = re.compile(r'^[\w\.]+$')
@@ -359,9 +359,11 @@ class HubPlusApplicationForm(forms.Form):
 
     organisation = forms.CharField(label=_("Organisation"),required=False,widget=forms.TextInput())
     location = forms.CharField(label=_("Location"),required=False,widget=forms.TextInput())
-    about_and_why = forms.CharField(label=_("Tell us a bit about yourself what you do and why you're interested in the Hub?"),required=True,widget=forms.TextInput())
-    find_out = forms.CharField(label=_("How did you find out about the Hub?"),required=True,widget=forms.TextInput())
-
+    about_and_why = forms.CharField(
+        label=_("Tell us a bit about yourself what you do and why you're interested in the Hub?"),
+        required=True, widget=forms.TextInput())
+    find_out = forms.CharField(label=_("How did you find out about the Hub?"), required=True, widget=forms.TextInput())
+    group = forms.CharField(label=_("A group you'd like to join (Optional)"), required=False, widget=forms.TextInput())
 
     def clean_username(self):
         if not alnum_re.search(self.cleaned_data["username"]):
@@ -372,6 +374,15 @@ class HubPlusApplicationForm(forms.Form):
             return self.cleaned_data["username"]
         raise forms.ValidationError(_("This username is already taken. Please choose another."))
 
+
+    def clean_group(self) :
+        if self.cleaned_data['group'] == '' :
+            return None
+        try :
+            return TgGroup.objects.get(groupname=self.cleaned_data['group'])
+        except :
+            raise forms.ValidationError(_("There is no group called %s"%self.cleaned_data['group']))
+                
 
     def clean(self):
         return self.cleaned_data
@@ -397,9 +408,12 @@ class HubPlusApplicationForm(forms.Form):
             contact.email_address = email
             contact.save()
 
+
+
         application = Application()
         application.applicant=contact
         application.request=self.cleaned_data["about_and_why"]
+        application.group = self.cleaned_data["group"]
         application.save()
 
         return contact, application

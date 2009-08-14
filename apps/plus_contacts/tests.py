@@ -6,13 +6,15 @@ from django.db import models
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes import generic
 
-from apps.plus_permissions.models import *
 from django.contrib.auth.models import *
 from apps.plus_groups.models import *
 
-
 from models import *
 
+from apps.plus_permissions.models import *
+from apps.plus_permissions.Application import *
+
+ps = get_permission_system()
 
 class TestContact(unittest.TestCase):
 
@@ -81,6 +83,7 @@ class TestApplication(unittest.TestCase) :
         self.assertEquals(application.group, group)
         self.assertEquals(application.status, PENDING)
         self.assertEquals(application.admin_comment,'')
+        self.assertEquals(application.accepted_by,None)
 
         ps = get_permission_system()
         # adding a couple more 

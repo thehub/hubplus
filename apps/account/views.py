@@ -10,6 +10,7 @@ from django.core.urlresolvers import reverse
 from django.contrib.auth.decorators import login_required
 from django.db import models
 
+
 from account.utils import get_default_redirect
 from account.models import OtherServiceInfo
 from account.forms import SignupForm, AddEmailForm, LoginForm, \
@@ -270,8 +271,9 @@ other_services_remove = login_required(other_services_remove)
 def apply(request, form_class=HubPlusApplicationForm,
         template_name="account/apply_form.html", success_url=None):
 
+    #print urlpatterns
     if success_url is None:
-        success_url = get_default_redirect(request)
+        success_url = reverse('what_next')
 
     if request.method == "POST":
         print "received post"
@@ -279,7 +281,10 @@ def apply(request, form_class=HubPlusApplicationForm,
         print form
         if form.is_valid():
             contact, application = form.save()
-            return HttpResponseRedirect(success_url)
+            return render_to_response('plus_contacts/application_thanks.html',{
+            'group' : form.cleaned_data['group'],
+            },context_instance=RequestContext(request))
+
         else :
             print "invalid form"
     else:
@@ -287,3 +292,6 @@ def apply(request, form_class=HubPlusApplicationForm,
     return render_to_response(template_name, {
         "form": form,
     }, context_instance=RequestContext(request))
+
+
+

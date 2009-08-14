@@ -13,8 +13,6 @@ from apps.hubspace_compatibility.models import TgGroup
 from apps.plus_permissions.permissionable import PermissionableMixin
 
 
-
-
 class PlusContact(models.Model):
     """Use this for the sign-up / invited sign-up process, provisional users"""
     first_name = models.CharField(max_length=60)
@@ -25,7 +23,10 @@ class PlusContact(models.Model):
     apply_msg = models.TextField()
     find_out = models.TextField()
     invited_by = models.ForeignKey(User,null=True)
-    
+
+
+    def get_user(self) :
+        return User.objects.get(email_address=self.email_address)
 
     def become_member(self, username, invited_by=None, accepted_by=None):
         """Either a user accepts an invitation or their application is accepted.
@@ -54,20 +55,46 @@ class PlusContact(models.Model):
         return u
 
 
+
 PENDING = 0
+WAITING_USER_SIGNUP = 1
 
 class ApplicationManager(models.Manager) :
     # only show applications to those who have right permissions
     # if query is done with "permission_agent" as argument
 
-    def filter(self,**kwargs) :
+    def filter(self,**kwargs) : 
         if not kwargs.has_key('permission_agent') :
             return super(ApplicationManager,self).filter(**kwargs)
         else :
+            from apps.plus_permissions.models import NullInterface
             agent = kwargs['permission_agent']
             del kwargs['permission_agent']
             ps = get_permission_system()
-            return (a for a in super(ApplicationManager,self).filter(**kwargs) if ps.has_access(agent,a,ps.get_interface_id(Application,'Viewer')))
+            def wrap(a) :
+                n = NullInterface(a)
+                n.load_interfaces_for(agent)
+                
+            return (wrap(a) 
+                    for a in super(ApplicationManager,self).filter(**kwargs) 
+                    if ps.has_access(agent,a,ps.get_interface_id("Application",'Viewer')))
+
+
+    def get(self,**kwargs) :
+        if not kwargs.has_key('permission_agent') :
+            return super(ApplicationManager,self).get(**kwargs)
+        else :
+            from apps.plus_permissions.models import NullInterface
+            agent = kwargs['permission_agent']
+            del kwargs['permission_agent']
+            ps = get_permission_system()
+            def wrap(a) :
+                n = NullInterface(a)
+                n.load_interfaces_for(agent)
+                
+            return (wrap(a) 
+                    for a in super(ApplicationManager,self).get(**kwargs) 
+                    if ps.has_access(agent,a,ps.get_interface_id("Application",'Viewer')))
 
 
 class Application(PermissionableMixin, models.Model) :
@@ -75,15 +102,22 @@ class Application(PermissionableMixin, models.Model) :
     applicant_object_id = models.PositiveIntegerField()
     applicant = generic.GenericForeignKey('applicant_content_type', 'applicant_object_id')
     
-
     group = models.ForeignKey(TgGroup,null=True)
     request = models.TextField()
     status = models.PositiveIntegerField(default=PENDING)
 
     admin_comment = models.TextField(default='')
     date = models.DateField(auto_now_add=True)
+    accepted_by = models.ForeignKey(User, null=True) 
 
     objects = ApplicationManager()
+
+    def generate_accept_url(self, accepted_by) :
+        self.accepted_by = accepted_by
+        self.save()
+        return '/contacts/signup/%s/' % self.id
+
+
 
 def extract(d,key) :
     if d.has_key(key) :

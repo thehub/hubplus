@@ -161,7 +161,7 @@ class TestPermissions(unittest.TestCase) :
         
         IViewer = tif.get_id(OurPost,'Viewer')
         ICommentor = tif.get_id(OurPost,'Commentor')
-        IEditor = ps.get_interface_id(OurPost,'Editor')
+        IEditor = ps.get_interface_id('OurPost','Editor')
 
         self.assertTrue(ps.has_access(u,blog,IViewer))
 
