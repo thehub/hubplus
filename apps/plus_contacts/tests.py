@@ -40,6 +40,10 @@ class TestContact(unittest.TestCase):
         self.assertEquals(self.ct.invited_by.username,'phil')
 
     def test_become_member(self):
+        ps = get_permission_system()
+        ps.__init__()
+        print TgGroup.objects.all()
+
         u2 = User(username='admin',email_address='y@y.com')
         u2.save()
         # now upgrade to a user
@@ -70,13 +74,18 @@ class TestApplication(unittest.TestCase) :
         return count
 
     def test_application(self) :
+        ps = get_permission_system()
+        ps.__init__()
+        print TgGroup.objects.all()
+
         contact = PlusContact(first_name='kate', last_name='smith', email_address='kate@z.x.com')
         contact.save()
         group, admin = create_site_group('singing', 'Singers')
-        # use make_plus_application to add security_context when creating an application object
-        application = make_plus_application(applicant=contact, request='I want to join in',security_context=group)
+        # use make_application to add security_context when creating an application object
+        application = make_application(applicant=contact, request='I want to join in',security_context=group)
         application.group = group
         application.save()
+        
         self.assertEquals(application.date.date(),datetime.datetime.today().date())
         self.assertEquals(application.applicant, contact)
         self.assertEquals(application.request, 'I want to join in')
@@ -85,10 +94,13 @@ class TestApplication(unittest.TestCase) :
         self.assertEquals(application.admin_comment,'')
         self.assertEquals(application.accepted_by,None)
 
+        self.assertTrue(ps.has_access(ps.get_site_members(),application,ps.get_interface_id(Application,'Viewer')))
+        self.assertTrue(ps.has_access(ps.get_site_members(),application,ps.get_interface_id(Application,'Accepter')))
+
         ps = get_permission_system()
         # adding a couple more 
-        ap2 = make_plus_application(applicant=contact,request='ap2',group=ps.get_anon_group(),security_context=group)
-        ap3 = make_plus_application(applicant=contact,request='ap3',group=ps.get_site_members(),security_context=group)
+        ap2 = make_application(applicant=contact,request='ap2',group=ps.get_anon_group(),security_context=group)
+        ap3 = make_application(applicant=contact,request='ap3',group=ps.get_site_members(),security_context=group)
         
         self.assertEquals(self.count(Application.objects.filter()),3)
         self.assertEquals(self.count(Application.objects.filter(request='ap2')),1)

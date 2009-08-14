@@ -316,12 +316,14 @@ class PermissionSystem :
             self.root_location.save()
 
         self.root_group = self.get_or_create_group('root','World',self.root_location)
+        self.root_group.set_security_context(self.root_group)
         self.all_members_group = self.get_or_create_group('all_members','All Members',self.root_location)
-
+        self.all_members_group.set_security_context(self.all_members_group)
 
     def create_security_tag(self,context,interface,agents) :
         # agents here is a list of something like User or TgGroup, NOT an Agent
-        tag = SecurityTag(context=context,interface=interface)
+        type = ContentType.objects.get_for_model(context)
+        tag,created = SecurityTag.objects.get_or_create(context_content_type=type,context_object_id=context.id,interface=interface)
         tag.save()
         for agent in agents :
             tag.agents.add(agent.corresponding_agent())

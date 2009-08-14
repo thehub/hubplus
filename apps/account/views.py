@@ -268,15 +268,11 @@ def other_services_remove(request):
 other_services_remove = login_required(other_services_remove)
 
 
-def apply(request, form_class=HubPlusApplicationForm,
-        template_name="account/apply_form.html", success_url=None):
 
-    #print urlpatterns
-    if success_url is None:
-        success_url = reverse('what_next')
+def apply(request, form_class=HubPlusApplicationForm,
+        template_name="account/apply_form.html"):
 
     if request.method == "POST":
-        print "received post"
         form = form_class(request.POST)
         print form
         if form.is_valid():

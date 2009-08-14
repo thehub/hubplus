@@ -88,14 +88,12 @@ class ApplicationManager(models.Manager) :
             agent = kwargs['permission_agent']
             del kwargs['permission_agent']
             ps = get_permission_system()
-            def wrap(a) :
-                n = NullInterface(a)
-                n.load_interfaces_for(agent)
-                
-            return (wrap(a) 
-                    for a in super(ApplicationManager,self).get(**kwargs) 
-                    if ps.has_access(agent,a,ps.get_interface_id("Application",'Viewer')))
-
+            
+            a = super(ApplicationManager,self).get(**kwargs)
+            
+            n = NullInterface(a)
+            n.load_interfaces_for(agent)
+            return n
 
 class Application(PermissionableMixin, models.Model) :
     applicant_content_type = models.ForeignKey(ContentType,related_name='applicant_type')
@@ -113,11 +111,22 @@ class Application(PermissionableMixin, models.Model) :
     objects = ApplicationManager()
 
     def generate_accept_url(self, accepted_by) :
-        self.accepted_by = accepted_by
-        self.save()
-        return '/contacts/signup/%s/' % self.id
+        url = '/contacts/signup/%s/%s' % (self.contact.id,accepted_by.id)
+        return url
 
 
+    def is_site_application(self) :
+        """ Is this an application by someone who's not yet a site-member and needs an User / Profile object created"""
+        if self.contact.get_user() :
+            return False
+        return True
+
+    def requests_group(self) :
+        """ Is this application requesting a group in addition to site membership?"""
+        if self.group : 
+            return True
+        else :
+            return False
 
 def extract(d,key) :
     if d.has_key(key) :
@@ -127,11 +136,21 @@ def extract(d,key) :
         v = None
     return v
 
-def make_plus_application(**kwargs) :
+def make_application(**kwargs) :
     security_context = extract(kwargs,'security_context')
     pa = Application(**kwargs)
     pa.save()
+    # setup security context
     if security_context :
         pa.set_security_context(security_context)
+    else :
+        pa.set_security_context(pa)
+
+    # and we give view permission to any site-member
+    ps = get_permission_system()
+    tag = ps.create_security_tag(pa,ps.get_interface_id(Application,'Viewer'),[ps.get_site_members()])
+    tag = ps.create_security_tag(pa,ps.get_interface_id(Application,'Accepter'),[ps.get_site_members()])
+
+    pa.save()    
     return pa
 

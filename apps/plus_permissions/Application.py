@@ -19,12 +19,20 @@ class ApplicationViewer(Interface) :
     admin_comment = InterfaceReadProperty('admin_comment')
     date = InterfaceReadProperty('date')
 
+    is_site_application = InterfaceCallProperty('is_site_application')
+    requests_group = InterfaceCallProperty('requests_group')
+
+
     @classmethod
     def get_id(self) : 
         return 'Application.Viewer'
 
 
+class ApplicationAccepter(Interface) :
+    pk= InterfaceReadProperty('pk')
+    generate_accept_url = InterfaceCallProperty('generate_accept_url')
 
 get_permission_system().add_interface('Application','Viewer',ApplicationViewer)
+get_permission_system().add_interface('Application','Accepter',ApplicationAccepter)
 
 
