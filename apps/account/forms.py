@@ -27,7 +27,7 @@ from plus_contacts.models import PlusContact, Application, make_application
 from hubspace_compatibility.models import TgGroup
 
 
-alnum_re = re.compile(r'^[\w\.]+$')
+alnum_re = re.compile(r'^[\w\.\s]+$')
 
 class LoginForm(forms.Form):
 
@@ -393,7 +393,7 @@ class HubPlusApplicationForm(forms.Form):
         username = self.cleaned_data["username"]
         email = self.cleaned_data["email_address"]
         if username.find(' ') > 0 :
-            first_name, last_name = (username.split(' '))[0:1] # note that if users need > 2 names, we have to do something
+            first_name, last_name = (username.split(' ')) # note that if users need > 2 names, we have to do something
             username = '%s.%s' % (first_name,last_name)
         else : 
             first_name=username

@@ -51,36 +51,11 @@ def accept_application(request,id) :
         if application.is_site_application() :
             print "CCC"
             # contact is not a user 
-            
-            if ps.has_access(request.user,ps.get_site_members(),ps.get_interface_id("TgGroup","ManageMembers")) :
-                print "Ccccc"
-                # this user has permission to add contact to the site
-                application.status = WAITING_USER_SIGNUP
-                print "RRR %s" %application.status
-                application.save()
-                print "QQQ"
-                url = application.generate_accept_url(request.user)
-                print "PPP"
-                # for the moment, we're just outputting the url to a page.
-                # in fact, we'll mail this
-                send_mail('Confirmation of account on Hub+', """Dear %s %s
-                               We are delighted to confirm you have been accepted as a member of Hub+
-
-                               Please visit the following link to confirm your account : %s
-""" % (application.first_name, application.last_name, url), application.email_address,
-                          [application.email_address], fail_silently=False)
-                
-                print "OOO"
-                return render_to_response('plus_contacts/dummy_email.html',
-                                          {'url':url},
+            msg,url = application.accept()
+            return render_to_response('plus_contacts/dummy_email.html',
+                                          {'url':url, 'message':msg},                                      
                                           context_instance=RequestContext(request))
-            else : 
-                return render_to_response('no_permission.html', {
-                        'msg' : "You don't have permission to accept this person into site_members ",
-                        'user' : request.user,
-                        'resource' : "the site-members group"
-                        }, context_instance=RequestContext(request))
-                
+                 
 
         # here, this user already exists, now we're going to allow to become member of group,
         # if we have the right permissions
