@@ -26,6 +26,8 @@ class PlusContact(models.Model):
 
 
     def get_user(self) :
+        if len( User.objects.filter(email_address=self.email_address) ) < 1 : 
+            return None
         return User.objects.get(email_address=self.email_address)
 
     def become_member(self, username, invited_by=None, accepted_by=None):
@@ -117,9 +119,10 @@ class Application(PermissionableMixin, models.Model) :
 
     def is_site_application(self) :
         """ Is this an application by someone who's not yet a site-member and needs an User / Profile object created"""
-        if self.contact.get_user() :
-            return False
-        return True
+
+        if self.applicant.get_user() is None :
+            return True
+        return False
 
     def requests_group(self) :
         """ Is this application requesting a group in addition to site membership?"""

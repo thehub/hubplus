@@ -11,8 +11,8 @@ from django.core.urlresolvers import reverse
 from django.contrib.auth.decorators import login_required
 from django.db import models
 
-from apps.plus_contacts.models import Application, WAITING_USER_SIGNUP
-
+from apps.plus_contacts.models import Application, PENDING, WAITING_USER_SIGNUP
+ 
 # XXX temporary, ensure that the interface factory know about Application
 from apps.plus_permissions.models import get_permission_system, PlusPermissionsNoAccessException
 from apps.plus_permissions.Application import ApplicationViewer
@@ -25,7 +25,7 @@ def list_of_applications(request, template_name="plus_contacts/applicant_list.ht
 
     if request.user.is_authenticated() :
 
-        applications= Application.objects.filter()
+        applications= Application.objects.filter(status=PENDING)
     else :
         HttpResponseRedirect()
 
@@ -47,7 +47,7 @@ def accept_application(request,id) :
         
         if application.is_site_application() :
             # contact is not a user
-            if ps.has_access(request.user,ps.get_all_members(),ps.get_interface_id("TgGroup","ManageMembers")) :
+            if ps.has_access(request.user,ps.get_site_members(),ps.get_interface_id("TgGroup","ManageMembers")) :
                 # this user has permission to add contact to the site
                 application.status = WAITING_USER_SIGNUP
                 application.save()
