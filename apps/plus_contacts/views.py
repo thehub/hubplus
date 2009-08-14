@@ -51,7 +51,7 @@ def accept_application(request,id) :
         if application.is_site_application() :
             print "CCC"
             # contact is not a user 
-            msg,url = application.accept()
+            msg,url = application.accept(request.user)
             return render_to_response('plus_contacts/dummy_email.html',
                                           {'url':url, 'message':msg},                                      
                                           context_instance=RequestContext(request))
@@ -61,7 +61,7 @@ def accept_application(request,id) :
         # if we have the right permissions
         if application.requests_group() :
             # we're asking for a group
-            print "DDD"
+ 
             try :
                 application.group.accept_member(application.get_user())
                 print "EEE"

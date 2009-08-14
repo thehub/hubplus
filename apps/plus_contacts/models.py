@@ -156,7 +156,7 @@ Please visit the following link to confirm your account : %s
                   [self.applicant.email_address], fail_silently=False)
         
         print "Done email"
-        return message
+        return message, url
 
 
 def extract(d,key) :
@@ -177,7 +177,7 @@ def make_application(**kwargs) :
     elif pa.group :
         pa.set_security_context(pa.group)
     else :
-        pa.set_security_context(pa)
+        pa.set_security_context(get_permission_system().get_site_members())
 
     # and we give view permission to any site-member
     ps = get_permission_system()
