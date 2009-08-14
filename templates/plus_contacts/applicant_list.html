@@ -1,0 +1,35 @@
+{% extends "site_base.html" %}
+
+{% load i18n %}
+{% load avatar_tags %}
+{% load app_plugins %}
+{% load uni_form %}
+
+{% block body %}
+
+<h2>List of open applications</h2>
+
+<table class='list_of_applications'>
+  
+<tr><th>Name</th><th>Email</th><th>Message</th><th>Date</th><th>Group?</th><th>{% trans "Heard about us through"%}</th><th>Authorize?</th></tr>
+{% for app in applications %}
+<tr>
+  <td>{%if app.applicant.last_name %}{{app.applicant.first_name}} {{app.applicant.last_name}}{% else %}{{app.applicant.first_name}}{% endif %}</td>
+  <td>{{app.applicant.email_address}}
+  <td>{{app.request}}</td>
+  <td>{{app.date}}</td>
+  <td>{{app.group}}</td>
+  <td>{{app.contact.find_out}}
+  <td>
+    <form class="authorize" method="POST" action="/contacts/accept_application/{{app.id}}/">
+      <input type="submit" value="accept"/>
+    </form>
+  </td>
+
+</tr>
+{% endfor %}
+</table>
+
+{% endblock %}
+
+

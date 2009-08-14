@@ -1,0 +1,19 @@
+{% extends "site_base.html" %}
+
+{% load i18n %}
+{% load avatar_tags %}
+{% load app_plugins %}
+{% load uni_form %}
+
+{% block body %}
+
+<h2>{% trans "Permission Failure"%}</h2>
+
+
+<p>You don't have permission to do that</p>
+<p>You are {{user}}</p>
+<p>The resource is {{resource}}</p>
+ 
+
+
+{% endblock %}
