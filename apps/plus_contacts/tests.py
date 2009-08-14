@@ -42,7 +42,6 @@ class TestContact(unittest.TestCase):
     def test_become_member(self):
         ps = get_permission_system()
         ps.__init__()
-        print TgGroup.objects.all()
 
         u2 = User(username='admin',email_address='y@y.com')
         u2.save()
@@ -76,7 +75,6 @@ class TestApplication(unittest.TestCase) :
     def test_application(self) :
         ps = get_permission_system()
         ps.__init__()
-        print TgGroup.objects.all()
 
         contact = PlusContact(first_name='kate', last_name='smith', email_address='kate@z.x.com')
         contact.save()
@@ -94,8 +92,8 @@ class TestApplication(unittest.TestCase) :
         self.assertEquals(application.admin_comment,'')
         self.assertEquals(application.accepted_by,None)
 
-        self.assertTrue(ps.has_access(ps.get_site_members(),application,ps.get_interface_id(Application,'Viewer')))
-        self.assertTrue(ps.has_access(ps.get_site_members(),application,ps.get_interface_id(Application,'Accepter')))
+        self.assertTrue(ps.has_access(group,application,ps.get_interface_id(Application,'Viewer')))
+        self.assertTrue(ps.has_access(group,application,ps.get_interface_id(Application,'Accepter')))
 
         ps = get_permission_system()
         # adding a couple more 
@@ -109,9 +107,26 @@ class TestApplication(unittest.TestCase) :
         u.save()
         self.assertEquals(self.count(Application.objects.filter(permission_agent=u)),0)
 
-        # now there's a security tag which links "group" as context to the interface "PlusApplicationViewer"
+        # now there's a security tag which links "group" as context to the interface "ApplicationViewer"
         t = ps.create_security_tag(group,ps.get_interface_id(Application,'Viewer'),[u])
         t.save()
         
         self.assertEquals(self.count(Application.objects.filter(permission_agent=u)),3)
+        
+        application = Application.objects.get(id=application.id,permission_agent=u)
+        
+        def f(application,sponsor) :
+            application.accept(sponsor)
+        self.assertRaises(PlusPermissionsNoAccessException,f,application,u)
+
+        self.assertEquals(application.status,PENDING)
+
+        application = Application.objects.get(id=application.id,permission_agent=application.group)
+        application.accept(u,admin_comment='great choice')
+        self.assertEquals(application.status,WAITING_USER_SIGNUP)
+        self.assertEquals(application.admin_comment,'great choice')
+
+        
+        
+        
         

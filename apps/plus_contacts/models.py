@@ -11,7 +11,9 @@ from django.contrib.contenttypes import generic
 from apps.hubspace_compatibility.models import TgGroup
 
 from apps.plus_permissions.permissionable import PermissionableMixin
+from django.core.mail import send_mail
 
+from django.conf import settings
 
 class PlusContact(models.Model):
     """Use this for the sign-up / invited sign-up process, provisional users"""
@@ -113,7 +115,7 @@ class Application(PermissionableMixin, models.Model) :
     objects = ApplicationManager()
 
     def generate_accept_url(self, accepted_by) :
-        url = '/contacts/signup/%s/%s' % (self.contact.id,accepted_by.id)
+        url = '/contacts/signup/%s/%s' % (self.applicant.id,accepted_by.id)
         return url
 
 
@@ -131,6 +133,32 @@ class Application(PermissionableMixin, models.Model) :
         else :
             return False
 
+    def accept(self,sponsor,**kwargs) :
+        self.status = WAITING_USER_SIGNUP
+        if kwargs.has_key('admin_comment') :
+            self.admin_comment = kwargs['admin_comment']
+            self.accepted_by = sponsor
+        self.save()
+
+        url = self.generate_accept_url(sponsor)
+
+        message = """
+Dear %s %s,
+We are delighted to confirm you have been accepted as a member of Hub+
+
+Please visit the following link to confirm your account : %s
+""" % (self.applicant.first_name, self.applicant.last_name, url)
+
+        email_address = self.applicant.email_address
+
+        print settings.EMAIL_HOST, settings.EMAIL_PORT
+        send_mail('Confirmation of account on Hub+', message, settings.CONTACT_EMAIL,
+                  [self.applicant.email_address], fail_silently=False)
+        
+        print "Done email"
+        return message
+
+
 def extract(d,key) :
     if d.has_key(key) :
         v = d[key]
@@ -146,13 +174,15 @@ def make_application(**kwargs) :
     # setup security context
     if security_context :
         pa.set_security_context(security_context)
+    elif pa.group :
+        pa.set_security_context(pa.group)
     else :
         pa.set_security_context(pa)
 
     # and we give view permission to any site-member
     ps = get_permission_system()
-    tag = ps.create_security_tag(pa,ps.get_interface_id(Application,'Viewer'),[ps.get_site_members()])
-    tag = ps.create_security_tag(pa,ps.get_interface_id(Application,'Accepter'),[ps.get_site_members()])
+    tag = ps.create_security_tag(pa.get_security_context(),ps.get_interface_id(Application,'Viewer'),[pa.get_security_context()])
+    tag2 = ps.create_security_tag(pa.get_security_context(),ps.get_interface_id(Application,'Accepter'),[pa.get_security_context()])
 
     pa.save()    
     return pa

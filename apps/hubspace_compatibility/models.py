@@ -216,6 +216,7 @@ try :
     def __str__(self) : 
         return "<TgGroup : %s>" % self.group_name
 
+
     child_groups = models.ManyToManyField('self', symmetrical=False, related_name='parent_groups')
 
   #class HCGroupMapping(models.Model) :

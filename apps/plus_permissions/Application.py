@@ -1,5 +1,5 @@
 
-from models import Interface, InterfaceReadProperty, InterfaceCallProperty, get_permission_system
+from models import Interface, InterfaceReadProperty, InterfaceCallProperty, InterfaceWriteProperty, get_permission_system
 
 from apps.plus_contacts.models import Application
 
@@ -31,6 +31,9 @@ class ApplicationViewer(Interface) :
 class ApplicationAccepter(Interface) :
     pk= InterfaceReadProperty('pk')
     generate_accept_url = InterfaceCallProperty('generate_accept_url')
+    status = InterfaceWriteProperty('status')
+    accept = InterfaceCallProperty('accept')
+
 
 get_permission_system().add_interface('Application','Viewer',ApplicationViewer)
 get_permission_system().add_interface('Application','Accepter',ApplicationAccepter)
