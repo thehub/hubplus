@@ -282,13 +282,6 @@ TgGroup.is_direct_member_of = is_direct_member_of
 def get_permission_agent_name(self) :
     return self.username
 
-# to be added to user class
-def corresponding_agent(self) :
-    agent_type = ContentType.objects.get_for_model(self)
-    return Agent.objects.get(agent_content_type=agent_type,agent_object_id=self.id)
-
-TgGroup.corresponding_agent = corresponding_agent
-
 def user_save(self) :
     if not self.created :
         self.created = datetime.date.today()
@@ -299,43 +292,3 @@ def user_save(self) :
 # Agents are used by plus_permissions.SecurityTag to make a many-to-many relationship with agents such as 
 # Users and TgGroups
 
-class Agent(models.Model) :
-    agent_content_type = models.ForeignKey(ContentType,related_name='security_tag_agent')
-    agent_object_id = models.PositiveIntegerField()
-    agent = generic.GenericForeignKey('agent_content_type', 'agent_object_id')
-
-    def get_type_and_id(self) :
-        return ContentType.objects.get_for_model(self), self.id
-
-
-def create_agent(sender, instance=None, **kwargs):
-    if instance is None:
-        return
-    instance_type = ContentType.objects.get_for_model(instance)
-    agent, created = Agent.objects.get_or_create(agent_content_type=instance_type,agent_object_id=instance.id)
-    agent.save()
-
-post_save.connect(create_agent, sender=User)
-post_save.connect(create_agent, sender=TgGroup)
-
-
-
-# ======================================
-# The hubspace object reference model
-
-class ObjectReference(models.Model):
-    """ Generic object reference, based on version in Hubspace"""
-    content_type = models.ForeignKey(ContentType)
-    object_id = models.PositiveIntegerField()
-    object = generic.GenericForeignKey('content_type', 'object_id')
-
-
-def make_object_reference(object) :
-    if not object.pk : 
-        object.save()
-    o = ObjectReference(object=object)
-    o.save()
-    return o
-
-def get_referenced_object(id) :
-    return ObjectReference.objects.get(pk=id).object

@@ -269,7 +269,7 @@ except ImportError, e:
     print "import hubspace_compatibility failed :: " + `e`
 
 try:
-    from apps.plus_permissions import security_patch
+    from apps.plus_permissions.permissionable import security_patch
     from apps.plus_permissions import types
     from apps.plus_permissions.types import *
     for module in types.__all__:

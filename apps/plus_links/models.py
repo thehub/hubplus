@@ -2,8 +2,8 @@ from django.db import models
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes import generic
 
-from apps.hubspace_compatibility.models import Location, ObjectReference
-from apps.hubspace_compatibility.models import make_object_reference, get_referenced_object
+from apps.hubspace_compatibility.models import Location
+from apps.plus_permissions.models import GenericReference
 
 
 class Service(models.Model) :
@@ -30,8 +30,8 @@ class ListItem(models.Model):
     next = models.ForeignKey("ListItem", default=None)
     location = models.ForeignKey(Location, null=True)
 
-    item = models.ForeignKey(ObjectReference,related_name='list_item_item')
-    owner = models.ForeignKey(ObjectReference,related_name='list_item_owner') # if this list belongs to, say, a Group or a Profile
+    item = models.ForeignKey(GenericReference,related_name='list_item_item')
+    owner = models.ForeignKey(GenericReference,related_name='list_item_owner') # if this list belongs to, say, a Group or a Profile
 
 
 class ListOfLinks :

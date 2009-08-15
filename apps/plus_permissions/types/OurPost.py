@@ -1,10 +1,9 @@
 
 # Permissions for OurPost, an example 
-
 from django.db import models
-
 from apps.plus_permissions.models import SecurityTag
 from apps.plus_permissions.interfaces import InterfaceReadProperty, InterfaceWriteProperty, InterfaceCallProperty
+from apps.plus_permissions.OurPost import OurPost
 
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes import generic
@@ -15,15 +14,7 @@ import ipdb
 
 # This represents a typical model type from another django or pinax app
 
-class OurPost(models.Model):
-    title = models.CharField(max_length='20')
-    body = models.CharField(max_length='20')
 
-    def __str__(self):
-        return "OurPost %s,%s" % (self.title,self.body)
-
-    def foo(self):
-        pass
 
 content_type = OurPost
 
