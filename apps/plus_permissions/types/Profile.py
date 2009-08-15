@@ -14,6 +14,8 @@ from django.db.models.signals import post_save
 import ipdb
 
 # Here's the wrapping we have to put around it.                                                                                                              
+
+content_type = Profile
         
 class ProfileViewer: 
     about = InterfaceReadProperty

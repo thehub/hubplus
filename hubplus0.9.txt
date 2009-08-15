@@ -20,6 +20,7 @@ Tom - resource containment relation - objects exist in a "container" which may n
     - initialise types (maps + any patching)
     - control permissions on security tags - admin only 
 
+- who can set the security context of an object?? - the admin of the container
 
 Example configuration
 ---------------------

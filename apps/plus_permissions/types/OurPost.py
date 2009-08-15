@@ -25,6 +25,8 @@ class OurPost(models.Model):
     def foo(self):
         pass
 
+content_type = OurPost
+
 
 # Here's the wrapping we have to put around it.
 
