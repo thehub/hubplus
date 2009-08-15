@@ -15,10 +15,9 @@ from apps.plus_groups.models import create_hub, create_site_group
 
 from apps.plus_groups import *
 
-import ipdb
 
 # Permission Management by Content Types
-from OurPost import *
+from types.OurPost import *
 
 #  
 class TestPermissions(unittest.TestCase) :

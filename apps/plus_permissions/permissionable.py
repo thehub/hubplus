@@ -19,5 +19,5 @@ class MissingSecurityContextException(Exception):
         self.msg = 'Missing %s when creating a %s' % (context,cls)
 
 
-def security_patch(content_type):
+
     

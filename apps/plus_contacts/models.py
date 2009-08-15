@@ -8,7 +8,6 @@ from django.contrib.contenttypes import generic
 
 from apps.hubspace_compatibility.models import TgGroup
 
-from apps.plus_permissions.permissionable import PermissionableMixin
 from django.core.mail import send_mail
 
 from django.conf import settings
@@ -97,7 +96,7 @@ class ApplicationManager(models.Manager) :
             n.load_interfaces_for(agent)
             return n
 
-class Application(PermissionableMixin, models.Model) :
+class Application(models.Model) :
     applicant_content_type = models.ForeignKey(ContentType,related_name='applicant_type')
     applicant_object_id = models.PositiveIntegerField()
     applicant = generic.GenericForeignKey('applicant_content_type', 'applicant_object_id')
