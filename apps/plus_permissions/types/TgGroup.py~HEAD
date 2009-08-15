@@ -6,11 +6,9 @@ from apps.hubspace_compatibility.models import TgGroup
 
 from django.db.models.signals import post_save
 
-content_type = TgGroup
-
 import ipdb
 
-# override object managers, filter, get, get_or_create
+# Here's the wrapping we have to put around it. 
 
 def get_or_create_group(self, group_name, display_name, place) :
     # note : we can't use get_or_create for TgGroup, because the created date clause won't match on a different day                                     

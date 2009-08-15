@@ -9,8 +9,7 @@ from apps.plus_permissions.interfaces import InterfaceReadProperty, InterfaceWri
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes import generic
 
-from apps.hubspace_compatibility.models import TgGroup
-
+from apps.hubspace_compatibility.models import TgGro
 import ipdb
 
 # This represents a typical model type from another django or pinax app
@@ -24,8 +23,6 @@ class OurPost(models.Model):
 
     def foo(self):
         pass
-
-content_type = OurPost
 
 
 # Here's the wrapping we have to put around it.

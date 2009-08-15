@@ -8,7 +8,6 @@ from django.contrib.contenttypes import generic
 
 from apps.hubspace_compatibility.models import TgGroup, Location
 
-from apps.plus_permissions.models import DefaultAdmin
 
 import datetime
 

@@ -3,8 +3,6 @@ from django.db import models
 from django.contrib.auth.models import User, UserManager
 from django.contrib.contenttypes.models import ContentType
 
-from apps.plus_permissions.models import get_permission_system
-
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes import generic
 

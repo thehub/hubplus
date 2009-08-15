@@ -1,3 +1,4 @@
+
 Tuesday-Wednesday
 -----------------
 - objects exist in an agents object-namespace, this determines "security context" and who will be able to 
@@ -5,11 +6,36 @@ Tuesday-Wednesday
 - objects exist in a "container" which may not be the agent but will be in the agents namespace  
 e.g. comments on wikis
 
-- a security context has an agent and the agent has an "admin". The agents admin 
+=======
+
+Phil - Write decorator to explicitly check for a given interface on the current resource (second argument) 
+       when calling a function. decorator should also wrap the current resource in a secure_wrapper.
+     - Write template decorator which automatically wraps "secure" objects in a template_secure_wrapper
+     - override generic object manager filter and get functions to use secure_wrapper. 
+     - write high-level tests for PermissionsSystem, and SecurityContext
 
 - if security context isn't set, we should look up the containment hierarchy to find it
 - Whenever we create a group, user or set customize permissions the slider-set we create a new security context
  
+=======
+Tom - resource containment relation - objects exist in a "container" which may not be the agent but will be in the agents namespace  e.g. comments on wikis
+    - associate_security_context(object, type) - make an object security context - allow different group types. if security context isn't set, we should look up the containment hierarchy to find it
+    - reverese lookups - patch object manager
+
+    - json specification of group, wiki and comments
+    - imports
+
+    - generate slider (view)
+    - change slider (view)
+    - on create group create admin group. Whenever we create a group, user or set customize permissions the slider-set we create a new security context
+    - on create profile set user as admin
+    - a security context has an agent and the agent has a "host". The agents admin - this determines and who will be able to *set permissions*, i.e. the admin group of this group, and a necessary monotonic tag acquisition (sliders).
+    - templatetag - include slider for interface, include slider set for security context
+    - initialise types (maps + any patching)
+    - control permissions on security tags - admin only 
+
+- who can set the security context of an object?? - the admin of the container
+>>>>>>> 68c2125342f3326f3f319e2c8f05fd2228399802:hubplus0.9.txt
 
 Example configuration
 ---------------------
@@ -76,7 +102,6 @@ Wednesday
 - Phil + Tom - sign-up UI - js elements
 
 
-- Jesson + Tom - wiki design
 - Tom wiki + group tests - security_context and context/container
 
 
@@ -139,14 +164,6 @@ Go live with whole Hub+ team + selection of members
 Hard launch with members! International hosted event conferenced between Hubs - with people testing.
 
 
-
-Permissions
------------
-finish off contextual permissions
-switch context of object from group to object
-respect hubspace user-group memberships
-
-
 Tweets
 ------
 From pinax
@@ -162,7 +179,6 @@ tag group as "about ..."
 
 
 - Place item in owning AGENT
-- control permissions based on security context 
 Group permissions Dashboard (slider group for each type)
 Host Group (default to only visible to its members)
 
@@ -258,6 +274,7 @@ django-mptt
 Financial + User data export HP 0.9
 ----------------------------
 
+<<<<<<< HEAD:hubplus0.9.txt
 ==== Extra tasks ====
 
 1) Move GroupExtra fields back into TgGroups
@@ -351,4 +368,5 @@ How do we represent "dynamic agents"
 Now you have lists of possible types, and slider_agents, interfaces etc. ... are these different per instance of SecurityContext? 
 
 Slider agents are different, if you can only create certain types of things in certain contexts then interfaces are different. In reality constraints are probably relationships between certain interfaces. e.g. Group.View can't be lower than Group.Editor
+
 

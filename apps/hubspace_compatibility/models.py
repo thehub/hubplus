@@ -7,8 +7,6 @@ from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes import generic
 from django.db.models.signals import post_save
 
-from apps.plus_permissions.permissionable import PermissionableMixin
-
 from itertools import chain
 
 import hashlib
@@ -153,7 +151,7 @@ class Location(models.Model):
         db_table = u'location'
 
 try :
-  class TgGroup(models.Model,PermissionableMixin):
+  class TgGroup(models.Model):
     group_name = models.CharField(unique=True, max_length=40)
     display_name = models.CharField(max_length=255)
     created = models.DateTimeField(auto_now_add=True)
@@ -163,7 +161,9 @@ try :
     level = models.CharField(max_length=9)
     psn_id = models.CharField(max_length=100)
     path = models.CharField(max_length=120)
-    users = models.ManyToManyField(User)
+    users = models.ManyToManyField(User, db_table='user_group')
+    child_groups = models.ManyToManyField('self', symmetrical=False, related_name='parent_groups')
+
 
     def add_member(self, user_or_group):
         if isinstance(user_or_group, User) and not self.users.filter(id=user_or_group.id):
@@ -219,19 +219,6 @@ try :
 
     child_groups = models.ManyToManyField('self', symmetrical=False, related_name='parent_groups')
 
-  #class HCGroupMapping(models.Model) :
-  #    """XXX Effectively this is a many-to-many relationship between a group and its members.
-  #    I guess it is explicit because of the need for a GenericForeignKey to reference User and Group tables for the child.
-  #    I find this unnecessary and undesirable because:
-  #    a) we already have a user_group relation in hubspace 
-  #    b) it might sometimes be useful to distinguish group memberships from user membership relations
-  #    Therfore I will add a many-to-many relation for groups called is_parent_of. And user the existing user_group relation from hubspace. This will also enhance hubspace's access to HubPlus defined groups.
-  #    This relationship should then be deprecated.
-  #    """
-  #    content_type = models.ForeignKey(ContentType)
-  #    object_id = models.PositiveIntegerField()
-  #    child = generic.GenericForeignKey('content_type', 'object_id')
-  #    parent = models.ForeignKey(TgGroup)
 
 except Exception, e:
   print "##### %s" % e
