@@ -64,9 +64,6 @@ def my_create_group(name, display_name, type, *argv, **kwargs) :
     else :
         h = g # if no admin flag, we make the group its own admin
         
-    da = DefaultAdmin(agent=h,resource=g)
-    da.save()
-
     return g,h
 
 def create_hub(name, display_name,  *argv, **kwargs) :

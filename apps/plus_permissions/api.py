@@ -11,11 +11,8 @@ def create_root_location():
         self.root_location.save()
 create_root_location()
 
-<<<<<<< HEAD:apps/plus_permissions/api.py
+
 anonymous_group = self.get_or_create_group('anonymous', 'World', self.root_location)
-=======
-anonyoumous_group = self.get_or_create_group('anonymous', 'World', self.root_location)
->>>>>>> 68c2125342f3326f3f319e2c8f05fd2228399802:apps/plus_permissions/api.py
 all_members_group = self.get_or_create_group('all_members','All Members', self.root_location)
 site_hosts = self.get_or_create_group('site_hosts','site_hosts', self.root_location)
 

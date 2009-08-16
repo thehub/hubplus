@@ -15,6 +15,7 @@ from apps.plus_groups.models import create_hub, create_site_group
 
 from apps.plus_groups import *
 
+
 from types.OurPost import *
 
 #  
@@ -123,14 +124,9 @@ class TestPermissions(unittest.TestCase) :
 
 
     def testPermissions(self) :
-        ps = PermissionSystem()
 
         u = User(username='synnove',email_address='synnove@the-hub.net')
         u.save()
-
-        agent_type = ContentType.objects.get_for_model(u)
-        an_agent = Agent.objects.get(agent_content_type=agent_type,agent_object_id=u.id)
-        self.assertEquals(an_agent.agent.id,u.id)
 
         # two resources, blog and blog2, make sure that security_
         blog= OurPost(title='my post')    
@@ -208,7 +204,7 @@ class TestPermissions(unittest.TestCase) :
 
 
     def makeInterfaceFactory(self) :
-        ps = PermissionSystem()
+
         tif = ps.get_interface_factory()        
         tif.add_permission_manager(OurPost,OurPostPermissionManager(OurPost))
         return tif
@@ -312,7 +308,7 @@ class TestPermissions(unittest.TestCase) :
 
 
     def test_new_slider_set(self) :
-        ps = get_permission_system()
+
         group, hosts = create_site_group('solar cooking', 'Solar Chefs', create_hosts=True)
         blog= OurPost(title='parabolic pancakes')
         blog.save()
@@ -358,7 +354,7 @@ class TestPermissions(unittest.TestCase) :
         self.assertEquals(slider.current,options[1])
         self.assertEquals(slider.soft_min,options[0])
 
-        ps = get_permission_system()
+
 
         # slide up to anybody (remember security_context of sliders are "group")
         so.change_slider(IViewer,ps.get_anon_group())

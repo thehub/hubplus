@@ -16,31 +16,11 @@ import datetime
 1. Where is group's extra?? why not just extend 
 2. Move this to plus_permissions
 
-
 3. Bring in Location Data for Hub - define Hub as the Hub's members group object with an associated Location
 
 4. Implement the hubspace metadata framework - add typed metadata and language along the way
 5. Implement the Hub Microsites list functionality
 """
-
-def getHubspaceUser(username) :
-    """ Returns the hubspace user. None if doesn't exist"""
-    try :
-        tu = User.objects.get(username=username)
-        return  tu
-    except Exception,e:
-        print "Error in getHubspaceUser %s" % e
-        return None
-
-
-#class UserGroup(models.Model):
-#    group_id = models.IntegerField()
-#    user_id = models.IntegerField()
-#    id = models.IntegerField(primary_key=True)
-#    class Meta:
-#        db_table = u'user_group'
-
-
 
 def to_db_encoding(s, encoding):
     if isinstance(s, str):
@@ -162,7 +142,17 @@ try :
     psn_id = models.CharField(max_length=100)
     path = models.CharField(max_length=120)
     users = models.ManyToManyField(User, db_table='user_group')
+
     child_groups = models.ManyToManyField('self', symmetrical=False, related_name='parent_groups')
+
+    about = models.TextField('about', null=True, blank=True)
+    group_type = models.CharField('type',max_length=30)
+    
+    title = models.CharField(max_length=60)
+    description = models.TextField()
+
+    body = models.TextField()
+    rights = models.TextField()
 
 
     def add_member(self, user_or_group):
@@ -278,6 +268,6 @@ def user_save(self) :
     
 
 
-# Agents are used by plus_permissions.SecurityTag to make a many-to-many relationship with agents such as 
+# Now GenericReferences replace "Agents" to make a many-to-many relationship with agents such as 
 # Users and TgGroups
 

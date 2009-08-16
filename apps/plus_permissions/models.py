@@ -7,7 +7,9 @@ from django.contrib.auth.models import User
 from django.db.models.signals import post_save
 
 from apps.hubspace_compatibility.models import TgGroup, Location
+
 from apps.plus_permissions.interfaces import *
+
 
 import pickle
 import simplejson
