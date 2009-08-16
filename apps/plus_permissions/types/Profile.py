@@ -9,7 +9,7 @@ from apps.profiles.models import Profile
 
 from apps.hubspace_compatibility.models import TgGroup
 
-import ipdb
+
 
 # Here's the wrapping we have to put around it.                                                                                                              
 

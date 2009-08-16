@@ -16,7 +16,7 @@ from apps.plus_groups import *
 
 from types.OurPost import *
 
-from api import make_security_tag, has_access
+from apps.plus_permissions.api import make_security_tag, has_access
 
 #  
 class TestPermissions(unittest.TestCase) :

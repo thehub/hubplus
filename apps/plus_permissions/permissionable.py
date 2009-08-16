@@ -20,6 +20,36 @@ class MissingSecurityContextException(Exception):
 
 
 
+class PermissionableManager(models.Manager) :
+    # if a permission_agent is passed, only get or filter items which 
+    # pass a security check
+    # XXX ... add the actual wrapper to the output of these functions
+
+    def filter(self,**kwargs) : 
+        if not kwargs.has_key('permission_agent') :
+            return super(self.__class__,self).filter(**kwargs)
+        else :
+            from apps.plus_permissions.interfaces import SecureWrapper, secure_wrap
+            agent = kwargs['permission_agent']
+            del kwargs['permission_agent']
+
+            return (a  
+                    for a in super(self.__class__,self).filter(**kwargs) 
+                    if has_access(agent,a,get_interface_map(self.__class__,'Viewer')))
+        
+
+
+    def get(self,**kwargs) :
+        if not kwargs.has_key('permission_agent') :
+            return super(self.__class__,self).get(**kwargs)
+        else :
+            from apps.plus_permissions.interfaces import SecureWrapper, secure_wrap
+            agent = kwargs['permission_agent']
+            del kwargs['permission_agent']
+            a = super(self.__class__,self).get(**kwargs)
+            #return secure_wrap(a,...)
+            return a
+ 
 
 def to_security_context(self):
     """Turn an existing object into a security context.

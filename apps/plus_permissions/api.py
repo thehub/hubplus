@@ -5,6 +5,9 @@ to which anyone is a member)"""
 
 from apps.plus_permissions.interfaces import secure_wrap, TemplateSecureWrapper
 from apps.hubspace_compatibility.models import Location
+from apps.plus_groups.models import get_or_create_group
+
+root_location = None
 
 def create_root_location():
     root_location, created = Location.objects.get_or_create(name='HubPlus')
@@ -13,9 +16,10 @@ def create_root_location():
 create_root_location()
 
 
-anonymous_group = self.get_or_create_group('anonymous', 'World', self.root_location)
-all_members_group = self.get_or_create_group('all_members','All Members', self.root_location)
-site_hosts = self.get_or_create_group('site_hosts','site_hosts', self.root_location)
+
+anonymous_group = get_or_create_group('anonymous', display_name='World', location=root_location)
+all_members_group = get_or_create_group('all_members',display_name='All Members', location=root_location)
+site_hosts = get_or_create_group('site_hosts', display_name='site_hosts', location=root_location)
 
 def has_access(self, agent, resource, interface) :
     """Does the agent have access to this interface in this resource
