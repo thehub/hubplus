@@ -117,8 +117,8 @@ class GenericReference(models.Model):
     obj = generic.GenericForeignKey()
     
     acquires_from = models.ForeignKey("GenericReference", related_name="acquirers", null=True)
-    acquired_scontext =  models.ForeignKey(SecurityContext, related_name="controlled", null=True)
-    explicit_scontext = models.ForeignKey(SecurityContext, related_name="target", null=True)
+    acquired_scontext = models.ForeignKey(SecurityContext, related_name="controlled", null=True)
+    explicit_scontext = models.ForeignKey(SecurityContext, related_name="target", null=True, unique=True)
 
 
 
