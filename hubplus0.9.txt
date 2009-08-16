@@ -2,25 +2,27 @@ Phil - Write decorator to explicitly check for a given interface on the current 
      - Write template decorator which automatically wraps "secure" objects in a template_secure_wrapper
      - override generic object manager filter and get functions to use secure_wrapper. 
      - write high-level tests for PermissionsSystem, and SecurityContext
+     - on create group create admin group. Whenever we create a group, user or set customize permissions the slider-set we create a new security context
+     
+     - on create security context set the agent as a "host". The agents admin - this determines who will be able to *set permissions*, i.e. the admin group of this group, and a necessary monotonic tag acquisition (sliders).
+     
+     - on create profile set user as admin, and profile to acquire from user
+     
+     - find agent from acquistion hierarchy + host
 
 
-Tom - resource containment relation - objects exist in a "container" which may not be the agent but will be in the agents namespace  e.g. comments on wikis
-    - associate_security_context(object, type) - make an object security context - allow different group types. if security context isn't set, we should look up the containment hierarchy to find it
-    - reverese lookups - patch object manager
-
-    - json specification of group, wiki and comments
-    - imports
+Tom - json specification of user, profile, group, wiki and comments
+    - different types of groups - "template" groups and clone group permissions
+    - add manage permissions interface to most objects  i.e. set_security_context, move_slider
 
     - generate slider (view)
     - change slider (view)
-    - on create group create admin group. Whenever we create a group, user or set customize permissions the slider-set we create a new security context
-    - on create profile set user as admin
-    - a security context has an agent and the agent has a "host". The agents admin - this determines and who will be able to *set permissions*, i.e. the admin group of this group, and a necessary monotonic tag acquisition (sliders).
+    - customize permissions (make security context)
+
     - templatetag - include slider for interface, include slider set for security context
     - initialise types (maps + any patching)
     - control permissions on security tags - admin only 
 
-- who can set the security context of an object?? - the admin of the container
 
 Example configuration
 ---------------------
@@ -43,12 +45,6 @@ Wednesday
 
 - Phil + Tom - finish permissions
 
-  * Phil implement SliderSet
-  ** Define a "Contextable" behaviour for things that can be "Contexts"
-  *** including some standard "create defaults" functions. Eg. if a Group can contain wiki-pages, then in a TgGroupPermissionManager, the "create_context_defaults" function will make SecurityTags for wiki-pages (ie. one for each Interface that a wiki has)
-  *** Now "sliders" will simply add and remove agents from these pre-existing SecurityTags. 
-  *** When a new wiki page is created and a group (say, "Hub Kings Cross") is set as its security_context, then the permission system will look at the Wiki SecurityTags for Hub Kings Cross to decide access to this wiki-page.
-  *** If we then customize the settings of the wiki page, the Page becomes its own security_context, and new Wiki-page SecurityTags are created for this page.
   *** If the user then reverts this wiki to using the "defaults" from Kings Cross again, do we delete these custom SecurityTags? I think so.
 
   ** SliderSet to manage creation and deletion of agent-mappings. (Never creates or destroys security tags)
@@ -82,29 +78,29 @@ Wednesday
 
 
 
-Thursday
+Monday
 --------
 - Tom wiki backend implementation
 - Phil - Group's UI  + create Hubs (with location object)
 
-Friday - Sunday
----------------
+Tuesday - Thursday
+------------------
 - Tom wiki UI
 - Phil + Jesson - Group permissions dashboard
 - Phil + Jesson - tweets, messaging and comments (on documents) from pinax + ui enhancements
                 - set status of a group
 
 
-Monday 17th - Tuesday
----------------------
+Friday - Sunday
+---------------
 Phil + Tom - file upload + image previewing http://www.ohloh.net/p/django-thumbs ?
 Phil + Tom - full text search - backend
 Phil + Tom - field-value search
 Jesson - Search and tag filtering interface
 Phil + Tom - results batching and sorting
 
-Wednesday - Friday
-------------------
+Monday - Friday
+---------------
 Tom + Phil - tag search
 Jesson - Feed customisation design
 
