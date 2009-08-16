@@ -19,33 +19,6 @@ anonyoumous_group = self.get_or_create_group('anonymous', 'World', self.root_loc
 all_members_group = self.get_or_create_group('all_members','All Members', self.root_location)
 site_hosts = self.get_or_create_group('site_hosts','site_hosts', self.root_location)
 
-def make_security_context(obj):
-    """Turn an existing object into a security context.
-    """
-    
-
-
-def set_security_context(self, target, context):
-    """Set the security context used by this object
-    """
-    cn = self.get_or_create(target)
-    cn.security_context = context
-    cn.save()
-
-def get_security_context(target):
-    saved_context = target.security_context
-    if saved_context:
-        return saved_context
-    sec_context = get_security_context(container)
-    
-def set_container(target, container):
-    target.container = container
-    target.save()
-
-def get_container(target):
-    return target.context
-
-
 def has_access(self, agent, resource, interface) :
     """Does the agent have access to this interface in this resource
     """
@@ -55,12 +28,12 @@ def has_access(self, agent, resource, interface) :
     context_type = ContentType.objects.get_for_model(context)
 
     # which agents have access?
-    allowed_agents = Agent.objects.filter(securitytag__interface=interface,
-                                          securitytag__context_content_type=context_type,
-                                          securitytag__context_object_id=context.id)
+    allowed_agents = GenericReference.objects.filter(securitytag__interface=interface,
+                                                     securitytag__context_content_type=context_type,
+                                                     securitytag__context_object_id=context.id)
     # probably should memcache both allowed agents (per .View interface) and agents held per user to allow many queries very quickly. e.g. to only return the search results that you have permission to view
     
-    allowed_agents = set([a.agent for a in allowed_agents])
+    allowed_agents = set([a.obj for a in allowed_agents])
     
     if self.anonyoumous_group in allowed_agents: 
         # in other words, if this resource is matched with anyone, we don't have to test 

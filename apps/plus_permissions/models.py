@@ -6,17 +6,15 @@ from django.contrib.contenttypes import generic
 from django.contrib.auth.models import User
 from django.db.models.signals import post_save
 
-from permissionable import *
-
-from apps.hubspace_compatibility.models import TgGroup, Location, Agent
+from apps.hubspace_compatibility.models import TgGroup, Location
 from apps.plus_permissions.interfaces import *
-
 
 import pickle
 import simplejson
 
 import datetime
-import ipdb
+
+
 
 
 class SecurityContext(models.Model):
@@ -35,7 +33,7 @@ class SecurityContext(models.Model):
      def add_default_agents(self, tag):
           pass
 
-     context_agent = models.ForeignKey('Agent', null=True) #The agent which this security context is associated with
+     context_agent = models.ForeignKey('GenericReference', null=True) #The agent which this security context is associated with
      def set_context_agent(self, agent):
           if self.context_agent:
                return context_agent
@@ -111,12 +109,23 @@ class SecurityContext(models.Model):
         
 
 
+class GenericReference(models.Model):
+    content_type = models.ForeignKey(ContentType, related_name='security_tag_agent')
+    object_id = models.PositiveIntegerField()
+    obj = generic.GenericForeignKey()
+    
+    acquires_from = models.ForeignKey("GenericReference", related_name="acquirers", null=True)
+    acquired_scontext =  models.ForeignKey(SecurityContext, related_name="controlled", null=True)
+    explicit_scontext = models.ForeignKey(SecurityContext, related_name="target", null=True)
+
+
 
 class SecurityTag(models.Model) :
     interface = models.CharField(max_length=100)
     security_context = models.ForeignKey(SecurityContext)  # revere is securitytag
-    agents = models.ManyToManyField(Agent)
+    agents = models.ManyToManyField(GenericReference)
     def __str__(self) :
         return """(%s)Interface: %s, Contexte: %s, Agents: %s""" % (self.id, self.interface,self.context,self.agents)
+
 
 
