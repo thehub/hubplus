@@ -11,23 +11,6 @@ from apps.hubspace_compatibility.models import TgGroup, Location
 
 import datetime
 
-class GroupExtras(models.Model) :
-    """ Rather than hack the TgGroup table, we'll add the extras here. 
-    To consider : would this be better as a subclass of TgGroup?"""
-    
-    tg_group = models.OneToOneField(TgGroup, primary_key=True)
-    about = models.TextField('about', null=True, blank=True)
-    group_type = models.CharField('type',max_length=30)
-    
-    psn_id = models.CharField(max_length=120)
-    path = models.CharField(max_length=120)
-
-    title = models.CharField(max_length=60)
-    description = models.TextField()
-
-    body = models.TextField()
-    rights = models.TextField()
-
  
 def create_group_extras(sender, instance=None, **kwargs) :
     if instance is None : 

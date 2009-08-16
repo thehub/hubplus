@@ -37,6 +37,7 @@ def set_security_context(self, scontext):
     ref.save()
 
 def get_security_context(self):
+
     ref = self.get_ref()
     if ref.explicit_scontext:
         return ref.explicit_scontext

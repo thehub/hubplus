@@ -35,7 +35,9 @@ class SecurityContext(models.Model):
      def add_default_agents(self, tag):
           pass
 
-     context_agent = models.ForeignKey('GenericReference', null=True) #The agent which this security context is associated with
+     context_agent = models.ForeignKey('GenericReference', null=True) 
+     #The agent which this security context is associated with
+
      def set_context_agent(self, agent):
           if self.context_agent:
                return context_agent
@@ -126,8 +128,10 @@ class SecurityTag(models.Model) :
     interface = models.CharField(max_length=100)
     security_context = models.ForeignKey(SecurityContext)  # revere is securitytag
     agents = models.ManyToManyField(GenericReference)
+
     def __str__(self) :
         return """(%s)Interface: %s, Contexte: %s, Agents: %s""" % (self.id, self.interface,self.context,self.agents)
 
-
+    def add_agent(self, agent) :
+         self.agents.add(agent)
 

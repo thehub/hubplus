@@ -12,11 +12,11 @@ from apps.hubspace_compatibility.models import TgGroup, Location
 
 from models import *
 from apps.plus_groups.models import create_hub, create_site_group
-
 from apps.plus_groups import *
 
-
 from types.OurPost import *
+
+from api import make_security_tag, has_access
 
 #  
 class TestPermissions(unittest.TestCase) :
@@ -35,13 +35,11 @@ class TestPermissions(unittest.TestCase) :
         u3 = User(username='jesson',email_address='jesson@the-hub.net')
         u3.save()
 
-        # we need location for TgGroups
         l = Location(name='kingsX')
         l.save()
 
         # here's a group (called "hub-members")
-        hubMembers = TgGroup(group_name='hub-members',display_name='members',created=datetime.date.today(),place=l)
-        hubMembers.save()
+        hubMembers = create_site_group(group_name='hub-members',display_name='members',place=l)
 
         # they start empty
         self.assertEquals(hubMembers.get_no_members(),0)
@@ -123,38 +121,63 @@ class TestPermissions(unittest.TestCase) :
 
 
 
-    def testPermissions(self) :
+    def test_permissions(self) :
 
         u = User(username='synnove',email_address='synnove@the-hub.net')
         u.save()
+        
 
-        # two resources, blog and blog2, make sure that security_
+        writers = create_site_group(group_name='writers', display_name='writers')
+        editors = create_site_group(group_name='editors', display_name='editors')
+
+        # two resources, blog and blog2, 
         blog= OurPost(title='my post')    
         blog.save()
-        blog.set_security_context(blog)
 
+        
+        # and make writers the acquired security context of the blog
+        blog.acquires_from(writers)
+    
+        i_viewer = get_interface_map(OurPost,'Viewer')
+
+        # explicit tag between the writers group, the viewer interface and the user u
+        # this means that u has viewer access on writers,
+        t = make_security_tag(writers, i_viewer, [u])
+
+        # confirm this
+        self.assertTrue(has_access(u, writers, i_viewer))
+
+        # now confirm that u also has access on blog via this security_context
+        self.assertTrue(has_access(u, blog, i_viewer))
+        
+
+        # confirm that a different user DOESN'T have the same access
+        u2 = User(username='joerg', email_address='joerg@the-hub.net')
+        u2.save()
+        
+        self.assertFalse(has_access(writers, blog, i_viewer))
+        self.assertFalse(has_access(u2, blog, i_viewer))
+        
+
+        # now a second resource, blog2 which is similar to blog1, but we won't give access
         blog2 = OurPost(title='another post')
         blog2.save()
-        blog2.set_security_context(blog2)
 
-        l = Location(name='da hub')
-        l.save()
-
-        editors = TgGroup(group_name='editors',display_name='editors',created=datetime.date.today(),place=l)
-        editors.save()
-
-        tif = self.makeInterfaceFactory()
-
-        # explicit tag between u, blog, viewer
-        t = SecurityTag(context=blog,interface=tif.get_id(OurPost,'Viewer'))
-        t.save()
-
-        t.agents.add(u.corresponding_agent())
-        t.save()
+        self.assertFalse(has_access(u,blog2,i_viewer))
         
-        IViewer = tif.get_id(OurPost,'Viewer')
-        ICommentor = tif.get_id(OurPost,'Commentor')
-        IEditor = ps.get_interface_id('OurPost','Editor')
+        # but we'll make it its own security context
+        blog2.set_explicit_security_context(blog2)
+        t2 = make_security_tag(blog2, i_viewer)
+        # and we have a tag for it, but no agents associated with the tag
+        self.assertFalse(has_access(blog2,i_viewer,u))
+        self.assertFalse(has_access(blog2,i_viewer,u2))
+
+        # now we add an agent to a tag
+        t2.add_agent(u)
+        self.assertTrue(has_access(blog2,i_viewer,u))
+        self.assertFalse(has_access(blog2,i_viewer,u2))
+
+
 
         self.assertTrue(ps.has_access(u,blog,IViewer))
 
@@ -202,17 +225,7 @@ class TestPermissions(unittest.TestCase) :
         
                          
 
-
-    def makeInterfaceFactory(self) :
-
-        tif = ps.get_interface_factory()        
-        tif.add_permission_manager(OurPost,OurPostPermissionManager(OurPost))
-        return tif
-
-
-    def testInterfaces(self) :
-
-        tif = self.makeInterfaceFactory()
+    def test_interfaces(self) :
 
         class A : pass
         self.assertTrue(tif.get_type(OurPost))

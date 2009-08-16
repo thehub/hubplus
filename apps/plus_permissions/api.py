@@ -3,12 +3,13 @@
 the user creating a lot of other objects. Also you can ask it to give you some default groups such as 'anon' (the group 
 to which anyone is a member)"""
 
-from apps.hubplus.interfaces import secure_wrap, TemplateSecureWrapper
+from apps.plus_permissions.interfaces import secure_wrap, TemplateSecureWrapper
+from apps.hubspace_compatibility.models import Location
 
 def create_root_location():
     root_location, created = Location.objects.get_or_create(name='HubPlus')
     if created :
-        self.root_location.save()
+        root_location.save()
 create_root_location()
 
 
@@ -42,3 +43,8 @@ def has_access(self, agent, resource, interface) :
         return True
 
     return False
+
+
+def create_security_tag(security_context, interface, agents=[]) :
+    t = SecurityTag(security_context=security_context, interface=interface, agents=agents)
+    
