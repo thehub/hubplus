@@ -8,14 +8,16 @@ content_type = TgGroup
 
 import ipdb
 
-# override object managers, filter, get, get_or_create
-from apps.plus_permissions.permissionable import get_or_create_root_location
 
+from apps.plus_permissions.default_agents import get_or_create_root_location
+
+# override object managers, filter, get, get_or_create
 def get_or_create(group_name=None, display_name=None, place=None, level=None, user=None) :
     """get or create a group
     """
     # note : we can't use get_or_create for TgGroup, because the created date clause won't match on a different day                                     
     # from the day the record was created.                                                                                                              
+    
     if not user:
         raise TypeError("We must have a user to create a group, since otherwise it will be inaccessible")
     if not place:
@@ -23,36 +25,35 @@ def get_or_create(group_name=None, display_name=None, place=None, level=None, us
     xs = TgGroup.objects.filter(group_name=group_name)
     if len(xs) > 0 :
         group = xs[0]
+        created = False
     else :
+        created = True
         group = TgGroup(group_name=group_name, display_name=display_name, level=level, place=place)
         group.to_security_context()
         sec_context = group.get_security_context() 
         if level == 'member':
-            admin = TgGroup.objects.get_or_create(
+            admin_group, created = TgGroup.objects.get_or_create(
                 group_name=group_name + "_hosts", 
                 display_name=display_name + " Hosts", 
                 level='host',
-                place=place
+                place=place,
+                user=user
                 )
             sec_context.set_context_agent(group.get_ref())
-            sec_context.set_context_admin(admin.get_ref())
-            group.add_member(admin)
+            sec_context.set_context_admin(admin_group.get_ref())
+            group.add_member(admin_group)
             group.add_member(user)
-        elif 'host':
+            group.save()
+        elif level == 'host':
             sec_context.set_context_agent(group.get_ref())
             sec_context.set_context_admin(group.get_ref())
             group.add_member(user)
-    return group
+            group.save()
+    return group, created
 
 TgGroup.objects.get_or_create = get_or_create
-#we need to create a security context and an admin group here. We should overrider the manger method on TgGroup 
  
 
-#class TgGroupManager(model.managers):
-#    super()
- #   self.get_or_create = get_or_create_group
-
-#TgGroup.objects = TgGroupManager
 
 #       
 class TgGroupViewer: 

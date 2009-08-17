@@ -1,13 +1,9 @@
 from django.db import models
-
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes import generic
 
 from django.contrib.auth.models import User
-from django.db.models.signals import post_save
-
-from apps.hubspace_compatibility.models import TgGroup, Location
-from apps.plus_permissions.interfaces import *
+from apps.hubspace_compatibility.models import TgGroup
 
 import pickle
 import simplejson
@@ -30,14 +26,14 @@ PossibleTypes = {}
 def SetPossibleTypes(type, options):
      PossibleTypes = options
 
-
+from apps.plus_permissions.default_agents import get_anonymous_group, get_admin_user, get_all_members_group
 
 class SecurityContext(models.Model):
      """Target is the thing the context is associated with e.g. Group. The thing that we will metaphorically put things "in".
      Context Agent is the 
 
      """
-     #from plus_permissions.permissionable import anonyoumous_group, all_members_group
+
 
      def set_up(self):
          """XXX set from maps and create security tags
@@ -80,6 +76,7 @@ class SecurityContext(models.Model):
                context_admin_ref = context_admin_ref.acquires_from
           self.context_admin = context_admin_ref.obj
           return self.context_admin
+
 
 
      possible_types = models.TextField()

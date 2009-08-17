@@ -155,7 +155,7 @@ INSTALLED_APPS = (
     'about',
     'plus_lib',
     'hubspace_compatibility',
-
+    'plus_permissions',
     
 
     'analytics',
