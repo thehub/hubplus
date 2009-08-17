@@ -15,6 +15,7 @@ Phil - Write decorator to explicitly check for a given interface on the current 
      - write high-level tests for PermissionsSystem, and SecurityContext
      
 
+<<<<<<< HEAD:hubplus0.9.txt
 - if security context isn't set, we should look up the containment hierarchy to find it
 - Whenever we create a group, user or set customize permissions the slider-set we create a new security context
  
@@ -28,6 +29,10 @@ Tom - resource containment relation - objects exist in a "container" which may n
 Tom - put creator on the reference object?
     - access anonyoumous_group and all_members_group on the SecurityContext
     - json specification of user, profile, group, wiki and comments
+=======
+Tom - access anonyoumous_group and all_members_group on the SecurityContext
+    - json specification of user, profile, group, wiki and comments 
+>>>>>>> f54f823c690534223499249504dc8157f5124376:hubplus0.9.txt
         - everything apart from constraints
     - generate slider (views)
     - set slider (view)

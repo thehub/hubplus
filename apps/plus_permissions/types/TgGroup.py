@@ -11,11 +11,13 @@ import ipdb
 # override object managers, filter, get, get_or_create
 from apps.plus_permissions.permissionable import get_or_create_root_location
 
-def get_or_create(group_name=None, display_name=None, place=None, level=None) :
+def get_or_create(group_name=None, display_name=None, place=None, level=None, user=None) :
     """get or create a group
     """
     # note : we can't use get_or_create for TgGroup, because the created date clause won't match on a different day                                     
     # from the day the record was created.                                                                                                              
+    if not user:
+        raise TypeError("We must have a user to create a group, since otherwise it will be inaccessible")
     if not place:
         place = get_or_create_root_location()
     xs = TgGroup.objects.filter(group_name=group_name)
@@ -24,22 +26,22 @@ def get_or_create(group_name=None, display_name=None, place=None, level=None) :
     else :
         group = TgGroup(group_name=group_name, display_name=display_name, level=level, place=place)
         group.to_security_context()
+        sec_context = group.get_security_context() 
         if level == 'member':
             admin = TgGroup.objects.get_or_create(
                 group_name=group_name + "_hosts", 
                 display_name=display_name + " Hosts", 
                 level='host',
-                place=place,
+                place=place
                 )
-            sec_context = get_security_context(group)  #.get_ref().explicit_scontext
             sec_context.set_context_agent(group.get_ref())
             sec_context.set_context_admin(admin.get_ref())
             group.add_member(admin)
-            
+            group.add_member(user)
         elif 'host':
-            group.get_ref().explicit_scontext.set_context_agent(group.get_ref())
             sec_context.set_context_agent(group.get_ref())
             sec_context.set_context_admin(group.get_ref())
+            group.add_member(user)
     return group
 
 TgGroup.objects.get_or_create = get_or_create

@@ -69,7 +69,7 @@ class SecurityContext(models.Model):
 
 
      def get_creator(self):
-          return self.target.obj.creator
+          return self.target.creator
                
      def get_context_agent(self):
           if self.context_agent:
@@ -143,7 +143,7 @@ class GenericReference(models.Model):
     acquired_scontext = models.ForeignKey(SecurityContext, related_name="controlled", null=True)
     explicit_scontext = models.ForeignKey(SecurityContext, related_name="target", null=True, unique=True)
 
-    creator = models.ForeignKey(User, related_name='has_created')
+    creator = models.ForeignKey(User, related_name='created_objects', null=True)
 
 
 class SecurityTag(models.Model) :
