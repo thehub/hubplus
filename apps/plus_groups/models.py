@@ -11,31 +11,6 @@ from apps.hubspace_compatibility.models import TgGroup, Location
 
 import datetime
 
-class GroupExtras(models.Model) :
-    """ Rather than hack the TgGroup table, we'll add the extras here. 
-    To consider : would this be better as a subclass of TgGroup?"""
-    
-    tg_group = models.OneToOneField(TgGroup, primary_key=True)
-    about = models.TextField('about', null=True, blank=True)
-    group_type = models.CharField('type',max_length=30)
-    
-    psn_id = models.CharField(max_length=120)
-    path = models.CharField(max_length=120)
-
-    title = models.CharField(max_length=60)
-    description = models.TextField()
-
-    body = models.TextField()
-    rights = models.TextField()
-
- 
-def create_group_extras(sender, instance=None, **kwargs) :
-    if instance is None : 
-        return
-    group_extras, created = GroupExtras.objects.get_or_create(tg_group=instance)
-
-post_save.connect(create_group_extras,sender=TgGroup) 
-
 
 # Group types
 HUB     = 'HUB'
@@ -43,40 +18,54 @@ GROUP   = 'GROUP'
 MEMBERS = 'MEMBERS'
 HOSTS   = 'HOSTS'
 
-def my_create_group(name, display_name, type, *argv, **kwargs) :
+def extract(d,key) :
+    if d.has_key(key) :
+        k = d[key]
+        del d[key]
+        return k
+    else :
+        return None
 
-    location,created = Location.objects.get_or_create(name='virtual')
+def get_or_create_group(name, type=GROUP, **kwargs) :
 
-    g = TgGroup(group_name=name, display_name=display_name, place=location, created=datetime.datetime.today())
+    if TgGroup.objects.filter(group_name=name).count() > 0 :
+        return TgGroup.objects.get(group_name=name)
+
+    create_hosts = extract(kwargs,'create_hosts')
+    location = extract(kwargs,'location')
+    created = extract(kwargs,'created')
+    display_name = extract(kwargs,'display_name')
+
+    if not location :
+        location,flag = Location.objects.get_or_create(name='VirtualLocation')
+
+    if not created :
+        created = datetime.datetime.today()
+
+    g = TgGroup(group_name=name, place=location, created=created, display_name=display_name, **kwargs)
+    g.type = type
     g.save()
-    e = g.get_extras()
-    e.group_type = type
-    e.save()
+    scg = g.to_security_context()
 
-    if 'create_hosts' in kwargs :
-        if kwargs['create_hosts'] :
-            kw2 = {}
-            kw2.update(kwargs)
-            del kw2['create_hosts']
-            h,bb = my_create_group('%s-admin'%name, '%s Admin'%display_name, HOSTS, *argv, **kw2) 
+    if create_hosts : 
+            h = TgGroup(group_name='%s-admin'%name, display_name='%s Admin'%display_name,  place=location, **kwargs) 
+            h.type = HOSTS
             h.save()
-    
+            # XXX Not currently setting this to be the default host ... does that idea still exist?
     else :
         h = g # if no admin flag, we make the group its own admin
         
-    da = DefaultAdmin(agent=h,resource=g)
-    da.save()
-
     return g,h
 
-def create_hub(name, display_name,  *argv, **kwargs) :
-    g,h = my_create_group(name, display_name, HUB, *argv, **kwargs)
+
+def create_hub(name, **kwargs) :
+    g,h = get_or_create_group(name, HUB, **kwargs)
     g.add_member(h)
     return g,h
 
     
-def create_site_group(name, display_name, *argv, **kwargs) :
-    g,h = my_create_group(name, display_name, GROUP, *argv, **kwargs)
+def create_site_group(name,  **kwargs) :
+    g,h = get_or_create_group(name, GROUP, **kwargs)
     g.add_member(h)
     return g,h
 

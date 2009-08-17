@@ -16,11 +16,43 @@ class MissingSecurityContextException(Exception):
 
 
 
+class PermissionableManager(models.Manager) :
+    # if a permission_agent is passed, only get or filter items which 
+    # pass a security check
+    # XXX ... add the actual wrapper to the output of these functions
 
+    def filter(self,**kwargs) : 
+        if not kwargs.has_key('permission_agent') :
+            return super(self.__class__,self).filter(**kwargs)
+        else :
+            from apps.plus_permissions.interfaces import SecureWrapper, secure_wrap
+            agent = kwargs['permission_agent']
+            del kwargs['permission_agent']
+
+            return (a  
+                    for a in super(self.__class__,self).filter(**kwargs) 
+                    if has_access(agent,a,get_interface_map(self.__class__,'Viewer')))
+        
+
+
+    def get(self,**kwargs) :
+        if not kwargs.has_key('permission_agent') :
+            return super(self.__class__,self).get(**kwargs)
+        else :
+            from apps.plus_permissions.interfaces import SecureWrapper, secure_wrap
+            agent = kwargs['permission_agent']
+            del kwargs['permission_agent']
+            a = super(self.__class__,self).get(**kwargs)
+            #return secure_wrap(a,...)
+            return a
+ 
 
 def to_security_context(self):
     """Turn an existing object into a security context.
     """    
+    if self.get_ref().explicit_scontext :
+        # if one already exists, return it (PJ)
+        return self.get_ref().explicit_scontext
     sc = SecurityContext()
     sc.save()
     self.set_security_context(sc)
@@ -30,14 +62,21 @@ def set_security_context(self, scontext):
     """Set the security context used by this object
     """
     ref = self.get_ref()
+    if scontext.__class__ != SecurityContext: 
+        scontext = scontext.get_ref().explicit_scontext
     ref.explicit_scontext = scontext
     ref.save()
 
+
 def get_security_context(self):
+
     ref = self.get_ref()
     if ref.explicit_scontext:
         return ref.explicit_scontext
-    self.acquired_scontext = ref.acquires_from.obj.get_security_context()
+    elif ref.acquired_scontext:
+        return ref.acquired_scontext
+    else:
+        self.acquired_scontext = ref.acquires_from.obj.get_security_context()
     return self.acquired_scontext
     
 def get_ref(self):

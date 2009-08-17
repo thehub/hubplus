@@ -6,7 +6,7 @@ Interfaces are associated with a SecurityContext via a SecurityTag. Agents (user
 Interfaces are namespaced by the type they apply to e.g. "Wiki.Editor" allowing us to assign permissions on a type.  The syntax ".Editor" refers to the Editor Interface on the SecurityContext target object. The syntax *.Editor refers to the Editor interface on any objects in the security context.
 """
 
-__all__ = ['secure_wrap', 'PlusPermissionsNoAccessException', 'PlusPermissionsReadOnlyException', 'add_type_to_interface_map', 'add_interfaces_to_type', 'strip', 'TemplateSecureWrapper']
+__all__ = ['secure_wrap', 'PlusPermissionsNoAccessException', 'PlusPermissionsReadOnlyException', 'add_type_to_interface_map', 'add_interfaces_to_type', 'strip', 'TemplateSecureWrapper', 'get_interface_map']
 
 
 def secure_wrap(content_obj, interface_names=None):
@@ -51,6 +51,7 @@ def get_interface_map(cls):
     return type_interfaces_map.get(cls, {})
 
 def add_type_to_interface_map(cls, interfaces):
+    print "adding %s to %s in interface map" % (','.join(interfaces),cls.__name__)
     type_interfaces_map[cls.__name__] = {}
     add_interfaces_to_type(cls, interfaces)
         
@@ -63,6 +64,8 @@ def add_interfaces_to_type(cls, interfaces):
             type_interfaces[label] = interface
         else:
             raise "Interface "+ label  +"was not added to "+ `cls` +" because an interface of that name already exists"
+
+    print "ZZZ",type_interfaces
 
 
 def strip(x) :

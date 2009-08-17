@@ -10,15 +10,11 @@ from django.core.urlresolvers import reverse
 from django.contrib.auth.decorators import login_required
 from django.db import models
 
-
 from account.utils import get_default_redirect
 from account.models import OtherServiceInfo
 from account.forms import SignupForm, AddEmailForm, LoginForm, \
     ChangePasswordForm, SetPasswordForm, ResetPasswordForm, \
     ChangeTimezoneForm, ChangeLanguageForm, TwitterForm, ResetPasswordKeyForm
-
-from forms import HubPlusApplicationForm
-
 from emailconfirmation.models import EmailAddress, EmailConfirmation
 
 association_model = models.get_model('django_openid', 'Association')
@@ -47,17 +43,12 @@ def login(request, form_class=LoginForm,
         "url_required": url_required,
     }, context_instance=RequestContext(request))
 
-
-def signup(request, key, form_class=SignupForm,
+def signup(request, form_class=SignupForm,
         template_name="account/signup.html", success_url=None):
-
-
     if success_url is None:
         success_url = get_default_redirect(request)
     if request.method == "POST":
-        print "received post"
         form = form_class(request.POST)
-        print form
         if form.is_valid():
             username, password = form.save()
             user = authenticate(username=username, password=password)
@@ -67,11 +58,8 @@ def signup(request, key, form_class=SignupForm,
                 'username': user.username
             })
             return HttpResponseRedirect(success_url)
-        else :
-            print "invalid form"
     else:
         form = form_class()
-
     return render_to_response(template_name, {
         "form": form,
     }, context_instance=RequestContext(request))
@@ -268,28 +256,3 @@ def other_services_remove(request):
     request.user.message_set.create(message=ugettext(u"Removed twitter account information successfully."))
     return HttpResponseRedirect(reverse("acct_other_services"))
 other_services_remove = login_required(other_services_remove)
-
-
-
-def apply(request, form_class=HubPlusApplicationForm,
-        template_name="account/apply_form.html"):
-
-    if request.method == "POST":
-        form = form_class(request.POST)
-        print form
-        if form.is_valid():
-            contact, application = form.save()
-            return render_to_response('plus_contacts/application_thanks.html',{
-            'group' : form.cleaned_data['group'],
-            },context_instance=RequestContext(request))
-
-        else :
-            print "invalid form"
-    else:
-        form = form_class()
-    return render_to_response(template_name, {
-        "form": form,
-    }, context_instance=RequestContext(request))
-
-
-

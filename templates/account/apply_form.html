@@ -1,0 +1,48 @@
+{% extends "site_base.html" %}
+
+{% load i18n %}
+{% load avatar_tags %}
+{% load app_plugins %}
+{% load uni_form %}
+
+{% block body %}
+    
+{% if user.is_authenticated %}
+  <p>{% trans "You are already logged in. You can still use this form to apply for membership of hubs and groups." %}</p>
+{% else %}
+  <p>{% trans "Already have an account?" %} <a href="{% url acct_login %}">{% trans "Log In" %}</a>!</p>
+{% endif %}
+
+  <form class="full uniForm" id="apply_form" method="post" action="{% url acct_apply %}">
+    <fieldset class="inlineLabels">
+      {{ form|as_uni_form }}
+      <div  class="form_blick">
+        <input type="submit" value="{% trans "Apply to Join &raquo;" %}" />
+      </div>
+    </fieldset>
+  </form>
+
+
+        
+{% url terms as terms_url %}
+{% url privacy as privacy_url %}
+<p>{% blocktrans %}By clicking "Sign Up", you are indicating that you have read and agree to the <a href="{{ terms_url }}">Terms of Use</a> and <a href="{{ privacy_url }}">Privacy Policy</a>.{% endblocktrans %}</p>
+        
+<p>{% blocktrans %}If you have any trouble creating your account, contact us at <a href="mailto:{{ contact_email }}">{{ contact_email }}</a>.{% endblocktrans %}</p>
+        
+<p>If you have OpenID, <a href="{% url acct_login %}">log in</a> using that to begin using this site with OpenID right away.</p>
+
+
+{% endblock %}
+
+
+{% block extra_body %}
+    {% load jquery_validation %}
+    {% include_validation %}
+    <script type="text/javascript">
+        $(function(){
+            $('#signup_form').validate('{% url signup_form_validate %}', {type: 'table', fields: ['username'], dom: $('#id_username'), event: 'change'});
+            $("#id_username").focus();
+        });
+    </script>
+{% endblock %}

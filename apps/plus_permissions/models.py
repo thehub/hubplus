@@ -26,6 +26,7 @@ PossibleTypes = {}
 def SetPossibleTypes(type, options):
      PossibleTypes = options
 
+
 from apps.plus_permissions.default_agents import get_anonymous_group, get_admin_user, get_all_members_group
 
 class SecurityContext(models.Model):
@@ -44,17 +45,25 @@ class SecurityContext(models.Model):
                    self.add_default_agents(tag)
          self.set_context_agent()
 
-     context_agent = models.ForeignKey('GenericReference', null=True, related_name="agent_scontexts") #The agent which this security context is associated with
+     #def add_default_agents(self, tag):
+     #     pass
+
+     context_agent = models.ForeignKey('GenericReference', null=True, related_name="agent_scontexts")
+     # The agent which this security context is associated with
+
      def set_context_agent(self, agent):
           if not isinstance(agent.obj, TgGroup) and not isinstance(agent.obj, User):
                raise TypeError("Agent must be a user of a group")
           self.context_agent = agent
 
-     context_admin = models.ForeignKey('GenericReference', null=True, related_name="admin_scontexts") #The admin which this security context is associated with
+     context_admin = models.ForeignKey('GenericReference', null=True, related_name="admin_scontexts") 
+     # The admin which this security context is associated with
+
      def set_context_admin(self, admin):
           if not isinstance(admin.obj, TgGroup) and not isinstance(admin.obj, User):
                raise TypeError("Admin must be a user of a group")
           self.context_admin = admin
+
 
      def get_creator(self):
           return self.target.creator
@@ -139,17 +148,19 @@ class SecurityTag(models.Model) :
     interface = models.CharField(max_length=100)
     security_context = models.ForeignKey(SecurityContext)  # revere is securitytag
     agents = models.ManyToManyField(GenericReference)
+
     def __str__(self) :
         return """(%s)Interface: %s, Contexte: %s, Agents: %s""" % (self.id, self.interface,self.context,self.agents)
 
-
+    def add_agent(self, agent) :
+         self.agents.add(agent)
 
 def has_access(agent, resource, interface) :
     """Does the agent have access to this interface in this resource
     """
         
     # we're always interested in the security_context of this resource
-    context = resource.get_security_context(resource)
+    context = resource.get_security_context()
     context_type = ContentType.objects.get_for_model(context)
 
     # which agents have access?
@@ -213,7 +224,7 @@ def has_access(agent, resource, interface) :
     """
         
     # we're always interested in the security_context of this resource
-    context = resource.get_security_context(resource)
+    context = resource.get_security_context()
     context_type = ContentType.objects.get_for_model(context)
 
     # which agents have access?

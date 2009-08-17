@@ -167,6 +167,7 @@ INSTALLED_APPS = (
     'plus_groups',
     'plus_links',
     'plus_contacts',
+    #'plus_signup',
 
     'staticfiles',
     'account',
@@ -190,7 +191,7 @@ NOTIFICATION_LANGUAGE_MODULE = 'account.Account'
 
 EMAIL_CONFIRMATION_DAYS = 2
 EMAIL_DEBUG = DEBUG
-CONTACT_EMAIL = "feedback@example.com"
+CONTACT_EMAIL = "techteam@the-hub.net"
 SITE_NAME = "Hub+"
 LOGIN_URL = "/account/login"
 LOGIN_REDIRECT_URLNAME = "what_next"
@@ -218,6 +219,8 @@ CACHE_BACKEND = "locmem:///?max_entries=3000"
 FEEDUTIL_SUMMARY_LEN = 60*7 # 7 hours
 
 AUTHENTICATION_BACKENDS = ('hubspace_compatibility.models.HubspaceAuthenticationBackend',)
+ACCOUNT_OPEN_SIGNUP = False # signups must be accompanied by the appropriate token
+
 
 
 class NullStream(object):

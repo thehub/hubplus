@@ -1,21 +1,80 @@
 {% extends "site_base.html" %}
 
 {% load i18n %}
+{% load avatar_tags %}
+{% load app_plugins %}
 {% load uni_form %}
 
-{% block head_title %}{% trans "Signup" %}{% endblock %}
-
 {% block body %}
-
-<div id="signup" class="block">
-
-    <h1>{% trans "Sign Up" %}</h1>
     
-    {% if user.is_authenticated %}
-        <p>{% trans "You are already logged in." %}</p>
-    {% else %}
-        <p>{% trans "Already have an account?" %} <a href="{% url acct_login %}">{% trans "Log In" %}</a>!</p>
-        
+{% if user.is_authenticated %}
+  <p>{% trans "You are already logged in." %}</p>
+{% else %}
+  <p>{% trans "Already have an account?" %} <a href="{% url acct_login %}">{% trans "Log In" %}</a>!</p>
+
+<!-- 
+<div id="intro" class="block">
+  <form class="full" id="signup_form" method="post" action="{% url acct_signup %}">
+    <h4>Your details</h4>
+    <p>Please enter your details below to request an account.</p>
+    <fieldset>
+      <ul>
+	<li>
+	  <label for="name"><span class="required">*</span> Name</label>
+	  <input  id="name" class="text" type="text" />
+	</li>
+	<li>
+	  <label for="email"><span class="required">*</span> Email</label>
+	  <input  id="email" class="text" type="text" />
+	</li>
+	<li>
+	  <label for="organisation"><span class="required">*</span> Organisation</label>
+	  <input  id="organisation" class="text" type="text" />
+	</li>
+	<li>
+	  <label for="location"><span class="required">*</span> Location <span class="extra">postcode, country</span></label>
+	  <input  id="location" class="text" type="text" />
+	</li>
+	<li>
+	  <label for="about"><span class="required">*</span> Tell us a bit about yourself <span class="extra">what you do and why you're interested in the Hub?</span></label>
+	  <textarea id="about" rows="5"></textarea>
+	</li>
+	<li>
+	  <label for="interests"><span class="required">*</span> What are your interests?</label>
+	
+
+	  <span style="color:red">(Use existing tag functionality profiles here)</span>
+	</li>
+	<li>
+	  <label for="skills"><span class="required">*</span> What are your skills?</label>
+	
+	  <span style="color:red">(Use existing tag functionality from profiles here)</span>
+	</li>
+	<li>
+	  <label for="referal"><span class="required">*</span> How did you find out about the Hub?</label>
+	  <textarea id="referal" rows="2"></textarea>
+	</li>
+	<li class="nested">
+	  <input id="physical_hub" class="checkbox" type="checkbox"/>
+	  <ul>
+	    <li class="label_extended">
+	      <label for="physical_hub">I'm interested in joining a physical Hub.</label>
+	      <select class="disabled" id="which_hub" name="physical_hubs">
+		<option value="#" readonly="readonly" selected="selected">Please select a Hub...</option>
+		<option value="#">Amsterdam</option>
+	      </select>
+	      <a href="#">Tell me more</a>
+	    </li>
+	  </ul>
+	</li>
+      </ul>
+    </fieldset>
+    <input class="submit button" type="Submit" value="Request account" />
+  </form>
+</div>
+
+-->
+
         <form class="signup uniForm" id="signup_form" method="post" action="{% url acct_signup %}">
             <fieldset class="inlineLabels">
                 {{ form|as_uni_form }}
@@ -24,17 +83,20 @@
                 </div>
             </fieldset>
         </form>
+
+
         
-        {% url terms as terms_url %}
-        {% url privacy as privacy_url %}
-        <p>{% blocktrans %}By clicking "Sign Up", you are indicating that you have read and agree to the <a href="{{ terms_url }}">Terms of Use</a> and <a href="{{ privacy_url }}">Privacy Policy</a>.{% endblocktrans %}</p>
+{% url terms as terms_url %}
+{% url privacy as privacy_url %}
+<p>{% blocktrans %}By clicking "Sign Up", you are indicating that you have read and agree to the <a href="{{ terms_url }}">Terms of Use</a> and <a href="{{ privacy_url }}">Privacy Policy</a>.{% endblocktrans %}</p>
         
-        <p>{% blocktrans %}If you have any trouble creating your account, contact us at <a href="mailto:{{ contact_email }}">{{ contact_email }}</a>.{% endblocktrans %}</p>
+<p>{% blocktrans %}If you have any trouble creating your account, contact us at <a href="mailto:{{ contact_email }}">{{ contact_email }}</a>.{% endblocktrans %}</p>
         
-        <p>If you have OpenID, <a href="{% url acct_login %}">log in</a> using that to begin using this site with OpenID right away.</p>
-    {% endif %}
-</div>
+<p>If you have OpenID, <a href="{% url acct_login %}">log in</a> using that to begin using this site with OpenID right away.</p>
+{% endif %}
+
 {% endblock %}
+
 
 {% block extra_body %}
     {% load jquery_validation %}

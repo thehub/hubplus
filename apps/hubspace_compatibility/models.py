@@ -16,31 +16,11 @@ import datetime
 1. Where is group's extra?? why not just extend 
 2. Move this to plus_permissions
 
-
 3. Bring in Location Data for Hub - define Hub as the Hub's members group object with an associated Location
 
 4. Implement the hubspace metadata framework - add typed metadata and language along the way
 5. Implement the Hub Microsites list functionality
 """
-
-def getHubspaceUser(username) :
-    """ Returns the hubspace user. None if doesn't exist"""
-    try :
-        tu = User.objects.get(username=username)
-        return  tu
-    except Exception,e:
-        print "Error in getHubspaceUser %s" % e
-        return None
-
-
-#class UserGroup(models.Model):
-#    group_id = models.IntegerField()
-#    user_id = models.IntegerField()
-#    id = models.IntegerField(primary_key=True)
-#    class Meta:
-#        db_table = u'user_group'
-
-
 
 def to_db_encoding(s, encoding):
     if isinstance(s, str):
@@ -73,7 +53,8 @@ class UserNameField(models.CharField) :
 def encrypt_password(password) :
     return hashlib.md5(password).hexdigest()
 
-# The following will be patched into the User object in the  --- WHERE! Tom
+# The following will be patched into the User object in hubspace_compatibility.py
+
 def set_password(self,raw) :
     self.password = encrypt_password(raw)
 
@@ -154,7 +135,9 @@ try :
   class TgGroup(models.Model):
     group_name = models.CharField(unique=True, max_length=40)
     display_name = models.CharField(max_length=255)
-    created = models.DateTimeField(default=datetime.datetime.now)
+
+    created = models.DateTimeField(auto_now_add=True)
+
     place = models.ForeignKey(Location)
     #if place is Hub Islington then set member of toHub Islington group if level is member
     #if level is host, set member of to Hub Islington Host Group.
@@ -162,7 +145,17 @@ try :
     psn_id = models.CharField(max_length=100)
     path = models.CharField(max_length=120)
     users = models.ManyToManyField(User, db_table='user_group')
+
     child_groups = models.ManyToManyField('self', symmetrical=False, related_name='parent_groups')
+
+    about = models.TextField('about', null=True, blank=True)
+    group_type = models.CharField('type',max_length=30)
+    
+    title = models.CharField(max_length=60)
+    description = models.TextField()
+
+    body = models.TextField()
+    rights = models.TextField()
 
 
     def add_member(self, user_or_group):
@@ -217,19 +210,8 @@ try :
         return "<TgGroup : %s>" % self.group_name
 
 
-  #class HCGroupMapping(models.Model) :
-  #    """XXX Effectively this is a many-to-many relationship between a group and its members.
-  #    I guess it is explicit because of the need for a GenericForeignKey to reference User and Group tables for the child.
-  #    I find this unnecessary and undesirable because:
-  #    a) we already have a user_group relation in hubspace 
-  #    b) it might sometimes be useful to distinguish group memberships from user membership relations
-  #    Therfore I will add a many-to-many relation for groups called is_parent_of. And user the existing user_group relation from hubspace. This will also enhance hubspace's access to HubPlus defined groups.
-  #    This relationship should then be deprecated.
-  #    """
-  #    content_type = models.ForeignKey(ContentType)
-  #    object_id = models.PositiveIntegerField()
-  #    child = generic.GenericForeignKey('content_type', 'object_id')
-  #    parent = models.ForeignKey(TgGroup)
+    child_groups = models.ManyToManyField('self', symmetrical=False, related_name='parent_groups')
+
 
 except Exception, e:
   print "##### %s" % e
@@ -289,6 +271,6 @@ def user_save(self) :
     
 
 
-# Agents are used by plus_permissions.SecurityTag to make a many-to-many relationship with agents such as 
+# Now GenericReferences replace "Agents" to make a many-to-many relationship with agents such as 
 # Users and TgGroups
 
