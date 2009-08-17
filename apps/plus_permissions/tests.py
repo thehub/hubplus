@@ -139,7 +139,7 @@ class TestAccess(unittest.TestCase) :
         blog = kx.create_OurPost(title='my blog')
         blog.save()
         
-        # assert that the blog post derives it's security context from Kings Cross
+        # assert that the blog post acquires it's security context from Kings Cross
         self.assertEquals(blog.get_security_context(),kx.get_security_context())
 
         # confirm that there's an OurPost.Viewer interface for it
