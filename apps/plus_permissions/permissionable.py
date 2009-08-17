@@ -62,9 +62,6 @@ def to_security_context(self):
 def set_security_context(self, scontext):
     """Set the security context used by this object
     """
-    print scontext, scontext.__class__, self, self.__class__
-    import ipdb
-    #ipdb.set_trace()
     ref = self.get_ref()
     ref.explicit_scontext = scontext
     ref.save()
