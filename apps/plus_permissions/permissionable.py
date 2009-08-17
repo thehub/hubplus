@@ -102,6 +102,18 @@ def add_create_method(content_type, content_class, class_name) :
     setattr(content_type,'create_%s' % class_name, f)
 
 
+def get_tag_for_interface(self, interface) :
+    """ Get the tag which links a resource and interface
+    """
+    context = self.get_security_context()
+    context_type = ContentType.objects.get_for_model(self)
+    return SecurityTag.objects.get(context_content_type=context_type, 
+                                   context_object_id=context.id, 
+                                   get_interface_map(self.__class__, interface))
+
+
+
+
 from apps.plus_permissions.models import GenericReference, SecurityContext
 from django.db.models.signals import post_init
 
@@ -112,6 +124,8 @@ def security_patch(content_type, type_list):
     content_type.set_security_context = set_security_context
     content_type.get_security_context = get_security_context
     content_type.acquires_from = acquires_from
+    content_type.get_tag_for_interface = get_tag_for_interface
+          
 
     for typ in type_list :
         add_create_method(content_type, typ, typ.__name__)

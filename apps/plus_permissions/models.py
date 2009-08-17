@@ -94,7 +94,6 @@ class SecurityContext(models.Model):
      defaults  = models.TextField()      #{ type: [{interface:default_group},{interface:default_group}}
                     
      def create_security_tag(self, interface, agents) :
-         # agents here is a list of something like User or TgGroup, NOT an Agent
           tag = SecurityTag(security_context=self, interface=interface)
           tag.save()
           for agent in agents :
@@ -152,8 +151,9 @@ class SecurityTag(models.Model) :
     def __str__(self) :
         return """(%s)Interface: %s, Contexte: %s, Agents: %s""" % (self.id, self.interface,self.context,self.agents)
 
-    def add_agent(self, agent) :
-         self.agents.add(agent)
+
+
+
 
 def has_access(agent, resource, interface) :
     """Does the agent have access to this interface in this resource
@@ -169,69 +169,6 @@ def has_access(agent, resource, interface) :
                                                      securitytag__context_object_id=context.id)
     # probably should memcache both allowed agents (per .View interface) and agents held per user to allow many queries very quickly. e.g. to only return the searc
      
-    def move_slider(self, new_agent, interface):
-         if new_agent in self.slider_agents:
-              for agent in slider_agents:
-                   if agent not in SecurityTag.objects.filter(interface=interface, context=self).agents:
-                        self.add_agent_to_tag()
-                   if agent == new_agent:
-                        pass
-
-    def get_slider_level(self, interface):
-         pass
-
-    def add_arbitrary_agent(self, new_agent, interface):
-         tag = SecurityTag.objects.filter(interface, self)
-         tag.add_agent(new_agent)
-              
-    def get_tags_on(self, resource) :
-         context = resource.get_security_context()
-         context_type = ContentType.objects.get_for_model(context)
-         return SecurityTag.objects.filter(context_content_type=context_type, context_object_id=context.id)
-
-    def setup_defaults(self,resource, owner, creator) :
-         options = self.make_slider_options(resource,owner,creator)
-         self.save_defaults(resource,owner,creator)
-         interfaces = self.get_interfaces()
-         s = interfaces['Viewer'].make_slider_for(resource,options,owner,0,creator)
-         s = interfaces['Editor'].make_slider_for(resource,options,owner,2,creator)
-         s = interfaces['Commentor'].make_slider_for(resource,options,owner,1,creator)
-        
-
-
-class GenericReference(models.Model):
-    content_type = models.ForeignKey(ContentType, related_name='security_tag_agent')
-    object_id = models.PositiveIntegerField()
-    obj = generic.GenericForeignKey()
-    
-    acquires_from = models.ForeignKey("GenericReference", related_name="acquirers", null=True)
-    acquired_scontext = models.ForeignKey(SecurityContext, related_name="controlled", null=True)
-    explicit_scontext = models.ForeignKey(SecurityContext, related_name="target", null=True, unique=True)
-
-
-
-class SecurityTag(models.Model) :
-    interface = models.CharField(max_length=100)
-    security_context = models.ForeignKey(SecurityContext)  # revere is securitytag
-    agents = models.ManyToManyField(GenericReference)
-    def __str__(self) :
-        return """(%s)Interface: %s, Contexte: %s, Agents: %s""" % (self.id, self.interface,self.context,self.agents)
-
-
-
-def has_access(agent, resource, interface) :
-    """Does the agent have access to this interface in this resource
-    """
-        
-    # we're always interested in the security_context of this resource
-    context = resource.get_security_context()
-    context_type = ContentType.objects.get_for_model(context)
-
-    # which agents have access?
-    allowed_agents = GenericReference.objects.filter(securitytag__interface=interface,
-                                                     securitytag__context_content_type=context_type,
-                                                     securitytag__context_object_id=context.id)
-    # probably should memcache both allowed agents (per .View interface) and agents held per user to allow many queries very quickly. e.g. to only return the search results that you have permission to view
     
     allowed_agents = set([a.obj for a in allowed_agents])
     

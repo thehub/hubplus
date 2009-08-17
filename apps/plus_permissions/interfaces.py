@@ -107,6 +107,7 @@ class NotViewable:
     
     
 
+
 class SecureWrapper:
     """
     Empty interface, wraps models in a shell, which only lets explicitly named properties through

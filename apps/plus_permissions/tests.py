@@ -146,17 +146,17 @@ class TestAccess(unittest.TestCase) :
         # assert that the blog post acquires it's security context from Kings Cross
         self.assertEquals(blog.get_security_context(), kx.get_security_context())
 
-        # confirm that there's an OurPost.Viewer interface for it
-        self.assertTrue( kx.get_tag_for(blog, "Viewer"))
+        # confirm that there's an OurPost.Viewer interface for Kings Cross
+        self.assertTrue( kx.get_tag_for_interface(OurPost, "Viewer"))
                 
         i_viewer = get_interface_map(OurPost)['Viewer']
 
-        # but nahia has no access
+        # but nahia has no access to the blog
         self.assertFalse( has_access(nahia, blog, i_viewer))
 
         # now lets add this user to the tag
-        tag = kx.get_tag_for(blog,"Viewer")
-        tag.add_agent(nahia)
+        tag = kx.get_tag_for_interface(OurPost, "Viewer")
+        tag.add_agents([nahia])
 
         # so now nahia has access
         self.assertTrue( has_access(nahia, blog, i_viewer))
@@ -168,7 +168,7 @@ class TestAccess(unittest.TestCase) :
         self.assertFalse( has_access(tuba, blog, i_viewer))
 
         # however, we presumably want to give kings cross *members* access to it
-        tag.add_agent(kx)
+        tag.add_agents([kx])
         self.assertTrue( has_access(kx, blog, i_viewer))
 
         # so if we add tuba to kings cross
@@ -193,9 +193,10 @@ class TestAccess(unittest.TestCase) :
         sc2 = blog2.to_security_context()
         # and make a tag for it
         tag2 = sc2.get_tag_for(blog2,'Editor')
-        tag2.add_agent(tuba)
+        tag2.add_agent([tuba])
         
         self.assertTrue(has_access(tuba, blog2, i_editor))
+
 
 
         # check that kings cross hosts are a sub-group of kings cross
