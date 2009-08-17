@@ -127,7 +127,7 @@ class TestHierarchy(unittest.TestCase):
 
 class TestAccess(unittest.TestCase) :
 
-    def test_permissions(self) :
+    def test_access(self) :
         """ Starting with security_contexts"""
 
         nahia = User(username='nahia', email_address='nahia@the-hub.net')
@@ -135,7 +135,7 @@ class TestAccess(unittest.TestCase) :
         
         kx, kxh = create_hub('kingsX', display_name='Hub Kings Cross')
         kxsc = kx.to_security_context()
-        
+
         blog = kx.create_OurPost(title='my blog')
         blog.save()
         
@@ -152,13 +152,13 @@ class TestAccess(unittest.TestCase) :
 
         # now lets add this user to the tag
         tag = kx.get_tag_for(blog,"Viewer")
-        tag.add_agent(u)
+        tag.add_agent(nahia)
 
         # so now nahia has access
         self.assertTrue( has_access(nahia, blog, i_viewer))
         
         # but tuba doesn't
-        tuba = User(username='nahia', email_address='tuba@the-hub.net')
+        tuba = User(username='tuba', email_address='tuba@the-hub.net')
         tuba.save()
 
         self.assertFalse( has_access(tuba, blog, i_viewer))
@@ -194,7 +194,6 @@ class TestAccess(unittest.TestCase) :
         self.assertTrue(has_access(tuba, blog2, i_editor))
 
         
-
 
         
 
