@@ -15,19 +15,16 @@ Phil - Write decorator to explicitly check for a given interface on the current 
      - write high-level tests for PermissionsSystem, and SecurityContext
      
 
-<<<<<<< HEAD:hubplus0.9.txt
 - if security context isn't set, we should look up the containment hierarchy to find it
 - Whenever we create a group, user or set customize permissions the slider-set we create a new security context
  
-=======
 Tom - resource containment relation - objects exist in a "container" which may not be the agent but will be in the agents namespace  e.g. comments on wikis
     - associate_security_context(object, type) - make an object security context - allow different group types. if security context isn't set, we should look up the containment hierarchy to find it
     - reverese lookups - patch object manager
 
     - json specification of group, wiki and comments
     - imports
-=======
-=======
+
 Tom - put creator on the reference object?
     - access anonyoumous_group and all_members_group on the SecurityContext
     - json specification of user, profile, group, wiki and comments
@@ -45,8 +42,6 @@ Tom - put creator on the reference object?
     - single slider UI
      
         - different types of groups - "template" groups and clone group permissions
->>>>>>> 07aefc70e86ed255855d2fffd4e6b3c67d79e415:hubplus0.9.txt
-
 
 
 
