@@ -90,9 +90,12 @@ def acquires_from(self, content_obj):
 
 def add_create_method(content_type, content_class, class_name) :
     def f(self,**kwargs) :
-        print "Adding class %s" % content_class
+        print "Adding class %s to %s" % (content_class,content_type)
         resource = content_class(**kwargs)
         resource.save()
+
+        # now create its security_context etc.        
+        resource.acquires_from(self)
         return resource
 
 
