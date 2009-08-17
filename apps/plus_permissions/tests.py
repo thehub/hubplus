@@ -45,13 +45,13 @@ class TestHierarchy(unittest.TestCase):
         hubMembers, flag = TgGroup.objects.get_or_create('hub-members',display_name='members', place=l, 
                                                          user=u, level='member')
 
-        # they start 
-        self.assertEquals(hubMembers.get_no_members(),0)
+        # they start with at least two members
+        self.assertEquals(hubMembers.get_no_members(),2)
 
         # we now add member to the group
         hubMembers.add_member(u)
         # which now has one member
-        self.assertEquals(hubMembers.get_no_members(),1)
+        self.assertEquals(hubMembers.get_no_members(),3)
         # and u is a member 
         self.assertTrue(u.is_member_of(hubMembers))
         
@@ -60,7 +60,7 @@ class TestHierarchy(unittest.TestCase):
 
         # check that you can't add the same member twice
         hubMembers.add_member(u)
-        self.assertEquals(hubMembers.get_no_members(),1)
+        self.assertEquals(hubMembers.get_no_members(),3)
 
         # another group, called hosts
         hosts,h2 = TgGroup.objects.get_or_create(group_name='admins', display_name='admins', place=l, 
@@ -74,7 +74,7 @@ class TestHierarchy(unittest.TestCase):
         hubMembers.add_member(hosts) 
         
         # and check that it's counted as a member
-        self.assertEquals(hubMembers.get_no_members(),2)
+        self.assertEquals(hubMembers.get_no_members(),4)
 
         # and hubMembers is in hosts' enclosures
         self.assertTrue(hubMembers in set(hosts.get_enclosures()))
@@ -230,7 +230,7 @@ class TestAccess(unittest.TestCase) :
         blog2 = blog
         
  
-        def f(blog) : return blog.title       
+        def f(blog) : return blog.title
         self.assertRaises(PlusPermissionsNoAccessException,f,blog) 
 
         try : f(blog)
@@ -282,11 +282,6 @@ class TestAccess(unittest.TestCase) :
         blog.delete()
         
         
-
-    def test_group_admin(self) :
-        l = Location(name='Dalston')
-        l.save()
-        g, h = TgGroup.objects.get_or_create(group_name='hub-dalston',display_name='Hub Dalston', place=l, level='member')
 
 
     def Xtest_new_slider_set(self) :
@@ -373,15 +368,12 @@ class TestSecurityContexts(unittest.TestCase):
                                                       place=None, level='member', user=u)
         group.to_security_context()
 
-        blog = OurPost(title='using defaults')
-        blog.save()
-        blog.acquires_from(group)
+        blog = group.create_OurPost(title='using defaults')
 
         self.assertEquals(blog.get_security_context().id, group.get_security_context().id)
 
-        blog2 = OurPost(title='I did it my way')
-        blog2.save()
-        blog2.acquires_from(group)
+        blog2 = group.create_OurPost(title='I did it my way')
+
         sc2 = blog2.to_security_context()
         blog2.set_security_context(sc2)
         blog2.save()
@@ -391,6 +383,7 @@ class TestSecurityContexts(unittest.TestCase):
 
 class TestDecorators(unittest.TestCase) :
     def test_decorators(self) :
+        
         b = OurPost(title='test decorator')
         b.save()
 
