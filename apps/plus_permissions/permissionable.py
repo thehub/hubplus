@@ -1,17 +1,5 @@
 from django.db import models
-
-from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes import generic
-
-from django.contrib.auth.models import User
-from apps.hubspace_compatibility.models import Location, TgGroup
-
-def get_or_create_root_location():
-    root_location, created = Location.objects.get_or_create(name='HubPlus')
-    if created:
-        root_location.save()
-    return root_location
-
 
 class MissingSecurityContextException(Exception): 
     def __init__(self, cls, security_context) :
@@ -85,9 +73,11 @@ def get_security_context(self):
     ref = self.get_ref()
     if ref.explicit_scontext:
         return ref.explicit_scontext
-    return ref.acquires_from.obj.get_security_context()
-    
-
+    elif ref.acquired_scontext:
+        return ref.acquired_scontext
+    else:
+        self.acquired_scontext = ref.acquires_from.obj.get_security_context()
+    return self.acquired_scontext
     
 def get_ref(self):
     return self.ref.all()[0]
@@ -113,7 +103,6 @@ def security_patch(content_type):
 def create_reference(sender, instance=None, **kwargs):
     if instance is None:
         return
-
     instance.save()
     ref = GenericReference(obj=instance)
     ref.save()

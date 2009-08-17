@@ -1,43 +1,24 @@
 
-Tuesday-Wednesday
------------------
-- objects exist in an agents object-namespace, this determines "security context" and who will be able to 
-*set permissions*, i.e. the admin group of this group, and a necessary monotonic tag acquisition (sliders).
-- objects exist in a "container" which may not be the agent but will be in the agents namespace  
-e.g. comments on wikis
+7.15pm us call 
 
-=======
 
 Phil - Write decorator to explicitly check for a given interface on the current resource (second argument) 
        when calling a function. decorator should also wrap the current resource in a secure_wrapper.
      - Write template decorator which automatically wraps "secure" objects in a template_secure_wrapper
      - override generic object manager filter and get, constructor functions to use secure_wrapper. 
-     - write high-level tests for PermissionsSystem, and SecurityContext
+     - write high-level tests for api, and SecurityContext
      
 
-<<<<<<< HEAD:hubplus0.9.txt
-- if security context isn't set, we should look up the containment hierarchy to find it
-- Whenever we create a group, user or set customize permissions the slider-set we create a new security context
- 
-Tom - resource containment relation - objects exist in a "container" which may not be the agent but will be in the agents namespace  e.g. comments on wikis
-    - associate_security_context(object, type) - make an object security context - allow different group types. if security context isn't set, we should look up the containment hierarchy to find it
-    - reverese lookups - patch object manager
 
-    - json specification of group, wiki and comments
-    - imports
-
-Tom - put creator on the reference object?
-    - access anonyoumous_group and all_members_group on the SecurityContext
-    - json specification of user, profile, group, wiki and comments
-=======
-Tom - access anonyoumous_group and all_members_group on the SecurityContext
-    - json specification of user, profile, group, wiki and comments 
->>>>>>> f54f823c690534223499249504dc8157f5124376:hubplus0.9.txt
+Tom - json specification of user, profile, group, wiki and comments 
         - everything apart from constraints
+
     - generate slider (views)
     - set slider (view)
+
     - create "set permissoins" interface per type, controlled by admin,  i.e. set_security_context, move_slider
     - customise permissions button
+
     - to_security_context  should copy Sliders from current values from old_security (implicit) context of object
 
     - templatetag - include slider for interface, include slider set for security context
