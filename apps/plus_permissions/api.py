@@ -10,7 +10,8 @@ from apps.hubspace_compatibility.models import Location, TgGroup
 from apps.plus_permissions.models import has_access
 from apps.plus_permissions.permissionable import get_or_create_root_location
 
-
-anonyoumous_group = TgGroup.objects.get_or_create(group_name='anonymous', display_name='World', place=get_or_create_root_location(), level='public')
-all_members_group = TgGroup.objects.get_or_create(group_name='all_members', display_name='All Members', place=get_or_create_root_location(), level='site_member')
+from django.contrib.auth.models import User
+admin_user = User('admin', 'tom.salfield@the-hub.net', 'blah')
+anonyoumous_group = TgGroup.objects.get_or_create(group_name='anonymous', display_name='World', place=get_or_create_root_location(), level='public', user=admin_user)
+all_members_group = TgGroup.objects.get_or_create(group_name='all_members', display_name='All Members', place=get_or_create_root_location(), level='site_member', user=admin_user)
 
