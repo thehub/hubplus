@@ -19,6 +19,10 @@ from apps.plus_permissions.OurPost import *
 # This represents a typical model type from another django or pinax app
 content_type = OurPost
 
+# And these are the "child" types that can be created inside this type. 
+# Currently OurPost has none, but, for example, a TgGroup can have OurPosts or WikiPages etc.
+child_types = []
+
 
 # Here's the wrapping we have to put around it.
 
@@ -48,9 +52,5 @@ SliderOptions = {'InterfaceOrder':['Viewer', 'Editor','Commentor']}
 SetSliderOptions(TgGroup, SliderOptions)
 
 
-# hmmm ... fake this for a minute
-def force_add() :
-    add_type_to_interface_map(OurPost,OurPostInterfaces)
-    print "3zz33", get_interface_map(OurPost)
 
 

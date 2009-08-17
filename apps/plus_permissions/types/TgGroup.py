@@ -4,10 +4,11 @@ from apps.hubspace_compatibility.models import TgGroup
 from apps.plus_permissions.OurPost import OurPost
 from django.db.models.signals import post_save
 import datetime
+
 content_type = TgGroup
+child_types = [OurPost]
 
 import ipdb
-
 
 from apps.plus_permissions.default_agents import get_or_create_root_location
 
@@ -15,13 +16,15 @@ from apps.plus_permissions.default_agents import get_or_create_root_location
 def get_or_create(group_name=None, display_name=None, place=None, level=None, user=None) :
     """get or create a group
     """
-    # note : we can't use get_or_create for TgGroup, because the created date clause won't match on a different day                                     
-    # from the day the record was created.                                                                                                              
+    # note : we can't use get_or_create for TgGroup, because the created date clause won't match on a different day
+    # from the day the record was created.
     
     if not user:
         raise TypeError("We must have a user to create a group, since otherwise it will be inaccessible")
     if not place:
         place = get_or_create_root_location()
+    if not level :
+        level = 'member'
     xs = TgGroup.objects.filter(group_name=group_name)
     if len(xs) > 0 :
         group = xs[0]
@@ -90,6 +93,8 @@ class TgGroupManageMembers:
     add_member = InterfaceCallProperty
     accept_member = InterfaceCallProperty
     remove_member = InterfaceCallProperty
+
+
 
 from apps.plus_permissions.interfaces import add_type_to_interface_map
 

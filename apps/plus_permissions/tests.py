@@ -14,7 +14,6 @@ from models import *
 from interfaces import get_interface_map
 import interfaces
 
-from apps.plus_groups.models import create_hub, create_site_group, get_or_create_group
 from apps.plus_groups import *
 
 from types.OurPost import *
@@ -43,7 +42,7 @@ class TestHierarchy(unittest.TestCase):
         l.save()
 
         # here's a group (called "hub-members")
-        hubMembers, flag = get_or_create_group('hub-members',display_name='members',location=l)
+        hubMembers, flag = TgGroup.objects.get_or_create('hub-members',display_name='members', place=l, user=u)
 
         # they start 
         self.assertEquals(hubMembers.get_no_members(),0)
@@ -63,7 +62,7 @@ class TestHierarchy(unittest.TestCase):
         self.assertEquals(hubMembers.get_no_members(),1)
 
         # another group, called hosts
-        hosts,h2 = create_site_group('admins',display_name='admins',location=l)
+        hosts,h2 = TgGroup.objects.get_or_create('admins',display_name='admins',place=l,user=u)
         hosts.save()
 
         # u2 is a host
@@ -101,12 +100,12 @@ class TestHierarchy(unittest.TestCase):
         self.assertTrue(u.is_direct_member_of(hubMembers))
         self.assertTrue(u.is_member_of(hubMembers))
 
-
-        another_group,ag_hosts = create_site_group('site_group',display_name='Another Site Group',  create_hosts=True)
+        another_group,created = TgGroup.objects.get_or_create(group_name='site_group',
+                                                               display_name='Another Site Group',  
+                                                               create_hosts=True, user=u)
         another_group.add_member(hubMembers)
         self.assertTrue(ag_hosts.is_member_of(another_group))
         self.assertFalse(another_group.is_member_of(ag_hosts))
-
 
         # Now, if we ask for enclosure_set of u, we should get hubMembers and hosts
         es = u.get_enclosure_set()
@@ -133,14 +132,14 @@ class TestAccess(unittest.TestCase) :
         nahia = User(username='nahia', email_address='nahia@the-hub.net')
         nahia.save()
         
-        kx, kxh = create_hub('kingsX', display_name='Hub Kings Cross')
+        kx, kxh = TgGroup.objects.get_or_create(group_name='kingsX', display_name='Hub Kings Cross')
         kxsc = kx.to_security_context()
 
         blog = kx.create_OurPost(title='my blog')
         blog.save()
         
         # assert that the blog post acquires it's security context from Kings Cross
-        self.assertEquals(blog.get_security_context(),kx.get_security_context())
+        self.assertEquals(blog.get_security_context(), kx.get_security_context())
 
         # confirm that there's an OurPost.Viewer interface for it
         self.assertTrue( kx.get_tag_for(blog, "Viewer"))
@@ -193,19 +192,26 @@ class TestAccess(unittest.TestCase) :
         
         self.assertTrue(has_access(tuba, blog2, i_editor))
 
-        
 
-        
+        # check that kings cross hosts are a sub-group of kings cross
+        self.assertTrue(kxh.is_member_of(kx))
 
-                         
+        # so should have same access
+        self.assertTrue(has_access(kxh, blog, i_viewer))
+
+        # 
+
+
 
     def test_interfaces(self) :
 
-        class A : pass
+        kx, kxh = TgGroup.objects.get_or_create(group_name='kingsX', display_name='Hub Kings Cross')
+        kxsc = kx.to_security_context()
 
-        force_add()
-        self.assertTrue(get_interface_map(OurPost))
+        blog = kx.create_OurPost(title='another post', body="Here's what")
 
+        caroline = User(username='caroline', email_address='caroline@the-hub.net')
+        blog = secure_wrap(blog)
 
         i_viewer= get_interface_map(OurPost)['Viewer']
         self.assertEquals(i_viewer,OurPostViewer)
@@ -213,14 +219,12 @@ class TestAccess(unittest.TestCase) :
             return get_interface_map(cls)[key]
         self.assertRaises(Exception,im,OurPost,'xyz')
 
-        blog= OurPost(title='what I want to say',body="Here's what")
-        blog.save()
         blog2 = blog
         
-        blog = secure_wrap(blog,[])
-        def f(blog) : return blog.title
-        
+ 
+        def f(blog) : return blog.title       
         self.assertRaises(PlusPermissionsNoAccessException,f,blog) 
+
         try : f(blog)
         except PlusPermissionsNoAccessException, e :
             self.assertEquals(e.silent_variable_failure,True)
@@ -229,7 +233,6 @@ class TestAccess(unittest.TestCase) :
         class BodyViewer(Interface) :
             body = InterfaceReadProperty('body')
 
-        
         blog.add_interface(BodyViewer)
         self.assertEquals(blog.body,"Here's what")
         self.assertRaises(PlusPermissionsNoAccessException,f,blog)
@@ -275,12 +278,12 @@ class TestAccess(unittest.TestCase) :
     def test_group_admin(self) :
         l = Location(name='Dalston')
         l.save()
-        g, h = create_hub(name='hub-dalston',display_name='Hub Dalston', location=l, create_hosts=True)
+        g, h = TgGroup.objects.get_or_create(name='hub-dalston',display_name='Hub Dalston', place=l, create_hosts=True)
 
 
     def Xtest_new_slider_set(self) :
 
-        group, hosts = create_site_group('solar cooking', display_name='Solar Chefs', create_hosts=True)
+        group, TgGroup.objects.get_or_create(group_name='solar cooking', display_name='Solar Chefs', create_hosts=True)
         blog= OurPost(title='parabolic pancakes')
         blog.save()
 
@@ -353,7 +356,7 @@ class TestSecurityContexts(unittest.TestCase):
     def test_contexts(self) :
         location = Location(name='world')
         location.save()
-        group,hosts = create_site_group('group',display_name='Our Group', location=None, create_hosts=True)
+        group,hosts = TgGroup.objects.get_or_create(group_name='group',display_name='Our Group', place=None, create_hosts=True)
         group.to_security_context()
 
         blog = OurPost(title='using defaults')

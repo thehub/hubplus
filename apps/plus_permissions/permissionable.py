@@ -69,7 +69,7 @@ def set_security_context(self, scontext):
 
 
 def get_security_context(self):
-
+    """Get the security context for this object """
     ref = self.get_ref()
     if ref.explicit_scontext:
         return ref.explicit_scontext
@@ -88,16 +88,29 @@ def acquires_from(self, content_obj):
     ref.save()
 
 
+def add_create_method(content_type, content_class, class_name) :
+    def f(self) :
+        print "Adding class %s" % content_class
+        raise Exception('A method called create_%s has been added to %s' % (content_class, content_type))
+
+    setattr(content_type,'create_%s' % class_name, f)
+
+
 from apps.plus_permissions.models import GenericReference, SecurityContext
 from django.db.models.signals import post_init
 
-def security_patch(content_type):  
+def security_patch(content_type, type_list):  
     content_type.add_to_class('ref', generic.GenericRelation(GenericReference))
     content_type.get_ref = get_ref
     content_type.to_security_context = to_security_context
     content_type.set_security_context = set_security_context
     content_type.get_security_context = get_security_context
     content_type.acquires_from = acquires_from
+
+    for typ in type_list :
+        add_create_method(content_type, typ, typ.__name__)
+        
+
     post_init.connect(create_reference, sender=content_type)
 
 def create_reference(sender, instance=None, **kwargs):

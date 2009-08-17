@@ -10,10 +10,10 @@ from apps.profiles.models import Profile
 from apps.hubspace_compatibility.models import TgGroup
 
 
-
 # Here's the wrapping we have to put around it.                                                                                                              
 
 content_type = Profile
+child_types = []
         
 class ProfileViewer: 
     about = InterfaceReadProperty
