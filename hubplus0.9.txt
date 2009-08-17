@@ -10,8 +10,13 @@ Phil - Write decorator to explicitly check for a given interface on the current 
      
 
 
-Tom - json specification of user, profile, group, wiki and comments 
-        - everything apart from constraints
+Tom - setup security context
+        - possible types  + add methods to TgGroup
+        - initialise slider levels = default security tags
+    - Do TgGroup + User + OurPost
+
+    - everything apart from constraints
+
 
     - generate slider (views)
     - set slider (view)

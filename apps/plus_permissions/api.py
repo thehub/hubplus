@@ -16,17 +16,6 @@ from apps.plus_permissions.permissionable import get_or_create_root_location
 
 
 __all__ = ['secure_wrap', 'TemplateSecureWrapper', 'Location', 'TgGroup', 'has_access', 'anonyoumous_group', 'all_members_group', 'get_or_create_root_location']
-
-
-def create_security_tag(scontext, interface, agents=[]) :
-    # do we need this? 
-    if scontext.__class__ != SecurityContext: 
-        scontext = scontext.get_ref().explicit_scontext
-        print "III", scontext, scontext.__class__
-    t = SecurityTag(security_context=scontext, interface=interface)
-    t.save()
-    for a in agents : 
-        t.add_agent(a)
     
 
 def has_interfaces_decorator(interfaces) :
