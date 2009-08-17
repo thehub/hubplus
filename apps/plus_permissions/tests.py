@@ -136,7 +136,7 @@ class TestAccess(unittest.TestCase) :
         kx, kxh = create_hub('kingsX', display_name='Hub Kings Cross')
         kxsc = kx.to_security_context()
         
-        blog = kx.create_resource(OurPost,title='my blog')
+        blog = kx.create_OurPost(title='my blog')
         blog.save()
         
         # assert that the blog post derives it's security context from Kings Cross
@@ -173,111 +173,31 @@ class TestAccess(unittest.TestCase) :
         # she now has access
         self.assertTrue( has_access(tuba, blog, i_viewer))
         
-
-        
-
-    def test_old_permissions(self) :
-
-        u = User(username='synnove',email_address='synnove@the-hub.net')
-        u.save()
-        
-        writers, wh = create_site_group('writers', display_name='writers')
-        wsc = writers.to_security_context()
-        editors, eh = create_site_group('editors', display_name='editors')
-
-        # two resources, blog and blog2, 
-        blog= OurPost(title='my post')    
-        blog.save()
-  
-        # and make writers the acquired security context of the blog
-        blog.acquires_from(writers)
-    
-        i_viewer = get_interface_map(OurPost)['Viewer']
-        
-        # explicit tag between the writers group, the viewer interface and the user u
-        # this means that u has viewer access on writers,
-        t = writers.get_security_context().create_security_tag(i_viewer, [u])
-
-        # confirm this
-        self.assertTrue(has_access(u, writers, i_viewer))
-
-        # now confirm that u also has access on blog via this security_context
-        self.assertTrue(has_access(u, blog, i_viewer))
-        
-        # confirm that a different user DOESN'T have the same access
-        u2 = User(username='joerg', email_address='joerg@the-hub.net')
-        u2.save()
-        
-        self.assertFalse(has_access(writers, blog, i_viewer))
-        self.assertFalse(has_access(u2, blog, i_viewer))
-        
-        # now a second resource, blog2 which is similar to blog1, but we won't give access
-        blog2 = OurPost(title='another post')
+        # Now we test that a second blog-post that's created starts with similar access
+        blog2 = kx.create_OurPost(title='second post')
         blog2.save()
 
-
-        self.assertFalse(has_access(u,blog2,i_viewer))
+        self.assertTrue(has_access(tuba, blog2, i_viewer))
         
-        # but we'll make it its own security context
-        sc2 = blog2.set_security_context(blog2)
+        # but we assume that not everyone got an editor interface
+        i_editor = get_interface_map(OurPost)['Editor']
 
-        t2 = sc2.create_security_tag(i_viewer,[])
-        # and we have a tag for it, but no agents associated with the tag
-        self.assertFalse(has_access(blog2,i_viewer,u))
-        self.assertFalse(has_access(blog2,i_viewer,u2))
-
-        # now we add an agent to a tag
-        t2.add_agent(u)
-        self.assertTrue(has_access(blog2,i_viewer,u))
-        self.assertFalse(has_access(blog2,i_viewer,u2))
-
-        self.assertTrue(ps.has_access(u,blog,i_viewer))
-
-        i_commentor = get_interface_map(OurPost)['Commentor']
-        t2 = blog.get_security_context().create_security_tag(i_commentor,[u])
-
-        self.assertTrue(ps.has_access(u,blog,i_commentor))
-
-        ### continue from here 
-        i_editor = get_interface_map(OurPost)['Editor']        
-        self.assertFalse(ps.has_access(u,blog,i_editor))
-
-        t3 = blog.get_security_context().create_security_tag(i_editor,[editors])
+        self.assertFalse(has_access(tuba, blog2, i_editor))
         
-        self.assertTrue(ps.has_access(editors,blog2,i_editor))
-
-        editors.add_member(u)
+        # so now we're going to give tuba special permissions on this blog post
+        # so first make the blog post a custom context
+        sc2 = blog2.to_security_context()
+        # and make a tag for it
+        tag2 = sc2.get_tag_for(blog2,'Editor')
+        tag2.add_agent(tuba)
+        
+        self.assertTrue(has_access(tuba, blog2, i_editor))
 
         
-        self.assertTrue(ps.has_access(u,blog2,IEditor))
-        self.assertFalse(ps.has_access(u,blog,IEditor))
 
-        self.assertFalse(ps.direct_access(u,blog2,IEditor))
-        self.assertTrue(ps.direct_access(u,blog,IViewer))
 
-        t2.delete()
-       
-        self.assertFalse(ps.has_access(u,blog,ICommentor))
-        ps.delete_access(u,blog,IViewer)
-
-        self.assertFalse(ps.has_access(u,blog,IViewer))
-
-        # now let's test contexts
-        discussion_group,discussion_admin = create_site_group('discussion',display_name='Discussion',location=l)
-        blog3 = OurPost(title='story')
-        blog3.save()
-
-        blog3.set_context(discussion_group)
-        blog3.set_security_context(discussion_group)
         
-        ps.create_security_tag(discussion_group,IViewer,[u])
-        self.assertTrue(ps.has_access(u,blog3,IViewer))
-        self.assertFalse(ps.has_access(u,blog3,IEditor))
-        
-        # and group
-        ps.create_security_tag(discussion_group,IEditor,[editors])
-        self.assertTrue(ps.has_access(u,blog3,IEditor))
-        
+
                          
 
     def test_interfaces(self) :
