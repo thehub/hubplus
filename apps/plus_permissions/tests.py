@@ -147,7 +147,7 @@ class TestAccess(unittest.TestCase) :
         self.assertEquals(blog.get_security_context(), kx.get_security_context())
 
         # confirm that there's an OurPost.Viewer interface for Kings Cross
-        self.assertTrue( kx.get_tag_for_interface(OurPost, "Viewer"))
+        self.assertTrue( kx.get_tag_for_interface("OurPost.Viewer"))
                 
         i_viewer = get_interface_map(OurPost)['Viewer']
 
@@ -155,7 +155,7 @@ class TestAccess(unittest.TestCase) :
         self.assertFalse( has_access(nahia, blog, i_viewer))
 
         # now lets add this user to the tag
-        tag = kx.get_tag_for_interface(OurPost, "Viewer")
+        tag = kx.get_tag_for_interface("OurPost.Viewer")
         tag.add_agents([nahia])
 
         # so now nahia has access
@@ -192,7 +192,7 @@ class TestAccess(unittest.TestCase) :
         # so first make the blog post a custom context
         sc2 = blog2.to_security_context()
         # and make a tag for it
-        tag2 = sc2.get_tag_for(blog2,'Editor')
+        tag2 = sc2.get_tag_for_interface('OurPost.Editor')
         tag2.add_agent([tuba])
         
         self.assertTrue(has_access(tuba, blog2, i_editor))

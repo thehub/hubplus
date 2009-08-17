@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.contenttypes import generic
+from django.contrib.contenttypes.models import ContentType
 
 class MissingSecurityContextException(Exception): 
     def __init__(self, cls, security_context) :
@@ -90,7 +91,6 @@ def acquires_from(self, content_obj):
 
 def add_create_method(content_type, content_class, class_name) :
     def f(self,**kwargs) :
-        print "Adding class %s to %s" % (content_class,content_type)
         resource = content_class(**kwargs)
         resource.save()
 
@@ -105,11 +105,13 @@ def add_create_method(content_type, content_class, class_name) :
 def get_tag_for_interface(self, interface) :
     """ Get the tag which links a resource and interface
     """
-    context = self.get_security_context()
-    context_type = ContentType.objects.get_for_model(self)
-    return SecurityTag.objects.get(context_content_type=context_type, 
-                                   context_object_id=context.id, 
-                                   get_interface_map(self.__class__, interface))
+    from models import SecurityTag
+    if not SecurityTag.objects.filter(security_context=self.get_security_context(),
+                                   interface=interface).count() > 0 : 
+        return None
+    return SecurityTag.objects.get(security_context=self.get_security_context(),
+                                   interface=interface)
+    
 
 
 
