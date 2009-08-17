@@ -89,7 +89,7 @@ def acquires_from(self, content_obj):
 
 
 def add_create_method(content_type, content_class, class_name) :
-    def f(self) :
+    def f(self,**kwargs) :
         print "Adding class %s" % content_class
         raise Exception('A method called create_%s has been added to %s' % (content_class, content_type))
 

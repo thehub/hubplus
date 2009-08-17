@@ -23,8 +23,7 @@ def get_or_create(group_name=None, display_name=None, place=None, level=None, us
         raise TypeError("We must have a user to create a group, since otherwise it will be inaccessible")
     if not place:
         place = get_or_create_root_location()
-    if not level :
-        level = 'member'
+
     xs = TgGroup.objects.filter(group_name=group_name)
     if len(xs) > 0 :
         group = xs[0]

@@ -42,7 +42,8 @@ class TestHierarchy(unittest.TestCase):
         l.save()
 
         # here's a group (called "hub-members")
-        hubMembers, flag = TgGroup.objects.get_or_create('hub-members',display_name='members', place=l, user=u)
+        hubMembers, flag = TgGroup.objects.get_or_create('hub-members',display_name='members', place=l, 
+                                                         user=u, level='member')
 
         # they start 
         self.assertEquals(hubMembers.get_no_members(),0)
@@ -62,7 +63,8 @@ class TestHierarchy(unittest.TestCase):
         self.assertEquals(hubMembers.get_no_members(),1)
 
         # another group, called hosts
-        hosts,h2 = TgGroup.objects.get_or_create('admins',display_name='admins',place=l,user=u)
+        hosts,h2 = TgGroup.objects.get_or_create(group_name='admins', display_name='admins', place=l, 
+                                                 user=u, level='member')
         hosts.save()
 
         # u2 is a host
@@ -102,7 +104,7 @@ class TestHierarchy(unittest.TestCase):
 
         another_group,created = TgGroup.objects.get_or_create(group_name='site_group',
                                                                display_name='Another Site Group',  
-                                                               create_hosts=True, user=u)
+                                                               level='member', user=u)
         another_group.add_member(hubMembers)
         self.assertTrue(ag_hosts.is_member_of(another_group))
         self.assertFalse(another_group.is_member_of(ag_hosts))
@@ -132,7 +134,10 @@ class TestAccess(unittest.TestCase) :
         nahia = User(username='nahia', email_address='nahia@the-hub.net')
         nahia.save()
         
-        kx, kxh = TgGroup.objects.get_or_create(group_name='kingsX', display_name='Hub Kings Cross')
+        adam = User(username='adam', email_address='adam@the-hub.net')
+        adam.save()
+
+        kx, kxh = TgGroup.objects.get_or_create(group_name='kingsX', display_name='Hub Kings Cross', level='member', user=adam)
         kxsc = kx.to_security_context()
 
         blog = kx.create_OurPost(title='my blog')
@@ -205,7 +210,10 @@ class TestAccess(unittest.TestCase) :
 
     def test_interfaces(self) :
 
-        kx, kxh = TgGroup.objects.get_or_create(group_name='kingsX', display_name='Hub Kings Cross')
+        u = User(username='deus', email_address='deus@the-hub.net')
+        u.save()
+
+        kx, kxh = TgGroup.objects.get_or_create(group_name='kingsX', display_name='Hub Kings Cross', level='member', user=u)
         kxsc = kx.to_security_context()
 
         blog = kx.create_OurPost(title='another post', body="Here's what")
@@ -278,12 +286,12 @@ class TestAccess(unittest.TestCase) :
     def test_group_admin(self) :
         l = Location(name='Dalston')
         l.save()
-        g, h = TgGroup.objects.get_or_create(name='hub-dalston',display_name='Hub Dalston', place=l, create_hosts=True)
+        g, h = TgGroup.objects.get_or_create(group_name='hub-dalston',display_name='Hub Dalston', place=l, level='member')
 
 
     def Xtest_new_slider_set(self) :
 
-        group, TgGroup.objects.get_or_create(group_name='solar cooking', display_name='Solar Chefs', create_hosts=True)
+        group, TgGroup.objects.get_or_create(group_name='solar cooking', display_name='Solar Chefs', level='member')
         blog= OurPost(title='parabolic pancakes')
         blog.save()
 
@@ -356,7 +364,13 @@ class TestSecurityContexts(unittest.TestCase):
     def test_contexts(self) :
         location = Location(name='world')
         location.save()
-        group,hosts = TgGroup.objects.get_or_create(group_name='group',display_name='Our Group', place=None, create_hosts=True)
+
+        u = User(username='God', email_address='god@the-hub.net')
+        u.save()
+
+        group, created= TgGroup.objects.get_or_create(group_name='group',
+                                                      display_name='Our Group', 
+                                                      place=None, level='member', user=u)
         group.to_security_context()
 
         blog = OurPost(title='using defaults')
