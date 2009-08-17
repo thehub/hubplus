@@ -6,7 +6,8 @@ to which anyone is a member)"""
 from apps.plus_permissions.interfaces import secure_wrap, TemplateSecureWrapper
 from apps.hubspace_compatibility.models import Location
 from apps.plus_groups.models import get_or_create_group
-from apps.plus_permissions.models import SecurityTag
+from apps.plus_permissions.models import SecurityTag, SecurityContext
+
 
 root_location = None
 
@@ -50,6 +51,8 @@ def has_access(self, agent, resource, interface) :
     return False
 
 
-def create_security_tag(security_context, interface, agents=[]) :
-    t = SecurityTag(security_context=security_context, interface=interface, agents=agents)
+def create_security_tag(scontext, interface, agents=[]) :
+    if scontext.__class__ != SecurityContext: 
+        scontext = scontext.get_ref().explicit_scontext
+    t = SecurityTag(security_context=scontext, interface=interface, agents=agents)
     

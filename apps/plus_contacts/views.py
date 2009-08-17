@@ -16,11 +16,6 @@ from django.template import RequestContext
 from apps.plus_contacts.models import Application, PENDING, WAITING_USER_SIGNUP
 
  
-# XXX temporary, ensure that the interface factory know about Application
-from apps.plus_permissions.models import get_permission_system, PlusPermissionsNoAccessException
-from apps.plus_permissions.Application import ApplicationViewer
-get_permission_system().add_interface(Application,'Viewer',ApplicationViewer)
-
 
 @login_required
 def list_of_applications(request, template_name="plus_contacts/applicant_list.html"):
@@ -41,7 +36,6 @@ def accept_application(request,id) :
     application = Application.objects.get(id=id,permission_agent=request.user)
 
     try :
-        ps = get_permission_system()
         # now approved ... we need to send a confirmation mail, however, for the moment, we'll just 
         # create the login url and show it,
         # also, if the applicant already has an account, we can join him/her to a group

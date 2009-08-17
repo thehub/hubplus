@@ -63,6 +63,8 @@ def set_security_context(self, scontext):
     """Set the security context used by this object
     """
     ref = self.get_ref()
+    if scontext.__class__ != SecurityContext: 
+        scontext = scontext.get_ref().explicit_scontext
     ref.explicit_scontext = scontext
     ref.save()
 

@@ -23,8 +23,9 @@ from types.OurPost import *
 from apps.plus_permissions.api import create_security_tag, has_access
 
 #  
-class TestPermissions(unittest.TestCase) :
 
+
+class TestHierarchy(unittest.TestCase):
     def testGroupHierarchy(self):
         # Test the group hierarchies stuff ...
 
@@ -124,6 +125,8 @@ class TestPermissions(unittest.TestCase) :
         self.assertFalse(u.is_member_of(hosts))
 
 
+
+class TestAccess(unittest.TestCase) :
 
     def test_permissions(self) :
 
@@ -301,25 +304,6 @@ class TestPermissions(unittest.TestCase) :
         
 
 
-    def test_contexts(self) :
-        location = Location(name='world')
-        location.save()
-        group,hosts = create_site_group('group',display_name='Our Group', location=None, create_hosts=True)
-        blog = OurPost(title='hello')
-        blog.save()
-        blog.set_security_context(group)
-        blog.set_context(hosts)
-
-        self.assertEquals(Context.objects.get_security_context(blog).id, group.id)
-        self.assertEquals(Context.objects.get_security_context(blog).__class__, group.__class__)
-
-        blog.set_context(hosts)
-        self.assertEquals(Context.objects.get_context(blog).id,hosts.id)
-
-        Context.objects.set_security_context(blog,blog)
-        self.assertEquals(blog.get_security_context().id, blog.id)
-        self.assertEquals(blog.get_context().id, hosts.id)
-    
         
 
     def test_group_admin(self) :
@@ -328,7 +312,7 @@ class TestPermissions(unittest.TestCase) :
         g, h = create_hub(name='hub-dalston',display_name='Hub Dalston', location=l, create_hosts=True)
 
 
-    def test_new_slider_set(self) :
+    def Xtest_new_slider_set(self) :
 
         group, hosts = create_site_group('solar cooking', display_name='Solar Chefs', create_hosts=True)
         blog= OurPost(title='parabolic pancakes')
@@ -399,6 +383,19 @@ class TestPermissions(unittest.TestCase) :
 
   
 class TestSecurityContexts(unittest.TestCase):
+
+    def test_contexts(self) :
+        location = Location(name='world')
+        location.save()
+        group,hosts = create_site_group('group',display_name='Our Group', location=None, create_hosts=True)
+        blog = OurPost(title='hello')
+        blog.save()
+        blog.acquires_from(group)
+
+        self.assertEquals(blog.get_security_context().id, group.get_security_context().id)
+        self.assertEquals(blog.get_security_context().__class__, group.get_security_context().id,__class__)
+
+
     def test_generic_reference(self):
         b = OurPost(title="Hello")
         b.save()
@@ -411,11 +408,14 @@ class TestSecurityContexts(unittest.TestCase):
         b2.to_security_context()
         sc = b2.get_ref().explicit_scontext
         self.assertEquals(sc.__class__, SecurityContext)
-        b.set_security_context(sc)
-        self.assertEquals(b2.get_security_context(), b2.get_security_context())
+
+        b.acquires_from(b2)
+        self.assertEquals(b.get_security_context(), b2.get_security_context())
 
         b3 = OurPost(title="Hello3")
         b3.save()
         b3.acquires_from(b2)
         self.assertEquals(b3.get_security_context(), b2.get_security_context())
+
+
 
