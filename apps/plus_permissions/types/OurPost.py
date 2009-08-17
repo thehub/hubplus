@@ -35,7 +35,7 @@ class OurPostCommentor:
     pass
 
 
-from apps.plus_permissions.interfaces import add_type_to_interface_map
+from apps.plus_permissions.interfaces import add_type_to_interface_map, get_interface_map
 
 OurPostInterfaces = {'Viewer':OurPostViewer,
                      'Editor':OurPostEditor,
@@ -43,3 +43,8 @@ OurPostInterfaces = {'Viewer':OurPostViewer,
 
 add_type_to_interface_map(OurPost, OurPostInterfaces)
 
+
+# hmmm ... fake this for a minute
+def force_add() :
+    add_type_to_interface_map(OurPost,OurPostInterfaces)
+    print "3zz33", get_interface_map(OurPost)

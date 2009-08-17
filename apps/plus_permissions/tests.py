@@ -11,12 +11,16 @@ from django.contrib.auth.models import User
 from apps.hubspace_compatibility.models import TgGroup, Location
 
 from models import *
-from apps.plus_groups.models import create_hub, create_site_group
+from interfaces import get_interface_map
+import interfaces
+
+from apps.plus_groups.models import create_hub, create_site_group, get_or_create_group
 from apps.plus_groups import *
 
 from types.OurPost import *
 
-from apps.plus_permissions.api import make_security_tag, has_access
+
+from apps.plus_permissions.api import create_security_tag, has_access
 
 #  
 class TestPermissions(unittest.TestCase) :
@@ -39,9 +43,9 @@ class TestPermissions(unittest.TestCase) :
         l.save()
 
         # here's a group (called "hub-members")
-        hubMembers = create_site_group(group_name='hub-members',display_name='members',place=l)
+        hubMembers, flag = get_or_create_group('hub-members',display_name='members',location=l)
 
-        # they start empty
+        # they start 
         self.assertEquals(hubMembers.get_no_members(),0)
 
         # we now add member to the group
@@ -59,7 +63,7 @@ class TestPermissions(unittest.TestCase) :
         self.assertEquals(hubMembers.get_no_members(),1)
 
         # another group, called hosts
-        hosts = TgGroup(group_name='admins',display_name='admins',created=datetime.date.today(),place=l)
+        hosts,h2 = create_site_group('admins',display_name='admins',location=l)
         hosts.save()
 
         # u2 is a host
@@ -98,7 +102,7 @@ class TestPermissions(unittest.TestCase) :
         self.assertTrue(u.is_member_of(hubMembers))
 
 
-        another_group,ag_hosts = create_site_group('site_group','Another Site Group',  create_hosts=True)
+        another_group,ag_hosts = create_site_group('site_group',display_name='Another Site Group',  create_hosts=True)
         another_group.add_member(hubMembers)
         self.assertTrue(ag_hosts.is_member_of(another_group))
         self.assertFalse(another_group.is_member_of(ag_hosts))
@@ -123,12 +127,13 @@ class TestPermissions(unittest.TestCase) :
 
     def test_permissions(self) :
 
+
         u = User(username='synnove',email_address='synnove@the-hub.net')
         u.save()
         
 
-        writers = create_site_group(group_name='writers', display_name='writers')
-        editors = create_site_group(group_name='editors', display_name='editors')
+        writers, wh = create_site_group('writers', display_name='writers')
+        editors, eh = create_site_group('editors', display_name='editors')
 
         # two resources, blog and blog2, 
         blog= OurPost(title='my post')    
@@ -138,11 +143,13 @@ class TestPermissions(unittest.TestCase) :
         # and make writers the acquired security context of the blog
         blog.acquires_from(writers)
     
-        i_viewer = get_interface_map(OurPost,'Viewer')
-
+        import ipdb
+        #ipdb.set_trace()
+        i_viewer = get_interface_map(OurPost)['Viewer']
+        
         # explicit tag between the writers group, the viewer interface and the user u
         # this means that u has viewer access on writers,
-        t = make_security_tag(writers, i_viewer, [u])
+        t = create_security_tag(writers, i_viewer, [u])
 
         # confirm this
         self.assertTrue(has_access(u, writers, i_viewer))
@@ -167,7 +174,7 @@ class TestPermissions(unittest.TestCase) :
         
         # but we'll make it its own security context
         blog2.set_explicit_security_context(blog2)
-        t2 = make_security_tag(blog2, i_viewer)
+        t2 = create_security_tag(blog2, i_viewer)
         # and we have a tag for it, but no agents associated with the tag
         self.assertFalse(has_access(blog2,i_viewer,u))
         self.assertFalse(has_access(blog2,i_viewer,u2))
@@ -208,7 +215,7 @@ class TestPermissions(unittest.TestCase) :
         self.assertFalse(ps.has_access(u,blog,IViewer))
 
         # now let's test contexts
-        discussion_group,discussion_admin = create_site_group('discussion','Discussion',l)
+        discussion_group,discussion_admin = create_site_group('discussion',display_name='Discussion',location=l)
         blog3 = OurPost(title='story')
         blog3.save()
 
@@ -228,17 +235,22 @@ class TestPermissions(unittest.TestCase) :
     def test_interfaces(self) :
 
         class A : pass
-        self.assertTrue(tif.get_type(OurPost))
-        self.assertRaises(Exception,tif.get_type,A)
 
-        self.assertEquals(tif.get_interface(OurPost,'Viewer'),OurPostViewer)
-        self.assertRaises(Exception,tif.get_interface,OurPost,'xyz')
+        force_add()
+        self.assertTrue(get_interface_map(OurPost))
+
+
+        i_viewer= get_interface_map(OurPost)['Viewer']
+        self.assertEquals(i_viewer,OurPostViewer)
+        def im(cls, key) :
+            return get_interface_map(cls)[key]
+        self.assertRaises(Exception,im,OurPost,'xyz')
 
         blog= OurPost(title='what I want to say',body="Here's what")
         blog.save()
         blog2 = blog
         
-        blog = NullInterface(blog)
+        blog = secure_wrap(blog,[])
         def f(blog) : return blog.title
         
         self.assertRaises(PlusPermissionsNoAccessException,f,blog) 
@@ -255,7 +267,7 @@ class TestPermissions(unittest.TestCase) :
         self.assertEquals(blog.body,"Here's what")
         self.assertRaises(PlusPermissionsNoAccessException,f,blog)
 
-        blog.add_interface( tif.get_interface(OurPost,'Viewer'))
+        blog.add_interface( get_interface_map(OurPost)['Viewer'])
         self.assertEquals(blog.title,'what I want to say')
         
         def f(blog) : blog.title = "something stupid"
@@ -265,7 +277,7 @@ class TestPermissions(unittest.TestCase) :
             blog.delete()
         self.assertRaises(PlusPermissionsNoAccessException,try_delete,blog)
 
-        blog.add_interface( tif.get_interface(OurPost,'Editor'))
+        blog.add_interface( get_interface_map(OurPost)['Editor'])
         
         blog.title = "Hello"
         self.assertEquals(blog.title,'Hello')
@@ -273,11 +285,11 @@ class TestPermissions(unittest.TestCase) :
 
         self.assertEquals(blog2.title,'Hello')
 
-        blog.remove_interface( tif.get_interface(OurPost,'Editor'))
+        blog.remove_interface( get_interface_map(OurPost)['Editor'])
         self.assertRaises(PlusPermissionsReadOnlyException,f,blog)
         
         self.assertRaises(PlusPermissionsNoAccessException,try_delete,blog)
-        blog.add_interface(tif.get_interface(OurPost,'Editor'))
+        blog.add_interface(get_interface_map(OurPost)['Editor'])
 
         def foo(r) :
             r.foo()
@@ -296,7 +308,7 @@ class TestPermissions(unittest.TestCase) :
     def test_contexts(self) :
         location = Location(name='world')
         location.save()
-        group,hosts = create_site_group('group','Our Group', location=None, create_hosts=True)
+        group,hosts = create_site_group('group',display_name='Our Group', location=None, create_hosts=True)
         blog = OurPost(title='hello')
         blog.save()
         blog.set_security_context(group)
@@ -322,7 +334,7 @@ class TestPermissions(unittest.TestCase) :
 
     def test_new_slider_set(self) :
 
-        group, hosts = create_site_group('solar cooking', 'Solar Chefs', create_hosts=True)
+        group, hosts = create_site_group('solar cooking', display_name='Solar Chefs', create_hosts=True)
         blog= OurPost(title='parabolic pancakes')
         blog.save()
 
@@ -341,7 +353,7 @@ class TestPermissions(unittest.TestCase) :
                            'options' : options,
                            'sliders':[ 
                     {
-                        'type' : ps.get_interface_id(OurPost,'Viewer'),
+                        'type' : get_interface_map(OurPost)['Viewer'],
                         'title': 'Viewer',
                         'hard_min' : options[0],
                         'soft_min' : options[0],
@@ -356,11 +368,11 @@ class TestPermissions(unittest.TestCase) :
         self.assertEquals(so.options,options)
 
         
-        IViewer = ps.get_interface_id(OurPost,'Viewer')
+        IViewer = get_interface_map(OurPost)['Viewer']
         slider = so.sliders[0]
 
 
-        self.assertEquals(slider.type,ps.get_interface_id(OurPost,'Viewer'))
+        self.assertEquals(slider.type,get_interface_map(OurPost)['Viewer'])
         self.assertEquals(slider.title,'Viewer')
         self.assertEquals(slider.hard_min,options[0])
         self.assertEquals(slider.default,options[1])

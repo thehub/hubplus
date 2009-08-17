@@ -6,6 +6,7 @@ to which anyone is a member)"""
 from apps.plus_permissions.interfaces import secure_wrap, TemplateSecureWrapper
 from apps.hubspace_compatibility.models import Location
 from apps.plus_groups.models import get_or_create_group
+from apps.plus_permissions.models import SecurityTag
 
 root_location = None
 
