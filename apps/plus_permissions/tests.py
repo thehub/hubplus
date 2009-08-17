@@ -388,34 +388,24 @@ class TestSecurityContexts(unittest.TestCase):
         location = Location(name='world')
         location.save()
         group,hosts = create_site_group('group',display_name='Our Group', location=None, create_hosts=True)
-        blog = OurPost(title='hello')
+        group.to_security_context()
+
+        blog = OurPost(title='using defaults')
         blog.save()
         blog.acquires_from(group)
 
         self.assertEquals(blog.get_security_context().id, group.get_security_context().id)
-        self.assertEquals(blog.get_security_context().__class__, group.get_security_context().id,__class__)
 
-
-    def test_generic_reference(self):
-        b = OurPost(title="Hello")
-        b.save()
-        self.assertTrue(b.ref)
+        blog2 = OurPost(title='I did it my way')
+        blog2.save()
+        blog2.acquires_from(group)
+        sc2 = blog2.to_security_context()
+        blog2.set_security_context(sc2)
+        blog2.save()
+        self.assertEquals(blog2.get_security_context().id, sc2.id)
+        self.assertNotEqual(blog2.get_security_context().id, blog.get_security_context())
         
-        b2 = OurPost(title="Hello2")
-        b2.save()
 
-        #test explicit security context
-        b2.to_security_context()
-        sc = b2.get_ref().explicit_scontext
-        self.assertEquals(sc.__class__, SecurityContext)
-
-        b.acquires_from(b2)
-        self.assertEquals(b.get_security_context(), b2.get_security_context())
-
-        b3 = OurPost(title="Hello3")
-        b3.save()
-        b3.acquires_from(b2)
-        self.assertEquals(b3.get_security_context(), b2.get_security_context())
 
 
 
