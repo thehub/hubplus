@@ -47,8 +47,7 @@ def accept_application(request,id) :
             print url
             return render_to_response('plus_contacts/dummy_email.html',
                                           {'url':url, 'message':msg},                                      
-                                          context_instance=RequestContext(request))
-                 
+                                          context_instance=RequestContext(request))                 
 
         # here, this user already exists, now we're going to allow to become member of group,
         # if we have the right permissions

@@ -53,7 +53,8 @@ class UserNameField(models.CharField) :
 def encrypt_password(password) :
     return hashlib.md5(password).hexdigest()
 
-# The following will be patched into the User object in the  --- WHERE! Tom
+# The following will be patched into the User object in hubspace_compatibility.py
+
 def set_password(self,raw) :
     self.password = encrypt_password(raw)
 

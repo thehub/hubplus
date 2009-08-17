@@ -300,8 +300,6 @@ class TestAccess(unittest.TestCase) :
 
         blog.delete()
         
-
-
         
 
     def test_group_admin(self) :
@@ -404,8 +402,6 @@ class TestSecurityContexts(unittest.TestCase):
         self.assertNotEqual(blog2.get_security_context().id, blog.get_security_context())
         
 
-
-
 class TestDecorators(unittest.TestCase) :
     def test_decorators(self) :
         b = OurPost(title='test decorator')
@@ -421,12 +417,13 @@ class TestDecorators(unittest.TestCase) :
             def __init__(self, user) :
                 self.user = user
 
-
         u = User(username='lydia',email_address='tattooed_lady@the-hub.net')
         u.save()
 
-        self.assertFalse(has_access(u,b,i_viewer))
+        bsc = b.to_security_context()
+        b.set_security_context(b)
 
+        self.assertFalse(has_access(u,b,i_viewer))
         self.assertRaises(PlusPermissionsNoAccessException,foo,FakeRequest(u),b)
 
         scb = b.to_security_context()

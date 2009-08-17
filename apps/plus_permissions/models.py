@@ -162,7 +162,7 @@ def has_access(agent, resource, interface) :
     """
         
     # we're always interested in the security_context of this resource
-    context = resource.get_security_context(resource)
+    context = resource.get_security_context()
     context_type = ContentType.objects.get_for_model(context)
 
     # which agents have access?
@@ -226,7 +226,7 @@ def has_access(agent, resource, interface) :
     """
         
     # we're always interested in the security_context of this resource
-    context = resource.get_security_context(resource)
+    context = resource.get_security_context()
     context_type = ContentType.objects.get_for_model(context)
 
     # which agents have access?
