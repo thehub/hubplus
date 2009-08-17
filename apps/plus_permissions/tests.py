@@ -19,7 +19,7 @@ from apps.plus_groups import *
 
 from types.OurPost import *
 
-from apps.plus_permissions.api import create_security_tag, has_access, has_interfaces_decorator
+from apps.plus_permissions.api import has_access, has_interfaces_decorator
 
 #  
 
@@ -128,6 +128,55 @@ class TestHierarchy(unittest.TestCase):
 class TestAccess(unittest.TestCase) :
 
     def test_permissions(self) :
+        """ Starting with security_contexts"""
+
+        nahia = User(username='nahia', email_address='nahia@the-hub.net')
+        nahia.save()
+        
+        kx, kxh = create_hub('kingsX', display_name='Hub Kings Cross')
+        kxsc = kx.to_security_context()
+        
+        blog = kx.create_resource(OurPost,title='my blog')
+        blog.save()
+        
+        # assert that the blog post derives it's security context from Kings Cross
+        self.assertEquals(blog.get_security_context(),kx.get_security_context())
+
+        # confirm that there's an OurPost.Viewer interface for it
+        self.assertTrue( kx.get_tag_for(blog, "Viewer"))
+                
+        i_viewer = get_interface_map(OurPost)['Viewer']
+
+        # but nahia has no access
+        self.assertFalse( has_access(nahia, blog, i_viewer))
+
+        # now lets add this user to the tag
+        tag = kx.get_tag_for(blog,"Viewer")
+        tag.add_agent(u)
+
+        # so now nahia has access
+        self.assertTrue( has_access(nahia, blog, i_viewer))
+        
+        # but tuba doesn't
+        tuba = User(username='nahia', email_address='tuba@the-hub.net')
+        tuba.save()
+
+        self.assertFalse( has_access(tuba, blog, i_viewer))
+
+        # however, we presumably want to give kings cross *members* access to it
+        tag.add_agent(kx)
+        self.assertTrue( has_access(kx, blog, i_viewer))
+
+        # so if we add tuba to kings cross
+        kx.add_member(tuba)
+
+        # she now has access
+        self.assertTrue( has_access(tuba, blog, i_viewer))
+        
+
+        
+
+    def test_old_permissions(self) :
 
         u = User(username='synnove',email_address='synnove@the-hub.net')
         u.save()
@@ -147,7 +196,7 @@ class TestAccess(unittest.TestCase) :
         
         # explicit tag between the writers group, the viewer interface and the user u
         # this means that u has viewer access on writers,
-        t = create_security_tag(writers, i_viewer, [u])
+        t = writers.get_security_context().create_security_tag(i_viewer, [u])
 
         # confirm this
         self.assertTrue(has_access(u, writers, i_viewer))
@@ -166,11 +215,13 @@ class TestAccess(unittest.TestCase) :
         blog2 = OurPost(title='another post')
         blog2.save()
 
+
         self.assertFalse(has_access(u,blog2,i_viewer))
         
         # but we'll make it its own security context
-        blog2.set_security_context(blog2)
-        t2 = create_security_tag(blog2, i_viewer)
+        sc2 = blog2.set_security_context(blog2)
+
+        t2 = sc2.create_security_tag(i_viewer,[])
         # and we have a tag for it, but no agents associated with the tag
         self.assertFalse(has_access(blog2,i_viewer,u))
         self.assertFalse(has_access(blog2,i_viewer,u2))
@@ -183,7 +234,7 @@ class TestAccess(unittest.TestCase) :
         self.assertTrue(ps.has_access(u,blog,i_viewer))
 
         i_commentor = get_interface_map(OurPost)['Commentor']
-        t2 = create_security_tag(blog,i_commentor,[u])
+        t2 = blog.get_security_context().create_security_tag(i_commentor,[u])
 
         self.assertTrue(ps.has_access(u,blog,i_commentor))
 
@@ -191,7 +242,7 @@ class TestAccess(unittest.TestCase) :
         i_editor = get_interface_map(OurPost)['Editor']        
         self.assertFalse(ps.has_access(u,blog,i_editor))
 
-        t3 = create_security_tag(blog2,i_editor,[editors])
+        t3 = blog.get_security_context().create_security_tag(i_editor,[editors])
         
         self.assertTrue(ps.has_access(editors,blog2,i_editor))
 
@@ -426,6 +477,5 @@ class TestDecorators(unittest.TestCase) :
         self.assertFalse(has_access(u,b,i_viewer))
         self.assertRaises(PlusPermissionsNoAccessException,foo,FakeRequest(u),b)
 
-        scb = b.to_security_context()
         create_security_tag(b,i_viewer,[u])
         self.assertTrue(foo(FakeRequest(u),b))

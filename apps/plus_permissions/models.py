@@ -97,7 +97,7 @@ class SecurityContext(models.Model):
                     
      def create_security_tag(self, interface, agents) :
          # agents here is a list of something like User or TgGroup, NOT an Agent
-          tag = SecurityTag(context=self, interface=interface)
+          tag = SecurityTag(security_context=self, interface=interface)
           tag.save()
           for agent in agents :
                tag.agents.add(agent.get_ref())

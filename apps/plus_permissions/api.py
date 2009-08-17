@@ -22,16 +22,6 @@ anonymous_group = TgGroup.objects.get_or_create(group_name='anonymous', display_
 all_members_group = TgGroup.objects.get_or_create(group_name='all_members', display_name='All Members', place=get_or_create_root_location(), level='site_member', user=admin_user)
 
 
-def create_security_tag(scontext, interface, agents=[]) :
-    # do we need this? 
-    if scontext.__class__ != SecurityContext: 
-        scontext = scontext.get_ref().explicit_scontext
-        print "III", scontext, scontext.__class__
-    t = SecurityTag(security_context=scontext, interface=interface)
-    t.save()
-    for a in agents : 
-        t.add_agent(a)
-    
 
 def has_interfaces_decorator(interfaces) :
     def decorator(f) :
