@@ -17,8 +17,6 @@ from apps.plus_permissions.permissionable import get_or_create_root_location
 
 __all__ = ['secure_wrap', 'TemplateSecureWrapper', 'Location', 'TgGroup', 'has_access', 'anonyoumous_group', 'all_members_group', 'get_or_create_root_location']
 
-
-
 def has_interfaces_decorator(interfaces) :
     def decorator(f) :
         def g(request, resource,*args,**kwargs) :
