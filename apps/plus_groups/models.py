@@ -45,6 +45,7 @@ def get_or_create_group(name, type=GROUP, **kwargs) :
     g = TgGroup(group_name=name, place=location, created=created, display_name=display_name, **kwargs)
     g.type = type
     g.save()
+    scg = g.to_security_context()
 
     if create_hosts : 
             h = TgGroup(group_name='%s-admin'%name, display_name='%s Admin'%display_name,  place=location, **kwargs) 

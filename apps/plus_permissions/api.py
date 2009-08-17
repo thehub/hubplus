@@ -23,12 +23,12 @@ anonymous_group = get_or_create_group('anonymous', display_name='World', locatio
 all_members_group = get_or_create_group('all_members',display_name='All Members', location=root_location)
 site_hosts = get_or_create_group('site_hosts', display_name='site_hosts', location=root_location)
 
-def has_access(self, agent, resource, interface) :
+def has_access(agent, resource, interface) :
     """Does the agent have access to this interface in this resource
     """
         
     # we're always interested in the security_context of this resource
-    context = self.get_security_context(resource)
+    context = resource.get_security_context()
     context_type = ContentType.objects.get_for_model(context)
 
     # which agents have access?
@@ -54,5 +54,20 @@ def has_access(self, agent, resource, interface) :
 def create_security_tag(scontext, interface, agents=[]) :
     if scontext.__class__ != SecurityContext: 
         scontext = scontext.get_ref().explicit_scontext
-    t = SecurityTag(security_context=scontext, interface=interface, agents=agents)
+        print "III", scontext, scontext.__class__
+    t = SecurityTag(security_context=scontext, interface=interface)
+    t.save()
+    for a in agents : 
+        t.add_agent(a)
     
+
+def has_interfaces_decorator(interfaces) :
+    def decorator(f) :
+        def g(request, resource,*args,**kwargs) :
+            r2 = secure_wrap(resource,interfaces)
+            return f(request, r2,*args,**kwargs)
+        return g
+    return decorator
+            
+        
+

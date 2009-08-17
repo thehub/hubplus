@@ -54,6 +54,9 @@ class PermissionableManager(models.Manager) :
 def to_security_context(self):
     """Turn an existing object into a security context.
     """    
+    if self.get_ref().explicit_scontext :
+        # if one already exists, return it (PJ)
+        return self.get_ref().explicit_scontext
     sc = SecurityContext()
     sc.save()
     self.set_security_context(sc)

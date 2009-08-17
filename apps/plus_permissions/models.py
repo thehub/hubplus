@@ -17,8 +17,6 @@ import simplejson
 import datetime
 
 
-
-
 class SecurityContext(models.Model):
      """Target is the thing the context is associated with e.g. Group. The thing that we will metaphorically put things "in".
      Context Agent is the 

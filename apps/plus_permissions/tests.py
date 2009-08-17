@@ -19,8 +19,7 @@ from apps.plus_groups import *
 
 from types.OurPost import *
 
-
-from apps.plus_permissions.api import create_security_tag, has_access
+from apps.plus_permissions.api import create_security_tag, has_access, has_interfaces_decorator
 
 #  
 
@@ -134,6 +133,7 @@ class TestAccess(unittest.TestCase) :
         u.save()
         
         writers, wh = create_site_group('writers', display_name='writers')
+        wsc = writers.to_security_context()
         editors, eh = create_site_group('editors', display_name='editors')
 
         # two resources, blog and blog2, 
@@ -155,7 +155,6 @@ class TestAccess(unittest.TestCase) :
         # now confirm that u also has access on blog via this security_context
         self.assertTrue(has_access(u, blog, i_viewer))
         
-
         # confirm that a different user DOESN'T have the same access
         u2 = User(username='joerg', email_address='joerg@the-hub.net')
         u2.save()
@@ -163,7 +162,6 @@ class TestAccess(unittest.TestCase) :
         self.assertFalse(has_access(writers, blog, i_viewer))
         self.assertFalse(has_access(u2, blog, i_viewer))
         
-
         # now a second resource, blog2 which is similar to blog1, but we won't give access
         blog2 = OurPost(title='another post')
         blog2.save()
@@ -184,13 +182,13 @@ class TestAccess(unittest.TestCase) :
 
         self.assertTrue(ps.has_access(u,blog,i_viewer))
 
-        i_commentor = get_interfaces_map(OurPost)['Commentor']
+        i_commentor = get_interface_map(OurPost)['Commentor']
         t2 = create_security_tag(blog,i_commentor,[u])
 
         self.assertTrue(ps.has_access(u,blog,i_commentor))
 
         ### continue from here 
-        i_editor = get_interfaces_map(OurPost)['Editor']        
+        i_editor = get_interface_map(OurPost)['Editor']        
         self.assertFalse(ps.has_access(u,blog,i_editor))
 
         t3 = create_security_tag(blog2,i_editor,[editors])
@@ -408,4 +406,29 @@ class TestSecurityContexts(unittest.TestCase):
 
 
 
+class TestDecorators(unittest.TestCase) :
+    def test_decorators(self) :
+        b = OurPost(title='test decorator')
+        b.save()
 
+        i_viewer = get_interface_map(OurPost)['Viewer']
+
+        @has_interfaces_decorator(['Viewer'])
+        def foo(request, resource, *args, **kwargs) :
+            return True
+
+        class FakeRequest :
+            def __init__(self, user) :
+                self.user = user
+
+
+        u = User(username='lydia',email_address='tattooed_lady@the-hub.net')
+        u.save()
+
+        self.assertFalse(has_access(u,b,i_viewer))
+
+        self.assertRaises(PlusPermissionsNoAccessException,foo,FakeRequest(u),b)
+
+        scb = b.to_security_context()
+        create_security_tag(b,i_viewer,[u])
+        self.assertTrue(foo(FakeRequest(u),b))
