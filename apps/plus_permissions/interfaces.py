@@ -8,10 +8,40 @@ Interfaces are namespaced by the type they apply to e.g. "Wiki.Editor" allowing 
 
 __all__ = ['secure_wrap', 'PlusPermissionsNoAccessException', 'PlusPermissionsReadOnlyException', 'add_type_to_interface_map', 'add_interfaces_to_type', 'strip', 'TemplateSecureWrapper', 'get_interface_map']
 
+
 def secure_wrap(content_obj, interface_names=None):
     access_obj = SecureWrapper(content_obj)
     access_obj.load_interfaces_for(request.user, interface_names=interface_names)
     return access_obj
+
+
+class PlusPermissionsNoAccessException(Exception):
+    def __init__(self,cls,id,msg) :
+        self.cls=cls
+        self.id=id
+        self.msg=msg
+        self.silent_variable_failure = True
+
+class PlusPermissionsReadOnlyException(Exception) : 
+    def __init__(self,cls,msg) :
+        self.cls = cls
+        self.msg = msg
+
+class NonExistentPermission(Exception) : 
+    pass
+
+
+class TemplateSecureWrapper:
+
+    def __init__(self, SecureWrapper):
+        self.SecureWrapper = SecureWrapper
+
+    def __getattr__(self, name):
+        try:
+            return getattr(self.SecureWrapper, name)
+        except:
+            return NotViewable
+
 
 type_interfaces_map = {}  
 
@@ -46,20 +76,6 @@ def strip(x) :
         return x
 
 
-class PlusPermissionsNoAccessException(Exception):
-    def __init__(self,cls,id,msg) :
-        self.cls=cls
-        self.id=id
-        self.msg=msg
-        self.silent_variable_failure = True
-
-class PlusPermissionsReadOnlyException(Exception) : 
-    def __init__(self,cls,msg) :
-        self.cls = cls
-        self.msg = msg
-
-class NonExistentPermission(Exception) : 
-    pass
 
 
 class InterfaceReadProperty:
@@ -87,19 +103,9 @@ class NotViewable:
     @classmethod
     def __repr__(self):
         return ""
+
     
     
-class TemplateSecureWrapper:
-
-    def __init__(self, SecureWrapper):
-        self.SecureWrapper = SecureWrapper
-
-    def __getattr__(self, name):
-        try:
-            return getattr(self.SecureWrapper, name)
-        except:
-            return NotViewable
-
 
 class SecureWrapper:
     """
@@ -136,7 +142,7 @@ class SecureWrapper:
             interface_names = interface_map.keys()
         for iname in interface_names:
             interface = interface_map[iname]
-            if ps.has_access(agent=agent, resource=resource, interface=self.get_inner.__class__ + '.' + iname) :
+            if has_access(agent=agent.get_ref(), resource=resource, interface=self.get_inner.__class__ + '.' + iname) :
                 self.add_permissions(interface)
     
     def add_permissions(self, interface):

@@ -134,7 +134,9 @@ try :
   class TgGroup(models.Model):
     group_name = models.CharField(unique=True, max_length=40)
     display_name = models.CharField(max_length=255)
+
     created = models.DateTimeField(auto_now_add=True)
+
     place = models.ForeignKey(Location)
     #if place is Hub Islington then set member of toHub Islington group if level is member
     #if level is host, set member of to Hub Islington Host Group.

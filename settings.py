@@ -155,7 +155,7 @@ INSTALLED_APPS = (
     'about',
     'plus_lib',
     'hubspace_compatibility',
-    'plus_permissions',
+
     
 
     'analytics',
@@ -176,10 +176,9 @@ INSTALLED_APPS = (
     'misc',
     'photos',
     'tag_app',
-    
     'django.contrib.admin',
 
-)
+    )
 
 ABSOLUTE_URL_OVERRIDES = {
     "auth.user": lambda o: "/profiles/%s/" % o.username,
@@ -268,17 +267,12 @@ except ImportError:
 
 try:
     from hubspace_compatibility import *
+    print "import hubspace_compatibility succeeded"
 except ImportError, e:
     print "import hubspace_compatibility failed :: " + `e`
 
 try:
-    from apps.plus_permissions.permissionable import security_patch
-    from apps.plus_permissions import types
-    from apps.plus_permissions.types import *
-    for module in types.__all__:
-        content_type =  globals()[module].content_type
-        security_patch(content_type)
-
+    from apps.plus_permissions import patch
 except ImportError, e:
     print "importing / setting up permissions system failed :: " + `e`
 

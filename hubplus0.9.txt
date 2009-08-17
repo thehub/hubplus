@@ -11,16 +11,11 @@ e.g. comments on wikis
 Phil - Write decorator to explicitly check for a given interface on the current resource (second argument) 
        when calling a function. decorator should also wrap the current resource in a secure_wrapper.
      - Write template decorator which automatically wraps "secure" objects in a template_secure_wrapper
-     - override generic object manager filter and get functions to use secure_wrapper. 
+     - override generic object manager filter and get, constructor functions to use secure_wrapper. 
      - write high-level tests for PermissionsSystem, and SecurityContext
-     - on create group create admin group. Whenever we create a group, user or set customize permissions the slider-set we create a new security context
      
-     - on create security context set the agent as a "host". The agents admin - this determines who will be able to *set permissions*, i.e. the admin group of this group, and a necessary monotonic tag acquisition (sliders).
-     
-     - on create profile set user as admin, and profile to acquire from user
-     
-     - find agent from acquistion hierarchy + host
 
+<<<<<<< HEAD:hubplus0.9.txt
 - if security context isn't set, we should look up the containment hierarchy to find it
 - Whenever we create a group, user or set customize permissions the slider-set we create a new security context
  
@@ -32,18 +27,28 @@ Tom - resource containment relation - objects exist in a "container" which may n
     - json specification of group, wiki and comments
     - imports
 =======
-
-Tom - json specification of user, profile, group, wiki and comments
-    - different types of groups - "template" groups and clone group permissions
-    - add manage permissions interface to most objects  i.e. set_security_context, move_slider
-
-    - generate slider (view)
-    - change slider (view)
-    - customize permissions (make security context)
+=======
+Tom - put creator on the reference object?
+    - access anonyoumous_group and all_members_group on the SecurityContext
+    - json specification of user, profile, group, wiki and comments
+        - everything apart from constraints
+    - generate slider (views)
+    - set slider (view)
+    - create "set permissoins" interface per type, controlled by admin,  i.e. set_security_context, move_slider
+    - customise permissions button
+    - to_security_context  should copy Sliders from current values from old_security (implicit) context of object
 
     - templatetag - include slider for interface, include slider set for security context
-    - initialise types (maps + any patching)
-    - control permissions on security tags - admin only 
+
+    - create GenericReferences for existing objects - security patch
+    - on create profile set user as admin, and profile to acquire from user
+    - single slider UI
+     
+        - different types of groups - "template" groups and clone group permissions
+>>>>>>> 07aefc70e86ed255855d2fffd4e6b3c67d79e415:hubplus0.9.txt
+
+
+
 
 
 - who can set the security context of an object?? - the admin of the container
