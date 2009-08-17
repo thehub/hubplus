@@ -97,10 +97,10 @@ class SecurityContext(models.Model):
          # agents here is a list of something like User or TgGroup, NOT an Agent
           tag = SecurityTag(security_context=self, interface=interface)
           tag.save()
-          for agent in agents :
-               tag.agents.add(agent.get_ref())
-          tag.save()
+
           return tag
+
+
      
      def move_slider(self, new_agent, interface):
           if new_agent in self.slider_agents:
@@ -149,11 +149,25 @@ class SecurityTag(models.Model) :
     security_context = models.ForeignKey(SecurityContext)  # revere is securitytag
     agents = models.ManyToManyField(GenericReference)
 
+    def add_agents(self, agents=None):
+         """pass in a list of users and groups
+         """
+         for agent in agents :
+              if agent.get_ref() not in self.agents:
+                   self.agents.add(agent.get_ref())
+         self.save()
+
+    def remove_agents(self, agents=None):
+         """pass in a list of users and groups
+         """
+         for agent in agents:
+              if agent.get_ref() in self.agents():
+                   self.agents.remove(agent.get_ref())
+         self.save()
+
     def __str__(self) :
         return """(%s)Interface: %s, Contexte: %s, Agents: %s""" % (self.id, self.interface,self.context,self.agents)
 
-    def add_agent(self, agent) :
-         self.agents.add(agent)
 
 def has_access(agent, resource, interface) :
     """Does the agent have access to this interface in this resource
@@ -197,53 +211,3 @@ def has_access(agent, resource, interface) :
          s = interfaces['Editor'].make_slider_for(resource,options,owner,2,creator)
          s = interfaces['Commentor'].make_slider_for(resource,options,owner,1,creator)
         
-
-
-class GenericReference(models.Model):
-    content_type = models.ForeignKey(ContentType, related_name='security_tag_agent')
-    object_id = models.PositiveIntegerField()
-    obj = generic.GenericForeignKey()
-    
-    acquires_from = models.ForeignKey("GenericReference", related_name="acquirers", null=True)
-    acquired_scontext = models.ForeignKey(SecurityContext, related_name="controlled", null=True)
-    explicit_scontext = models.ForeignKey(SecurityContext, related_name="target", null=True, unique=True)
-
-
-
-class SecurityTag(models.Model) :
-    interface = models.CharField(max_length=100)
-    security_context = models.ForeignKey(SecurityContext)  # revere is securitytag
-    agents = models.ManyToManyField(GenericReference)
-    def __str__(self) :
-        return """(%s)Interface: %s, Contexte: %s, Agents: %s""" % (self.id, self.interface,self.context,self.agents)
-
-
-
-def has_access(agent, resource, interface) :
-    """Does the agent have access to this interface in this resource
-    """
-        
-    # we're always interested in the security_context of this resource
-    context = resource.get_security_context()
-    context_type = ContentType.objects.get_for_model(context)
-
-    # which agents have access?
-    allowed_agents = GenericReference.objects.filter(securitytag__interface=interface,
-                                                     securitytag__context_content_type=context_type,
-                                                     securitytag__context_object_id=context.id)
-    # probably should memcache both allowed agents (per .View interface) and agents held per user to allow many queries very quickly. e.g. to only return the search results that you have permission to view
-    
-    allowed_agents = set([a.obj for a in allowed_agents])
-    
-    if self.anonyoumous_group in allowed_agents: 
-        # in other words, if this resource is matched with anyone, we don't have to test 
-        #that user is in the "anyone" group
-        return True
-
-    agents_held = agent.get_enclosure_set()
-    if allowed_agents.intersection(agents_held):
-        return True
-
-    return False
-
-
