@@ -27,7 +27,7 @@ except :
     hub_local_settings = True
     print "**************"
     
-    
+
     # Patching the User class
 
     User.add_to_class('user_name', UserNameField(unique=True, max_length=255))
@@ -46,7 +46,7 @@ except :
     User.add_to_class('home', models.CharField(max_length=30))
     User.add_to_class('fax', models.CharField(max_length=30))
 
-    User.add_to_class('created',models.DateTimeField())
+    User.add_to_class('created',models.DateTimeField(default=datetime.datetime.now))
     User.add_to_class('email2',models.CharField(max_length=255))
     User.add_to_class('email3',models.CharField(max_length=255))
     User.add_to_class('address',models.TextField())

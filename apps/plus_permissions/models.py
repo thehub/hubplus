@@ -14,6 +14,21 @@ import simplejson
 
 import datetime
 
+SliderOptions = {}
+def SetSliderOptions(type, options):
+     SliderOptions[type] = options
+
+AgentSecurityContext = {}
+def SetAgentSecurityContext(type, options):
+     AgentSecurityContext[type] = options
+
+AgentDefaults = {}
+def SetAgentDefaults(type, options):
+     AgentDefaults[type] = options
+
+PossibleTypes = {}
+def SetPossibleTypes(type, options):
+     PossibleTypes = options
 
 
 
@@ -22,60 +37,62 @@ class SecurityContext(models.Model):
      Context Agent is the 
 
      """
+     #from plus_permissions.permissionable import anonyoumous_group, all_members_group
+
      def set_up(self):
-         self.json_to_context(json)
+         """XXX set from maps and create security tags
+         """
          for type in json_to_context:
               for interface in type:
                    tag = SecurityTag.get_or_create(interface, self)
                    self.add_default_agents(tag)
          self.set_context_agent()
 
-     def add_default_agents(self, tag):
-          pass
-
-     context_agent = models.ForeignKey('GenericReference', null=True) #The agent which this security context is associated with
+     context_agent = models.ForeignKey('GenericReference', null=True, related_name="agent_scontexts") #The agent which this security context is associated with
      def set_context_agent(self, agent):
-          if self.context_agent:
-               return context_agent
+          if not isinstance(agent.obj, TgGroup) and not isinstance(agent.obj, User):
+               raise TypeError("Agent must be a user of a group")
           self.context_agent = agent
+
+     context_admin = models.ForeignKey('GenericReference', null=True, related_name="admin_scontexts") #The admin which this security context is associated with
+     def set_context_admin(self, admin):
+          if not isinstance(admin.obj, TgGroup) and not isinstance(admin.obj, User):
+               raise TypeError("Admin must be a user of a group")
+          self.context_admin = admin
+
+     def get_creator(self):
+          return self.target.obj.creator
+               
+     def get_context_agent(self):
+          if self.context_agent:
+               return self.context_agent
+          context_agent_ref = self.target
+          while not isinstance(context_agent_ref.obj, User) and not isinstance(context_agent_ref.obj, TgGroup):
+               context_agent_ref = context_agent_ref.acquires_from
+          self.context_agent = context_agent_ref.obj
+          return self.context_agent
+
+     def get_context_admin(self):
+          if self.context_admin:
+               return self.context_admin
+          context_admin_ref = self.target
+          while not isinstance(context_admin_ref.obj, User) and not isinstance(context_admin_ref.obj, TgGroup):
+               context_admin_ref = context_admin_ref.acquires_from
+          self.context_admin = context_admin_ref.obj
+          return self.context_admin
+
 
      possible_types = models.TextField()
      slider_agents = models.TextField()  # order actually matters here
-     interfaces  = models.TextField()    # {type: [interface_order]}
      contraints = models.TextField()     # {type: [contstraints]}  e.g. {wiki:['editor<viewer']}
      defaults  = models.TextField()      #{ type: [{interface:default_group},{interface:default_group}}
-
-
-
-     def json_to_context(self, json):
-         """
-         How do we represent "dynamic agents"
-         Example json : 
-         { 'target' : target,
-           'possible_types' : ['profile', 'tggroup', 'wikipage', 'etc'] # actually, maybe Django's "model name"  as in the "model" field of the ContentType class
-           'slider_agents': [[world_type,world_id],
-                             [all_members_type,all_members_is],
-                             [$context_agent_type,$context_agent_id], 
-                             [ $this_admin_type,$this_admin_id]], 
-           'interfaces':{'profile':['Profile.Viewer','Profile.Editor','Profile.PhoneViewer','Profile.EmailViewer', ...],
-                         'tggroup':['TgGroup.Viewer','TgGroup.Editor','TgGroup.Join',...],...},
-           'constraints':{'profile':[['Profile.Viewer','Profile.Editor'],['Profile.Viewer','Profile.PhoneViewer'],['Profile.Viewer','Profile.EmailViewer'] ...],
-                          'defaults':{'profile':['Profile.Viewer':$]}
-                          }
-         }
-                          """
-         for agent in slider_agents:
-              if agent.startswith('$'):
-                   agent = getattr(context, agent[1:])
-              else:
-                   agent = blah
                     
-     def create_security_tag(self, context, interface, agents) :
+     def create_security_tag(self, interface, agents) :
          # agents here is a list of something like User or TgGroup, NOT an Agent
-          tag = SecurityTag(context=context, interface=interface)
+          tag = SecurityTag(context=self, interface=interface)
           tag.save()
           for agent in agents :
-               tag.agents.add(agent.corresponding_agent())
+               tag.agents.add(agent.get_ref())
           tag.save()
           return tag
      
@@ -118,6 +135,7 @@ class GenericReference(models.Model):
     acquired_scontext = models.ForeignKey(SecurityContext, related_name="controlled", null=True)
     explicit_scontext = models.ForeignKey(SecurityContext, related_name="target", null=True, unique=True)
 
+    creator = models.ForeignKey(User, related_name='has_created')
 
 
 class SecurityTag(models.Model) :
@@ -127,5 +145,97 @@ class SecurityTag(models.Model) :
     def __str__(self) :
         return """(%s)Interface: %s, Contexte: %s, Agents: %s""" % (self.id, self.interface,self.context,self.agents)
 
+
+
+def has_access(agent, resource, interface) :
+    """Does the agent have access to this interface in this resource
+    """
+        
+    # we're always interested in the security_context of this resource
+    context = resource.get_security_context(resource)
+    context_type = ContentType.objects.get_for_model(context)
+
+    # which agents have access?
+    allowed_agents = GenericReference.objects.filter(securitytag__interface=interface,
+                                                     securitytag__context_content_type=context_type,
+                                                     securitytag__context_object_id=context.id)
+    # probably should memcache both allowed agents (per .View interface) and agents held per user to allow many queries very quickly. e.g. to only return the searc
+     
+    def move_slider(self, new_agent, interface):
+         if new_agent in self.slider_agents:
+              for agent in slider_agents:
+                   if agent not in SecurityTag.objects.filter(interface=interface, context=self).agents:
+                        self.add_agent_to_tag()
+                   if agent == new_agent:
+                        pass
+
+    def get_slider_level(self, interface):
+         pass
+
+    def add_arbitrary_agent(self, new_agent, interface):
+         tag = SecurityTag.objects.filter(interface, self)
+         tag.add_agent(new_agent)
+              
+    def get_tags_on(self, resource) :
+         context = resource.get_security_context()
+         context_type = ContentType.objects.get_for_model(context)
+         return SecurityTag.objects.filter(context_content_type=context_type, context_object_id=context.id)
+
+    def setup_defaults(self,resource, owner, creator) :
+         options = self.make_slider_options(resource,owner,creator)
+         self.save_defaults(resource,owner,creator)
+         interfaces = self.get_interfaces()
+         s = interfaces['Viewer'].make_slider_for(resource,options,owner,0,creator)
+         s = interfaces['Editor'].make_slider_for(resource,options,owner,2,creator)
+         s = interfaces['Commentor'].make_slider_for(resource,options,owner,1,creator)
+        
+
+
+class GenericReference(models.Model):
+    content_type = models.ForeignKey(ContentType, related_name='security_tag_agent')
+    object_id = models.PositiveIntegerField()
+    obj = generic.GenericForeignKey()
+    
+    acquires_from = models.ForeignKey("GenericReference", related_name="acquirers", null=True)
+    acquired_scontext = models.ForeignKey(SecurityContext, related_name="controlled", null=True)
+    explicit_scontext = models.ForeignKey(SecurityContext, related_name="target", null=True, unique=True)
+
+
+
+class SecurityTag(models.Model) :
+    interface = models.CharField(max_length=100)
+    security_context = models.ForeignKey(SecurityContext)  # revere is securitytag
+    agents = models.ManyToManyField(GenericReference)
+    def __str__(self) :
+        return """(%s)Interface: %s, Contexte: %s, Agents: %s""" % (self.id, self.interface,self.context,self.agents)
+
+
+
+def has_access(agent, resource, interface) :
+    """Does the agent have access to this interface in this resource
+    """
+        
+    # we're always interested in the security_context of this resource
+    context = resource.get_security_context(resource)
+    context_type = ContentType.objects.get_for_model(context)
+
+    # which agents have access?
+    allowed_agents = GenericReference.objects.filter(securitytag__interface=interface,
+                                                     securitytag__context_content_type=context_type,
+                                                     securitytag__context_object_id=context.id)
+    # probably should memcache both allowed agents (per .View interface) and agents held per user to allow many queries very quickly. e.g. to only return the search results that you have permission to view
+    
+    allowed_agents = set([a.obj for a in allowed_agents])
+    
+    if self.anonyoumous_group in allowed_agents: 
+        # in other words, if this resource is matched with anyone, we don't have to test 
+        #that user is in the "anyone" group
+        return True
+
+    agents_held = agent.get_enclosure_set()
+    if allowed_agents.intersection(agents_held):
+        return True
+
+    return False
 
 

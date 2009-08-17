@@ -1,7 +1,7 @@
 
 # Permissions for OurPost, an example 
 from django.db import models
-from apps.plus_permissions.models import SecurityTag
+from apps.plus_permissions.models import SetSliderOptions, SetAgentSecurityContext, SetAgentDefaults, SetPossibleTypes
 from apps.plus_permissions.interfaces import InterfaceReadProperty, InterfaceWriteProperty, InterfaceCallProperty
 from apps.plus_permissions.OurPost import OurPost
 
@@ -42,3 +42,6 @@ OurPostInterfaces = {'Viewer':OurPostViewer,
 
 add_type_to_interface_map(OurPost, OurPostInterfaces)
 
+SliderOptions = {'InterfaceOrder':['Viewer', 'Editor','Commentor']}
+
+SetSliderOptions(TgGroup, SliderOptions)

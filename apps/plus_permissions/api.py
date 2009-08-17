@@ -3,41 +3,14 @@
 the user creating a lot of other objects. Also you can ask it to give you some default groups such as 'anon' (the group 
 to which anyone is a member)"""
 
-from apps.hubplus.interfaces import secure_wrap, TemplateSecureWrapper
+__all__ = ['secure_wrap', 'TemplateSecureWrapper', 'Location', 'TgGroup', 'has_access', 'anonyoumous_group', 'all_members_group', 'get_or_create_root_location']
 
-def create_root_location():
-    root_location, created = Location.objects.get_or_create(name='HubPlus')
-    if created :
-        self.root_location.save()
-create_root_location()
+from apps.plus_permissions.interfaces import secure_wrap, TemplateSecureWrapper
+from apps.hubspace_compatibility.models import Location, TgGroup
+from apps.plus_permissions.models import has_access
+from apps.plus_permissions.permissionable import get_or_create_root_location
 
-anonyoumous_group = self.get_or_create_group('anonymous', 'World', self.root_location)
-all_members_group = self.get_or_create_group('all_members','All Members', self.root_location)
-site_hosts = self.get_or_create_group('site_hosts','site_hosts', self.root_location)
 
-def has_access(self, agent, resource, interface) :
-    """Does the agent have access to this interface in this resource
-    """
-        
-    # we're always interested in the security_context of this resource
-    context = self.get_security_context(resource)
-    context_type = ContentType.objects.get_for_model(context)
+anonyoumous_group = TgGroup.objects.get_or_create(group_name='anonymous', display_name='World', place=get_or_create_root_location(), level='public')
+all_members_group = TgGroup.objects.get_or_create(group_name='all_members', display_name='All Members', place=get_or_create_root_location(), level='site_member')
 
-    # which agents have access?
-    allowed_agents = GenericReference.objects.filter(securitytag__interface=interface,
-                                                     securitytag__context_content_type=context_type,
-                                                     securitytag__context_object_id=context.id)
-    # probably should memcache both allowed agents (per .View interface) and agents held per user to allow many queries very quickly. e.g. to only return the search results that you have permission to view
-    
-    allowed_agents = set([a.obj for a in allowed_agents])
-    
-    if self.anonyoumous_group in allowed_agents: 
-        # in other words, if this resource is matched with anyone, we don't have to test 
-        #that user is in the "anyone" group
-        return True
-
-    agents_held = agent.get_enclosure_set()
-    if allowed_agents.intersection(agents_held):
-        return True
-
-    return False

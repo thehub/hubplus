@@ -141,3 +141,40 @@ class SliderSetObject(object) :
                 return s.change(new_setting)
             else :
                 raise Exception('slider %s not in this slider_set'% interface)
+
+
+
+
+    def make_slider_options(self,resource,owner,creator) :
+        options = [
+            SliderOption('World',get_permission_system().get_anon_group()),
+            SliderOption('All Site Members',get_permission_system().get_site_members()),
+            SliderOption(owner.display_name,owner),
+        ]
+
+        default_admin = default_admin_for(owner)
+        if not default_admin is None :
+            options.append( SliderOption(default_admin.display_name,default_admin) )
+        return options
+
+
+    def setup_defaults(self,resource, owner, creator) :
+        self.save_defaults(resource,owner,creator)
+
+        options = self.make_slider_options(resource,owner,creator)
+        interfaces = self.get_interfaces()
+
+        slide = interfaces['Viewer'].make_slider_for(resource,options,owner,0,creator,creator)
+        slide = interfaces['Editor'].make_slider_for(resource,options,owner,3,creator,creator)
+        slide = interfaces['Join'].make_slider_for(resource,options,owner,1,creator,creator)
+        slide = interfaces['Invite'].make_slider_for(resource,options,owner,2,creator,creator)
+        slide = interfaces['ManageMembers'].make_slider_for(resource,options,owner,3,creator,creator)
+
+    def main_json_slider_group(self,resource) :
+        json = self.json_slider_group('Group Permissions', 'Use these sliders to set overall permissions on your group', 
+               resource, 
+               ['Viewer', 'Editor', 'Apply', 'Join', 'ManageMembers'], 
+               [0, 3, 1, 2, 3], 
+               [[0,1], [0,2], [0,3], [0,4]])
+        return json
+
