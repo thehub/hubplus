@@ -127,24 +127,19 @@ class TestPermissions(unittest.TestCase) :
 
     def test_permissions(self) :
 
-
         u = User(username='synnove',email_address='synnove@the-hub.net')
         u.save()
         
-
         writers, wh = create_site_group('writers', display_name='writers')
         editors, eh = create_site_group('editors', display_name='editors')
 
         # two resources, blog and blog2, 
         blog= OurPost(title='my post')    
         blog.save()
-
-        
+  
         # and make writers the acquired security context of the blog
         blog.acquires_from(writers)
     
-        import ipdb
-        #ipdb.set_trace()
         i_viewer = get_interface_map(OurPost)['Viewer']
         
         # explicit tag between the writers group, the viewer interface and the user u
@@ -173,7 +168,7 @@ class TestPermissions(unittest.TestCase) :
         self.assertFalse(has_access(u,blog2,i_viewer))
         
         # but we'll make it its own security context
-        blog2.set_explicit_security_context(blog2)
+        blog2.set_security_context(blog2)
         t2 = create_security_tag(blog2, i_viewer)
         # and we have a tag for it, but no agents associated with the tag
         self.assertFalse(has_access(blog2,i_viewer,u))
@@ -184,23 +179,24 @@ class TestPermissions(unittest.TestCase) :
         self.assertTrue(has_access(blog2,i_viewer,u))
         self.assertFalse(has_access(blog2,i_viewer,u2))
 
+        self.assertTrue(ps.has_access(u,blog,i_viewer))
 
+        i_commentor = get_interfaces_map(OurPost)['Commentor']
+        t2 = create_security_tag(blog,i_commentor,[u])
 
-        self.assertTrue(ps.has_access(u,blog,IViewer))
+        self.assertTrue(ps.has_access(u,blog,i_commentor))
 
-        t2 = ps.create_security_tag(blog,ICommentor,[u])
+        ### continue from here 
+        i_editor = get_interfaces_map(OurPost)['Editor']        
+        self.assertFalse(ps.has_access(u,blog,i_editor))
 
-        self.assertTrue(ps.has_access(u,blog,ICommentor))
-
-        self.assertFalse(ps.has_access(u,blog,IEditor))
-
-
-        t3 = ps.create_security_tag(blog2,IEditor,[editors])
+        t3 = create_security_tag(blog2,i_editor,[editors])
         
-        self.assertTrue(ps.has_access(editors,blog2,IEditor))
+        self.assertTrue(ps.has_access(editors,blog2,i_editor))
 
         editors.add_member(u)
 
+        
         self.assertTrue(ps.has_access(u,blog2,IEditor))
         self.assertFalse(ps.has_access(u,blog,IEditor))
 
