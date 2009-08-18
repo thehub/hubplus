@@ -56,18 +56,6 @@ class SecurityContext(models.Model):
                raise TypeError("Agent must be a user of a group")
           self.context_agent = agent
 
-     context_admin = models.ForeignKey('GenericReference', null=True, related_name="admin_scontexts") 
-     # The admin which this security context is associated with
-
-     def set_context_admin(self, admin):
-          if not isinstance(admin.obj, TgGroup) and not isinstance(admin.obj, User):
-               raise TypeError("Admin must be a user of a group")
-          self.context_admin = admin
-
-
-     def get_creator(self):
-          return self.target.creator
-               
      def get_context_agent(self):
           if self.context_agent:
                return self.context_agent
@@ -76,6 +64,14 @@ class SecurityContext(models.Model):
                context_agent_ref = context_agent_ref.acquires_from
           self.context_agent = context_agent_ref.obj
           return self.context_agent
+
+     context_admin = models.ForeignKey('GenericReference', null=True, related_name="admin_scontexts") 
+     # The admin which this security context is associated with
+
+     def set_context_admin(self, admin):
+          if not isinstance(admin.obj, TgGroup) and not isinstance(admin.obj, User):
+               raise TypeError("Admin must be a user of a group")
+          self.context_admin = admin
 
      def get_context_admin(self):
           if self.context_admin:
@@ -86,7 +82,9 @@ class SecurityContext(models.Model):
           self.context_admin = context_admin_ref.obj
           return self.context_admin
 
-
+     def get_creator(self):
+          return self.target.creator
+               
 
      possible_types = models.TextField()
      slider_agents = models.TextField()  # order actually matters here
