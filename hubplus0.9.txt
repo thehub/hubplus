@@ -1,4 +1,4 @@
-
+GKGRX967
 7.15pm us call 
 
 
@@ -11,7 +11,8 @@ Phil - Write decorator to explicitly check for a given interface on the current 
 
 
 Tom - setup security context
-        - possible types  + add methods to TgGroup
+        - possible types TO Interfaces per type. possible types append to interface order
+           -
         - initialise slider levels = default security tags
     - Do TgGroup + User + OurPost
 

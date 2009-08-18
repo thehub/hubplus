@@ -60,18 +60,6 @@ class SecurityContext(models.Model):
                raise TypeError("Agent must be a user of a group")
           self.context_agent = agent
 
-     context_admin = models.ForeignKey('GenericReference', null=True, related_name="admin_scontexts") 
-     # The admin which this security context is associated with
-
-     def set_context_admin(self, admin):
-          if not isinstance(admin.obj, TgGroup) and not isinstance(admin.obj, User):
-               raise TypeError("Admin must be a user of a group")
-          self.context_admin = admin
-
-
-     def get_creator(self):
-          return self.target.creator
-               
      def get_context_agent(self):
           if self.context_agent:
                return self.context_agent
@@ -80,6 +68,14 @@ class SecurityContext(models.Model):
                context_agent_ref = context_agent_ref.acquires_from
           self.context_agent = context_agent_ref.obj
           return self.context_agent
+
+     context_admin = models.ForeignKey('GenericReference', null=True, related_name="admin_scontexts") 
+     # The admin which this security context is associated with
+
+     def set_context_admin(self, admin):
+          if not isinstance(admin.obj, TgGroup) and not isinstance(admin.obj, User):
+               raise TypeError("Admin must be a user of a group")
+          self.context_admin = admin
 
      def get_context_admin(self):
           if self.context_admin:
@@ -90,7 +86,9 @@ class SecurityContext(models.Model):
           self.context_admin = context_admin_ref.obj
           return self.context_admin
 
-
+     def get_creator(self):
+          return self.target.creator
+               
 
      possible_types = models.TextField()
      slider_agents = models.TextField()  # order actually matters here
@@ -100,10 +98,10 @@ class SecurityContext(models.Model):
      def create_security_tag(self, interface, agents) :
           tag = SecurityTag(security_context=self, interface=interface)
           tag.save()
-          for agent in agents :
-               tag.agents.add(agent.get_ref())
-          tag.save()
+
           return tag
+
+
      
      def move_slider(self, new_agent, interface):
           if new_agent in self.slider_agents:
@@ -149,6 +147,22 @@ class SecurityTag(models.Model) :
     security_context = models.ForeignKey(SecurityContext)  # revere is securitytag
     agents = models.ManyToManyField(GenericReference)
 
+    def add_agents(self, agents=None):
+         """pass in a list of users and groups
+         """
+         for agent in agents :
+              if agent.get_ref() not in self.agents:
+                   self.agents.add(agent.get_ref())
+         self.save()
+
+    def remove_agents(self, agents=None):
+         """pass in a list of users and groups
+         """
+         for agent in agents:
+              if agent.get_ref() in self.agents():
+                   self.agents.remove(agent.get_ref())
+         self.save()
+
     def __str__(self) :
         return """(%s)Interface: %s, Contexte: %s, Agents: %s""" % (self.id, self.interface,self.context,self.agents)
 
@@ -172,10 +186,9 @@ def has_access(agent, resource, interface) :
 
     # probably should memcache both allowed agents (per .View interface) and agents held per user to allow many queries very quickly. e.g. to only return the searc
      
-
     allowed_agents = set([a.obj for a in allowed_agents])
     
-    if self.anonyoumous_group in allowed_agents: 
+    if self.anonymous_group in allowed_agents: 
         # in other words, if this resource is matched with anyone, we don't have to test 
         #that user is in the "anyone" group
         return True
@@ -185,5 +198,6 @@ def has_access(agent, resource, interface) :
         return True
 
     return False
+
 
 

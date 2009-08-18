@@ -6,7 +6,7 @@ from django.db.models.signals import post_save
 import datetime
 
 content_type = TgGroup
-child_types = [OurPost]
+
 
 
 import ipdb
@@ -64,11 +64,9 @@ def add_creator_interface(type) :
     return CanCreate
 
  
+# we need a special set_permissions interface which is only editable by the scontext_admin and determines who can set permissions or override them for an object. 
 
-
-#       
 class TgGroupViewer: 
-
     pk = InterfaceReadProperty
     about = InterfaceReadProperty
     location = InterfaceReadProperty
@@ -119,15 +117,22 @@ add_type_to_interface_map(TgGroup, TgGroupInterfaces)
 # these exist on a per type basis and are globals for their type.
 # they don't need to be stored in the db
 SliderOptions = {'InterfaceOrder':['Viewer', 'Editor', 'Invite', 'Join', 'ManageMembers']}
+SetSliderOptions(TgGroup, SliderOptions) 
 
-SetSliderOptions(TgGroup, SliderOptions)  
+
+# ChildTypes are used to determine what types of objects can be created in this security context (and acquire security context from this). These are used when creating an explicit security context for an object of this type. 
+
+child_types = [OurPost]
+SetPossibleTypes(TgGroup, child_types)
+
+
 # if the security context is in this agent, this set of slider_agents apply irrespective of the type they or applied to and the security context. Constraints are also specified here since we needs to know the format of "slider_agents" in order to be able to specify an absolute constraint on level for a particular interface.
 AgentSecurityContext = {'slider_agents': ['$anonymous_group',
                                           '$all_members_group',
                                           '$context_agent',
                                           '$creator',
                                           '$context_agent_admin'],
-                        'constraints':['*.Viewer>=*.Editor', 'Group.Invite>=Group.ManageMembers', 'Group.Join>=ManageMembers', 'ManageMembers<=3']
+                        'constraints':['*.Viewer>=*.Editor', 'Group.Invite>=Group.ManageMembers', 'Group.Join>=ManageMembers', 'ManageMembers<=$anonymous']
                         }
 
 SetAgentSecurityContext(TgGroup, AgentSecurityContext)
@@ -148,7 +153,3 @@ AgentDefaults = {'public':{'TgGroup':{'Viewer':'$context_agent',
                  }
 
 SetAgentDefaults(TgGroup, AgentDefaults)
-# PossibleTypes are used to determine what types of objects can be created in this security context (and acquire security context from this). These are used when creating an explicit security context for an object of this type. 
-PossibleTypes = [OurPost]
-SetPossibleTypes(TgGroup, PossibleTypes)
-# we need a special set_permissions interface which is only editable by the scontext_admin and determines who can set permissions or override them for an object. 
