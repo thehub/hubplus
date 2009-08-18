@@ -89,9 +89,9 @@ def acquires_from(self, content_obj):
     ref.save()
 
 
-def add_create_method(content_type, content_class, class_name) :
+def add_create_method(content_type, child_type) :
     def f(self,**kwargs) :
-        resource = content_class(**kwargs)
+        resource = child_type(**kwargs)
         resource.save()
 
         # now create its security_context etc.        
@@ -99,7 +99,7 @@ def add_create_method(content_type, content_class, class_name) :
         return resource
 
 
-    setattr(content_type,'create_%s' % class_name, f)
+    setattr(content_type,'create_%s' % child_type.__name__, f)
 
 
 def get_tag_for_interface(self, interface) :
@@ -130,7 +130,7 @@ def security_patch(content_type, type_list):
           
 
     for typ in type_list :
-        add_create_method(content_type, typ, typ.__name__)
+        add_create_method(content_type, typ)
         
 
     post_init.connect(create_reference, sender=content_type)

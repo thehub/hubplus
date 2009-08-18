@@ -8,6 +8,7 @@ import datetime
 content_type = TgGroup
 child_types = [OurPost]
 
+
 import ipdb
 
 from apps.plus_permissions.default_agents import get_or_create_root_location
@@ -54,6 +55,14 @@ def get_or_create(group_name=None, display_name=None, place=None, level=None, us
     return group, created
 
 TgGroup.objects.get_or_create = get_or_create
+
+
+def add_creator_interface(type) :
+    class CanCreate(Interface) :
+        pk = InterfaceReadProperty
+    setattr(CanCreate,'create_%s'%type.__class__.__name__,InterfaceCallProperty)
+    return CanCreate
+
  
 
 
