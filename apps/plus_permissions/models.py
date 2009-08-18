@@ -63,16 +63,20 @@ class SecurityContext(models.Model):
      Context Agent is the 
 
      """
+     def get_target(self):
+         return self.target.all()[0].obj
+         
      def set_up(self):
          """XXX set from maps and create security tags
          """
          
          # setting up security_tags
-         my_type = self.target.obj.__class__
+
+         my_type = self.get_target().__class__
          
          agent_defaults = AgentDefaults[TgGroup]['public']
 
-         self.slider_agents = SliderAgents[self.__class__](self)
+         self.slider_agents = SliderAgents[my_type](self)
          self.slider_agents.reverse()
          sad = dict(self.slider_agents)
          

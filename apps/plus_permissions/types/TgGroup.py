@@ -8,10 +8,7 @@ import datetime
 content_type = TgGroup
 
 
-
-import ipdb
-
-from apps.plus_permissions.default_agents import get_or_create_root_location
+from apps.plus_permissions.default_agents import get_or_create_root_location, get_anonymous_group, get_all_members_group, get_creator_agent
 
 # override object managers, filter, get, get_or_create
 def get_or_create(group_name=None, display_name=None, place=None, level=None, user=None) :
@@ -48,12 +45,14 @@ def get_or_create(group_name=None, display_name=None, place=None, level=None, us
             
             sec_context.set_context_agent(group.get_ref())
             sec_context.set_context_admin(admin_group.get_ref())
+            sec_context.save()
             group.add_member(admin_group)
             group.add_member(user)
             group.save()
         elif level == 'host':
             sec_context.set_context_agent(group.get_ref())
             sec_context.set_context_admin(group.get_ref())
+            sec_context.save()
             group.add_member(user)
             group.save()
 

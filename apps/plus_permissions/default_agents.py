@@ -18,15 +18,26 @@ def get_admin_user():
         admin_user.save()
     return admin_user
 
-def get_anonymous_group():
+def set_anonymous_group():
     admin_user = get_admin_user()
-    anonyoumous_group, created = TgGroup.objects.get_or_create(group_name='anonymous', display_name='World', place=get_or_create_root_location(), level='public', user=admin_user)
-    return anonyoumous_group
+    return TgGroup.objects.get_or_create(group_name='anonymous', display_name='World', place=get_or_create_root_location(), level='public', user=admin_user)
 
-def get_all_members_group():
+
+def get_anonymous_group():
+    anonymous_group = TgGroup.objects.filter(group_name="anonymous")
+    if not anonymous_group:
+        anonymous_group, created = set_anonymous_group()
+    return anonymous_group
+
+def set_all_members_group():
     admin_user = get_admin_user()
-    all_members_group, created = TgGroup.objects.get_or_create(group_name='all_members', display_name='All Members', place=get_or_create_root_location(), level='member', user=admin_user)
-    return all_members_group
+    return TgGroup.objects.get_or_create(group_name='all_members', display_name='All Members', place=get_or_create_root_location(), level='member', user=admin_user)
+           
+def get_all_members_group():
+    all_members = TgGroup.objects.filter(group_name="all_members")
+    if not all_members:
+        all_members, created = set_all_members_group()
+    return all_members
 
 
 class CreatorMarker(models.Model) :

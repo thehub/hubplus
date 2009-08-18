@@ -1,6 +1,3 @@
-GKGRX967
-7.15pm us call 
-
 
 Phil - Write decorator to explicitly check for a given interface on the current resource (second argument) 
        when calling a function. decorator should also wrap the current resource in a secure_wrapper.
