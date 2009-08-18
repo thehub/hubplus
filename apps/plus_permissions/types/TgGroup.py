@@ -1,4 +1,4 @@
-from apps.plus_permissions.interfaces import InterfaceReadProperty, InterfaceWriteProperty, InterfaceCallProperty
+from apps.plus_permissions.interfaces import InterfaceReadProperty, InterfaceWriteProperty, InterfaceCallProperty, add_creator_interface
 from apps.plus_permissions.models import SetSliderOptions, SetAgentSecurityContext, SetAgentDefaults, SetPossibleTypes
 from apps.hubspace_compatibility.models import TgGroup
 from apps.plus_permissions.OurPost import OurPost
@@ -57,11 +57,6 @@ def get_or_create(group_name=None, display_name=None, place=None, level=None, us
 TgGroup.objects.get_or_create = get_or_create
 
 
-def add_creator_interface(type) :
-    class CanCreate(Interface) :
-        pk = InterfaceReadProperty
-    setattr(CanCreate,'create_%s'%type.__class__.__name__,InterfaceCallProperty)
-    return CanCreate
 
  
 # we need a special set_permissions interface which is only editable by the scontext_admin and determines who can set permissions or override them for an object. 
@@ -110,6 +105,7 @@ TgGroupInterfaces = {'Viewer': TgGroupViewer,
                      'ManageMembers': TgGroupManageMembers,
                      'Join': TgGroupInviteMember}
 
+
 add_type_to_interface_map(TgGroup, TgGroupInterfaces)
 
 
@@ -124,6 +120,15 @@ SetSliderOptions(TgGroup, SliderOptions)
 
 child_types = [OurPost]
 SetPossibleTypes(TgGroup, child_types)
+
+# Add the create_* interfaces and sliders 
+def add_create_interfaces() :
+    for child in child_types :
+        key = 'Create%s'%child.__class__.__name__
+        TgGroupInterfaces[key] = add_creator_interface(child)
+        SliderOptions['InterfaceOrder'].append(key)
+
+add_create_interfaces()
 
 
 # if the security context is in this agent, this set of slider_agents apply irrespective of the type they or applied to and the security context. Constraints are also specified here since we needs to know the format of "slider_agents" in order to be able to specify an absolute constraint on level for a particular interface.

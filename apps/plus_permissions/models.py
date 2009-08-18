@@ -26,6 +26,7 @@ PossibleTypes = {}
 def SetPossibleTypes(type, options):
      PossibleTypes = options
 
+from apps.plus_permissions.interfaces import get_interfaces_map
 
 from apps.plus_permissions.default_agents import get_anonymous_group, get_admin_user, get_all_members_group
 
@@ -43,7 +44,17 @@ class SecurityContext(models.Model):
      def set_up(self):
          """XXX set from maps and create security tags
          """
-         for type in json_to_context:
+         
+         # setting up security_tags
+         my_type = self.target.obj.__class__
+         types = [my_type] + PossibleTypes[my_type.__name__]:
+         for typ in types:
+              for name, interface in get_interface_map(typ.__name__).iteritems():
+                   self.create_security_tag(interface)
+                   
+         
+         # for the children
+
               for interface in type:
                    tag = SecurityTag.get_or_create(interface, self)
                    self.add_default_agents(tag)
@@ -95,13 +106,12 @@ class SecurityContext(models.Model):
      contraints = models.TextField()     # {type: [contstraints]}  e.g. {wiki:['editor<viewer']}
      defaults  = models.TextField()      #{ type: [{interface:default_group},{interface:default_group}}
                     
-     def create_security_tag(self, interface, agents) :
+     def create_security_tag(self, interface, agents=None) :
           tag = SecurityTag(security_context=self, interface=interface)
           tag.save()
-
+          if agents:
+               tag.add_agents(agents)
           return tag
-
-
      
      def move_slider(self, new_agent, interface):
           if new_agent in self.slider_agents:
@@ -118,8 +128,6 @@ class SecurityContext(models.Model):
           tag = SecurityTag.objects.filter(interface, self)
           tag.add_agent(new_agent)
               
-  
-
      def setup_defaults(self,resource, owner, creator) :
          options = self.make_slider_options(resource,owner,creator)
          self.save_defaults(resource,owner,creator)

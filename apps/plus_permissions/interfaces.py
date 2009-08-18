@@ -104,9 +104,6 @@ class NotViewable:
     def __repr__(self):
         return ""
 
-    
-    
-
 
 class SecureWrapper:
     """
@@ -200,3 +197,11 @@ class SecureWrapper:
         """
         self._interfaces.remove(interface)
         self.load_interfaces(interface)
+
+
+
+def add_creator_interface(type) :
+    class CanCreate(Interface) :
+        pk = InterfaceReadProperty
+    setattr(CanCreate,'create_%s'%type.__class__.__name__,InterfaceCallProperty)
+    return CanCreate
