@@ -39,19 +39,22 @@ class TestHierarchy(unittest.TestCase):
         u3 = User(username='jesson',email_address='jesson@the-hub.net')
         u3.save()
 
+        god = User(username='brahma', email_address='brahma@the-hub.net')
+        god.save()
+
         l = Location(name='kingsX')
         l.save()
 
         # here's a group (called "hub-members")
         hubMembers, flag = TgGroup.objects.get_or_create('hub-members',display_name='members', place=l, 
-                                                         user=u, level='member')
+                                                         user=god, level='member')
 
         # they start with at least two members
         self.assertEquals(hubMembers.get_no_members(),2)
 
         # we now add member to the group
         hubMembers.add_member(u)
-        # which now has one member
+        # which now has three members
         self.assertEquals(hubMembers.get_no_members(),3)
         # and u is a member 
         self.assertTrue(u.is_member_of(hubMembers))
@@ -65,7 +68,7 @@ class TestHierarchy(unittest.TestCase):
 
         # another group, called hosts
         hosts,h2 = TgGroup.objects.get_or_create(group_name='admins', display_name='admins', place=l, 
-                                                 user=u, level='member')
+                                                 user=god, level='member')
         hosts.save()
 
         # u2 is a host
@@ -103,10 +106,12 @@ class TestHierarchy(unittest.TestCase):
         self.assertTrue(u.is_direct_member_of(hubMembers))
         self.assertTrue(u.is_member_of(hubMembers))
 
-        another_group,created = TgGroup.objects.get_or_create(group_name='site_group',
+        another_group, created = TgGroup.objects.get_or_create(group_name='site_group',
                                                                display_name='Another Site Group',  
-                                                               level='member', user=u)
+                                                               level='member', user=god)
         another_group.add_member(hubMembers)
+        ag_hosts = another_group.get_admin_group() 
+
         self.assertTrue(ag_hosts.is_member_of(another_group))
         self.assertFalse(another_group.is_member_of(ag_hosts))
 
