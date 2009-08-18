@@ -37,7 +37,7 @@ def add_interfaces_to_type(cls, interfaces):
 
 SliderOptions = {}
 def SetSliderOptions(type, options):
-     SliderOptions[type] = options
+    SliderOptions[type] = options
 
 SliderAgents = {}
 def SetSliderAgents(type, options) :

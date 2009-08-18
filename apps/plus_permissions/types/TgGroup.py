@@ -32,10 +32,11 @@ def get_or_create(group_name=None, display_name=None, place=None, level=None, us
     else :
         created = True
         group = TgGroup(group_name=group_name, display_name=display_name, level=level, place=place)
+        group.save()
         group.to_security_context()
         sec_context = group.get_security_context() 
-        if level == 'member':
 
+        if level == 'member':
             admin_group, created = TgGroup.objects.get_or_create(
                 group_name=group_name + "_hosts", 
                 display_name=display_name + " Hosts", 
@@ -43,6 +44,8 @@ def get_or_create(group_name=None, display_name=None, place=None, level=None, us
                 place=place,
                 user=user
                 )
+            
+            
             sec_context.set_context_agent(group.get_ref())
             sec_context.set_context_admin(admin_group.get_ref())
             group.add_member(admin_group)
@@ -53,12 +56,18 @@ def get_or_create(group_name=None, display_name=None, place=None, level=None, us
             sec_context.set_context_admin(group.get_ref())
             group.add_member(user)
             group.save()
+
+
+    group.get_security_context().set_up()
     return group, created
 
 TgGroup.objects.get_or_create = get_or_create
 
 
+def get_admin_group(self) :
+    return self.get_security_context().get_context_admin().context_agent.obj
 
+TgGroup.get_admin_group = get_admin_group
  
 # we need a special set_permissions interface which is only editable by the scontext_admin and determines who can set permissions or override them for an object. 
 
