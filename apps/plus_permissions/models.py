@@ -30,11 +30,15 @@ def SetPossibleTypes(type, options):
 from apps.plus_permissions.default_agents import get_anonymous_group, get_admin_user, get_all_members_group
 
 class SecurityContext(models.Model):
-     """Target is the thing the context is associated with e.g. Group. The thing that we will metaphorically put things "in".
+     """Target is the thing the context is associated with e.g. Group. 
+     The thing that we will metaphorically put things "in".
      Context Agent is the 
 
      """
 
+     def __init__(self) :
+          super(self.__class__,self).__init__()
+          self.set_up()
 
      def set_up(self):
          """XXX set from maps and create security tags
@@ -116,10 +120,7 @@ class SecurityContext(models.Model):
           tag = SecurityTag.objects.filter(interface, self)
           tag.add_agent(new_agent)
               
-     def get_tags_on(self, resource) :
-         context = resource.get_security_context()
-         context_type = ContentType.objects.get_for_model(context)
-         return SecurityTag.objects.filter(context_content_type=context_type, context_object_id=context.id)
+  
 
      def setup_defaults(self,resource, owner, creator) :
          options = self.make_slider_options(resource,owner,creator)
@@ -153,8 +154,6 @@ class SecurityTag(models.Model) :
 
 
 
-
-
 def has_access(agent, resource, interface) :
     """Does the agent have access to this interface in this resource
     """
@@ -164,12 +163,16 @@ def has_access(agent, resource, interface) :
     context_type = ContentType.objects.get_for_model(context)
 
     # which agents have access?
-    allowed_agents = GenericReference.objects.filter(securitytag__interface=interface,
-                                                     securitytag__context_content_type=context_type,
-                                                     securitytag__context_object_id=context.id)
+    try :
+         allowed_agents = SecurityTag.objects.get(interface=interface,
+                                                  security_context=context).agents
+    except Exception, e:
+         print e
+         raise e
+
     # probably should memcache both allowed agents (per .View interface) and agents held per user to allow many queries very quickly. e.g. to only return the searc
      
-    
+
     allowed_agents = set([a.obj for a in allowed_agents])
     
     if self.anonyoumous_group in allowed_agents: 

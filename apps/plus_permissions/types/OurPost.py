@@ -12,9 +12,6 @@ from apps.hubspace_compatibility.models import TgGroup
 
 from apps.plus_permissions.OurPost import *
 
-# This represents a typical model type from another django or pinax app
-
-
 
 # This represents a typical model type from another django or pinax app
 content_type = OurPost

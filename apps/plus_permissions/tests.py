@@ -19,6 +19,7 @@ from apps.plus_groups import *
 from types.OurPost import *
 
 from apps.plus_permissions.api import has_access, has_interfaces_decorator
+from apps.plus_permissions.interfaces import secure_wrap
 
 #  
 
@@ -137,7 +138,8 @@ class TestAccess(unittest.TestCase) :
         adam = User(username='adam', email_address='adam@the-hub.net')
         adam.save()
 
-        kx, kxh = TgGroup.objects.get_or_create(group_name='kingsX', display_name='Hub Kings Cross', level='member', user=adam)
+        kx, kxh = TgGroup.objects.get_or_create(group_name='kingsX', display_name='Hub Kings Cross', 
+                                                level='member', user=adam)
         kxsc = kx.to_security_context()
 
         blog = kx.create_OurPost(title='my blog')
