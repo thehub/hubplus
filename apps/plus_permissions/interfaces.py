@@ -43,29 +43,6 @@ class TemplateSecureWrapper:
             return NotViewable
 
 
-type_interfaces_map = {}  
-
-def get_interface_map(cls):
-    if not isinstance(cls, basestring):
-        cls = cls.__name__
-    return type_interfaces_map.get(cls, {})
-
-def add_type_to_interface_map(cls, interfaces):
-    print "adding %s to %s in interface map" % (','.join(interfaces),cls.__name__)
-    type_interfaces_map[cls.__name__] = {}
-    add_interfaces_to_type(cls, interfaces)
-        
-def add_interfaces_to_type(cls, interfaces):
-    if not isinstance(interfaces, dict):
-        raise TypeError
-    type_interfaces = type_interfaces_map[cls.__name__]
-    for label, interface in interfaces.iteritems():
-        if label not in type_interfaces:
-            type_interfaces[label] = interface
-        else:
-            raise "Interface "+ label  +"was not added to "+ `cls` +" because an interface of that name already exists"
-
-    print "ZZZ",type_interfaces
 
 
 def strip(x) :
@@ -198,10 +175,8 @@ class SecureWrapper:
         self._interfaces.remove(interface)
         self.load_interfaces(interface)
 
-
-
-def add_creator_interface(type) :
-    class CanCreate(Interface) :
+def add_creator_interface(type):
+    class CanCreate:
         pk = InterfaceReadProperty
     setattr(CanCreate,'create_%s'%type.__class__.__name__,InterfaceCallProperty)
     return CanCreate

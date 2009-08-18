@@ -11,7 +11,7 @@ from django.contrib.auth.models import User
 from apps.hubspace_compatibility.models import TgGroup, Location
 
 from models import *
-from interfaces import get_interface_map
+
 import interfaces
 
 from apps.plus_groups import *

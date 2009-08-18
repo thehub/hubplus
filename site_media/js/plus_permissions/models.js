@@ -278,7 +278,7 @@ function Buffer() {
     return o;
 }
 
-function Transform(from_low,from_hi,to_low,to_hi,to_step) {
+function Transform(from_low, from_hi, to_low, to_hi) {
     f = function(x) {
 	val = (x/(from_hi-from_low))*(to_hi-to_low);	
 	return val;

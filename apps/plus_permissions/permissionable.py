@@ -89,6 +89,7 @@ def acquires_from(self, content_obj):
     ref.save()
 
 
+
 def add_create_method(content_type, child_type) :
     def f(self,**kwargs) :
         resource = child_type(**kwargs)

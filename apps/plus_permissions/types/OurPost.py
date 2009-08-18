@@ -36,7 +36,7 @@ class OurPostCommentor:
     pass
 
 
-from apps.plus_permissions.interfaces import add_type_to_interface_map, get_interface_map
+from apps.plus_permissions.models import add_type_to_interface_map, get_interface_map
 
 OurPostInterfaces = {'Viewer':OurPostViewer,
                      'Editor':OurPostEditor,

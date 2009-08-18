@@ -59,18 +59,6 @@ from django.utils import simplejson
 
 
 
-def make_slider_for(cls,resource,options,default_agent,selected,creator) :
-    s = Slider(
-        tag_name='%s slider'%cls.__name__,
-        resource=resource,
-        interface_id=cls.get_id(),
-        default_agent=default_agent,
-        creator=creator,
-        options=options
-        )
-    s.set_current_option(selected)
-    return s
-
 
 @login_required
 def update_main_permission_sliders(request,username) :
@@ -89,92 +77,4 @@ class NoSliderException(Exception) :
         self.cls = cls
         self.name = name
 
-
-class Slider :
-
-    def __init__(self, title, type, level, min, max, options) :
-        self.title = title
-        self.type = type
-        self.options = options
-        self.min = 
-        self.current = current
-        self.default = default
-
-    def change(new_setting) :
-        if new_setting >= self.soft_min and new_setting >= self.hard_min :
-            self.current = new_setting
-            self.generate_permissions()
-
-            
-
-
-class SliderSetObject(object) :
-
-    def __init__(self,context, all) :
-        self.context = context
-
-        def trans(key) :
-            setattr(self,key,all[key])
-        
-        def cross(newkey,key) :
-            setattr(self, newkey,[s[key] for s in self.sliders])
-
-        trans('title')
-        trans('description')
-        trans('options')
-
-        self.sliders = [
-            Slider(s['title'], s['type'], self.options, s['hard_min'], s['soft_min'], s['current'],s['default']) 
-                for s in all['sliders'] ]
-
-        self.extras = []
-
-    def generate_permissions(self) :
-        for s in self.sliders :
-            print "generate permissions from slider %s" % s
-            s.generate_permissions(self.context)
-
-
-    def change_slider(self,interface,new_setting) :
-        for s in self.sliders :
-            if s.type == interface :
-                return s.change(new_setting)
-            else :
-                raise Exception('slider %s not in this slider_set'% interface)
-
-
-
-
-    def make_slider_options(self,resource,owner,creator) :
-        options = [
-            SliderOption('World',get_permission_system().get_anon_group()),
-            SliderOption('All Site Members',get_permission_system().get_site_members()),
-            SliderOption(owner.display_name,owner),
-        ]
-
-        default_admin = default_admin_for(owner)
-        if not default_admin is None :
-            options.append( SliderOption(default_admin.display_name,default_admin) )
-        return options
-
-
-    def setup_defaults(self,resource, owner, creator) :
-        self.save_defaults(resource,owner,creator)
-
-        options = self.make_slider_options(resource,owner,creator)
-        interfaces = self.get_interfaces()
-
-        slide = interfaces['Viewer'].make_slider_for(resource,options,owner,0,creator,creator)
-        slide = interfaces['Editor'].make_slider_for(resource,options,owner,3,creator,creator)
-        slide = interfaces['Join'].make_slider_for(resource,options,owner,1,creator,creator)
-        slide = interfaces['Invite'].make_slider_for(resource,options,owner,2,creator,creator)
-        slide = interfaces['ManageMembers'].make_slider_for(resource,options,owner,3,creator,creator)
-
-    def main_json_slider_group(self,resource) :
-        json = self.json_slider_group('Group Permissions', 'Use these sliders to set overall permissions on your group', 
-               resource, 
-               ['Viewer', 'Editor', 'Apply', 'Join', 'ManageMembers'], 
-               [0, 3, 1, 2, 3], 
-               [[0,1], [0,2], [0,3], [0,4]])
-        return json
 

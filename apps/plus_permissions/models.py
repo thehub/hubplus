@@ -10,9 +10,38 @@ import simplejson
 
 import datetime
 
+
+type_interfaces_map = {}  
+
+def get_interface_map(cls):
+    if not isinstance(cls, basestring):
+        cls = cls.__name__
+    return type_interfaces_map.get(cls, {})
+
+def add_type_to_interface_map(cls, interfaces):
+    print "adding %s to %s in interface map" % (','.join(interfaces),cls.__name__)
+    type_interfaces_map[cls.__name__] = {}
+    add_interfaces_to_type(cls, interfaces)
+        
+def add_interfaces_to_type(cls, interfaces):
+    if not isinstance(interfaces, dict):
+        raise TypeError
+    type_interfaces = type_interfaces_map[cls.__name__]
+    for label, interface in interfaces.iteritems():
+        if label not in type_interfaces:
+            type_interfaces[label] = interface
+        else:
+            raise "Interface "+ label  +"was not added to "+ `cls` +" because an interface of that name already exists"
+
+
+
 SliderOptions = {}
 def SetSliderOptions(type, options):
      SliderOptions[type] = options
+
+SliderAgents = {}
+def SetSliderAgents(type, options) :
+     SliderAgents[type] = options
 
 AgentSecurityContext = {}
 def SetAgentSecurityContext(type, options):
@@ -26,9 +55,7 @@ PossibleTypes = {}
 def SetPossibleTypes(type, options):
      PossibleTypes = options
 
-from apps.plus_permissions.interfaces import get_interfaces_map
-
-from apps.plus_permissions.default_agents import get_anonymous_group, get_admin_user, get_all_members_group
+from apps.plus_permissions.default_agents import get_anonymous_group, get_admin_user, get_all_members_group, get_creator_agent
 
 class SecurityContext(models.Model):
      """Target is the thing the context is associated with e.g. Group. 
@@ -36,32 +63,28 @@ class SecurityContext(models.Model):
      Context Agent is the 
 
      """
-
-     def __init__(self) :
-          super(self.__class__,self).__init__()
-          self.set_up()
-
      def set_up(self):
          """XXX set from maps and create security tags
          """
          
          # setting up security_tags
          my_type = self.target.obj.__class__
-         types = [my_type] + PossibleTypes[my_type.__name__]:
+         
+         agent_defaults = AgentDefaults[TgGroup]['public']
+
+         self.slider_agents = SliderAgents[self.__class__](self)
+         self.slider_agents.reverse()
+         sad = dict(self.slider_agents)
+         
+         types = [my_type] + PossibleTypes[my_type.__name__]
          for typ in types:
               for name, interface in get_interface_map(typ.__name__).iteritems():
                    self.create_security_tag(interface)
+                   selected_agent = sad[agent_defaults['defaults'][name]]
+                   self.move_slider(selected_agent,interface)
                    
-         
-         # for the children
 
-              for interface in type:
-                   tag = SecurityTag.get_or_create(interface, self)
-                   self.add_default_agents(tag)
-         self.set_context_agent()
-
-     #def add_default_agents(self, tag):
-     #     pass
+          
 
      context_agent = models.ForeignKey('GenericReference', null=True, related_name="agent_scontexts")
      # The agent which this security context is associated with
@@ -97,14 +120,7 @@ class SecurityContext(models.Model):
           self.context_admin = context_admin_ref.obj
           return self.context_admin
 
-     def get_creator(self):
-          return self.target.creator
-               
-
-     possible_types = models.TextField()
-     slider_agents = models.TextField()  # order actually matters here
      contraints = models.TextField()     # {type: [contstraints]}  e.g. {wiki:['editor<viewer']}
-     defaults  = models.TextField()      #{ type: [{interface:default_group},{interface:default_group}}
                     
      def create_security_tag(self, interface, agents=None) :
           tag = SecurityTag(security_context=self, interface=interface)
@@ -114,27 +130,33 @@ class SecurityContext(models.Model):
           return tag
      
      def move_slider(self, new_agent, interface):
-          if new_agent in self.slider_agents:
-               for agent in slider_agents:
-                    if agent not in SecurityTag.objects.filter(interface=interface, context=self).agents:
-                         self.add_agent_to_tag()
-                    if agent == new_agent:
-                         pass
+          slider_agents = [t[1] for t in self.slider_agents]
+          if new_agent in slider :
+               tag = SecurityTag.objects.get(interface=interface, context=self)
+               split = slider.index(new_agent) + 1
+               adds = slider_agents[:split]
+               removes = slider_agents[split:]
+               tag.remove_agents(removes)
+               tag.add_agents(adds)
+
 
      def get_slider_level(self, interface):
-          pass
+          tag = SecurityTag.objects.get(interface=interface, context=self)
+          for label, agent in self.slider_agents :
+               highest = agent
+               if agent not in tag.agents:
+                    break
+          return highest
 
      def add_arbitrary_agent(self, new_agent, interface):
-          tag = SecurityTag.objects.filter(interface, self)
-          tag.add_agent(new_agent)
+          tag = SecurityTag.objects.get(interface, self)
+          tag.add_agents([new_agent])
+
+     def add_arbitrary_agent(self, new_agent, interface):
+          tag = SecurityTag.objects.get(interface, self)
+          tag.add_agents([new_agent])
+
               
-     def setup_defaults(self,resource, owner, creator) :
-         options = self.make_slider_options(resource,owner,creator)
-         self.save_defaults(resource,owner,creator)
-         interfaces = self.get_interfaces()
-         s = interfaces['Viewer'].make_slider_for(resource,options,owner,0,creator)
-         s = interfaces['Editor'].make_slider_for(resource,options,owner,2,creator)
-         s = interfaces['Commentor'].make_slider_for(resource,options,owner,1,creator)
         
 
 
@@ -148,27 +170,30 @@ class GenericReference(models.Model):
     explicit_scontext = models.ForeignKey(SecurityContext, related_name="target", null=True, unique=True)
 
     creator = models.ForeignKey(User, related_name='created_objects', null=True)
-
+    
 
 class SecurityTag(models.Model) :
     interface = models.CharField(max_length=100)
     security_context = models.ForeignKey(SecurityContext)  # revere is securitytag
     agents = models.ManyToManyField(GenericReference)
 
+    class Meta:
+        unique_together = (("interface", "security_context"),)
+
     def add_agents(self, agents=None):
          """pass in a list of users and groups
          """
-         for agent in agents :
-              if agent.get_ref() not in self.agents:
-                   self.agents.add(agent.get_ref())
+         db_agents = self.agents
+         agents = [agent.get_ref() for agent in agents if agent not in db_agents]
+         self.agents.add(*agents)
          self.save()
 
     def remove_agents(self, agents=None):
          """pass in a list of users and groups
          """
-         for agent in agents:
-              if agent.get_ref() in self.agents():
-                   self.agents.remove(agent.get_ref())
+         db_agents = self.agents
+         agents = [agent.get_ref() for agent in agents if agent in db_agents]
+         self.agents.remove(*agents)
          self.save()
 
     def __str__(self) :
@@ -201,6 +226,11 @@ def has_access(agent, resource, interface) :
         #that user is in the "anyone" group
         return True
 
+    if get_creator_agent() in allowed_agents:
+        actual_creator = resource.get_ref().creator
+        if agent == actual_creator:
+            return True
+          
     agents_held = agent.get_enclosure_set()
     if allowed_agents.intersection(agents_held):
         return True

@@ -1,5 +1,5 @@
 from apps.plus_permissions.interfaces import InterfaceReadProperty, InterfaceWriteProperty, InterfaceCallProperty, add_creator_interface
-from apps.plus_permissions.models import SetSliderOptions, SetAgentSecurityContext, SetAgentDefaults, SetPossibleTypes
+from apps.plus_permissions.models import SetSliderOptions, SetAgentDefaults, SetPossibleTypes, SetSliderAgents
 from apps.hubspace_compatibility.models import TgGroup
 from apps.plus_permissions.OurPost import OurPost
 from django.db.models.signals import post_save
@@ -35,6 +35,7 @@ def get_or_create(group_name=None, display_name=None, place=None, level=None, us
         group.to_security_context()
         sec_context = group.get_security_context() 
         if level == 'member':
+
             admin_group, created = TgGroup.objects.get_or_create(
                 group_name=group_name + "_hosts", 
                 display_name=display_name + " Hosts", 
@@ -97,7 +98,7 @@ class TgGroupManageMembers:
 
 
 
-from apps.plus_permissions.interfaces import add_type_to_interface_map
+from apps.plus_permissions.models import add_type_to_interface_map
 
 TgGroupInterfaces = {'Viewer': TgGroupViewer,
                      'Editor': TgGroupEditor,
@@ -131,30 +132,55 @@ def add_create_interfaces() :
 add_create_interfaces()
 
 
-# if the security context is in this agent, this set of slider_agents apply irrespective of the type they or applied to and the security context. Constraints are also specified here since we needs to know the format of "slider_agents" in order to be able to specify an absolute constraint on level for a particular interface.
-AgentSecurityContext = {'slider_agents': ['$anonymous_group',
-                                          '$all_members_group',
-                                          '$context_agent',
-                                          '$creator',
-                                          '$context_agent_admin'],
-                        'constraints':['*.Viewer>=*.Editor', 'Group.Invite>=Group.ManageMembers', 'Group.Join>=ManageMembers', 'ManageMembers<=$anonymous']
-                        }
+# if the security context is in this agent, this set of slider_agents apply, irrespective of the type of resource they are
+def get_slider_agents(scontext)  : 
+    return [
+            ('anonymous_group', get_anonymous_group()),
+            ('all_members_group', get_all_members_group()), 
+            ('context_agent', scontext.context_agent), 
+            ('creator', get_creator_agent()),
+            ('context_admin', scontext.context_admin)
+           ]
 
-SetAgentSecurityContext(TgGroup, AgentSecurityContext)
+SetSliderAgents(TgGroup, get_slider_agents)
+
 
 # The agent must have a set of default levels for every type which can be created within it. Other objects don't need these as they will be copied from acquired security context according to the possible types available at the "lower" level. We have different AgentDefaults for different group types e.g. standard, public, or private.
-AgentDefaults = {'public':{'TgGroup':{'Viewer':'$context_agent', 
-                                      'Editor':'$creator',
-                                      'Invite':'$context_agent'},
-                           'OurPost':{'Viewer':'$context_agent',
-                                      'Editor':'$creator'}
+AgentDefaults = {'public':
+                     {'TgGroup':
+                          {'defaults':
+                               {'Viewer':'context_agent', 
+                                'Editor':'creator',
+                                'Invite':'context_agent'},
+                           'constraints':
+                               ['Viewer>=Editor', 'Invite>=ManageMembers', 'Join>=ManageMembers', 'ManageMembers<=$anonymous']
                            },
-                 'private':{'TgGroup':{'Viewer':'$context_agent', 
-                                       'Editor':'$creator',
-                                       'Invite':'$context_agent'},
-                            'OurPost':{'Viewer':'$context_agent',
-                                       'Editor':'$creator'}
-                            }           
+                      'OurPost':
+                          { 'defaults' : {'Viewer':'context_agent',
+                                          'Editor':'creator',
+                                          'Commentor':'site_members'},
+                            'constraints':['Viewer>=Editor']}
+                      },
+                 
+
+                 'private':
+                     {'TgGroup':
+                          {'defaults':
+                               {'Viewer':'context_agent', 
+                                'Editor':'creator',
+                                'Invite':'context_agent'},
+                           'constraints':
+                               ['Viewer>=Editor', 'Invite>=ManageMembers', 'Join>=ManageMembers', 'ManageMembers<=$anonymous']
+                           },
+                      'OurPost': 
+                      {'defaults' : 
+                       {'Viewer':'context_agent',
+                        'Editor':'creator',
+                        'Commentor':'site_members'},
+                       'constraints':['Viewer>=Editor']}
+                      }
                  }
 
 SetAgentDefaults(TgGroup, AgentDefaults)
+
+
