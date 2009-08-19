@@ -392,9 +392,17 @@ class TestSecurityContexts(unittest.TestCase):
 
 class TestDecorators(unittest.TestCase) :
     def test_decorators(self) :
+
+        god = User(username='Jupiter', email_address='jupiter@the-hub.net')
+        god.save()
+
+        group, created= TgGroup.objects.get_or_create(group_name='group',
+                                                      display_name='Our Group', 
+                                                      place=None, level='member', user=god)
+        group.to_security_context()
         
-        b = OurPost(title='test decorator')
-        b.save()
+
+        b = group.create_OurPost(title='test decorator')
 
         i_editor = get_interface_map(OurPost)['Editor']
 
