@@ -205,7 +205,7 @@ class TestAccess(unittest.TestCase) :
 
         # so now we're going to give tuba special permissions on this blog post
         # so first make the blog post a custom context
-        sc2 = blog2.to_security_context()
+        sc2 = blog2.make_custom_security_context()
         # and make a tag for it
         tag2 = sc2.add_arbitrary_agent(tuba, 'OurPost.Editor')
         

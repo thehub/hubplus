@@ -59,6 +59,15 @@ def to_security_context(self):
     self.set_security_context(sc)
     return sc
 
+def make_custom_security_context(self) :
+    original_sc = self.get_security_context()
+    new_sc = self.to_security_context()
+    # now we need to call set_up for the new_sc, but we
+    # need it to know the type of the previous security context
+    # eg. if this is an OurPost, it we still need to know we're in a TgGroup
+    new_sc.set_up(root_type=original_sc.__class__)
+    return new_sc
+
 def set_security_context(self, scontext):
     """Set the security context used by this object
     """
@@ -128,6 +137,7 @@ def security_patch(content_type, type_list):
     content_type.get_security_context = get_security_context
     content_type.acquires_from = acquires_from
     content_type.get_tag_for_interface = get_tag_for_interface
+    content_type.make_custom_security_context = make_custom_security_context
           
 
     for typ in type_list :
