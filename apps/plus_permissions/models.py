@@ -249,7 +249,7 @@ def has_access(agent, resource, interface) :
                                                  security_context=context).agents
 
     else :
-        print "WWWWEEEE", agent, resource, context, interface, 
+        print "WWWWEEEE", agent, resource, context, context.context_agent, interface, 
         # force the exception again
         allowed_agents = SecurityTag.objects.get(interface=interface,
                                                 security_context=context).agents
