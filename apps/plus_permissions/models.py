@@ -224,8 +224,8 @@ class SecurityTag(models.Model) :
          removes = []
          for agent in agents: 
              if agent in db_agents.all():
-                 if is_agent(agent):
-                     removes.append(agent.obj)
+                 if is_agent(agent.obj):
+                     removes.append(agent)
          self.agents.remove(*removes)
          self.save()
 

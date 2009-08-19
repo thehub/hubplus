@@ -197,6 +197,12 @@ class TestAccess(unittest.TestCase) :
 
         self.assertFalse(has_access(tuba, blog2, "OurPost.Editor"))
         
+        # add an arbitrary agent and remove her agaiin 
+        blog.get_security_context().add_arbitrary_agent(tuba, 'OurPost.Editor')
+        self.assertTrue(has_access(tuba, blog, "OurPost.Editor"))
+        blog.get_security_context().remove_arbitrary_agent(tuba, 'OurPost.Editor')
+        self.assertFalse(has_access(tuba, blog, "OurPost.Editor"))        
+
         # so now we're going to give tuba special permissions on this blog post
         # so first make the blog post a custom context
         sc2 = blog2.to_security_context()
