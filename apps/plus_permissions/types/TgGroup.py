@@ -34,7 +34,6 @@ def get_or_create(group_name=None, display_name=None, place=None, level=None, us
         if level == 'member':
             group.to_security_context()
             sec_context = group.get_security_context() 
-
             admin_group, created = TgGroup.objects.get_or_create(
                 group_name=group_name + "_hosts", 
                 display_name=display_name + " Hosts", 
@@ -42,7 +41,6 @@ def get_or_create(group_name=None, display_name=None, place=None, level=None, us
                 place=place,
                 user=user
                 )
-            
             
             sec_context.set_context_agent(group.get_ref())
             sec_context.set_context_admin(admin_group.get_ref())
