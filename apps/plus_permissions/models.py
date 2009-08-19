@@ -199,7 +199,7 @@ class SecurityTag(models.Model) :
          """pass in a list of users and groups
          """
          db_agents = self.agents
-         agents = [ref(agent) for agent in agents if agent not in db_agents.all()]
+         agents = [agent for agent in agents if agent not in db_agents.all()]
          self.agents.add(*agents)
          self.save()
 
@@ -207,7 +207,7 @@ class SecurityTag(models.Model) :
          """pass in a list of users and groups
          """
          db_agents = self.agents
-         agents = [ref(agent) for agent in agents if agent in db_agents.all()]
+         agents = [agent for agent in agents if agent in db_agents.all()]
          self.agents.remove(*agents)
          self.save()
 
