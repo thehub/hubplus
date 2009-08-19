@@ -202,20 +202,53 @@ class TestAccess(unittest.TestCase) :
         blog.get_security_context().remove_arbitrary_agent(tuba, 'OurPost.Editor')
         self.assertFalse(has_access(tuba, blog, "OurPost.Editor"))        
 
-        # so now we're going to give tuba special permissions on this blog post
-        # so first make the blog post a custom context
-        sc2 = blog2.to_security_context()
-        # and make a tag for it
-        tag2 = sc2.add_arbitrary_agent(tuba, 'OurPost.Editor')
+        #test moving the sliders around
+        members_group = blog.get_security_context().context_agent.obj
+        admin_group = blog.get_security_context().context_admin.obj
         
-        self.assertTrue(has_access(tuba, blog2, "OurPost.Editor"))
+        #set the slider so that members of KX have the Editor interface
+        blog.get_security_context().move_slider(members_group, 'OurPost.Editor')
+
+        #check that the slider level actually changed
+        level = blog.get_security_context().get_slider_level('OurPost.Editor')
+        self.assertTrue(level==members_group)
+
+        #and check that tuba has access
+        self.assertTrue(has_access(tuba, blog, "OurPost.Editor"))
+
+        #now remove tuba from the members group
+        members_group.remove_member(tuba)
+        self.assertFalse(has_access(tuba, blog, "OurPost.Editor"))        
+
+        #and re-add her
+        members_group.add_member(tuba)
+        self.assertTrue(has_access(tuba, blog, "OurPost.Editor"))  
+
+        #raise the requirement to the admin group
+        blog.get_security_context().move_slider(admin_group, 'OurPost.Editor')
+        level = blog.get_security_context().get_slider_level('OurPost.Editor')
+
+        #check the slider changed and that adam can now access while tuba cannot
+        self.assertTrue(level==admin_group)
+        self.assertFalse(has_access(tuba, blog, "OurPost.Editor"))
+        self.assertTrue(has_access(adam, blog, "OurPost.Editor"))
+
+        # so now we're going to give tuba special permissions on this blog post ONLY
+        # so first make the blog post a custom context
+        
+        #sc2 = blog2.to_security_context()
+        
+        # and make a tag for it
+        #tag2 = sc2.add_arbitrary_agent(tuba, 'OurPost.Editor')
+        
+        #self.assertTrue(has_access(tuba, blog2, "OurPost.Editor"))
 
 
         # check that kings cross hosts are a sub-group of kings cross
-        self.assertTrue(kxh.is_member_of(kx))
+        #self.assertTrue(kxh.is_member_of(kx))
 
         # so should have same access
-        self.assertTrue(has_access(kxh, blog, "OurPost.Viewer"))
+        #self.assertTrue(has_access(kxh, blog, "OurPost.Viewer"))
 
         # 
 

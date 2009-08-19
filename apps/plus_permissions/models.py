@@ -63,6 +63,7 @@ class SecurityContext(models.Model):
      Context Agent is the 
 
      """
+
      def get_target(self):
          return self.target.all()[0].obj
          
@@ -72,13 +73,12 @@ class SecurityContext(models.Model):
          
          # setting up security_tags
 
-         my_type = self.get_target().__class__
-         
+         my_type = self.get_target().__class__         
          agent_defaults = AgentDefaults[TgGroup]['public']
 
-         self.slider_agents = SliderAgents[my_type](self)
-         self.slider_agents.reverse()
-         sad = dict(self.slider_agents)
+         slider_agents = SliderAgents[self.context_agent.obj.__class__](self)
+
+         sad = dict(slider_agents)
 
          types = [my_type] + PossibleTypes[my_type]
          for typ in types:
@@ -86,7 +86,6 @@ class SecurityContext(models.Model):
                  interface_str = '%s.%s' %(typ.__name__, interface_name)
                  self.create_security_tag(interface_str)
                  selected_agent = sad[agent_defaults[typ.__name__]['defaults'][interface_name]]
-
                  self.move_slider(selected_agent, interface_str)
                  
                  
@@ -138,7 +137,16 @@ class SecurityContext(models.Model):
          return tag
      
      def move_slider(self, new_agent, interface):
-         slider_agents = [t[1] for t in self.slider_agents]
+         try:
+             new_agent.obj
+         except:
+             if is_agent(new_agent):
+                 new_agent = new_agent.get_ref()
+             else:
+                 raise NotAnAgent
+         slider_agents = SliderAgents[self.context_agent.obj.__class__](self)
+         slider_agents.reverse()
+         slider_agents = [t[1] for t in slider_agents]
          if new_agent in slider_agents:
              tag = SecurityTag.objects.get(interface=interface, security_context=self)
              split = slider_agents.index(new_agent) + 1
@@ -150,14 +158,15 @@ class SecurityContext(models.Model):
 
      def get_slider_level(self, interface):
          tag = SecurityTag.objects.get(interface=interface, security_context=self)
-         for label, agent in self.slider_agents:
-             highest = agent
-             if agent not in tag.agents:
+         slider_agents = SliderAgents[self.context_agent.obj.__class__](self)
+         slider_agents.reverse()
+         for label, agent in slider_agents:
+             if agent not in tag.agents.all():
                  break
-         return highest
+             highest = agent
+         return highest.obj
      
      def add_arbitrary_agent(self, new_agent, interface):
-         
          tag = SecurityTag.objects.get(interface=interface, security_context=self)
          tag.add_agents([new_agent.get_ref()])
 
@@ -198,7 +207,7 @@ def is_agent(obj):
 
 class SecurityTag(models.Model) :
     interface = models.CharField(max_length=100)
-    security_context = models.ForeignKey(SecurityContext)  # revere is securitytag
+    security_context = models.ForeignKey(SecurityContext)  # reverse is securitytag
     agents = models.ManyToManyField(GenericReference)
 
     class Meta:
@@ -230,7 +239,7 @@ class SecurityTag(models.Model) :
          self.save()
 
     def __str__(self) :
-        return """(%s)Interface: %s, Contexte: %s, Agents: %s""" % (self.id, self.interface,self.context,self.agents)
+        return """(%s)Interface: %s, Contexte: %s, Agents: %s""" % (self.id, self.interface,self.security_context, self.agents)
 
 
 
