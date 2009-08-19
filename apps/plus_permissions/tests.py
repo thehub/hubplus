@@ -164,7 +164,7 @@ class TestAccess(unittest.TestCase) :
 
         # now lets add this user to the tag
         tag = kx.get_tag_for_interface("OurPost.Viewer")
-        tag.add_agents([nahia])
+        tag.add_agents([nahia.get_ref()])
 
         # so now nahia has access
         self.assertTrue( has_access(nahia, blog, "OurPost.Viewer"))
