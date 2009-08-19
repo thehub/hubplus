@@ -212,7 +212,7 @@ class SecurityTag(models.Model) :
          adds = []
          for agent in agents:
              if agent not in db_agents.all():
-                 if is_agent(agent):
+                 if is_agent(agent.obj):
                      adds.append(agent)
          self.agents.add(*adds)
          self.save()
@@ -225,9 +225,7 @@ class SecurityTag(models.Model) :
          for agent in agents: 
              if agent in db_agents.all():
                  if is_agent(agent):
-                     removes.append(agent)
-                 else:
-                     raise NotAnAgent
+                     removes.append(agent.obj)
          self.agents.remove(*removes)
          self.save()
 
