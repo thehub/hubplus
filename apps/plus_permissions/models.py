@@ -96,35 +96,35 @@ class SecurityContext(models.Model):
      # The agent which this security context is associated with
 
      def set_context_agent(self, agent):
-          if not isinstance(agent.obj, TgGroup) and not isinstance(agent.obj, User):
-               raise TypeError("Agent must be a user of a group")
-          self.context_agent = agent
+         if not isinstance(agent.obj, TgGroup) and not isinstance(agent.obj, User):
+             raise TypeError("Agent must be a user of a group")
+         self.context_agent = agent
 
      def get_context_agent(self):
-          if self.context_agent:
-               return self.context_agent
-          context_agent_ref = self.target
-          while not isinstance(context_agent_ref.obj, User) and not isinstance(context_agent_ref.obj, TgGroup):
-               context_agent_ref = context_agent_ref.acquires_from
-          self.context_agent = context_agent_ref.obj
-          return self.context_agent
+         if self.context_agent:
+             return self.context_agent
+         context_agent_ref = self.target
+         while not isinstance(context_agent_ref.obj, User) and not isinstance(context_agent_ref.obj, TgGroup):
+             context_agent_ref = context_agent_ref.acquires_from
+         self.context_agent = context_agent_ref.obj
+         return self.context_agent
 
      context_admin = models.ForeignKey('GenericReference', null=True, related_name="admin_scontexts") 
      # The admin which this security context is associated with
 
      def set_context_admin(self, admin):
-          if not isinstance(admin.obj, TgGroup) and not isinstance(admin.obj, User):
-               raise TypeError("Admin must be a user of a group")
-          self.context_admin = admin
+         if not isinstance(admin.obj, TgGroup) and not isinstance(admin.obj, User):
+             raise TypeError("Admin must be a user of a group")
+         self.context_admin = admin
 
      def get_context_admin(self):
-          if self.context_admin:
-               return self.context_admin
-          context_admin_ref = self.target
-          while not isinstance(context_admin_ref.obj, User) and not isinstance(context_admin_ref.obj, TgGroup):
-               context_admin_ref = context_admin_ref.acquires_from
-          self.context_admin = context_admin_ref.obj
-          return self.context_admin
+         if self.context_admin:
+             return self.context_admin
+         context_admin_ref = self.target
+         while not isinstance(context_admin_ref.obj, User) and not isinstance(context_admin_ref.obj, TgGroup):
+             context_admin_ref = context_admin_ref.acquires_from
+         self.context_admin = context_admin_ref.obj
+         return self.context_admin
 
      contraints = models.TextField()     # {type: [contstraints]}  e.g. {wiki:['editor<viewer']}
                     
@@ -138,31 +138,32 @@ class SecurityContext(models.Model):
          return tag
      
      def move_slider(self, new_agent, interface):
-          slider_agents = [t[1] for t in self.slider_agents]
-          if new_agent in slider_agents:
-               tag = SecurityTag.objects.get(interface=interface, security_context=self)
-               split = slider_agents.index(new_agent) + 1
-               adds = slider_agents[:split]
-               removes = slider_agents[split:]
-               tag.remove_agents(removes)
-               tag.add_agents(adds)
+         slider_agents = [t[1] for t in self.slider_agents]
+         if new_agent in slider_agents:
+             tag = SecurityTag.objects.get(interface=interface, security_context=self)
+             split = slider_agents.index(new_agent) + 1
+             adds = slider_agents[:split]
+             removes = slider_agents[split:]
+             tag.remove_agents(removes)
+             tag.add_agents(adds)
 
 
      def get_slider_level(self, interface):
-          tag = SecurityTag.objects.get(interface=interface, security_context=self)
-          for label, agent in self.slider_agents:
-               highest = agent
-               if agent not in tag.agents:
-                    break
-          return highest
-
+         tag = SecurityTag.objects.get(interface=interface, security_context=self)
+         for label, agent in self.slider_agents:
+             highest = agent
+             if agent not in tag.agents:
+                 break
+         return highest
+     
      def add_arbitrary_agent(self, new_agent, interface):
-          tag = SecurityTag.objects.get(interface=interface, security_context=self)
-          tag.add_agents([new_agent])
+         
+         tag = SecurityTag.objects.get(interface=interface, security_context=self)
+         tag.add_agents([new_agent.get_ref()])
 
      def remove_arbitrary_agent(self, old_agent, interface):
-          tag = SecurityTag.objects.get(interface=interface, security_context=self)
-          tag.remove_agents([old_agent])
+         tag = SecurityTag.objects.get(interface=interface, security_context=self)
+         tag.remove_agents([old_agent.get_ref()])
 
               
         
@@ -224,13 +225,17 @@ def has_access(agent, resource, interface) :
     context_type = ContentType.objects.get_for_model(context)
 
     # which agents have access?
-    try :
-         allowed_agents = SecurityTag.objects.get(interface=interface,
-                                                  security_context=context).agents
-    except Exception, e:
-         print e
-         raise e
 
+    if SecurityTag.objects.filter(interface=interface,security_context=context) :
+        allowed_agents = SecurityTag.objects.get(interface=interface,
+                                                 security_context=context).agents
+
+    else :
+        print "WWWWEEEE", agent, resource, context, interface, 
+        # force the exception again
+        allowed_agents = SecurityTag.objects.get(interface=interface,
+                                                security_context=context).agents
+        
 
     # probably should memcache both allowed agents (per .View interface) and 
     # agents held per user to allow many queries very quickly. e.g. to only return the searc

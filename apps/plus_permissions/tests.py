@@ -205,7 +205,6 @@ class TestAccess(unittest.TestCase) :
         self.assertTrue(has_access(tuba, blog2, "OurPost.Editor"))
 
 
-
         # check that kings cross hosts are a sub-group of kings cross
         self.assertTrue(kxh.is_member_of(kx))
 

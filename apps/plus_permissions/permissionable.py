@@ -57,6 +57,7 @@ def to_security_context(self):
     sc = SecurityContext()
     sc.save()
     self.set_security_context(sc)
+    sc.set_up()
     return sc
 
 def set_security_context(self, scontext):
