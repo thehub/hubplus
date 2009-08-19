@@ -110,7 +110,7 @@ class SecureWrapper:
 
     def load_interfaces_for(self, agent, interface_names=None) :
         """Load interfaces for the wrapped inner content that are available to the agent"""
-        from apps.plus_permissions.models import type_interfaces_map
+        from apps.plus_permissions.models import type_interfaces_map, has_access
         resource = self.get_inner()
         cls = resource.__class__
         interface_map = type_interfaces_map[cls.__name__]
@@ -118,7 +118,7 @@ class SecureWrapper:
             interface_names = interface_map.keys()
         for iname in interface_names:
             interface = interface_map[iname]
-            if has_access(agent=agent.get_ref(), resource=resource, interface=self.get_inner.__class__ + '.' + iname) :
+            if has_access(agent=agent.get_ref(), resource=resource, interface=self.get_inner.__class__.__name__ + '.' + iname) :
                 self.add_permissions(interface)
 
 
