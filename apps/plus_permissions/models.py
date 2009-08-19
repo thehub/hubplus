@@ -231,7 +231,8 @@ def has_access(agent, resource, interface) :
          print e
          raise e
 
-    # probably should memcache both allowed agents (per .View interface) and agents held per user to allow many queries very quickly. e.g. to only return the searc
+    # probably should memcache both allowed agents (per .View interface) and 
+    # agents held per user to allow many queries very quickly. e.g. to only return the searc
      
     allowed_agents = set([a.obj for a in allowed_agents])
     

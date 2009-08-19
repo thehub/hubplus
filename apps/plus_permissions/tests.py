@@ -396,9 +396,9 @@ class TestDecorators(unittest.TestCase) :
         b = OurPost(title='test decorator')
         b.save()
 
-        i_viewer = get_interface_map(OurPost)['Viewer']
+        i_editor = get_interface_map(OurPost)['Editor']
 
-        @has_interfaces_decorator(['Viewer'])
+        @has_interfaces_decorator(['Editor'])
         def foo(request, resource, *args, **kwargs) :
             return True
 
@@ -412,8 +412,8 @@ class TestDecorators(unittest.TestCase) :
         bsc = b.to_security_context()
         b.set_security_context(b)
 
-        self.assertFalse(has_access(u, b, 'OurPost.Viewer'))
+        self.assertFalse(has_access(u, b, 'OurPost.Editor'))
         self.assertRaises(PlusPermissionsNoAccessException,foo,FakeRequest(u),b)
 
-        create_security_tag(b,i_viewer,[u])
+        create_security_tag(b,i_editor,[u])
         self.assertTrue(foo(FakeRequest(u),b))
