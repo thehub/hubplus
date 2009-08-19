@@ -49,7 +49,7 @@ class CreatorMarker(models.Model) :
 
 def get_creator_agent() :
     if CreatorMarker.objects.count() > 0 :
-        return CreatorMarker.objects.all()[0]
+        return CreatorMarker.objects.all()[0].get_ref()
     c = CreatorMarker()
     c.save()
     return c.get_ref()

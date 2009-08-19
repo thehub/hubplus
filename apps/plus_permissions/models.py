@@ -88,8 +88,8 @@ class SecurityContext(models.Model):
                  selected_agent = sad[agent_defaults[typ.__name__]['defaults'][interface_name]]
 
                  self.move_slider(selected_agent, interface_str)
-                   
-
+                 
+                 
           
 
      context_agent = models.ForeignKey('GenericReference', null=True, related_name="agent_scontexts")
@@ -198,7 +198,6 @@ class SecurityTag(models.Model) :
          """pass in a list of users and groups
          """
          db_agents = self.agents
-         print `agents`
          agents = [ref(agent) for agent in agents if agent not in db_agents.all()]
          self.agents.add(*agents)
          self.save()
