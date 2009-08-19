@@ -8,6 +8,9 @@ for module in types.__all__:
     child_types  =  globals()[module].child_types
     security_patch(content_type, child_types)
 
+from django.contrib.auth.models import User
+security_patch(User,[])
+
 
 from default_agents import CreatorMarker
 security_patch(CreatorMarker,[])
