@@ -19,7 +19,7 @@ from apps.plus_groups import *
 from types.OurPost import *
 
 from apps.plus_permissions.api import has_access, has_interfaces_decorator
-from apps.plus_permissions.interfaces import secure_wrap
+from apps.plus_permissions.interfaces import secure_wrap, PlusPermissionsNoAccessException
 
 #  
 
@@ -415,11 +415,9 @@ class TestDecorators(unittest.TestCase) :
         u = User(username='lydia',email_address='tattooed_lady@the-hub.net')
         u.save()
 
-        bsc = b.to_security_context()
-        b.set_security_context(b)
 
         self.assertFalse(has_access(u, b, 'OurPost.Editor'))
         self.assertRaises(PlusPermissionsNoAccessException,foo,FakeRequest(u),b)
 
-        create_security_tag(b,i_editor,[u])
+        b.get_context().create_security_tag(i_editor,[u])
         self.assertTrue(foo(FakeRequest(u),b))
