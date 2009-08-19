@@ -231,15 +231,11 @@ def has_access(agent, resource, interface) :
          print e
          raise e
 
-<<<<<<< HEAD:apps/plus_permissions/models.py
+
     # probably should memcache both allowed agents (per .View interface) and 
     # agents held per user to allow many queries very quickly. e.g. to only return the searc
      
-    allowed_agents = set([a.obj for a in allowed_agents])
-=======
-    # probably should memcache both allowed agents (per .View interface) and agents held per user to allow many queries very quickly. e.g. to only return the searc
     allowed_agents = set([a.obj for a in allowed_agents.all()])
->>>>>>> 1a16b0da4e31aa151455c5d8d67f6650dcd42740:apps/plus_permissions/models.py
     
     if get_anonymous_group in allowed_agents: 
         # in other words, if this resource is matched with anyone, we don't have to test 
