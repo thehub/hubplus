@@ -157,11 +157,11 @@ class SecurityContext(models.Model):
           return highest
 
      def add_arbitrary_agent(self, new_agent, interface):
-          tag = SecurityTag.objects.get(interface, self)
+          tag = SecurityTag.objects.get(interface=interface, security_context=self)
           tag.add_agents([new_agent])
 
      def remove_arbitrary_agent(self, old_agent, interface):
-          tag = SecurityTag.objects.get(interface, self)
+          tag = SecurityTag.objects.get(interface=interface, security_context=self)
           tag.remove_agents([old_agent])
 
               

@@ -200,8 +200,7 @@ class TestAccess(unittest.TestCase) :
         # so first make the blog post a custom context
         sc2 = blog2.to_security_context()
         # and make a tag for it
-        tag2 = sc2.get_tag_for_interface('OurPost.Editor')
-        tag2.add_agent([tuba])
+        tag2 = sc2.add_arbitrary_agent(tuba, 'OurPost.Editor')
         
         self.assertTrue(has_access(tuba, blog2, "OurPost.Editor"))
 
