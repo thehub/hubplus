@@ -53,7 +53,7 @@ def SetAgentDefaults(type, options):
 
 PossibleTypes = {}
 def SetPossibleTypes(type, options):
-     PossibleTypes = options
+     PossibleTypes[type] = options
 
 from apps.plus_permissions.default_agents import get_anonymous_group, get_admin_user, get_all_members_group, get_creator_agent
 
@@ -79,13 +79,14 @@ class SecurityContext(models.Model):
          self.slider_agents = SliderAgents[my_type](self)
          self.slider_agents.reverse()
          sad = dict(self.slider_agents)
-         
-         types = [my_type] + PossibleTypes[my_type.__name__]
+
+         types = [my_type] + PossibleTypes[my_type]
          for typ in types:
-              for name, interface in get_interface_map(typ.__name__).iteritems():
-                   self.create_security_tag(interface)
-                   selected_agent = sad[agent_defaults['defaults'][name]]
-                   self.move_slider(selected_agent,interface)
+             for interface_name in get_interface_map(typ.__name__):
+                 interface_str = '%s.%s' %(typ.__name__, interface_name)
+                 self.create_security_tag(interface_str)
+                 selected_agent = sad[agent_defaults[typ.__name__]['defaults'][interface_name]]
+                 self.move_slider(selected_agent, interface_str)
                    
 
           
@@ -126,18 +127,18 @@ class SecurityContext(models.Model):
 
      contraints = models.TextField()     # {type: [contstraints]}  e.g. {wiki:['editor<viewer']}
                     
-     def create_security_tag(self, interface, agents=None) :
-          tag = SecurityTag(security_context=self, interface=interface)
-          tag.save()
-          if agents:
-               tag.add_agents(agents)
-          return tag
+     def create_security_tag(self, interface, agents=None):
+         tag = SecurityTag(security_context=self, interface=interface)
+         tag.save()
+         if agents:
+             tag.add_agents(agents)
+         return tag
      
      def move_slider(self, new_agent, interface):
           slider_agents = [t[1] for t in self.slider_agents]
-          if new_agent in slider :
-               tag = SecurityTag.objects.get(interface=interface, context=self)
-               split = slider.index(new_agent) + 1
+          if new_agent in slider_agents:
+               tag = SecurityTag.objects.get(interface=interface, security_context=self)
+               split = slider_agents.index(new_agent) + 1
                adds = slider_agents[:split]
                removes = slider_agents[split:]
                tag.remove_agents(removes)
@@ -145,8 +146,8 @@ class SecurityContext(models.Model):
 
 
      def get_slider_level(self, interface):
-          tag = SecurityTag.objects.get(interface=interface, context=self)
-          for label, agent in self.slider_agents :
+          tag = SecurityTag.objects.get(interface=interface, security_context=self)
+          for label, agent in self.slider_agents:
                highest = agent
                if agent not in tag.agents:
                     break
@@ -156,9 +157,9 @@ class SecurityContext(models.Model):
           tag = SecurityTag.objects.get(interface, self)
           tag.add_agents([new_agent])
 
-     def add_arbitrary_agent(self, new_agent, interface):
+     def remove_arbitrary_agent(self, old_agent, interface):
           tag = SecurityTag.objects.get(interface, self)
-          tag.add_agents([new_agent])
+          tag.remove_agents([old_agent])
 
               
         
@@ -176,6 +177,12 @@ class GenericReference(models.Model):
     creator = models.ForeignKey(User, related_name='created_objects', null=True)
     
 
+def ref(agent) :
+    # if we're sent ordinary agent (group etc.) get the ref, if we've already got a ref, just return it
+    if agent.__class__ != GenericReference : 
+        return agent.get_ref()
+    return agent
+
 class SecurityTag(models.Model) :
     interface = models.CharField(max_length=100)
     security_context = models.ForeignKey(SecurityContext)  # revere is securitytag
@@ -188,7 +195,7 @@ class SecurityTag(models.Model) :
          """pass in a list of users and groups
          """
          db_agents = self.agents
-         agents = [agent.get_ref() for agent in agents if agent not in db_agents]
+         agents = [ref(agent) for agent in agents if agent not in db_agents.all()]
          self.agents.add(*agents)
          self.save()
 
@@ -196,7 +203,7 @@ class SecurityTag(models.Model) :
          """pass in a list of users and groups
          """
          db_agents = self.agents
-         agents = [agent.get_ref() for agent in agents if agent in db_agents]
+         agents = [agent.get_ref() for agent in agents if agent in db_agents.all()]
          self.agents.remove(*agents)
          self.save()
 

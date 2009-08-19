@@ -224,7 +224,7 @@ def profile_field(request,username,classname,fieldname,*args,**kwargs) :
             return one_model_field(request,p.get_host_info(),HostInfoForm,fieldname, kwargs.get('default', ''),[p.user])
 
 
-def one_model_field(request, object, formClass, fieldname, default, other_objects=[]) :
+def one_model_field(request, object, formClass, fieldname, default, other_objects=None) :
     val = getattr(object, fieldname)
     if not request.POST:
         return HttpResponse("%s" % val, mimetype="text/plain")
@@ -239,8 +239,9 @@ def one_model_field(request, object, formClass, fieldname, default, other_object
     try:
         setattr(object, fieldname, new_val)
         object.save()
-        for o in other_objects :
-            o.save()
+        if other_objects :
+            for o in other_objects :
+                o.save()
     except Exception, e :
         return HttpResponse('%s' % e, status=500)
     new_val = new_val and new_val or default

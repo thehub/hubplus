@@ -30,10 +30,11 @@ def get_or_create(group_name=None, display_name=None, place=None, level=None, us
         created = True
         group = TgGroup(group_name=group_name, display_name=display_name, level=level, place=place)
         group.save()
-        group.to_security_context()
-        sec_context = group.get_security_context() 
 
         if level == 'member':
+            group.to_security_context()
+            sec_context = group.get_security_context() 
+
             admin_group, created = TgGroup.objects.get_or_create(
                 group_name=group_name + "_hosts", 
                 display_name=display_name + " Hosts", 
@@ -50,6 +51,8 @@ def get_or_create(group_name=None, display_name=None, place=None, level=None, us
             group.add_member(user)
             group.save()
         elif level == 'host':
+            group.to_security_context()
+            sec_context = group.get_security_context() 
             sec_context.set_context_agent(group.get_ref())
             sec_context.set_context_admin(group.get_ref())
             sec_context.save()
@@ -157,16 +160,21 @@ SetSliderAgents(TgGroup, get_slider_agents)
 AgentDefaults = {'public':
                      {'TgGroup':
                           {'defaults':
-                               {'Viewer':'context_agent', 
-                                'Editor':'creator',
-                                'Invite':'context_agent'},
+                               {'Viewer'       :'context_agent', 
+                                'Editor'       :'creator',
+                                'Invite'       :'context_agent',
+                                'ManageMembers':'creator',
+                                'Join'         :'context_agent',
+                                
+                                },
+                           
                            'constraints':
                                ['Viewer>=Editor', 'Invite>=ManageMembers', 'Join>=ManageMembers', 'ManageMembers<=$anonymous']
                            },
                       'OurPost':
-                          { 'defaults' : {'Viewer':'context_agent',
+                          { 'defaults' : {'Viewer':'all_members_group',
                                           'Editor':'creator',
-                                          'Commentor':'site_members'},
+                                          'Commentor':'context_agent'},
                             'constraints':['Viewer>=Editor']}
                       },
                  
@@ -177,14 +185,17 @@ AgentDefaults = {'public':
                                {'Viewer':'context_agent', 
                                 'Editor':'creator',
                                 'Invite':'context_agent'},
+                                'ManageMembers':'creator',
+                                'Join'         :'context_agent',
+
                            'constraints':
                                ['Viewer>=Editor', 'Invite>=ManageMembers', 'Join>=ManageMembers', 'ManageMembers<=$anonymous']
                            },
                       'OurPost': 
                       {'defaults' : 
-                       {'Viewer':'context_agent',
+                       {'Viewer':'all_members_group',
                         'Editor':'creator',
-                        'Commentor':'site_members'},
+                        'Commentor':'context_agent'},
                        'constraints':['Viewer>=Editor']}
                       }
                  }

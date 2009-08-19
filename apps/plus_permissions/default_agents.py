@@ -43,8 +43,9 @@ def get_all_members_group():
 class CreatorMarker(models.Model) :
     pass
 
+
 def get_creator_agent() :
-    if CreatorMarker.objects.all().count() > 0 : 
+    if CreatorMarker.objects.count() > 0 :
         return CreatorMarker.objects.all()[0]
     c = CreatorMarker()
     c.save()

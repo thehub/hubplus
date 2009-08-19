@@ -7,3 +7,7 @@ for module in types.__all__:
     content_type =  globals()[module].content_type
     child_types  =  globals()[module].child_types
     security_patch(content_type, child_types)
+
+
+from default_agents import CreatorMarker
+security_patch(CreatorMarker,[])
