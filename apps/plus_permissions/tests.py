@@ -421,7 +421,6 @@ class TestDecorators(unittest.TestCase) :
         import ipdb
         #ipdb.set_trace()
 
-
         self.assertRaises(PlusPermissionsNoAccessException,foo,FakeRequest(u),b)
 
         b.get_context().create_security_tag(i_editor,[u])

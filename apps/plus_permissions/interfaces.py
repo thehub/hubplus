@@ -87,17 +87,17 @@ class SecureWrapper:
     Empty interface, wraps models in a shell, which only lets explicitly named properties through
     """
     def __init__(self, inner) :
-        self._inner = inner
-        self._interfaces = []        
-        self._exceptions = [ 
+        self.__dict__['_inner'] = inner
+        self.__dict__['_interfaces'] = []
+        self.__dict__['_exceptions'] = [ 
             lambda x : x[0] == '_',
             lambda x : x == 'id',
             lambda x : x == 'save',
         ]
-        self._permissions = {InterfaceReadProperty: set(),
-                             InterfaceCallProperty: set(),
-                             InterfaceWriteProperty: set(),
-                             InterfaceReadWriteProperty: set()}
+        self.__dict__['_permissions'] = {InterfaceReadProperty: set(),
+                                         InterfaceCallProperty: set(),
+                                         InterfaceWriteProperty: set(),
+                                         InterfaceReadWriteProperty: set()}
 
     def get_inner(self) :
         return self._inner
@@ -161,6 +161,10 @@ class SecureWrapper:
         raise PlusPermissionsNoAccessException(self.get_inner_class(),name,'from __getattr__')
 
     def __setattr__(self, name, val):
+        for rule in self.__dict__['_exceptions']:
+            if rule(name) :
+                setattr(self,name,val)
+
         if self.has_permission(name, InterfaceWriteProperty) or self.has_permission(name, InterfaceReadWriteProperty):
             self.get_inner().__setattr__(name,val)
             return None      
