@@ -160,7 +160,7 @@ class TestAccess(unittest.TestCase) :
         i_viewer = get_interface_map("OurPost")['Viewer']
 
         # but nahia has no access to the blog
-        self.assertFalse( has_access(nahia, blog, "OurPost.Viewer"))
+        self.assertFalse(has_access(nahia, blog, "OurPost.Viewer"))
 
         # now lets add this user to the tag
         tag = kx.get_tag_for_interface("OurPost.Viewer")
