@@ -17,6 +17,7 @@ import interfaces
 from apps.plus_groups import *
 
 from types.OurPost import *
+from types.OurPost import OurPost
 
 from apps.plus_permissions.api import has_access, has_interfaces_decorator
 from apps.plus_permissions.interfaces import secure_wrap, PlusPermissionsNoAccessException
@@ -421,7 +422,7 @@ class TestDecorators(unittest.TestCase) :
         import ipdb
         #ipdb.set_trace()
 
-        self.assertRaises(PlusPermissionsNoAccessException,foo,FakeRequest(u), b)
+        self.assertRaises(PlusPermissionsNoAccessException,foo,FakeRequest(u), b.id, b.__class__.__name__)
 
         b.get_context().create_security_tag(i_editor,[u])
         self.assertTrue(foo(FakeRequest(u),b))
