@@ -110,7 +110,7 @@ class TestHierarchy(unittest.TestCase):
                                                                display_name='Another Site Group',  
                                                                level='member', user=god)
         another_group.add_member(hubMembers)
-        another_group.get_security_context().set_up()
+
         ag_hosts = another_group.get_admin_group() 
 
         self.assertTrue(ag_hosts.is_member_of(another_group))

@@ -67,7 +67,7 @@ TgGroup.objects.get_or_create = get_or_create
 
 
 def get_admin_group(self) :
-    return self.get_security_context().get_context_admin().context_agent.obj
+    return self.get_security_context().get_context_admin().obj 
 
 TgGroup.get_admin_group = get_admin_group
  
