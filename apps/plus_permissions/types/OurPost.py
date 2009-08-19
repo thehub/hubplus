@@ -1,7 +1,8 @@
 
 # Permissions for OurPost, an example 
 from django.db import models
-from apps.plus_permissions.models import SetSliderOptions, SetAgentSecurityContext, SetAgentDefaults, SetPossibleTypes
+
+from apps.plus_permissions.models import SetSliderOptions, SetAgentSecurityContext, SetAgentDefaults, SetPossibleTypes, SetSliderAgents
 from apps.plus_permissions.interfaces import InterfaceReadProperty, InterfaceWriteProperty, InterfaceCallProperty
 
 
@@ -11,6 +12,8 @@ from django.contrib.contenttypes import generic
 from apps.hubspace_compatibility.models import TgGroup
 
 from apps.plus_permissions.OurPost import *
+
+from apps.plus_permissions.default_agents import get_or_create_root_location, get_anonymous_group, get_all_members_group, get_creator_agent
 
 
 # This represents a typical model type from another django or pinax app
@@ -46,8 +49,7 @@ add_type_to_interface_map(OurPost, OurPostInterfaces)
 
 
 SliderOptions = {'InterfaceOrder':['Viewer', 'Editor','Commentor']}
-SetSliderOptions(TgGroup, SliderOptions)
-
+SetSliderOptions(OurPost, SliderOptions)
 
 
 

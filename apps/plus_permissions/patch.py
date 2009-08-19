@@ -9,8 +9,5 @@ for module in types.__all__:
     security_patch(content_type, child_types)
 
 
-from django.contrib.auth.models import User
-security_patch(User,[])
-
 from default_agents import CreatorMarker
 security_patch(CreatorMarker,[])
