@@ -129,8 +129,10 @@ class SecurityContext(models.Model):
      contraints = models.TextField()     # {type: [contstraints]}  e.g. {wiki:['editor<viewer']}
                     
      def create_security_tag(self, interface, agents=None):
+         #print "creating security tag", self, interface, agents
          tag = SecurityTag(security_context=self, interface=interface)
          tag.save()
+         
          if agents:
              tag.add_agents(agents)
          return tag

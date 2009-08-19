@@ -52,5 +52,5 @@ def get_creator_agent() :
         return CreatorMarker.objects.all()[0]
     c = CreatorMarker()
     c.save()
-    return c
+    return c.get_ref()
 
