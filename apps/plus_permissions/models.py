@@ -86,6 +86,7 @@ class SecurityContext(models.Model):
                  interface_str = '%s.%s' %(typ.__name__, interface_name)
                  self.create_security_tag(interface_str)
                  selected_agent = sad[agent_defaults[typ.__name__]['defaults'][interface_name]]
+
                  self.move_slider(selected_agent, interface_str)
                    
 

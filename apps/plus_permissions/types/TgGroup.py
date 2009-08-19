@@ -146,8 +146,8 @@ add_create_interfaces()
 # if the security context is in this agent, this set of slider_agents apply, irrespective of the type of resource they are
 def get_slider_agents(scontext)  : 
     return [
-            ('anonymous_group', get_anonymous_group()),
-            ('all_members_group', get_all_members_group()), 
+            ('anonymous_group', get_anonymous_group().get_ref()),
+            ('all_members_group', get_all_members_group().get_ref()), 
             ('context_agent', scontext.context_agent), 
             ('creator', get_creator_agent()),
             ('context_admin', scontext.context_admin)

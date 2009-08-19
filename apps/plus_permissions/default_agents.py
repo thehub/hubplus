@@ -27,6 +27,8 @@ def get_anonymous_group():
     anonymous_group = TgGroup.objects.filter(group_name="anonymous")
     if not anonymous_group:
         anonymous_group, created = set_anonymous_group()
+    else :
+        anonymous_group = anonymous_group[0] # filter returns a QuerySet
     return anonymous_group
 
 def set_all_members_group():
@@ -37,8 +39,9 @@ def get_all_members_group():
     all_members = TgGroup.objects.filter(group_name="all_members")
     if not all_members:
         all_members, created = set_all_members_group()
+    else :
+        all_members = all_members[0] # filter returns a QuerySet
     return all_members
-
 
 class CreatorMarker(models.Model) :
     pass
