@@ -14,11 +14,11 @@ from apps.plus_permissions.models import has_access
 
 __all__ = ['secure_wrap', 'TemplateSecureWrapper', 'Location', 'TgGroup', 'has_access', 'anonyoumous_group', 'all_members_group', 'get_or_create_root_location']
 
-def has_interfaces_decorator(interfaces) :
+def has_interfaces_decorator(interface_names) :
     def decorator(f) :
-        def g(request, resource,*args,**kwargs) :
-            r2 = secure_wrap(resource,interfaces)
-            return f(request, r2,*args,**kwargs)
+        def g(request, resource, *args, **kwargs) :
+            r2 = secure_wrap(resource, request.user, interface_names=interface_names)
+            return f(request, r2, *args,**kwargs)
         return g
     return decorator
             

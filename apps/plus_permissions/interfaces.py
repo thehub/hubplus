@@ -9,9 +9,9 @@ Interfaces are namespaced by the type they apply to e.g. "Wiki.Editor" allowing 
 __all__ = ['secure_wrap', 'PlusPermissionsNoAccessException', 'PlusPermissionsReadOnlyException', 'add_type_to_interface_map', 'add_interfaces_to_type', 'strip', 'TemplateSecureWrapper', 'get_interface_map']
 
 
-def secure_wrap(content_obj, interface_names=None):
+def secure_wrap(content_obj, user, interface_names=None):
     access_obj = SecureWrapper(content_obj)
-    access_obj.load_interfaces_for(request.user, interface_names=interface_names)
+    access_obj.load_interfaces_for(user, interface_names=interface_names)
     return access_obj
 
 
@@ -110,9 +110,10 @@ class SecureWrapper:
 
     def load_interfaces_for(self, agent, interface_names=None) :
         """Load interfaces for the wrapped inner content that are available to the agent"""
+        from apps.plus_permissions.models import type_interfaces_map
         resource = self.get_inner()
         cls = resource.__class__
-        interface_map = type_interfaces_map[cls]
+        interface_map = type_interfaces_map[cls.__name__]
         if not interface_names:
             interface_names = interface_map.keys()
         for iname in interface_names:
