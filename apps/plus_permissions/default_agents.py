@@ -37,7 +37,7 @@ def get_all_members_group():
     all_members = TgGroup.objects.filter(group_name="all_members")
     if not all_members:
         all_members, created = set_all_members_group()
-        return all_members
+    return all_members
 
 
 class CreatorMarker(models.Model) :
@@ -48,6 +48,9 @@ def get_creator_agent() :
     if CreatorMarker.objects.count() > 0 :
         return CreatorMarker.objects.all()[0]
     c = CreatorMarker()
+    import ipdb
+    ipdb.set_trace()
+    c.get_ref()
     c.save()
     return c
 

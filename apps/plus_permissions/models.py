@@ -179,7 +179,7 @@ class GenericReference(models.Model):
 
 def ref(agent) :
     # if we're sent ordinary agent (group etc.) get the ref, if we've already got a ref, just return it
-    if agent.__class__ != GenericReference : 
+    if agent.__class__ != GenericReference :
         return agent.get_ref()
     return agent
 
@@ -195,6 +195,7 @@ class SecurityTag(models.Model) :
          """pass in a list of users and groups
          """
          db_agents = self.agents
+         print `agents`
          agents = [ref(agent) for agent in agents if agent not in db_agents.all()]
          self.agents.add(*agents)
          self.save()
@@ -203,7 +204,7 @@ class SecurityTag(models.Model) :
          """pass in a list of users and groups
          """
          db_agents = self.agents
-         agents = [agent.get_ref() for agent in agents if agent in db_agents.all()]
+         agents = [ref(agent) for agent in agents if agent in db_agents.all()]
          self.agents.remove(*agents)
          self.save()
 
