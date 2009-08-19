@@ -50,6 +50,7 @@ def get_or_create(group_name=None, display_name=None, place=None, level=None, us
             group.add_member(admin_group)
             group.add_member(user)
             group.save()
+            group.get_security_context().set_up()
         elif level == 'host':
             group.to_security_context()
             sec_context = group.get_security_context() 
@@ -58,9 +59,8 @@ def get_or_create(group_name=None, display_name=None, place=None, level=None, us
             sec_context.save()
             group.add_member(user)
             group.save()
+            group.get_security_context().set_up()
 
-
-    group.get_security_context().set_up()
     return group, created
 
 TgGroup.objects.get_or_create = get_or_create
