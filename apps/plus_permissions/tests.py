@@ -417,6 +417,11 @@ class TestDecorators(unittest.TestCase) :
 
 
         self.assertFalse(has_access(u, b, 'OurPost.Editor'))
+
+        import ipdb
+        #ipdb.set_trace()
+
+
         self.assertRaises(PlusPermissionsNoAccessException,foo,FakeRequest(u),b)
 
         b.get_context().create_security_tag(i_editor,[u])

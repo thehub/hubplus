@@ -119,6 +119,9 @@ class SecureWrapper:
             interface = interface_map[iname]
             if has_access(agent=agent.get_ref(), resource=resource, interface=self.get_inner.__class__ + '.' + iname) :
                 self.add_permissions(interface)
+
+
+
     
     def add_permissions(self, interface):
         for attr, perm in interface.__dict__:
