@@ -51,9 +51,6 @@ def get_creator_agent() :
     if CreatorMarker.objects.count() > 0 :
         return CreatorMarker.objects.all()[0]
     c = CreatorMarker()
-    import ipdb
-    ipdb.set_trace()
-    c.get_ref()
     c.save()
     return c.get_ref()
 
