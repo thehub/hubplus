@@ -227,12 +227,12 @@ class TestAccess(unittest.TestCase) :
         u.save()
 
         kx, kxh = TgGroup.objects.get_or_create(group_name='kingsX', display_name='Hub Kings Cross', level='member', user=u)
-        kxsc = kx.to_security_context()
+       
 
         blog = kx.create_OurPost(title='another post', body="Here's what")
 
         caroline = User(username='caroline', email_address='caroline@the-hub.net')
-        blog = secure_wrap(blog)
+        blog = secure_wrap(blog, caroline)
 
         i_viewer= get_interface_map(OurPost)['Viewer']
         self.assertEquals(i_viewer,OurPostViewer)
@@ -427,7 +427,7 @@ class TestDecorators(unittest.TestCase) :
         import ipdb
         #ipdb.set_trace()
 
-        self.assertRaises(PlusPermissionsNoAccessException,foo,FakeRequest(u),b)
+        self.assertRaises(PlusPermissionsNoAccessException,foo,FakeRequest(u), b)
 
         b.get_context().create_security_tag(i_editor,[u])
         self.assertTrue(foo(FakeRequest(u),b))
