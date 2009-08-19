@@ -232,11 +232,9 @@ def has_access(agent, resource, interface) :
          raise e
 
     # probably should memcache both allowed agents (per .View interface) and agents held per user to allow many queries very quickly. e.g. to only return the searc
-    import ipdb
-    ipdb.set_trace()
     allowed_agents = set([a.obj for a in allowed_agents.all()])
     
-    if self.anonymous_group in allowed_agents: 
+    if get_anonymous_group in allowed_agents: 
         # in other words, if this resource is matched with anyone, we don't have to test 
         #that user is in the "anyone" group
         return True
