@@ -157,44 +157,44 @@ class TestAccess(unittest.TestCase) :
         # confirm that there's an OurPost.Viewer interface for Kings Cross
         self.assertTrue( kx.get_tag_for_interface("OurPost.Viewer"))
                 
-        i_viewer = get_interface_map(OurPost)['Viewer']
+        i_viewer = get_interface_map("OurPost")['Viewer']
 
         # but nahia has no access to the blog
-        self.assertFalse( has_access(nahia, blog, i_viewer))
+        self.assertFalse( has_access(nahia, blog, "OurPost.Viewer"))
 
         # now lets add this user to the tag
         tag = kx.get_tag_for_interface("OurPost.Viewer")
         tag.add_agents([nahia])
 
         # so now nahia has access
-        self.assertTrue( has_access(nahia, blog, i_viewer))
+        self.assertTrue( has_access(nahia, blog, "OurPost.Viewer"))
         
         # but tuba doesn't
         tuba = User(username='tuba', email_address='tuba@the-hub.net')
         tuba.save()
 
-        self.assertFalse( has_access(tuba, blog, i_viewer))
+        self.assertFalse( has_access(tuba, blog, "OurPost.Viewer"))
 
         # however, we presumably want to give kings cross *members* access to it
         tag.add_agents([kx])
-        self.assertTrue( has_access(kx, blog, i_viewer))
+        self.assertTrue( has_access(kx, blog, "OurPost.Viewer"))
 
         # so if we add tuba to kings cross
         kx.add_member(tuba)
 
         # she now has access
-        self.assertTrue( has_access(tuba, blog, i_viewer))
+        self.assertTrue( has_access(tuba, blog, "OurPost.Viewer"))
         
         # Now we test that a second blog-post that's created starts with similar access
         blog2 = kx.create_OurPost(title='second post')
         blog2.save()
 
-        self.assertTrue(has_access(tuba, blog2, i_viewer))
+        self.assertTrue(has_access(tuba, blog2, "OurPost.Viewer"))
         
         # but we assume that not everyone got an editor interface
-        i_editor = get_interface_map(OurPost)['Editor']
+        i_editor = get_interface_map("OurPost")['Editor']
 
-        self.assertFalse(has_access(tuba, blog2, i_editor))
+        self.assertFalse(has_access(tuba, blog2, "OurPost.Editor"))
         
         # so now we're going to give tuba special permissions on this blog post
         # so first make the blog post a custom context
@@ -203,7 +203,7 @@ class TestAccess(unittest.TestCase) :
         tag2 = sc2.get_tag_for_interface('OurPost.Editor')
         tag2.add_agent([tuba])
         
-        self.assertTrue(has_access(tuba, blog2, i_editor))
+        self.assertTrue(has_access(tuba, blog2, "OurPost.Editor"))
 
 
 
@@ -211,7 +211,7 @@ class TestAccess(unittest.TestCase) :
         self.assertTrue(kxh.is_member_of(kx))
 
         # so should have same access
-        self.assertTrue(has_access(kxh, blog, i_viewer))
+        self.assertTrue(has_access(kxh, blog, "OurPost.Viewer"))
 
         # 
 
@@ -329,7 +329,7 @@ class TestAccess(unittest.TestCase) :
         self.assertEquals(so.options,options)
 
         
-        IViewer = get_interface_map(OurPost)['Viewer']
+        IViewer = get_interface_map("OurPost")['Viewer']
         slider = so.sliders[0]
 
 
@@ -347,17 +347,17 @@ class TestAccess(unittest.TestCase) :
 
         # anyone should now have access to blog under IViewer, given that 
         # a) its security_context is group, and b) group has IViewer set to 0 (anybody)
-        self.assertTrue(ps.has_access(u,blog,IViewer))
+        self.assertTrue(ps.has_access(u,blog,"OurPost.Viewer"))
 
         # now we change through the sliders, by interface and the new setting
         so.change_slider(IViewer,group)
         # and now u lost access
-        self.assertFalse(ps.has_access(u,blog,IViewer))
+        self.assertFalse(ps.has_access(u,blog,"OurPost.Viewer"))
 
         # but if u joins site_members and the slider is pushed up
         ps.get_site_members().add_member(u)
         so.change_slider(IViewer,ps.get_site_members())
-        self.assertTrue(ps.has_access(u,blog,IViewer))
+        self.assertTrue(ps.has_access(u,blog,"OurPost.Viewer"))
 
         ss = SliderSet(sliders=so)
         ss.save()
@@ -412,7 +412,7 @@ class TestDecorators(unittest.TestCase) :
         bsc = b.to_security_context()
         b.set_security_context(b)
 
-        self.assertFalse(has_access(u,b,i_viewer))
+        self.assertFalse(has_access(u, b, 'OurPost.Viewer'))
         self.assertRaises(PlusPermissionsNoAccessException,foo,FakeRequest(u),b)
 
         create_security_tag(b,i_viewer,[u])
