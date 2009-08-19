@@ -176,7 +176,7 @@ class TestAccess(unittest.TestCase) :
         self.assertFalse( has_access(tuba, blog, "OurPost.Viewer"))
 
         # however, we presumably want to give kings cross *members* access to it
-        tag.add_agents([kx])
+        tag.add_agents([kx.get_ref()])
         self.assertTrue( has_access(kx, blog, "OurPost.Viewer"))
 
         # so if we add tuba to kings cross

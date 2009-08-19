@@ -55,7 +55,7 @@ PossibleTypes = {}
 def SetPossibleTypes(type, options):
      PossibleTypes[type] = options
 
-from apps.plus_permissions.default_agents import get_anonymous_group, get_admin_user, get_all_members_group, get_creator_agent
+from apps.plus_permissions.default_agents import get_anonymous_group, get_admin_user, get_all_members_group, get_creator_agent, CreatorMarker
 
 class SecurityContext(models.Model):
      """Target is the thing the context is associated with e.g. Group. 
@@ -187,6 +187,15 @@ def ref(agent) :
         return agent.get_ref()
     return agent
 
+
+class NotAnAgent(Exception):
+    pass
+
+def is_agent(obj):
+    if isinstance(obj, User) or isinstance(obj, TgGroup) or isinstance(obj, CreatorMarker):
+        return True
+    raise NotAnAgent
+
 class SecurityTag(models.Model) :
     interface = models.CharField(max_length=100)
     security_context = models.ForeignKey(SecurityContext)  # revere is securitytag
@@ -198,17 +207,28 @@ class SecurityTag(models.Model) :
     def add_agents(self, agents=None):
          """pass in a list of users and groups
          """
+         
          db_agents = self.agents
-         agents = [agent for agent in agents if agent not in db_agents.all()]
-         self.agents.add(*agents)
+         adds = []
+         for agent in agents:
+             if agent not in db_agents.all():
+                 if is_agent(agent):
+                     adds.append(agent)
+         self.agents.add(*adds)
          self.save()
 
     def remove_agents(self, agents=None):
          """pass in a list of users and groups
          """
          db_agents = self.agents
-         agents = [agent for agent in agents if agent in db_agents.all()]
-         self.agents.remove(*agents)
+         removes = []
+         for agent in agents: 
+             if agent in db_agents.all():
+                 if is_agent(agent):
+                     removes.append(agent)
+                 else:
+                     raise NotAnAgent
+         self.agents.remove(*removes)
          self.save()
 
     def __str__(self) :
