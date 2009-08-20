@@ -144,6 +144,9 @@ class SecurityContext(models.Model):
      def get_constraints(self, type_name):
          return AgentDefaults[self.context_agent.obj.__class__]['public'][type_name]['constraints']          
 
+     def get_tags(self) :
+         return SecurityTag.objects.filter(security_context=self)
+
      def validate_constraints(self, type_name):
          slider_agents = SliderAgents[self.context_agent.obj.__class__](self)
          slider_agents.reverse()
@@ -310,6 +313,12 @@ class SecurityTag(models.Model) :
                      removes.append(agent)
          self.agents.remove(*removes)
          self.save()
+
+    def clone_for_context(self, other_context) :
+        new_sc = SecurityTag(interface=self.interface, security_context=other_context)
+        new_sc.save()
+        new_sc.add_agents(self.agents)
+            
 
     def __str__(self) :
         return """(%s)Interface: %s, Contexte: %s, Agents: %s""" % (self.id, self.interface,self.security_context, self.agents)

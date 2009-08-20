@@ -260,19 +260,24 @@ class TestAccess(unittest.TestCase) :
         # so now we're going to give tuba special permissions on this blog post ONLY
         # so first make the blog post a custom context
 
-        #sc2 = blog2.make_custom_security_context()
+        sc2 = blog2.create_custom_security_context()
+
+        # assert now that blog2's security context is NOT the same as blog's
+        self.assertNotEquals(blog2.get_security_context(), blog.get_security_context())
+        # but that the admin and agent are
+        self.assertEquals(blog2.get_security_context().get_context_agent(),blog.get_security_context().get_context_agent())
+        self.assertEquals(blog2.get_security_context().get_context_admin(),blog.get_security_context().get_context_admin())
 
         # and make a tag for it
-        #tag2 = sc2.add_arbitrary_agent(tuba, 'OurPost.Editor')
+        tag2 = sc2.add_arbitrary_agent(tuba, 'OurPost.Editor')
         
-        #self.assertTrue(has_access(tuba, blog2, "OurPost.Editor"))
-
+        self.assertTrue(has_access(tuba, blog2, "OurPost.Editor"))
 
         # check that kings cross hosts are a sub-group of kings cross
-        #self.assertTrue(kxh.is_member_of(kx))
+        self.assertTrue(kxh.is_member_of(kx))
 
         # so should have same access
-        #self.assertTrue(has_access(kxh, blog, "OurPost.Viewer"))
+        self.assertTrue(has_access(kxh, blog, "OurPost.Viewer"))
 
         # 
 
