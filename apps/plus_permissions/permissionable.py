@@ -133,7 +133,7 @@ def move_sliders(self, interface_level_map, type_name, user):
     if scontext:
         return scontext.move_sliders(interface_level_map, type_name, user)
 
-def add_arbitrary_agent(self, interface, user)
+def add_arbitrary_agent(self, interface, user):
     scontext = self.get_ref().explicit_scontext
     if scontext:
         return scontext.add_arbitrary_agent(old_agent, interface, user)
