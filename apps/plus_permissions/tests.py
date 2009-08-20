@@ -507,3 +507,7 @@ class TestDecorators(unittest.TestCase) :
 
         b.get_context().create_security_tag(i_editor,[u])
         self.assertTrue(foo(FakeRequest(u),b))
+
+    def test_custom_managers(self) :
+        self.assertTrue(TgGroup.objects.is_custom())
+        self.assertTrue(User.objects.is_custom())

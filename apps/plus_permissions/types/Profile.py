@@ -80,6 +80,23 @@ def display_name(x) :
     if x.name : return x.name
     return '%s'%x
 
+
+from apps.plus_permissions.models import add_type_to_interface_map
+
+ProfileInterfaces = {'Viewer': ProfileViewer,
+                     'Editor': ProfileEditor,
+                     'EmailAddressViewer' : ProfileEmailAddressViewer,
+                     'HomeViewer' : ProfileHomeViewer,
+                     'WorkViewer' : ProfileWorkViewer,
+                     'MobileViewer' : ProfileMobileViewer,
+                     'FaxViewer' : ProfileFaxViewer,
+                     'AddressViewer' : ProfileAddressViewer,
+                     'SkypeViewer' : ProfileSkypeViewer,
+                     'SipViewer' : ProfileSipViewer}
+
+
+add_type_to_interface_map(Profile, ProfileInterfaces)
+
 """
 class ProfilePermissionManager(PermissionManager) :
     def register_with_interface_factory(self,interface_factory) :

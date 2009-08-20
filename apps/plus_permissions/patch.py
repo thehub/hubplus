@@ -19,6 +19,7 @@ for module in types.__all__:
     child_types  =  globals()[module].child_types
     security_patch(content_type, child_types)
     add_create_interfaces(content_type, child_types)
+    print "AAA",content_type,content_type.__name__
     type_interfaces_map[content_type.__name__]['ManagePermissions'] = add_manage_permissions_interface()
 
 
