@@ -245,7 +245,6 @@ class TestAccess(unittest.TestCase) :
         self.assertRaises(InvalidSliderConfiguration, move_sliders, {'OurPost.Editor':anonymous_group, 'OurPost.Viewer':anonymous_group},  'OurPost')
          # check that nothing changed
         level = blog.get_security_context().get_slider_level('OurPost.Editor')
-        print `level`
         self.assertTrue(level==admin_group)
         
          # this should validate        
