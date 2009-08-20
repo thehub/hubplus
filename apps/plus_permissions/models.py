@@ -4,6 +4,7 @@ from django.contrib.contenttypes import generic
 
 from django.contrib.auth.models import User
 from apps.hubspace_compatibility.models import TgGroup
+from django.db.transaction import commit_on_success
 
 import pickle
 import simplejson
@@ -67,16 +68,24 @@ class SecurityContext(models.Model):
      def get_target(self):
          return self.target.all()[0].obj
          
-     def set_up(self):
+     def set_up(self,**kwargs):
          """XXX set from maps and create security tags
          """
          
          # setting up security_tags
-
          my_type = self.get_target().__class__         
          agent_defaults = AgentDefaults[self.context_agent.obj.__class__]['public']
 
          slider_agents = SliderAgents[self.context_agent.obj.__class__](self)
+
+         #if kwargs.has_key('root_type') :
+             # this security context is derived from another
+         #    root_type = kwargs['root_type']
+         #else : 
+         #    root_type = self.get_target().__class__
+
+         #agent_defaults = AgentDefaults[root_type]['public']
+
 
          sad = dict(slider_agents)
 
@@ -86,7 +95,7 @@ class SecurityContext(models.Model):
                  interface_str = '%s.%s' %(typ.__name__, interface_name)
                  self.create_security_tag(interface_str)
                  selected_agent = sad[agent_defaults[typ.__name__]['defaults'][interface_name]]
-                 self.move_slider(selected_agent, interface_str)
+                 self.move_slider(selected_agent, interface_str, skip_validation=True)
                  
                  
      context_agent = models.ForeignKey('GenericReference', null=True, related_name="agent_scontexts")
@@ -132,14 +141,42 @@ class SecurityContext(models.Model):
              tag.add_agents(agents)
          return tag
      
-     def get_constraints(self):
-         return AgentDefaults[self.context_agent.obj.__class__]['public']['constraints']          
+     def get_constraints(self, type_name):
+         return AgentDefaults[self.context_agent.obj.__class__]['public'][type_name]['constraints']          
 
-     def move_slider(self, new_agent, interface):
-         type_name = interfaces.split('.')[0]
-         constraints = get_constraints[type_name]['constraints']
-         # we need to validate constraints on the server side
-         # this requires info about what other sliders may have changed at the same time OR enforcement
+     def validate_constraints(self, type_name):
+         slider_agents = SliderAgents[self.context_agent.obj.__class__](self)
+         slider_agents.reverse()
+         slider_agents_names = [t[0] for t in slider_agents]
+         slider_agents = [t[1] for t in slider_agents]
+         for constraint in self.get_constraints(type_name):
+             iface_or_agent_1, iface_or_agent_2, op = interpret_constraint(constraint)
+             if iface_or_agent_1.startswith('$'):
+                 index_1 = slider_agents_names.index(iface_or_agent_1[1:])
+             else:
+                 index_1 = slider_agents.index(self.get_slider_level(type_name + '.' + iface_or_agent_1).get_ref())
+             if iface_or_agent_2.startswith('$'):
+                 index_2 = slider_agents_names.index(iface_or_agent_2[1:])
+             else:
+                 index_2 = slider_agents.index(self.get_slider_level(type_name + '.' + iface_or_agent_2).get_ref())
+             if not op(index_1, index_2):
+                 raise InvalidSliderConfiguration
+         return True
+
+     #@commit_on_success
+     def move_sliders(self, interface_level_map, type_name):
+         """move multiple sliders at the same time for a particular type, raising an error if the final position violates constraints
+         """
+         for interface, agent in interface_level_map.iteritems():
+             if interface.split('.')[0] == type_name:
+                 self.move_slider(agent, interface, skip_validation=True)
+         self.validate_constraints(type_name)
+         
+     #@commit_on_success
+     def move_slider(self, new_agent, interface, skip_validation=False):
+         """skip_validation is necessary on setup because some of the SecurityTags won't yet exist. Also when we move multiple sliders at the same time we should skip validation in the same way.
+         """
+         type_name = interface.split('.')[0]
          try:
              new_agent.obj
          except:
@@ -157,8 +194,21 @@ class SecurityContext(models.Model):
              removes = slider_agents[split:]
              tag.remove_agents(removes)
              tag.add_agents(adds)
+         if not skip_validation:
+             self.validate_constraints(type_name)
 
+     def get_all_sliders(self, type):
+         types = [my_type] + PossibleTypes[my_type]
+         return [(my_type.__name__, self.get_type_slider(type.__name__)) for type in types]
 
+     def get_type_slider(self, type_name):
+         """get all the sliders associated with a particular type in this SecurityContext
+         """
+         constraints = self.get_constraints(type_name)
+         interface_levels = [(interface, self.get_slider_level(type_name + '.' + interface)) for interface in SliderOptions[type]['InterfaceOrder']]
+         return {'constraints': constraints,
+                 'interface_levels': interface_levels}
+         
      def get_slider_level(self, interface):
          tag = SecurityTag.objects.get(interface=interface, security_context=self)
          slider_agents = SliderAgents[self.context_agent.obj.__class__](self)
@@ -207,6 +257,26 @@ def is_agent(obj):
     if isinstance(obj, User) or isinstance(obj, TgGroup) or isinstance(obj, CreatorMarker):
         return True
     raise NotAnAgent
+
+
+class InvalidSliderConfiguration(Exception):
+    pass
+
+import operator
+
+def interpret_constraint(constraint):
+    if '>=' in constraint:
+        arg1, arg2 = constraint.split('>=')
+        return (arg1.strip(), arg2.strip(), operator.ge)
+    if '<=' in constraint:
+        arg1, arg2 = constraint.split('<=')
+        return (arg1.strip(), arg2.strip(), operator.le)
+    if '<' in constraint:
+        arg1, arg2 = constraint.split('<')
+        return (arg1.strip(), arg2.strip(), operator.lt)
+    if '>' in constraint:
+        arg1, arg2 = constraint.split('>')
+        return (arg1.strip(), arg2.strip(), operator.gt)
 
 class SecurityTag(models.Model) :
     interface = models.CharField(max_length=100)

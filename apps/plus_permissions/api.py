@@ -16,7 +16,13 @@ __all__ = ['secure_wrap', 'TemplateSecureWrapper', 'Location', 'TgGroup', 'has_a
 
 def has_interfaces_decorator(interface_names) :
     def decorator(f) :
-        def g(request, resource, *args, **kwargs) :
+        def g(request, resource_id, resource_class, *args, **kwargs) :
+
+            try :
+                cls = locals()[resource_class]
+            except KeyError : 
+                cls = globals()[resource_class]
+            resource=cls.objects.get(id=resource_id)
             r2 = secure_wrap(resource, request.user, interface_names=interface_names)
             return f(request, r2, *args,**kwargs)
         return g

@@ -17,11 +17,13 @@ import interfaces
 from apps.plus_groups import *
 
 from types.OurPost import *
+from types.OurPost import OurPost
 
 from apps.plus_permissions.api import has_access, has_interfaces_decorator
 from apps.plus_permissions.interfaces import secure_wrap, PlusPermissionsNoAccessException
+from apps.plus_permissions.models import InvalidSliderConfiguration
+from apps.plus_permissions.default_agents import get_anonymous_group
 
-#  
 
 
 class TestHierarchy(unittest.TestCase):
@@ -233,11 +235,33 @@ class TestAccess(unittest.TestCase) :
         self.assertFalse(has_access(tuba, blog, "OurPost.Editor"))
         self.assertTrue(has_access(adam, blog, "OurPost.Editor"))
 
+        #use the move_sliders interface which should be called by the UI and check that constraints are enforced correctly
+         # this should fail validation  because editor can't be higher than viewer
+        def move_sliders(slider_dict, type_name):
+            blog.get_security_context().move_sliders(slider_dict, type_name)
+        anonymous_group = get_anonymous_group()
+        self.assertRaises(InvalidSliderConfiguration, move_sliders, {'OurPost.Editor':members_group, 'OurPost.Viewer':admin_group},  'OurPost')
+         # so should this because Editor can't be anonymous
+        self.assertRaises(InvalidSliderConfiguration, move_sliders, {'OurPost.Editor':anonymous_group, 'OurPost.Viewer':anonymous_group},  'OurPost')
+         # check that nothing changed
+        level = blog.get_security_context().get_slider_level('OurPost.Editor')
+        print `level`
+        self.assertTrue(level==admin_group)
+        
+         # this should validate        
+        blog.get_security_context().move_sliders({'OurPost.Editor':members_group, 'OurPost.Viewer':members_group}, 'OurPost')
+        # and levels should be changed
+        level = blog.get_security_context().get_slider_level('OurPost.Editor')
+        self.assertTrue(level==members_group)
+        level = blog.get_security_context().get_slider_level('OurPost.Viewer')
+        self.assertTrue(level==members_group)
+
+        
         # so now we're going to give tuba special permissions on this blog post ONLY
         # so first make the blog post a custom context
-        
-        #sc2 = blog2.to_security_context()
-        
+
+        #sc2 = blog2.make_custom_security_context()
+
         # and make a tag for it
         #tag2 = sc2.add_arbitrary_agent(tuba, 'OurPost.Editor')
         
@@ -271,7 +295,7 @@ class TestAccess(unittest.TestCase) :
         self.assertEquals(i_viewer,OurPostViewer)
         def im(cls, key) :
             return get_interface_map(cls)[key]
-        self.assertRaises(Exception,im,OurPost,'xyz')
+        self.assertRaises(Exception, im, OurPost, 'xyz')
 
         blog2 = blog
         
@@ -460,7 +484,7 @@ class TestDecorators(unittest.TestCase) :
         import ipdb
         #ipdb.set_trace()
 
-        self.assertRaises(PlusPermissionsNoAccessException,foo,FakeRequest(u), b)
+        self.assertRaises(PlusPermissionsNoAccessException,foo,FakeRequest(u), b.id, b.__class__.__name__)
 
         b.get_context().create_security_tag(i_editor,[u])
         self.assertTrue(foo(FakeRequest(u),b))
