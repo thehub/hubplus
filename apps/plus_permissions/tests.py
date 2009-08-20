@@ -267,18 +267,35 @@ class TestAccess(unittest.TestCase) :
         self.assertEquals(blog2.get_security_context().get_context_agent(),blog.get_security_context().get_context_agent())
         self.assertEquals(blog2.get_security_context().get_context_admin(),blog.get_security_context().get_context_admin())
 
-        # and make a tag for it
-        tag2 = sc2.add_arbitrary_agent(tuba, 'OurPost.Editor')
+        # another kings cross host
+        elenor = User(username='elenor', email_address='elenor@the-hub.net')
+        elenor.save()
         
-        self.assertTrue(has_access(tuba, blog2, "OurPost.Editor"))
+        # who doesn't have access
+        self.assertFalse(has_access(elenor, blog2, 'OurPost.Editor'))
+        
+        # so we add her to the tag
+        tag2 = sc2.add_arbitrary_agent(elenor, 'OurPost.Editor', adam)
+        
+        # and she now has access
+        self.assertTrue(has_access(elenor, blog2, "OurPost.Editor"))
+
+        # let's take her away again and check she loses access
+        tag2.remove_arbitrary_agent(elenor, 'OurPost.Editor', adam)
+        self.assertFalse(has_access(elenor, blog2, "OurPost.Editor"))
 
         # check that kings cross hosts are a sub-group of kings cross
         self.assertTrue(kxh.is_member_of(kx))
 
         # so should have same access
-        self.assertTrue(has_access(kxh, blog, "OurPost.Viewer"))
+        self.assertTrue(has_access(kxh, blog, "OurPost.Editor"))
 
-        # 
+        # and if we add elinor to kx
+        kx.add_member(elenor)
+        
+        # so should have same access
+        self.assertTrue(has_access(elenor, blog, "OurPost.Editor"))   
+                       
 
 
 
