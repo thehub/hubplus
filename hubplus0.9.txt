@@ -1,13 +1,9 @@
-
-Phil - customise permissions button
-     
-Tom  - constraints (views)
-     - generate slider (views)
-     - set slider (view)
-
        - customise permissions  should copy a) context agent/admin
                                            b) Security Tags for applicable type
 
+
+Tom  - generate slider (views)
+     - set slider (view)
        - create "set permissoins" interface per type, controlled by admin,  i.e. set_security_context, move_slider
 
 

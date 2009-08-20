@@ -163,7 +163,7 @@ class SecurityContext(models.Model):
                  raise InvalidSliderConfiguration
          return True
 
-     #@commit_on_success
+     @commit_on_success
      def move_sliders(self, interface_level_map, type_name):
          """move multiple sliders at the same time for a particular type, raising an error if the final position violates constraints
          """
@@ -172,7 +172,6 @@ class SecurityContext(models.Model):
                  self.move_slider(agent, interface, skip_validation=True)
          self.validate_constraints(type_name)
          
-     #@commit_on_success
      def move_slider(self, new_agent, interface, skip_validation=False):
          """skip_validation is necessary on setup because some of the SecurityTags won't yet exist. Also when we move multiple sliders at the same time we should skip validation in the same way.
          """
