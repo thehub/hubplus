@@ -378,7 +378,7 @@ class TestAccess(unittest.TestCase) :
     def Xtest_new_slider_set(self) :
 
         group, TgGroup.objects.get_or_create(group_name='solar cooking', display_name='Solar Chefs', level='member')
-        blog= OurPost(title='parabolic pancakes')
+        blog= group.OurPost(title='parabolic pancakes')
         blog.save()
 
         # blog belongs to this group's security_context
@@ -482,13 +482,12 @@ class TestDecorators(unittest.TestCase) :
                                                       display_name='Our Group', 
                                                       place=None, level='member', user=god)
         group.to_security_context()
-        
 
         b = group.create_OurPost(title='test decorator')
 
         i_editor = get_interface_map(OurPost)['Editor']
 
-        @has_interfaces_decorator(['Editor'])
+        @has_interfaces_decorator(OurPost, ['Editor'])
         def foo(request, resource, *args, **kwargs) :
             return True
 
@@ -499,13 +498,12 @@ class TestDecorators(unittest.TestCase) :
         u = User(username='lydia',email_address='tattooed_lady@the-hub.net')
         u.save()
 
-
         self.assertFalse(has_access(u, b, 'OurPost.Editor'))
 
         import ipdb
         #ipdb.set_trace()
 
-        self.assertRaises(PlusPermissionsNoAccessException,foo,FakeRequest(u), b.id, b.__class__.__name__)
+        self.assertRaises(PlusPermissionsNoAccessException,foo,FakeRequest(u), b.id)
 
         b.get_context().create_security_tag(i_editor,[u])
         self.assertTrue(foo(FakeRequest(u),b))
