@@ -27,5 +27,8 @@ def has_interfaces_decorator(interface_names) :
             return f(request, r2, *args,**kwargs)
         return g
     return decorator
+
+
+
             
         

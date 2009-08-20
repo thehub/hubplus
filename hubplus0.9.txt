@@ -1,18 +1,13 @@
-       - customise permissions  should copy a) context agent/admin
-                                           b) Security Tags for applicable type
-
+# review code for other test cases
+# general filter and get, and get_or_create
+# finish decorator
+fix server
+application process
 
 Tom  - generate slider (views)
      - set slider (view)
-       - create "set permissoins" interface per type, controlled by admin,  i.e. set_security_context, move_slider
-
-
-
-    - templatetag - include slider for interface, include slider set for security context
-
-
-    - on create profile set user as admin, and profile to acquire from user
-    - single slider UI
+     - on create profile set user as admin, and profile to acquire from user
+     - single slider UI
      
 
 

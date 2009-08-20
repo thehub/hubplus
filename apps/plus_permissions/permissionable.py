@@ -59,6 +59,8 @@ def to_security_context(self):
     self.set_security_context(sc)
     return sc
 
+from apps.plus_permissions.models import get_interface_map, PossibleTypes
+
 def create_custom_security_context(self) :
     original_sc = self.get_security_context()
     # create a new sc
@@ -66,14 +68,18 @@ def create_custom_security_context(self) :
     # copy the tags
     # copy the permissions
 
-    from apps.plus_permissions.models import get_interface_map
     new_sc = self.to_security_context()
-    new_sc.set_context_agent(original_sc.get_context_agent())
-    new_sc.set_context_admin(original_sc.get_context_admin())
+    new_sc.get_context_agent()  #the first this is called it will set the context agent
+    new_sc.get_context_admin()
     new_sc.save()
-    applicable_interfaces = get_interface_map(self.__class__).keys()
-    for tag in original_sc.get_tags() :
-        if tag.interface in applicable_interfaces :
+
+    types = [self.__class__] + PossibleTypes[self.__class__]
+    applicable_interfaces = []
+    for typ in types:
+        interfaces = get_interface_map(typ.__name__)
+        applicable_interfaces.extend(interfaces)
+    for tag in original_sc.get_tags():
+        if tag.interface in applicable_interfaces:
             tag.clone_for_context(new_sc)
 
     return new_sc
@@ -82,8 +88,7 @@ def set_security_context(self, scontext):
     """Set the security context used by this object
     """
     ref = self.get_ref()
-    if scontext.__class__ != SecurityContext: 
-        scontext = scontext.get_ref().explicit_scontext
+    #if we are passing in a target, the get its security context 
     ref.explicit_scontext = scontext
     ref.save()
 
@@ -121,6 +126,39 @@ def add_create_method(content_type, child_type) :
 
     setattr(content_type,'create_%s' % child_type.__name__, f)
 
+from apps.plus_permissions.interfaces import PlusPermissionsNoAccessException
+
+def move_sliders(self, interface_level_map, type_name, user):
+    scontext = self.get_ref().explicit_scontext
+    if scontext:
+        return scontext.move_sliders(interface_level_map, type_name, user)
+
+def add_arbitrary_agent(self, interface, user)
+    scontext = self.get_ref().explicit_scontext
+    if scontext:
+        return scontext.add_arbitrary_agent(old_agent, interface, user)
+
+def remove_arbitrary_agent(self, old_agent, interface, user):
+    scontext = self.get_ref().explicit_scontext
+    if scontext:
+        return scontext.remove_arbitrary_agent(old_agent, interface, user)
+
+
+def get_all_sliders(self, type):
+    scontext = self.get_ref().explicit_scontext
+    if scontext:
+        return scontext.get_all_sliders(type)
+
+def get_type_slider(self, type_name):
+    scontext = self.get_ref().explicit_scontext
+    if scontext:
+        return scontext.get_type_slider(type_name)
+
+def get_slider_level(self, interface):
+    scontext = self.get_ref().explicit_scontext
+    if scontext:
+        return scontext.get_slider_level(interface)
+
 
 def get_tag_for_interface(self, interface) :
     """ Get the tag which links a resource and interface
@@ -148,7 +186,7 @@ def security_patch(content_type, type_list):
     content_type.acquires_from = acquires_from
     content_type.get_tag_for_interface = get_tag_for_interface
     content_type.create_custom_security_context = create_custom_security_context
-          
+    content_type.move_sliders = move_sliders
 
     for typ in type_list :
         add_create_method(content_type, typ)

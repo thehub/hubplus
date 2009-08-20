@@ -62,19 +62,10 @@ from django.utils import simplejson
 
 @login_required
 def update_main_permission_sliders(request,username) :
-    ps = get_permission_system()
-    pm = ps.get_permission_manager(Profile)
     p = request.user.get_profile()
 
     form = request.form()
     json = pm.main_json_slider_group(p)
     print json
     return HttpResponse(json, mimetype='text/plain')
-
-
-class NoSliderException(Exception) :
-    def __init__(self,cls,name) :
-        self.cls = cls
-        self.name = name
-
 

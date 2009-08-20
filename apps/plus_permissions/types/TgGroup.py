@@ -1,4 +1,4 @@
-from apps.plus_permissions.interfaces import InterfaceReadProperty, InterfaceWriteProperty, InterfaceCallProperty, add_creator_interface
+from apps.plus_permissions.interfaces import InterfaceReadProperty, InterfaceWriteProperty, InterfaceCallProperty
 from apps.plus_permissions.models import SetSliderOptions, SetAgentDefaults, SetPossibleTypes, SetSliderAgents
 from apps.hubspace_compatibility.models import TgGroup
 from apps.plus_permissions.OurPost import OurPost
@@ -131,14 +131,7 @@ SetSliderOptions(TgGroup, SliderOptions)
 child_types = [OurPost]
 SetPossibleTypes(TgGroup, child_types)
 
-# Add the create_* interfaces and sliders 
-def add_create_interfaces() :
-    for child in child_types :
-        key = 'Create%s'%child.__class__.__name__
-        TgGroupInterfaces[key] = add_creator_interface(child)
-        SliderOptions['InterfaceOrder'].append(key)
 
-add_create_interfaces()
 
 
 # if the security context is in this agent, this set of slider_agents apply, irrespective of the type of resource they are

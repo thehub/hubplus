@@ -57,6 +57,7 @@ def SetPossibleTypes(type, options):
      PossibleTypes[type] = options
 
 from apps.plus_permissions.default_agents import get_anonymous_group, get_admin_user, get_all_members_group, get_creator_agent, CreatorMarker
+from apps.plus_permissions.exceptions import PlusPermissionsReadOnlyException, PlusPermissionsNoAccessException, NonExistentPermission
 
 class SecurityContext(models.Model):
      """Target is the thing the context is associated with e.g. Group. 
@@ -78,15 +79,6 @@ class SecurityContext(models.Model):
 
          slider_agents = SliderAgents[self.context_agent.obj.__class__](self)
 
-         #if kwargs.has_key('root_type') :
-             # this security context is derived from another
-         #    root_type = kwargs['root_type']
-         #else : 
-         #    root_type = self.get_target().__class__
-
-         #agent_defaults = AgentDefaults[root_type]['public']
-
-
          sad = dict(slider_agents)
 
          types = [my_type] + PossibleTypes[my_type]
@@ -96,8 +88,12 @@ class SecurityContext(models.Model):
                  self.create_security_tag(interface_str)
                  selected_agent = sad[agent_defaults[typ.__name__]['defaults'][interface_name]]
                  self.move_slider(selected_agent, interface_str, skip_validation=True)
-                 
-                 
+         
+
+         tag = self.create_security_tag(interface='SetPermissionManager',security_context=self)
+         tag.save()
+         tag.add_agents([self.context_admin])
+
      context_agent = models.ForeignKey('GenericReference', null=True, related_name="agent_scontexts")
      # The agent which this security context is associated with
 
@@ -174,11 +170,19 @@ class SecurityContext(models.Model):
              if interface.split('.')[0] == type_name:
                  self.move_slider(agent, interface, skip_validation=True)
          self.validate_constraints(type_name)
-         
-     def move_slider(self, new_agent, interface, skip_validation=False):
+ 
+     def can_set_manage_permissions(interface, user):
+         type_name, iface_name = interface.split('.')
+         if iface_name == "ManagePermissions":
+             if not has_access(agent=user, security_context=self, interface='SetManagePermissions') :
+                 raise PlusPermissionsNoAccessException(None,None,"You can't set permission manager slider if you aren't the group admin")
+        
+        
+     def move_slider(self, new_agent, interface, user, skip_validation=False):
          """skip_validation is necessary on setup because some of the SecurityTags won't yet exist. Also when we move multiple sliders at the same time we should skip validation in the same way.
          """
-         type_name = interface.split('.')[0]
+         self.can_set_manage_permissions(interface, user)
+         type_name, iface_name = interface.split('.')
          try:
              new_agent.obj
          except:
@@ -199,15 +203,21 @@ class SecurityContext(models.Model):
          if not skip_validation:
              self.validate_constraints(type_name)
 
-     def get_all_sliders(self, type):
+     def get_all_sliders(self, my_type, user):
          types = [my_type] + PossibleTypes[my_type]
-         return [(my_type.__name__, self.get_type_slider(type.__name__)) for type in types]
+         return [(type.__name__, self.get_type_slider(type.__name__, user)) for type in types]
 
-     def get_type_slider(self, type_name):
+     def get_type_slider(self, type_name, user):
          """get all the sliders associated with a particular type in this SecurityContext
          """
          constraints = self.get_constraints(type_name)
-         interface_levels = [(interface, self.get_slider_level(type_name + '.' + interface)) for interface in SliderOptions[type]['InterfaceOrder']]
+         options = SliderOptions[type]['InterfaceOrder']
+         try :
+             self.can_set_manage_permissions(interface, user)
+         except PlusPermissionsNoAccessException :
+             if 'ManagePermissions' in options :
+                 options.remove('ManagePermissions')
+         interface_levels = [(interface, self.get_slider_level(type_name + '.' + interface)) for interface in options ]
          return {'constraints': constraints,
                  'interface_levels': interface_levels}
          
@@ -221,16 +231,17 @@ class SecurityContext(models.Model):
              highest = agent
          return highest.obj
      
-     def add_arbitrary_agent(self, new_agent, interface):
+     def add_arbitrary_agent(self, new_agent, interface, user):
+         self.can_set_manage_permissions(interface, user)
          tag = SecurityTag.objects.get(interface=interface, security_context=self)
          tag.add_agents([new_agent.get_ref()])
 
-     def remove_arbitrary_agent(self, old_agent, interface):
+     def remove_arbitrary_agent(self, old_agent, interface, user):
+         self.can_set_manage_permissions(interface, user)
          tag = SecurityTag.objects.get(interface=interface, security_context=self)
          tag.remove_agents([old_agent.get_ref()])
 
               
-        
 
 
 class GenericReference(models.Model):
@@ -314,9 +325,9 @@ class SecurityTag(models.Model) :
          self.save()
 
     def clone_for_context(self, other_context) :
-        new_sc = SecurityTag(interface=self.interface, security_context=other_context)
-        new_sc.save()
-        new_sc.add_agents(self.agents)
+        new_st = SecurityTag(interface=self.interface, security_context=other_context)
+        new_st.save()
+        new_st.add_agents(self.agents)
             
 
     def __str__(self) :
@@ -343,7 +354,7 @@ def has_access(agent, resource, interface) :
         # force the exception again
         allowed_agents = SecurityTag.objects.get(interface=interface,
                                                 security_context=context).agents
-        
+    
 
     # probably should memcache both allowed agents (per .View interface) and 
     # agents held per user to allow many queries very quickly. e.g. to only return the searc

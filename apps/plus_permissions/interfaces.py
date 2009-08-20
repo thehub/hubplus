@@ -8,6 +8,7 @@ Interfaces are namespaced by the type they apply to e.g. "Wiki.Editor" allowing 
 
 __all__ = ['secure_wrap', 'PlusPermissionsNoAccessException', 'PlusPermissionsReadOnlyException', 'add_type_to_interface_map', 'add_interfaces_to_type', 'strip', 'TemplateSecureWrapper', 'get_interface_map']
 
+from apps.plus_permissions.exceptions import PlusPermissionsReadOnlyException, PlusPermissionsNoAccessException, NonExistentPermission
 
 def secure_wrap(content_obj, user, interface_names=None):
     access_obj = SecureWrapper(content_obj)
@@ -15,20 +16,6 @@ def secure_wrap(content_obj, user, interface_names=None):
     return access_obj
 
 
-class PlusPermissionsNoAccessException(Exception):
-    def __init__(self,cls,id,msg) :
-        self.cls=cls
-        self.id=id
-        self.msg=msg
-        self.silent_variable_failure = True
-
-class PlusPermissionsReadOnlyException(Exception) : 
-    def __init__(self,cls,msg) :
-        self.cls = cls
-        self.msg = msg
-
-class NonExistentPermission(Exception) : 
-    pass
 
 
 class TemplateSecureWrapper:
@@ -188,3 +175,19 @@ def add_creator_interface(type):
         pk = InterfaceReadProperty
     setattr(CanCreate,'create_%s'%type.__class__.__name__,InterfaceCallProperty)
     return CanCreate
+
+def add_manage_permissions_interface():
+    class ManagePermissions:
+        pk = InterfaceReadProperty
+        create_custom_security_context = InterfaceCallProperty
+        move_sliders = InterfaceCallProperty  #use explicit 
+        add_arbitrary_agent = InterfaceCallProperty
+        remove_arbitrary_agent = InterfaceCallProperty
+        get_all_sliders = InterfaceCallProperty
+        get_type_slider = InterfaceCallProperty
+        get_slider_level = InterfaceCallProperty
+
+    return ManagePermissions
+
+
+
