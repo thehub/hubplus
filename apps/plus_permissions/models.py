@@ -74,7 +74,7 @@ class SecurityContext(models.Model):
          # setting up security_tags
 
          my_type = self.get_target().__class__         
-         agent_defaults = AgentDefaults[TgGroup]['public']
+         agent_defaults = AgentDefaults[self.context_agent.obj.__class__]['public']
 
          slider_agents = SliderAgents[self.context_agent.obj.__class__](self)
 
@@ -89,8 +89,6 @@ class SecurityContext(models.Model):
                  self.move_slider(selected_agent, interface_str)
                  
                  
-          
-
      context_agent = models.ForeignKey('GenericReference', null=True, related_name="agent_scontexts")
      # The agent which this security context is associated with
 
@@ -124,8 +122,6 @@ class SecurityContext(models.Model):
              context_admin_ref = context_admin_ref.acquires_from
          self.context_admin = context_admin_ref.obj
          return self.context_admin
-
-     contraints = models.TextField()     # {type: [contstraints]}  e.g. {wiki:['editor<viewer']}
                     
      def create_security_tag(self, interface, agents=None):
          #print "creating security tag", self, interface, agents
@@ -136,7 +132,14 @@ class SecurityContext(models.Model):
              tag.add_agents(agents)
          return tag
      
+     def get_constraints(self):
+         return AgentDefaults[self.context_agent.obj.__class__]['public']['constraints']          
+
      def move_slider(self, new_agent, interface):
+         type_name = interfaces.split('.')[0]
+         constraints = get_constraints[type_name]['constraints']
+         # we need to validate constraints on the server side
+         # this requires info about what other sliders may have changed at the same time OR enforcement
          try:
              new_agent.obj
          except:

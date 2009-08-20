@@ -1,41 +1,25 @@
 
-Phil - Write decorator to explicitly check for a given interface on the current resource (second argument) 
-       when calling a function. decorator should also wrap the current resource in a secure_wrapper.
-     - Write template decorator which automatically wraps "secure" objects in a template_secure_wrapper
-     - override generic object manager filter and get, constructor functions to use secure_wrapper. 
-     - write high-level tests for api, and SecurityContext
+Phil - customise permissions button
      
+Tom  - constraints
+     - generate slider (views)
+     - set slider (view)
+
+     - customise permissions  should copy a) context agent/admin
+                                           b) Security Tags for applicable type
 
 
-Tom - setup security context
-        - possible types TO Interfaces per type. possible types append to interface order
-           -
-        - initialise slider levels = default security tags
-    - Do TgGroup + User + OurPost
-
-    - everything apart from constraints
+     - create "set permissoins" interface per type, controlled by admin,  i.e. set_security_context, move_slider
 
 
-    - generate slider (views)
-    - set slider (view)
-
-    - create "set permissoins" interface per type, controlled by admin,  i.e. set_security_context, move_slider
-    - customise permissions button
-
-    - to_security_context  should copy Sliders from current values from old_security (implicit) context of object
 
     - templatetag - include slider for interface, include slider set for security context
 
-    - create GenericReferences for existing objects - security patch
+
     - on create profile set user as admin, and profile to acquire from user
     - single slider UI
      
-        - different types of groups - "template" groups and clone group permissions
 
-
-
-
-- who can set the security context of an object?? - the admin of the container
 
 
 Example configuration

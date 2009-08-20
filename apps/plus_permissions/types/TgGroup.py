@@ -164,8 +164,7 @@ AgentDefaults = {'public':
                                 'ManageMembers':'creator',
                                 'Join'         :'context_agent',
                                 
-                                },
-                           
+                                },                           
                            'constraints':
                                ['Viewer>=Editor', 'Invite>=ManageMembers', 'Join>=ManageMembers', 'ManageMembers<=$anonymous']
                            },
