@@ -341,7 +341,7 @@ class SecurityTag(models.Model) :
     def clone_for_context(self, other_context) :
         new_st = SecurityTag(interface=self.interface, security_context=other_context)
         new_st.save()
-        new_st.add_agents(self.agents)
+        new_st.add_agents(self.agents.all())
             
 
     def __str__(self) :

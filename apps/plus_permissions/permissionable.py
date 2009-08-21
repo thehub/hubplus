@@ -124,7 +124,7 @@ def create_custom_security_context(self) :
     types = [self.__class__] + PossibleTypes[self.__class__]
     applicable_interfaces = []
     for typ in types:
-        interfaces = get_interface_map(typ.__name__)
+        interfaces = [typ.__name__ + '.' + iface for iface in get_interface_map(typ.__name__)]
         applicable_interfaces.extend(interfaces)
     for tag in original_sc.get_tags():
         if tag.interface in applicable_interfaces:
@@ -196,7 +196,6 @@ def remove_arbitrary_agent(self, old_agent, interface, user):
     if scontext:
         return scontext.remove_arbitrary_agent(old_agent, interface, user)
 
-
 def get_all_sliders(self, type):
     scontext = self.get_ref().explicit_scontext
     if scontext:
@@ -238,6 +237,10 @@ def security_patch(content_type, type_list):
     content_type.get_tag_for_interface = get_tag_for_interface
     content_type.create_custom_security_context = create_custom_security_context
     content_type.move_sliders = move_sliders
+    content_type.add_arbitrary_agent = add_arbitrary_agent
+    content_type.remove_arbitrary_agent = remove_arbitrary_agent
+    content_type.get_all_sliders = get_all_sliders
+    content_type.get_slider_level = get_slider_level
 
     for typ in type_list :
         add_create_method(content_type, typ)
