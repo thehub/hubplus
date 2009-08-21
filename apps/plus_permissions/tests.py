@@ -523,20 +523,20 @@ class TestDecorators(unittest.TestCase) :
                                                       display_name="Loki's Group", 
                                                       place=None, level='member', user=god)
 
-        blog1 = group.create_OurPost(title='post1')
-        blog2 = group.create_OurPost(title='post2')
-        blog3 = group.create_OurPost(title='post3')
+        blog1 = group.create_OurPost(title='post1', body='X')
+        blog2 = group.create_OurPost(title='post2', body='X')
+        blog3 = group.create_OurPost(title='post3', body='X')
 
         manfred = User(username='manfred', email_address='manfred@the-hub.net')
         manfred.save()
 
-        self.assertEquals(OurPost.objects.filter().count(),3)
-        self.assertEquals(OurPost.objects.filter(permission_agent=manfred),0)
+        self.assertEquals(OurPost.objects.filter(body='X').count(),3)
+        self.assertEquals(OurPost.objects.filter(body='X',permission_agent=manfred).count(),0)
         
         sc2 = blog2.create_custom_security_context()
         sc2.add_arbitrary_agent(manfred, 'OurPost.Viewer')
 
-        self.assertEquals(OurPost.objects.filter().count(), 1)
+        self.assertEquals(OurPost.objects.filter(body='X').count(), 1)
         p = OurPost.objects.get(title='post2', permission_agent=manfred)
         self.assertEquals(p.__class__, SecurityWrapper)
 
