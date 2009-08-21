@@ -199,9 +199,9 @@ class TestAccess(unittest.TestCase) :
         self.assertFalse(has_access(tuba, blog2, "OurPost.Editor"))
         
         # add an arbitrary agent and remove her agaiin 
-        blog.get_security_context().add_arbitrary_agent(tuba, 'OurPost.Editor')
+        blog.get_security_context().add_arbitrary_agent(tuba, 'OurPost.Editor', adam)
         self.assertTrue(has_access(tuba, blog, "OurPost.Editor"))
-        blog.get_security_context().remove_arbitrary_agent(tuba, 'OurPost.Editor')
+        blog.get_security_context().remove_arbitrary_agent(tuba, 'OurPost.Editor', adam)
         self.assertFalse(has_access(tuba, blog, "OurPost.Editor"))        
 
         #test moving the sliders around
@@ -209,7 +209,7 @@ class TestAccess(unittest.TestCase) :
         admin_group = blog.get_security_context().context_admin.obj
         
         #set the slider so that members of KX have the Editor interface
-        blog.get_security_context().move_slider(members_group, 'OurPost.Editor')
+        blog.get_security_context().move_slider(members_group, 'OurPost.Editor', adam)
 
         #check that the slider level actually changed
         level = blog.get_security_context().get_slider_level('OurPost.Editor')
@@ -227,7 +227,7 @@ class TestAccess(unittest.TestCase) :
         self.assertTrue(has_access(tuba, blog, "OurPost.Editor"))  
 
         #raise the requirement to the admin group
-        blog.get_security_context().move_slider(admin_group, 'OurPost.Editor')
+        blog.get_security_context().move_slider(admin_group, 'OurPost.Editor', adam)
         level = blog.get_security_context().get_slider_level('OurPost.Editor')
 
         #check the slider changed and that adam can now access while tuba cannot

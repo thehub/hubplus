@@ -153,12 +153,12 @@ SetSliderAgents(TgGroup, get_slider_agents)
 AgentDefaults = {'public':
                      {'TgGroup':
                           {'defaults':
-                               {'Viewer'       :'context_agent', 
-                                'Editor'       :'creator',
-                                'Invite'       :'context_agent',
+                               {'Viewer':'anonymous_group', 
+                                'Editor':'creator',
+                                'Invite':'context_agent',
                                 'ManageMembers':'creator',
-                                'Join'         :'context_agent',
-                                
+                                'Join':'all_members_group',
+                                'Unknown': 'context_agent'
                                 },                           
                            'constraints':
                                ['Viewer>=Editor', 'Invite>=ManageMembers', 'Join>=ManageMembers', 'ManageMembers<=$anonymous']
@@ -166,7 +166,8 @@ AgentDefaults = {'public':
                       'OurPost':
                           { 'defaults' : {'Viewer':'all_members_group',
                                           'Editor':'creator',
-                                          'Commentor':'context_agent'},
+                                          'Commentor':'context_agent',
+                                          'Unknown': 'context_agent'},
                             'constraints':['Viewer>=Editor', 'Editor<$anonymous_group']}
                       },
                  
@@ -176,10 +177,11 @@ AgentDefaults = {'public':
                           {'defaults':
                                {'Viewer':'context_agent', 
                                 'Editor':'creator',
-                                'Invite':'context_agent'},
+                                'Invite':'context_agent',
                                 'ManageMembers':'creator',
-                                'Join'         :'context_agent',
-
+                                'Join':'context_agent',
+                                'Unknown': 'context_admin'
+                               },
                            'constraints':
                                ['Viewer>=Editor', 'Invite>=ManageMembers', 'Join>=ManageMembers', 'ManageMembers<=$anonymous']
                            },
@@ -187,7 +189,8 @@ AgentDefaults = {'public':
                       {'defaults' : 
                        {'Viewer':'all_members_group',
                         'Editor':'creator',
-                        'Commentor':'context_agent'},
+                        'Commentor':'context_agent',
+                        'Unknown': 'context_agent'},
                        'constraints':['Viewer>=Editor']}
                       }
                  }
