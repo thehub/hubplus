@@ -225,7 +225,6 @@ def security_patch(content_type, type_list):
         
 
     if content_type == User:
-        pass
          content_type.add_to_class('objects',UserPermissionableManager())
     else :
          content_type.add_to_class('objects',PermissionableManager())
