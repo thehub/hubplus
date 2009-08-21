@@ -544,5 +544,6 @@ class TestDecorators(unittest.TestCase) :
             p.set_title('other')
 
         self.assertRaises(PlusPermissionsNoAccessException, f, p)
-            
+
+
 

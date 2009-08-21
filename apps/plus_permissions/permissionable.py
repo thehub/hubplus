@@ -3,6 +3,8 @@ from django.contrib.contenttypes import generic
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.auth.models import UserManager, User
 
+from apps.plus_lib.models import extract
+
 class MissingSecurityContextException(Exception): 
     def __init__(self, cls, security_context) :
         self.cls = cls
@@ -161,12 +163,17 @@ def acquires_from(self, content_obj):
 
 
 def add_create_method(content_type, child_type) :
+
     def f(self,**kwargs) :
+        permission_agent = extract(kwargs, 'permission_agent')
+
         resource = child_type(**kwargs)
         resource.save()
 
         # now create its security_context etc.        
         resource.acquires_from(self)
+        if permission_agent :
+            resource = secure_wrap(resource, permission_agent)
         return resource
 
 

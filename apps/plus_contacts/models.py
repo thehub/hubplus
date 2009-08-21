@@ -12,6 +12,8 @@ from django.core.mail import send_mail
 
 from django.conf import settings
 
+from apps.plus_lib.models import extract 
+
 class PlusContact(models.Model):
     """Use this for the sign-up / invited sign-up process, provisional users"""
     first_name = models.CharField(max_length=60)
@@ -156,13 +158,6 @@ Please visit the following link to confirm your account : %s
         return message, url
 
 
-def extract(d,key) :
-    if d.has_key(key) :
-        v = d[key]
-        del d[key]
-    else :
-        v = None
-    return v
 
 def make_application(**kwargs) :
     security_context = extract(kwargs,'security_context')
