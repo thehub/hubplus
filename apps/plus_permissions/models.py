@@ -87,7 +87,7 @@ class SecurityContext(models.Model):
                  interface_str = '%s.%s' %(typ.__name__, interface_name)
                  self.create_security_tag(interface_str)
                  selected_agent = sad[agent_defaults[typ.__name__]['defaults'][interface_name]]
-                 self.move_slider(selected_agent, interface_str, skip_validation=True)
+                 self.move_slider(selected_agent, interface_str, skip_validation=True, no_user=True)
          
 
          tag = self.create_security_tag(interface='SetPermissionManager',security_context=self)
@@ -178,10 +178,16 @@ class SecurityContext(models.Model):
                  raise PlusPermissionsNoAccessException(None,None,"You can't set permission manager slider if you aren't the group admin")
         
         
-     def move_slider(self, new_agent, interface, user, skip_validation=False):
+     def move_slider(self, new_agent, interface, user=None, skip_validation=False, no_user=False):
          """skip_validation is necessary on setup because some of the SecurityTags won't yet exist. Also when we move multiple sliders at the same time we should skip validation in the same way.
          """
-         self.can_set_manage_permissions(interface, user)
+         
+         if user:
+             self.can_set_manage_permissions(interface, user)
+         else:
+             if not no_user:
+                 raise NotAnAgent
+
          type_name, iface_name = interface.split('.')
          try:
              new_agent.obj

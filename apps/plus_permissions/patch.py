@@ -9,12 +9,11 @@ from apps.plus_permissions.interfaces import add_creator_interface, add_manage_p
 def add_create_interfaces(content_type, child_types):
     for child in child_types:
         key = 'Create%s'%child.__class__.__name__
-        type_interfaces_map[content_type][key] = add_creator_interface(child)
+        type_interfaces_map[content_type.__name__][key] = add_creator_interface(child)
         SliderOptions[content_type]['InterfaceOrder'].append(key)
 
 
 for module in types.__all__:
-    print "module:" + `module`
     content_type =  globals()[module].content_type
     child_types  =  globals()[module].child_types
     security_patch(content_type, child_types)
