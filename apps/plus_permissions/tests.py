@@ -275,13 +275,13 @@ class TestAccess(unittest.TestCase) :
         self.assertFalse(has_access(elenor, blog2, 'OurPost.Editor'))
         
         # so we add her to the tag
-        tag2 = sc2.add_arbitrary_agent(elenor, 'OurPost.Editor', adam)
+        sc2.add_arbitrary_agent(elenor, 'OurPost.Editor', adam)
         
         # and she now has access
         self.assertTrue(has_access(elenor, blog2, "OurPost.Editor"))
 
         # let's take her away again and check she loses access
-        tag2.remove_arbitrary_agent(elenor, 'OurPost.Editor', adam)
+        blog2.remove_arbitrary_agent(elenor, 'OurPost.Editor', adam)
         self.assertFalse(has_access(elenor, blog2, "OurPost.Editor"))
 
         # and if we add elinor to kx
