@@ -518,14 +518,6 @@ class TestDecorators(unittest.TestCase) :
                                                       place=None, level='member', user=god)
 
         blog1 = group.create_OurPost(title='post1', body='X')
-
-
-        print "TYTY",blog1, blog1.__class__
-        for t in group.get_security_context().get_tags() :
-            print "U", t.security_context, t.interface
-            for a in t.agents :
-                print a
-
         blog2 = group.create_OurPost(title='post2', body='X')
         blog3 = group.create_OurPost(title='post3', body='X')
 

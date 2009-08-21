@@ -34,7 +34,7 @@ class PermissionableManager(models.Manager) :
 
             return (secure_wrap(a, agent)  
                     for a in super(self.__class__,self).filter(**kwargs) 
-                    if has_access(agent,a,'%s.%s'%(self.__class__,'Viewer')))
+                    if has_access(agent,a,'%s.%s'%(self.__class__.__name__,'Viewer')))
         
     def plus_get(self,**kwargs) :
 
@@ -73,7 +73,7 @@ class UserPermissionableManager(UserManager) :
 
             return (secure_wrap(a, agent)  
                     for a in super(self.__class__,self).filter(**kwargs) 
-                    if has_access(agent,a,'%s.%s'%(self.__class__,'Viewer')))
+                    if has_access(agent,a,'%s.%s'%(self.__class__.__name__,'Viewer')))
         
     def plus_get(self,**kwargs) :
 
