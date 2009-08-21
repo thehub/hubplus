@@ -224,11 +224,11 @@ def security_patch(content_type, type_list):
         add_create_method(content_type, typ)
         
 
-    #if content_type == User:
-    #    pass
-        #content_type.objects = UserPermissionableManager()
-    #else :
-    #    content_type.objects = PermissionableManager()
+    if content_type == User:
+        pass
+         content_type.add_to_class('objects',UserPermissionableManager())
+    else :
+         content_type.add_to_class('objects',PermissionableManager())
 
     post_init.connect(create_reference, sender=content_type)
 

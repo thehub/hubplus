@@ -30,7 +30,7 @@ security_patch(User,[])
 from default_agents import CreatorMarker
 security_patch(CreatorMarker,[])
 
-#from apps.hubspace_compatibility.models import TgGroup
-#from apps.plus_permissions.types.TgGroup import get_or_create
+from apps.hubspace_compatibility.models import TgGroup
+from apps.plus_permissions.types.TgGroup import get_or_create
 
-#TgGroup.objects.get_or_create = get_or_create
+TgGroup.objects.get_or_create = get_or_create
