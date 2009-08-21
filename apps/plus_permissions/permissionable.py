@@ -23,8 +23,6 @@ class PermissionableManager(models.Manager) :
     # pass a security check
     # XXX ... add the actual wrapper to the output of these functions
 
-    from apps.plus_permissions.interfaces import *
-
     def filter(self,**kwargs) : 
         if not kwargs.has_key('permission_agent') :
             return super(self.__class__,self).filter(**kwargs)

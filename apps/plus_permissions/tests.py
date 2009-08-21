@@ -524,7 +524,7 @@ class TestDecorators(unittest.TestCase) :
         blog2 = group.create_OurPost(title='post2')
         blog3 = group.create_OurPost(title='post3')
 
-        manfred = User(username='manfred' email_address='manfred@the-hub.net')
+        manfred = User(username='manfred', email_address='manfred@the-hub.net')
         manfred.save()
 
         self.assertEquals(OurPost.objects.filter().count(),3)
@@ -537,6 +537,9 @@ class TestDecorators(unittest.TestCase) :
         p = OurPost.objects.get(title='post2', permission_agent=manfred)
         self.assertEquals(p.__class__, SecurityWrapper)
 
-        try : 
-            p.
+        def f(p) :
+            p.set_title('other')
+
+        self.assertRaises(PlusPermissionsNoAccessException, f, p)
+            
 
