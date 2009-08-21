@@ -2,6 +2,7 @@ from django.db import models
 from django.contrib.contenttypes import generic
 from django.contrib.contenttypes.models import ContentType
 
+
 class MissingSecurityContextException(Exception): 
     def __init__(self, cls, security_context) :
         self.cls = cls
@@ -22,6 +23,8 @@ class PermissionableManager(models.Manager) :
     # pass a security check
     # XXX ... add the actual wrapper to the output of these functions
 
+    from apps.plus_permissions.interfaces import *
+
     def filter(self,**kwargs) : 
         if not kwargs.has_key('permission_agent') :
             return super(self.__class__,self).filter(**kwargs)
@@ -30,7 +33,7 @@ class PermissionableManager(models.Manager) :
             agent = kwargs['permission_agent']
             del kwargs['permission_agent']
 
-            return (a  
+            return (secure_wrap(a, agent)   
                     for a in super(self.__class__,self).filter(**kwargs) 
                     if has_access(agent,a,get_interface_map(self.__class__,'Viewer')))
         
@@ -45,8 +48,11 @@ class PermissionableManager(models.Manager) :
             del kwargs['permission_agent']
             a = super(self.__class__,self).get(**kwargs)
             #return secure_wrap(a,...)
-            return a
+            return secure_wrap(a, agent)
  
+    def is_custom(self) : 
+        return True
+
 
 def to_security_context(self):
     """Turn an existing object into a security context.
