@@ -22,7 +22,7 @@ content_type = OurPost
 # And these are the "child" types that can be created inside this type. 
 # Currently OurPost has none, but, for example, a TgGroup can have OurPosts or WikiPages etc.
 child_types = []
-
+SetPossibleTypes(OurPost, child_types)
 
 # Here's the wrapping we have to put around it.
 

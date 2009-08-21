@@ -146,7 +146,7 @@ class TestAccess(unittest.TestCase) :
         adam = User(username='adam', email_address='adam@the-hub.net')
         adam.save()
 
-        kx, kxh = TgGroup.objects.get_or_create(group_name='kingsX', display_name='Hub Kings Cross', 
+        kx, created = TgGroup.objects.get_or_create(group_name='kingsX', display_name='Hub Kings Cross', 
                                                 level='member', user=adam)
         kxsc = kx.to_security_context()
 
@@ -237,18 +237,18 @@ class TestAccess(unittest.TestCase) :
 
         #use the move_sliders interface which should be called by the UI and check that constraints are enforced correctly
          # this should fail validation  because editor can't be higher than viewer
-        def move_sliders(slider_dict, type_name):
-            blog.get_security_context().move_sliders(slider_dict, type_name)
+        def move_sliders(slider_dict, type_name, user):
+            blog.get_security_context().move_sliders(slider_dict, type_name, user=user)
         anonymous_group = get_anonymous_group()
-        self.assertRaises(InvalidSliderConfiguration, move_sliders, {'OurPost.Editor':members_group, 'OurPost.Viewer':admin_group},  'OurPost')
+        self.assertRaises(InvalidSliderConfiguration, move_sliders, {'OurPost.Editor':members_group, 'OurPost.Viewer':admin_group},  'OurPost', adam)
          # so should this because Editor can't be anonymous
-        self.assertRaises(InvalidSliderConfiguration, move_sliders, {'OurPost.Editor':anonymous_group, 'OurPost.Viewer':anonymous_group},  'OurPost')
+        self.assertRaises(InvalidSliderConfiguration, move_sliders, {'OurPost.Editor':anonymous_group, 'OurPost.Viewer':anonymous_group},  'OurPost', adam)
          # check that nothing changed
         level = blog.get_security_context().get_slider_level('OurPost.Editor')
         self.assertTrue(level==admin_group)
         
          # this should validate        
-        blog.get_security_context().move_sliders({'OurPost.Editor':members_group, 'OurPost.Viewer':members_group}, 'OurPost')
+        blog.get_security_context().move_sliders({'OurPost.Editor':members_group, 'OurPost.Viewer':members_group}, 'OurPost', adam)
         # and levels should be changed
         level = blog.get_security_context().get_slider_level('OurPost.Editor')
         self.assertTrue(level==members_group)
@@ -264,8 +264,8 @@ class TestAccess(unittest.TestCase) :
         # assert now that blog2's security context is NOT the same as blog's
         self.assertNotEquals(blog2.get_security_context(), blog.get_security_context())
         # but that the admin and agent are
-        self.assertEquals(blog2.get_security_context().get_context_agent(),blog.get_security_context().get_context_agent())
-        self.assertEquals(blog2.get_security_context().get_context_admin(),blog.get_security_context().get_context_admin())
+        self.assertEquals(blog2.get_security_context().get_context_agent(), blog.get_security_context().get_context_agent())
+        self.assertEquals(blog2.get_security_context().get_context_admin(), blog.get_security_context().get_context_admin())
 
         # another kings cross host
         elenor = User(username='elenor', email_address='elenor@the-hub.net')
@@ -284,12 +284,6 @@ class TestAccess(unittest.TestCase) :
         tag2.remove_arbitrary_agent(elenor, 'OurPost.Editor', adam)
         self.assertFalse(has_access(elenor, blog2, "OurPost.Editor"))
 
-        # check that kings cross hosts are a sub-group of kings cross
-        self.assertTrue(kxh.is_member_of(kx))
-
-        # so should have same access
-        self.assertTrue(has_access(kxh, blog, "OurPost.Editor"))
-
         # and if we add elinor to kx
         kx.add_member(elenor)
         
@@ -304,7 +298,7 @@ class TestAccess(unittest.TestCase) :
         u = User(username='deus', email_address='deus@the-hub.net')
         u.save()
 
-        kx, kxh = TgGroup.objects.get_or_create(group_name='kingsX', display_name='Hub Kings Cross', level='member', user=u)
+        kx, created = TgGroup.objects.get_or_create(group_name='kingsX', display_name='Hub Kings Cross', level='member', user=u)
        
 
         blog = kx.create_OurPost(title='another post', body="Here's what")

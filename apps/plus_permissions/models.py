@@ -97,6 +97,14 @@ class SecurityContext(models.Model):
          tag.save()
          tag.add_agents([self.context_admin])
 
+     def get_agent_level_scontext(self):
+         """This will return the first security context up the acquisition tree where the target is an agent
+         """
+         target = self.target.all()[0]
+         while not isinstance(target.obj, User) and not isinstance(target.obj, TgGroup):
+             target = target.acquires_from
+         return target.explicit_scontext
+
      context_agent = models.ForeignKey('GenericReference', null=True, related_name="agent_scontexts")
      # The agent which this security context is associated with
 
@@ -108,10 +116,9 @@ class SecurityContext(models.Model):
      def get_context_agent(self):
          if self.context_agent:
              return self.context_agent
-         context_agent_ref = self.target
-         while not isinstance(context_agent_ref.obj, User) and not isinstance(context_agent_ref.obj, TgGroup):
-             context_agent_ref = context_agent_ref.acquires_from
-         self.context_agent = context_agent_ref.obj
+
+         agent_scontext = self.get_agent_level_scontext()
+         self.context_agent = agent_scontext.context_agent
          return self.context_agent
 
      context_admin = models.ForeignKey('GenericReference', null=True, related_name="admin_scontexts") 
@@ -125,10 +132,8 @@ class SecurityContext(models.Model):
      def get_context_admin(self):
          if self.context_admin:
              return self.context_admin
-         context_admin_ref = self.target
-         while not isinstance(context_admin_ref.obj, User) and not isinstance(context_admin_ref.obj, TgGroup):
-             context_admin_ref = context_admin_ref.acquires_from
-         self.context_admin = context_admin_ref.obj
+         agent_scontext = self.get_agent_level_scontext()
+         self.context_admin = agent_scontext.context_admin
          return self.context_admin
                     
      def create_security_tag(self, interface, agents=None):
@@ -166,12 +171,12 @@ class SecurityContext(models.Model):
          return True
 
      @commit_on_success
-     def move_sliders(self, interface_level_map, type_name):
+     def move_sliders(self, interface_level_map, type_name, user):
          """move multiple sliders at the same time for a particular type, raising an error if the final position violates constraints
          """
          for interface, agent in interface_level_map.iteritems():
              if interface.split('.')[0] == type_name:
-                 self.move_slider(agent, interface, skip_validation=True)
+                 self.move_slider(agent, interface, user, skip_validation=True)
          self.validate_constraints(type_name)
  
      def can_set_manage_permissions(self, interface, user):
