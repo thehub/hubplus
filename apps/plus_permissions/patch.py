@@ -8,7 +8,7 @@ from apps.plus_permissions.interfaces import add_creator_interface, add_manage_p
 # Add the create_* interfaces and sliders 
 def add_create_interfaces(content_type, child_types):
     for child in child_types:
-        key = 'Create%s'%child.__class__.__name__
+        key = 'Create%s'%child.__name__
         type_interfaces_map[content_type.__name__][key] = add_creator_interface(child)
         SliderOptions[content_type]['InterfaceOrder'].append(key)
 

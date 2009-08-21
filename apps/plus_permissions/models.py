@@ -86,11 +86,14 @@ class SecurityContext(models.Model):
              for interface_name in get_interface_map(typ.__name__):
                  interface_str = '%s.%s' %(typ.__name__, interface_name)
                  self.create_security_tag(interface_str)
-                 selected_agent = sad[agent_defaults[typ.__name__]['defaults'][interface_name]]
+                 try:
+                     selected_agent = sad[agent_defaults[typ.__name__]['defaults'][interface_name]]
+                 except KeyError:
+                     selected_agent = sad[agent_defaults[typ.__name__]['defaults']['Unknown']]
                  self.move_slider(selected_agent, interface_str, skip_validation=True, no_user=True)
          
 
-         tag = self.create_security_tag(interface='SetPermissionManager',security_context=self)
+         tag = self.create_security_tag(interface='SetPermissionManager')
          tag.save()
          tag.add_agents([self.context_admin])
 
@@ -171,7 +174,7 @@ class SecurityContext(models.Model):
                  self.move_slider(agent, interface, skip_validation=True)
          self.validate_constraints(type_name)
  
-     def can_set_manage_permissions(interface, user):
+     def can_set_manage_permissions(self, interface, user):
          type_name, iface_name = interface.split('.')
          if iface_name == "ManagePermissions":
              if not has_access(agent=user, security_context=self, interface='SetManagePermissions') :

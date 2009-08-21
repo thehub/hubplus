@@ -173,7 +173,7 @@ class SecureWrapper:
 def add_creator_interface(type):
     class CanCreate:
         pk = InterfaceReadProperty
-    setattr(CanCreate,'create_%s'%type.__class__.__name__,InterfaceCallProperty)
+    setattr(CanCreate, 'create_%s'%type.__class__.__name__, InterfaceCallProperty)
     return CanCreate
 
 def add_manage_permissions_interface():
