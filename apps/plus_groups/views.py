@@ -15,7 +15,7 @@ from microblogging.models import Following
 from apps.plus_lib.models import DisplayStatus, add_edit_key
 from apps.plus_permissions.models import SecurityTag
 from apps.plus_permissions.interfaces import PlusPermissionsNoAccessException, SecureWrapper
-from apps.plus_permissions.TgGroup import *
+from apps.plus_permissions.types.TgGroup import *
 from django.contrib.auth.decorators import login_required
 
 

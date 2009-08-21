@@ -15,15 +15,16 @@ from friends.models import FriendshipInvitation, Friendship
 
 from microblogging.models import Following
 
-from apps.plus_permissions.Profile import *  # Essential to get signals working at the moment.
 from profiles.models import Profile, HostInfo
 from profiles.forms import ProfileForm, HostInfoForm
 
 from avatar.templatetags.avatar_tags import avatar
 
 from apps.plus_lib.models import DisplayStatus, add_edit_key
+
 from apps.plus_permissions.models import SecurityTag
-from apps.plus_permissions.models import interface_wrap, PlusPermissionsNoAccessException, PlusPermissionsReadOnlyException
+from apps.plus_permissions.models import PlusPermissionsNoAccessException, PlusPermissionsReadOnlyException
+
 
 from django.contrib.auth.decorators import login_required
 
