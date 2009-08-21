@@ -22,9 +22,15 @@ for module in types.__all__:
     type_interfaces_map[content_type.__name__]['ManagePermissions'] = add_manage_permissions_interface()
 
 
+
+
 from django.contrib.auth.models import User
 security_patch(User,[])
 
-
 from default_agents import CreatorMarker
 security_patch(CreatorMarker,[])
+
+#from apps.hubspace_compatibility.models import TgGroup
+#from apps.plus_permissions.types.TgGroup import get_or_create
+
+#TgGroup.objects.get_or_create = get_or_create

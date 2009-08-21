@@ -512,12 +512,15 @@ class TestDecorators(unittest.TestCase) :
         # confirm we really customized them
         self.assertTrue(TgGroup.objects.is_custom())
         self.assertTrue(User.objects.is_custom())
+        
+        import ipdb
+        #ipdb.set_trace()
 
         god = User(username='Loki', email_address='loki@the-hub.net')
         god.save()
 
         group, created= TgGroup.objects.get_or_create(group_name='lokusts',
-                                                      display_name="Loki' Group", 
+                                                      display_name="Loki's Group", 
                                                       place=None, level='member', user=god)
 
         blog1 = group.create_OurPost(title='post1')
