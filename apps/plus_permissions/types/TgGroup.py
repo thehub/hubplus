@@ -61,8 +61,8 @@ def get_or_create(group_name=None, display_name=None, place=None, level=None, us
 
     return group, created
 
+# XXX will be moved to patch.py
 TgGroup.objects.get_or_create = get_or_create
-
 
 def get_admin_group(self) :
     return self.get_security_context().get_context_admin().obj 

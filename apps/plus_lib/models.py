@@ -15,3 +15,11 @@ def add_edit_key(cls) :
        return '%s-%s-' % (self.__class__.__name__,self.pk)
    cls.edit_key = edit_key
 
+
+def extract(d,key) :
+    if d.has_key(key) :
+        v = d[key]
+        del d[key]
+    else :
+        v = None
+    return v

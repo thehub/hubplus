@@ -506,34 +506,38 @@ class TestDecorators(unittest.TestCase) :
         # confirm we really customized them
         self.assertTrue(TgGroup.objects.is_custom())
         self.assertTrue(User.objects.is_custom())
+        
+        import ipdb
+        #ipdb.set_trace()
 
         god = User(username='Loki', email_address='loki@the-hub.net')
         god.save()
 
         group, created= TgGroup.objects.get_or_create(group_name='lokusts',
-                                                      display_name="Loki' Group", 
+                                                      display_name="Loki's Group", 
                                                       place=None, level='member', user=god)
 
-        blog1 = group.create_OurPost(title='post1')
-        blog2 = group.create_OurPost(title='post2')
-        blog3 = group.create_OurPost(title='post3')
+        blog1 = group.create_OurPost(title='post1', body='X')
+        blog2 = group.create_OurPost(title='post2', body='X')
+        blog3 = group.create_OurPost(title='post3', body='X')
 
         manfred = User(username='manfred', email_address='manfred@the-hub.net')
         manfred.save()
 
-        self.assertEquals(OurPost.objects.filter().count(),3)
-        self.assertEquals(OurPost.objects.filter(permission_agent=manfred),0)
+        self.assertEquals(OurPost.objects.plus_count(body='X'),3)
+        self.assertEquals(OurPost.objects.plus_count(body='X',permission_agent=manfred),0)
         
         sc2 = blog2.create_custom_security_context()
         sc2.add_arbitrary_agent(manfred, 'OurPost.Viewer')
 
-        self.assertEquals(OurPost.objects.filter().count(), 1)
-        p = OurPost.objects.get(title='post2', permission_agent=manfred)
+        self.assertEquals(OurPost.objects.plus_count(body='X'), 1)
+        p = OurPost.objects.plus_get(title='post2', permission_agent=manfred)
         self.assertEquals(p.__class__, SecurityWrapper)
 
         def f(p) :
             p.set_title('other')
 
         self.assertRaises(PlusPermissionsNoAccessException, f, p)
-            
+
+
 
