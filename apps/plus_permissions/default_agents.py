@@ -4,6 +4,11 @@ from django.contrib.auth.models import User
 from apps.hubspace_compatibility.models import Location
 from django.db import models
 
+from apps.plus_permissions.site import Site
+
+def get_site() :
+    return Site.objects.get_or_create()
+
 def get_or_create_root_location():
     root_location, created = Location.objects.get_or_create(name='HubPlus')
     if created:
@@ -43,9 +48,11 @@ def get_all_members_group():
         all_members = all_members[0] # filter returns a QuerySet
     return all_members
 
-class CreatorMarker(models.Model) :
-    pass
 
+
+class CreatorMarker(models.Model) :
+    """ This class is only for a fake "agent" which is used to represent "query for the creator of this content_type" """
+    pass
 
 def get_creator_agent() :
     if CreatorMarker.objects.count() > 0 :
@@ -54,4 +61,6 @@ def get_creator_agent() :
     c.get_ref()
     c.save()
     return c.get_ref()
+
+
 
