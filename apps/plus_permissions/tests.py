@@ -530,14 +530,14 @@ class TestDecorators(unittest.TestCase) :
         manfred = User(username='manfred', email_address='manfred@the-hub.net')
         manfred.save()
 
-        self.assertEquals(OurPost.objects.filter(body='X').count(),3)
-        self.assertEquals(OurPost.objects.filter(body='X',permission_agent=manfred).count(),0)
+        self.assertEquals(OurPost.objects.plus_count(body='X'),3)
+        self.assertEquals(OurPost.objects.plus_count(body='X',permission_agent=manfred),0)
         
         sc2 = blog2.create_custom_security_context()
         sc2.add_arbitrary_agent(manfred, 'OurPost.Viewer')
 
-        self.assertEquals(OurPost.objects.filter(body='X').count(), 1)
-        p = OurPost.objects.get(title='post2', permission_agent=manfred)
+        self.assertEquals(OurPost.objects.plus_count(body='X'), 1)
+        p = OurPost.objects.plus_get(title='post2', permission_agent=manfred)
         self.assertEquals(p.__class__, SecurityWrapper)
 
         def f(p) :

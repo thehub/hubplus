@@ -21,7 +21,8 @@ class MissingSecurityContextException(Exception):
 class PermissionableManager(models.Manager) :
     # if a permission_agent is passed, only get or filter items which 
     # pass a security check
-    def filter(self,**kwargs) : 
+    def plus_filter(self,**kwargs) : 
+        from apps.plus_permissions.models import has_access
         if not kwargs.has_key('permission_agent') :
             return super(self.__class__,self).filter(**kwargs)
         else :
@@ -33,10 +34,7 @@ class PermissionableManager(models.Manager) :
                     for a in super(self.__class__,self).filter(**kwargs) 
                     if has_access(agent,a,'%s.%s'%(self.__class__,'Viewer')))
         
-    def get(self,**kwargs) :
-        if self.model.__class__.__name__ == 'Profile' :
-            import ipdb
-            ipdb.set_trace()
+    def plus_get(self,**kwargs) :
 
         if not kwargs.has_key('permission_agent') :
             return super(self.__class__,self).get(**kwargs)
@@ -47,6 +45,12 @@ class PermissionableManager(models.Manager) :
             a = super(self.__class__,self).get(**kwargs)
             return secure_wrap(a, agent)
  
+    def plus_count(self, **kwargs) :
+        count = 0
+        for res in self.plus_filter(**kwargs) :
+            count = count+1
+        return count
+
     def is_custom(self) : 
         return True
 
@@ -56,7 +60,8 @@ class UserPermissionableManager(UserManager) :
     # NOTE : this is a special version of PermissionableManager above, which inherits from UserManager
     # I've copied and pasted because I'm not sure if the inheritance diamond works 
     # if we mixin the ordinary PermissionableManager with UserManager and don't have time to investigate
-    def filter(self,**kwargs) : 
+    def plus_filter(self,**kwargs) : 
+        from apps.plus_permissions.models import has_access
         if not kwargs.has_key('permission_agent') :
             return super(self.__class__,self).filter(**kwargs)
         else :
@@ -68,7 +73,8 @@ class UserPermissionableManager(UserManager) :
                     for a in super(self.__class__,self).filter(**kwargs) 
                     if has_access(agent,a,'%s.%s'%(self.__class__,'Viewer')))
         
-    def get(self,**kwargs) :
+    def plus_get(self,**kwargs) :
+
         if not kwargs.has_key('permission_agent') :
             return super(self.__class__,self).get(**kwargs)
         else :
@@ -78,6 +84,12 @@ class UserPermissionableManager(UserManager) :
             a = super(self.__class__,self).get(**kwargs)
             return secure_wrap(a, agent)
  
+    def plus_count(self, **kwargs) :
+        count = 0
+        for res in self.plus_filter(**kwargs) :
+            count = count+1
+        return count
+
     def is_custom(self) : 
         return True
 
