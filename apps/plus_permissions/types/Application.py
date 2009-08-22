@@ -12,7 +12,8 @@ content_type = Application
 
 from apps.plus_permissions.default_agents import get_or_create_root_location, get_anonymous_group, get_all_members_group, get_creator_agent
 
-# we need a special set_permissions interface which is only editable by the scontext_admin and determines who can set permissions or override them for an object. 
+# we need a special set_permissions interface which is only editable by the scontext_admin and 
+# determines who can set permissions or override them for an object. 
 
 class ApplicationViewer: 
     pk = InterfaceReadProperty
@@ -23,7 +24,9 @@ class ApplicationViewer:
 
     admin_comment = InterfaceReadProperty
     date = InterfaceReadProperty
-    accepted_by = InterfaceReadProperty
+
+    is_site_application = InterfaceCallProperty
+    requests_group = InterfaceCallProperty
 
 class ApplicationEditor: 
     pk = InterfaceReadProperty
@@ -40,7 +43,9 @@ class ApplicationEditor:
 class ApplicationAccept:
     pk = InterfaceReadProperty
     accept = InterfaceCallProperty
-
+    generate_accept_url = InterfaceCallProperty
+    status = InterfaceReadWriteProperty
+    accepted_by = InterfaceReadWriteProperty
 
 
 

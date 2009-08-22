@@ -14,6 +14,8 @@ from django.conf import settings
 
 from apps.plus_lib.models import extract 
 
+from apps.plus_permissions.default_agents import get_all_members_group
+
 class PlusContact(models.Model):
     """Use this for the sign-up / invited sign-up process, provisional users"""
     first_name = models.CharField(max_length=60)
@@ -52,8 +54,8 @@ class PlusContact(models.Model):
         h.find_out = self.find_out
         p.save()
         h.save()
-        ps = get_permission_system()
-        ps.get_site_members().add_member(u)
+
+        get_all_members_group().add_member(u)
         self.delete()
         return u
 
