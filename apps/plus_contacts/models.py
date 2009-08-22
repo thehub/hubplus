@@ -128,24 +128,3 @@ Please visit the following link to confirm your account : %s
 
 
 
-def make_application(**kwargs) :
-    security_context = extract(kwargs,'security_context')
-    app = Application(**kwargs)
-    app.save()
-    # setup security context
-    if security_context :
-        app.set_security_context(security_context)
-    elif app.group :
-        app.set_security_context(pa.group)
-    else :
-        app.set_security_context(get_permission_system().get_site_members())
-
-    # and we give view permission to any site-member
-    app
-
-    tag = ps.create_security_tag(pa.get_security_context(),ps.get_interface_id(Application,'Viewer'),[pa.get_security_context()])
-    tag2 = ps.create_security_tag(pa.get_security_context(),ps.get_interface_id(Application,'Accepter'),[pa.get_security_context()])
-
-    pa.save()    
-    return pa
-

@@ -33,3 +33,4 @@ from apps.hubspace_compatibility.models import TgGroup
 from apps.plus_permissions.types.TgGroup import get_or_create
 
 TgGroup.objects.get_or_create = get_or_create
+

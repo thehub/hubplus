@@ -2,6 +2,8 @@ from apps.plus_permissions.interfaces import InterfaceReadProperty, InterfaceWri
 from apps.plus_permissions.models import SetSliderOptions, SetAgentDefaults, SetPossibleTypes, SetSliderAgents
 from apps.hubspace_compatibility.models import TgGroup
 from apps.plus_permissions.OurPost import OurPost
+from apps.plus_contacts.models import Application, Contact
+from apps.plus_permissions.site import Site
 from django.db.models.signals import post_save
 import datetime
 
@@ -128,7 +130,7 @@ SetSliderOptions(TgGroup, SliderOptions)
 
 # ChildTypes are used to determine what types of objects can be created in this security context (and acquire security context from this). These are used when creating an explicit security context for an object of this type. 
 
-child_types = [OurPost]
+child_types = [OurPost, Site, Application, Contact]
 SetPossibleTypes(TgGroup, child_types)
 
 
@@ -172,7 +174,8 @@ AgentDefaults = {'public':
                             },
                       'Site' : 
                           {'defaults':
-                               {'Manager':'context_admin'},
+                               {'Manager':'context_admin',
+                                'Unknown': 'context_agent'},
                            'constraints':
                                [] 
                            },
@@ -180,11 +183,13 @@ AgentDefaults = {'public':
                           { 'defaults' : {'Viewer':'all_members_group',
                                           'Editor':'creator',
                                           'Accept':'context_agent',
+                                          'Unknown': 'context_agent'
                                           },
                             'constraints':['Viewer>=Editor', 'Editor<$anonymous_group']
                             },                      
                       'Contact':
                           { 'defaults' : {'ContactAdmin':'creator',
+                                          'Unknown': 'context_agent'
                                           },
                             'constraints':[]
                             }
@@ -214,7 +219,8 @@ AgentDefaults = {'public':
                            },
                       'Site' : 
                           {'defaults':
-                               {'Manager':'context_admin'},
+                               {'Manager':'context_admin',
+                                'Unknown': 'context_agent'},
                            'constraints':
                                [] 
                            },
@@ -222,11 +228,13 @@ AgentDefaults = {'public':
                           { 'defaults' : {'Viewer':'all_members_group',
                                           'Editor':'creator',
                                           'Accept':'context_agent',
+                                          'Unknown': 'context_agent',
                                           },
                             'constraints':['Viewer>=Editor', 'Editor<$anonymous_group']
                             },                      
                       'Contact':
                           { 'defaults' : {'ContactAdmin':'creator',
+                                          'Unknown': 'context_agent',
                                           },
                             'constraints':[]
                             }
