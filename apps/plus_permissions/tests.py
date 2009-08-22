@@ -185,7 +185,7 @@ class TestAccess(unittest.TestCase) :
         self.assertTrue( has_access(tuba, blog, "OurPost.Viewer"))
         
         # Now we test that a second blog-post that's created starts with similar access
-        blog2 = kx.create_OurPost(adam, title='second post')
+        blog2 = kx.create_OurPost(user=adam, title='second post')
         blog2.save()
 
         self.assertTrue(has_access(tuba, blog2, "OurPost.Viewer"))
@@ -418,9 +418,9 @@ class TestDecorators(unittest.TestCase) :
                                                       display_name="Loki's Group", 
                                                       place=None, level='member', user=god)
 
-        blog1 = group.create_OurPost(god, title='post1', body='X')
-        blog2 = group.create_OurPost(god, title='post2', body='X')
-        blog3 = group.create_OurPost(god, title='post3', body='X')
+        blog1 = group.create_OurPost(user=god, title='post1', body='X')
+        blog2 = group.create_OurPost(user=god, title='post2', body='X')
+        blog3 = group.create_OurPost(user=god, title='post3', body='X')
 
         manfred = User(username='manfred', email_address='manfred@the-hub.net')
         manfred.save()
@@ -429,6 +429,7 @@ class TestDecorators(unittest.TestCase) :
         
         sc2 = blog2.create_custom_security_context()
         sc2.add_arbitrary_agent(manfred, 'OurPost.Viewer', god)
+
 
         self.assertEquals(OurPost.objects.plus_count(manfred, body='X'), 1)
         p = OurPost.objects.plus_get(manfred, title='post2')

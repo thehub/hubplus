@@ -27,8 +27,10 @@ class PermissionableManager(models.Manager) :
     def plus_filter(self, user, **kwargs) : 
         from apps.plus_permissions.models import has_access
         from apps.plus_permissions.interfaces import secure_wrap
+        import ipdb
+        ipdb.set_trace()
         return (secure_wrap(resource, user)  
-                for resource in super(self.__class__,self).filter(**kwargs) 
+                for resource in super(self.__class__, self).filter(**kwargs) 
                 if has_access(user, resource, '%s.%s'%(resource.__class__.__name__,'Viewer')))
         
     def plus_get(self, user, **kwargs) :
@@ -39,7 +41,7 @@ class PermissionableManager(models.Manager) :
     def plus_count(self, user, **kwargs) :
         count = 0
         for res in self.plus_filter(user, **kwargs) :
-            count = count+1
+            count = count + 1
         return count
 
     def is_custom(self) : 
