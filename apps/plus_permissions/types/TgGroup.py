@@ -74,7 +74,7 @@ TgGroup.get_admin_group = get_admin_group
 class TgGroupViewer: 
     pk = InterfaceReadProperty
     about = InterfaceReadProperty
-    location = InterfaceReadProperty
+    place = InterfaceReadProperty
     website = InterfaceReadProperty
     display_name = InterfaceReadProperty
     groupextras = InterfaceReadProperty
@@ -86,7 +86,7 @@ class TgGroupViewer:
 class TgGroupEditor: 
     pk = InterfaceReadProperty
     about = InterfaceWriteProperty
-    location = InterfaceWriteProperty
+    place = InterfaceWriteProperty
     website = InterfaceWriteProperty
     display_name = InterfaceWriteProperty
     
@@ -113,7 +113,7 @@ TgGroupInterfaces = {'Viewer': TgGroupViewer,
                      'Editor': TgGroupEditor,
                      'Invite': TgGroupInviteMember,
                      'ManageMembers': TgGroupManageMembers,
-                     'Join': TgGroupInviteMember}
+                     'Join': TgGroupJoin}
 
 
 add_type_to_interface_map(TgGroup, TgGroupInterfaces)

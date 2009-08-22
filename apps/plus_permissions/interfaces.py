@@ -11,6 +11,8 @@ __all__ = ['secure_wrap', 'PlusPermissionsNoAccessException', 'PlusPermissionsRe
 from apps.plus_permissions.exceptions import PlusPermissionsReadOnlyException, PlusPermissionsNoAccessException, NonExistentPermission
 
 def secure_wrap(content_obj, user, interface_names=None):
+    if content_obj.__class__ == SecureWrapper:
+        content_obj = content_obj.get_inner()
     access_obj = SecureWrapper(content_obj)
     access_obj.load_interfaces_for(user, interface_names=interface_names)
     return access_obj
@@ -68,6 +70,7 @@ class NotViewable:
     def __repr__(self):
         return ""
 
+from apps.plus_permissions.models import type_interfaces_map, has_access
 
 class SecureWrapper:
     """
@@ -75,7 +78,6 @@ class SecureWrapper:
     """
     def __init__(self, inner) :
         self.__dict__['_inner'] = inner
-        self.__dict__['_interfaces'] = []
         self.__dict__['_exceptions'] = [ 
             lambda x : x[0] == '_',
             lambda x : x == 'id',
@@ -85,6 +87,10 @@ class SecureWrapper:
                                          InterfaceCallProperty: set(),
                                          InterfaceWriteProperty: set(),
                                          InterfaceReadWriteProperty: set()}
+    def depth(self) :
+        if self._inner.__class__ != SecureWrapper:
+            return 0
+        return self._inner.depth() + 1
 
     def get_inner(self) :
         return self._inner
@@ -92,12 +98,8 @@ class SecureWrapper:
     def get_inner_class(self) :
         return self.get_inner().__class__
 
-    def get_interfaces(self) :
-        return self._interfaces
-
     def load_interfaces_for(self, agent, interface_names=None) :
         """Load interfaces for the wrapped inner content that are available to the agent"""
-        from apps.plus_permissions.models import type_interfaces_map, has_access
         resource = self.get_inner()
         cls = resource.__class__
         interface_map = type_interfaces_map[cls.__name__]
@@ -105,14 +107,12 @@ class SecureWrapper:
             interface_names = interface_map.keys()
         for iname in interface_names:
             interface = interface_map[iname]
-            if has_access(agent=agent.get_ref(), resource=resource, interface=self.get_inner.__class__.__name__ + '.' + iname) :
+            iface_name = self.get_inner().__class__.__name__ + '.' + iname
+            if has_access(agent=agent, resource=resource, interface=iface_name):
                 self.add_permissions(interface)
-
-
-
     
     def add_permissions(self, interface):
-        for attr, perm in interface.__dict__:
+        for attr, perm in interface.__dict__.iteritems():
             try:
                 permitted = self._permissions[perm]
             except KeyError:
@@ -122,7 +122,7 @@ class SecureWrapper:
                     raise NonExistentPermission
             else:
                 if attr not in permitted:
-                    perms.add(attr)
+                    permitted.add(attr)
 
     def has_permission(self, name, interface) :
         """The moment of truth!"""
@@ -158,22 +158,11 @@ class SecureWrapper:
             return None      
         raise PlusPermissionsReadOnlyException(self.get_inner_class(),name)        
 
-    def add_interface(self, interface) :
-        """NOT USED atm, adds a new interface to the object whilst it is wrapped
-        """
-        self._interfaces.append(interface)
-        self.load_interfaces(interface)
-
-    def remove_interface(self, cls):
-        """NOT USED atm, emove an interface from the object whilst it is wrapped
-        """
-        self._interfaces.remove(interface)
-        self.load_interfaces(interface)
 
 def add_creator_interface(type):
     class CanCreate:
         pk = InterfaceReadProperty
-    setattr(CanCreate, 'create_%s'%type.__class__.__name__, InterfaceCallProperty)
+    setattr(CanCreate, 'create_%s'%type.__name__, InterfaceCallProperty)
     return CanCreate
 
 def add_manage_permissions_interface():

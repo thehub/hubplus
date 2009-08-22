@@ -4,6 +4,7 @@ from django.contrib.contenttypes.models import ContentType
 from django.contrib.auth.models import UserManager, User
 
 from apps.plus_lib.models import extract
+from apps.plus_permissions.interfaces import secure_wrap
 
 class MissingSecurityContextException(Exception): 
     def __init__(self, cls, security_context) :
@@ -23,77 +24,31 @@ class MissingSecurityContextException(Exception):
 class PermissionableManager(models.Manager) :
     # if a permission_agent is passed, only get or filter items which 
     # pass a security check
-    def plus_filter(self,**kwargs) : 
+    def plus_filter(self, user, **kwargs) : 
         from apps.plus_permissions.models import has_access
-        if not kwargs.has_key('permission_agent') :
-            return super(self.__class__,self).filter(**kwargs)
-        else :
-            from apps.plus_permissions.interfaces import SecureWrapper, secure_wrap
-            agent = kwargs['permission_agent']
-            del kwargs['permission_agent']
-
-            return (secure_wrap(a, agent)  
-                    for a in super(self.__class__,self).filter(**kwargs) 
-                    if has_access(agent,a,'%s.%s'%(self.__class__.__name__,'Viewer')))
+        from apps.plus_permissions.interfaces import secure_wrap
+        return (secure_wrap(resource, user)  
+                for resource in super(self.__class__,self).filter(**kwargs) 
+                if has_access(user, resource, '%s.%s'%(resource.__class__.__name__,'Viewer')))
         
-    def plus_get(self,**kwargs) :
-
-        if not kwargs.has_key('permission_agent') :
-            return super(self.__class__,self).get(**kwargs)
-        else :
-            from apps.plus_permissions.interfaces import SecureWrapper, secure_wrap
-            agent = kwargs['permission_agent']
-            del kwargs['permission_agent']
-            a = super(self.__class__,self).get(**kwargs)
-            return secure_wrap(a, agent)
+    def plus_get(self, user, **kwargs) :
+        from apps.plus_permissions.interfaces import secure_wrap
+        a = super(self.__class__,self).get(**kwargs)
+        return secure_wrap(a, user)
  
-    def plus_count(self, **kwargs) :
+    def plus_count(self, user, **kwargs) :
         count = 0
-        for res in self.plus_filter(**kwargs) :
+        for res in self.plus_filter(user, **kwargs) :
             count = count+1
         return count
 
     def is_custom(self) : 
         return True
 
-class UserPermissionableManager(UserManager) :
-    # if a permission_agent is passed, only get or filter items which 
-    # pass a security check
-    # NOTE : this is a special version of PermissionableManager above, which inherits from UserManager
-    # I've copied and pasted because I'm not sure if the inheritance diamond works 
-    # if we mixin the ordinary PermissionableManager with UserManager and don't have time to investigate
-    def plus_filter(self,**kwargs) : 
-        from apps.plus_permissions.models import has_access
-        if not kwargs.has_key('permission_agent') :
-            return super(self.__class__,self).filter(**kwargs)
-        else :
-            from apps.plus_permissions.interfaces import SecureWrapper, secure_wrap
-            agent = kwargs['permission_agent']
-            del kwargs['permission_agent']
+class UserPermissionableManager(UserManager, PermissionableManager) :
+    pass
 
-            return (secure_wrap(a, agent)  
-                    for a in super(self.__class__,self).filter(**kwargs) 
-                    if has_access(agent,a,'%s.%s'%(self.__class__.__name__,'Viewer')))
-        
-    def plus_get(self,**kwargs) :
 
-        if not kwargs.has_key('permission_agent') :
-            return super(self.__class__,self).get(**kwargs)
-        else :
-            from apps.plus_permissions.interfaces import SecureWrapper, secure_wrap
-            agent = kwargs['permission_agent']
-            del kwargs['permission_agent']
-            a = super(self.__class__,self).get(**kwargs)
-            return secure_wrap(a, agent)
- 
-    def plus_count(self, **kwargs) :
-        count = 0
-        for res in self.plus_filter(**kwargs) :
-            count = count+1
-        return count
-
-    def is_custom(self) : 
-        return True
 
 
 def to_security_context(self):
@@ -164,19 +119,16 @@ def acquires_from(self, content_obj):
 
 def add_create_method(content_type, child_type) :
 
-    def f(self,**kwargs) :
-        permission_agent = extract(kwargs, 'permission_agent')
-
+    def f(self, user, **kwargs) :
         resource = child_type(**kwargs)
         resource.save()
-
+        
         # now create its security_context etc.        
         resource.acquires_from(self)
-        if permission_agent :
-            resource = secure_wrap(resource, permission_agent)
-        return resource
+        resource.get_ref().creator = user
 
-
+        return secure_wrap(resource, user)
+    
     setattr(content_type,'create_%s' % child_type.__name__, f)
 
 from apps.plus_permissions.interfaces import PlusPermissionsNoAccessException
@@ -242,7 +194,7 @@ def security_patch(content_type, type_list):
     content_type.get_all_sliders = get_all_sliders
     content_type.get_slider_level = get_slider_level
 
-    for typ in type_list :
+    for typ in type_list:
         add_create_method(content_type, typ)
         
 

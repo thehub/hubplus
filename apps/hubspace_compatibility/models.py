@@ -165,6 +165,10 @@ try :
         if isinstance(user_or_group, self.__class__) and not self.child_groups.filter(id=user_or_group.id):
             self.child_groups.add(user_or_group)
 
+    def join(self, user):
+        self.add_member(user)
+        return user
+
     class Meta:
         db_table = u'tg_group'
 
