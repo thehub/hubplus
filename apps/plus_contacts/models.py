@@ -62,41 +62,7 @@ class PlusContact(models.Model):
 PENDING = 0
 WAITING_USER_SIGNUP = 1
 
-class ApplicationManager(models.Manager) :
-    # only show applications to those who have right permissions
-    # if query is done with "permission_agent" as argument
 
-    def filter(self,**kwargs) : 
-        if not kwargs.has_key('permission_agent') :
-            return super(ApplicationManager,self).filter(**kwargs)
-        else :
-            from apps.plus_permissions.models import NullInterface
-            agent = kwargs['permission_agent']
-            del kwargs['permission_agent']
-            ps = get_permission_system()
-            def wrap(a) :
-                n = NullInterface(a)
-                n.load_interfaces_for(agent)
-                
-            return (wrap(a) 
-                    for a in super(ApplicationManager,self).filter(**kwargs) 
-                    if ps.has_access(agent,a,ps.get_interface_id("Application",'Viewer')))
-
-
-    def get(self,**kwargs) :
-        if not kwargs.has_key('permission_agent') :
-            return super(ApplicationManager,self).get(**kwargs)
-        else :
-            from apps.plus_permissions.models import NullInterface
-            agent = kwargs['permission_agent']
-            del kwargs['permission_agent']
-            ps = get_permission_system()
-            
-            a = super(ApplicationManager,self).get(**kwargs)
-            
-            n = NullInterface(a)
-            n.load_interfaces_for(agent)
-            return n
 
 class Application(models.Model) :
     applicant_content_type = models.ForeignKey(ContentType,related_name='applicant_type')
@@ -111,7 +77,6 @@ class Application(models.Model) :
     date = models.DateField(auto_now_add=True)
     accepted_by = models.ForeignKey(User, null=True) 
 
-    objects = ApplicationManager()
 
     def generate_accept_url(self, accepted_by) :
         url = '/contacts/signup/%s-%s/' % (self.applicant.id,accepted_by.id)

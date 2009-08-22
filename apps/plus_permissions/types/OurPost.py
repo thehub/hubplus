@@ -11,18 +11,18 @@ from django.contrib.contenttypes import generic
 
 from apps.hubspace_compatibility.models import TgGroup
 
-from apps.plus_permissions.OurPost import *
+from apps.plus_permissions.OurPost import OurPost as content_type
 
 from apps.plus_permissions.default_agents import get_or_create_root_location, get_anonymous_group, get_all_members_group, get_creator_agent
 
 
 # This represents a typical model type from another django or pinax app
-content_type = OurPost
+
 
 # And these are the "child" types that can be created inside this type. 
 # Currently OurPost has none, but, for example, a TgGroup can have OurPosts or WikiPages etc.
 child_types = []
-SetPossibleTypes(OurPost, child_types)
+SetPossibleTypes(content_type, child_types)
 
 # Here's the wrapping we have to put around it.
 
@@ -45,11 +45,11 @@ OurPostInterfaces = {'Viewer':OurPostViewer,
                      'Editor':OurPostEditor,
                      'Commentor':OurPostCommentor}
 
-add_type_to_interface_map(OurPost, OurPostInterfaces)
+add_type_to_interface_map(content_type, OurPostInterfaces)
 
 
 SliderOptions = {'InterfaceOrder':['Viewer', 'Editor','Commentor']}
-SetSliderOptions(OurPost, SliderOptions)
+SetSliderOptions(content_type, SliderOptions)
 
 
 

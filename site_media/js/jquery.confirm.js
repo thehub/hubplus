@@ -1,8 +1,12 @@
 (function($){
-    $.fn.confirm_action = function(options) {
-        options = $.extend({action:function(){$('body').load(this.attr('href'))},
+    $.fn.confirm_action = function (options) {
+        options = $.extend({action:function(){
+	    $('body').load(this.attr('href'));
+	},
                             message:'Are you sure you want to delete this resource group? ',
-                            cancel: function(dialog, action_link, options){$.cancel_action(dialog, action_link, options)}
+                            cancel: function(dialog, action_link, options){
+				$.cancel_action(dialog, action_link, options);
+			    }
                            }, options);
         return this.each(function() {
              $.set_dialog_listen(this, options);

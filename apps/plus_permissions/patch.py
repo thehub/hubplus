@@ -23,7 +23,6 @@ for module in types.__all__:
 
 
 
-
 from django.contrib.auth.models import User
 security_patch(User,[])
 

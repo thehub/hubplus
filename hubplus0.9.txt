@@ -1,6 +1,3 @@
-# review code for other test cases
-# general filter and get, and get_or_create
-# finish decorator
 fix server
 application process
 
