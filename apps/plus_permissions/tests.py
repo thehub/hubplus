@@ -434,7 +434,7 @@ class TestDecorators(unittest.TestCase) :
         self.assertEquals(OurPost.objects.plus_count(manfred, body='X'), 1)
         p = OurPost.objects.plus_get(manfred, title='post2')
 
-        self.assertEquals(p.__class__, SecurityWrapper)
+        self.assertEquals(p.__class__, SecureWrapper)
 
         def f(p) :
             p.set_title('other')
