@@ -7,7 +7,12 @@ from django.db import models
 from apps.plus_permissions.site import Site
 
 def get_site() :
-    return Site.objects.get_or_create()
+    ss = Site.objects.all()
+    if len(ss) > 0 :
+        return ss[0]
+    s = Site()
+    s.save()
+    return s
 
 def get_or_create_root_location():
     root_location, created = Location.objects.get_or_create(name='HubPlus')

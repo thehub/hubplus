@@ -9,19 +9,19 @@ from django.contrib.contenttypes import generic
 from django.contrib.auth.models import *
 from apps.plus_groups.models import *
 
-from models import *
+from models import Contact, Application
 
-from apps.plus_permissions.models import *
-from apps.plus_permissions.Application import *
 
-ps = get_permission_system()
+from apps.plus_permissions.default_agents import get_site, get_all_members_group
+from apps.plus_permissions.interfaces import PlusPermissionsNoAccessException
+
 
 class TestContact(unittest.TestCase):
 
     def setUp(self):
         u = User(username='phil',email_address='x@y.com')
         u.save()
-        ct = PlusContact(first_name='tom',last_name='salfield',organisation='the-hub',email_address='tom@the-hub.net',location='islington',apply_msg='about me', find_out='through the grapevine',invited_by=u)
+        ct = Contact(first_name='tom',last_name='salfield',organisation='the-hub',email_address='tom@the-hub.net',location='islington',apply_msg='about me', find_out='through the grapevine',invited_by=u)
         ct.save()
         self.u = u
         self.ct = ct
@@ -35,21 +35,17 @@ class TestContact(unittest.TestCase):
 
     def test_contact(self):
         self.assertEquals(self.ct.first_name,'tom')
-
         self.assertEquals(self.ct.find_out,'through the grapevine')
         self.assertEquals(self.ct.invited_by.username,'phil')
 
     def test_become_member(self):
-        ps = get_permission_system()
-        ps.__init__()
-
         u2 = User(username='admin',email_address='y@y.com')
         u2.save()
         # now upgrade to a user
         u3 = self.ct.become_member('tom.salfield',  invited_by=self.u, accepted_by=u2)
         self.assertEquals(u2.__class__, User)
-        self.assertEquals(len(PlusContact.objects.filter(id=self.ct.id)), 0)
-        p = u3.get_profile()
+        self.assertEquals(len(Contact.objects.filter(id=self.ct.id)), 0)
+        p = u3.get_profile() 
         self.assertEquals(p.first_name, self.ct.first_name)
         self.assertEquals(p.last_name, self.ct.last_name)
         self.assertEquals(p.email_address, self.ct.email_address)
@@ -60,8 +56,7 @@ class TestContact(unittest.TestCase):
         self.assertEquals(p.invited_by.username, self.u.username)
         self.assertEquals(p.accepted_by.username, u2.username)
 
-        ps = get_permission_system()
-        self.assertTrue(u3.is_member_of(ps.get_site_members()))
+        self.assertTrue(u3.is_member_of(get_all_members_group()))
 
 
 class TestApplication(unittest.TestCase) :
@@ -73,14 +68,21 @@ class TestApplication(unittest.TestCase) :
         return count
 
     def test_application(self) :
-        ps = get_permission_system()
-        ps.__init__()
+        site = get_site()
 
-        contact = PlusContact(first_name='kate', last_name='smith', email_address='kate@z.x.com')
+        god = User(username='trickster', email_address='trickster@the-hub.net')
+        god.save()
+
+        contact = site.create_Contact(god, first_name='kate', last_name='smith', email_address='kate@z.x.com')
         contact.save()
-        group, admin = create_site_group('singing', 'Singers')
+
+
+        group = site.create_TgGroup(god, group_name='sexy_salad', display_name='Sexy Salad', level='member')
+
+
         # use make_application to add security_context when creating an application object
-        application = make_application(applicant=contact, request='I want to join in',security_context=group)
+        
+        application = site.create_Application(god, applicant=contact, request='I want to join in', security_context=group)
         application.group = group
         application.save()
         
@@ -92,13 +94,12 @@ class TestApplication(unittest.TestCase) :
         self.assertEquals(application.admin_comment,'')
         self.assertEquals(application.accepted_by,None)
 
-        self.assertTrue(ps.has_access(group,application,ps.get_interface_id(Application,'Viewer')))
-        self.assertTrue(ps.has_access(group,application,ps.get_interface_id(Application,'Accepter')))
+        self.assertTrue(has_access(group,application,'Application.Viewer'))
+        self.assertTrue(has_access(group,application,'Application.Viewer'))
 
-        ps = get_permission_system()
         # adding a couple more 
-        ap2 = make_application(applicant=contact,request='ap2',group=ps.get_anon_group(),security_context=group)
-        ap3 = make_application(applicant=contact,request='ap3',group=ps.get_site_members(),security_context=group)
+        ap2 = make_application(applicant=contact,request='ap2',group=get_anonymous_group(),security_context=group)
+        ap3 = make_application(applicant=contact,request='ap3',group=get_all_members_group(),security_context=group)
         
         self.assertEquals(self.count(Application.objects.filter()),3)
         self.assertEquals(self.count(Application.objects.filter(request='ap2')),1)

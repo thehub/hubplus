@@ -14,9 +14,11 @@ from django.conf import settings
 
 from apps.plus_lib.models import extract 
 
-from apps.plus_permissions.default_agents import get_all_members_group
+from apps.plus_permissions.default_agents import get_site, get_all_members_group
 
-class PlusContact(models.Model):
+
+
+class Contact(models.Model):
     """Use this for the sign-up / invited sign-up process, provisional users"""
     first_name = models.CharField(max_length=60)
     last_name = models.CharField(max_length=60)
@@ -25,7 +27,7 @@ class PlusContact(models.Model):
     location = models.CharField(max_length=100)
     apply_msg = models.TextField()
     find_out = models.TextField()
-    invited_by = models.ForeignKey(User,null=True)
+    invited_by = models.ForeignKey(User,null=True,related_name='invited_contact')
 
 
     def get_user(self) :
@@ -128,18 +130,19 @@ Please visit the following link to confirm your account : %s
 
 def make_application(**kwargs) :
     security_context = extract(kwargs,'security_context')
-    pa = Application(**kwargs)
-    pa.save()
+    app = Application(**kwargs)
+    app.save()
     # setup security context
     if security_context :
-        pa.set_security_context(security_context)
-    elif pa.group :
-        pa.set_security_context(pa.group)
+        app.set_security_context(security_context)
+    elif app.group :
+        app.set_security_context(pa.group)
     else :
-        pa.set_security_context(get_permission_system().get_site_members())
+        app.set_security_context(get_permission_system().get_site_members())
 
     # and we give view permission to any site-member
-    ps = get_permission_system()
+    app
+
     tag = ps.create_security_tag(pa.get_security_context(),ps.get_interface_id(Application,'Viewer'),[pa.get_security_context()])
     tag2 = ps.create_security_tag(pa.get_security_context(),ps.get_interface_id(Application,'Accepter'),[pa.get_security_context()])
 

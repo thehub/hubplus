@@ -1,1 +1,1 @@
-__all__ = ["OurPost", "Profile", "TgGroup", "Site", "Application"]
+__all__ = ["OurPost", "Profile", "TgGroup", "Site", "Application", "Contact"]
