@@ -6,6 +6,8 @@ from django.contrib.auth.models import User
 from apps.hubspace_compatibility.models import TgGroup
 from django.db.transaction import commit_on_success
 
+from apps.plus_permissions.site import Site
+
 import pickle
 import simplejson
 
@@ -97,20 +99,25 @@ class SecurityContext(models.Model):
          tag.save()
          tag.add_agents([self.context_admin])
 
+     def is_agent(self, target):
+         return ( isinstance(target.obj, User) or 
+                  isinstance(target.obj, TgGroup) or
+                  isinstance(target.obj, Site))
+
      def get_agent_level_scontext(self):
          """This will return the first security context up the acquisition tree where the target is an agent
          """
          target = self.target.all()[0]
-         while not isinstance(target.obj, User) and not isinstance(target.obj, TgGroup):
-             target = target.acquires_from
+         while ( not self.is_agent(target) ) :
+                 target = target.acquires_from
          return target.explicit_scontext
 
      context_agent = models.ForeignKey('GenericReference', null=True, related_name="agent_scontexts")
      # The agent which this security context is associated with
 
      def set_context_agent(self, agent):
-         if not isinstance(agent.obj, TgGroup) and not isinstance(agent.obj, User):
-             raise TypeError("Agent must be a user of a group")
+         if not self.is_agent(agent) :
+             raise TypeError("Agent must be a user, a group or a site")
          self.context_agent = agent
 
      def get_context_agent(self):

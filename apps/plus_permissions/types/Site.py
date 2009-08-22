@@ -79,8 +79,15 @@ AgentDefaults = {'standard':
                                           'Accept':'context_agent',
                                           },
                             'constraints':['Viewer>=Editor', 'Editor<$anonymous_group']
+                            },
+                      
+                      'Contact':
+                          { 'defaults' : {'ContactAdmin':'creator',
+                                          },
+                            'constraints':[]
                             }
                       },
+
                  }
 
 SetAgentDefaults(Site, AgentDefaults)

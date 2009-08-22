@@ -11,8 +11,11 @@ def get_site() :
     if len(ss) > 0 :
         return ss[0]
     s = Site()
-    s.save()
+    s.save() 
+    s.to_security_context()
+    s.get_security_context().set_up()
     return s
+
 
 def get_or_create_root_location():
     root_location, created = Location.objects.get_or_create(name='HubPlus')
