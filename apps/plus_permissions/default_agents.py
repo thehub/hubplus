@@ -12,8 +12,10 @@ def get_site() :
         return ss[0]
     s = Site()
     s.save() 
-    s.to_security_context()
-    s.get_security_context().set_up()
+
+    admin = get_all_members_group().get_admin_group()
+    s.acquires_from(admin)
+
     return s
 
 

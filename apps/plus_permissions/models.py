@@ -100,9 +100,9 @@ class SecurityContext(models.Model):
          tag.add_agents([self.context_admin])
 
      def is_agent(self, target):
-         return ( isinstance(target.obj, User) or 
-                  isinstance(target.obj, TgGroup) or
-                  isinstance(target.obj, Site))
+         return ( isinstance(target.obj, User) or isinstance(target.obj, TgGroup) )
+         # Maybe?  isinstance(target.obj, Site) ... 
+         # at the moment we make Site acquire_from all_members_group's admin
 
      def get_agent_level_scontext(self):
          """This will return the first security context up the acquisition tree where the target is an agent
@@ -132,7 +132,7 @@ class SecurityContext(models.Model):
      # The admin which this security context is associated with
 
      def set_context_admin(self, admin):
-         if not isinstance(admin.obj, TgGroup) and not isinstance(admin.obj, User):
+         if not self.is_agent(admin) :
              raise TypeError("Admin must be a user of a group")
          self.context_admin = admin
 
