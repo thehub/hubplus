@@ -168,7 +168,26 @@ AgentDefaults = {'public':
                                           'Editor':'creator',
                                           'Commentor':'context_agent',
                                           'Unknown': 'context_agent'},
-                            'constraints':['Viewer>=Editor', 'Editor<$anonymous_group']}
+                            'constraints':['Viewer>=Editor', 'Editor<$anonymous_group']
+                            },
+                      'Site' : 
+                          {'defaults':
+                               {'Manager':'context_admin'},
+                           'constraints':
+                               [] 
+                           },
+                      'Application':
+                          { 'defaults' : {'Viewer':'all_members_group',
+                                          'Editor':'creator',
+                                          'Accept':'context_agent',
+                                          },
+                            'constraints':['Viewer>=Editor', 'Editor<$anonymous_group']
+                            },                      
+                      'Contact':
+                          { 'defaults' : {'ContactAdmin':'creator',
+                                          },
+                            'constraints':[]
+                            }
                       },
                  
 
@@ -186,12 +205,32 @@ AgentDefaults = {'public':
                                ['Viewer>=Editor', 'Invite>=ManageMembers', 'Join>=ManageMembers', 'ManageMembers<=$anonymous']
                            },
                       'OurPost': 
-                      {'defaults' : 
-                       {'Viewer':'all_members_group',
-                        'Editor':'creator',
-                        'Commentor':'context_agent',
-                        'Unknown': 'context_agent'},
-                       'constraints':['Viewer>=Editor']}
+                          {'defaults' : 
+                               {'Viewer':'all_members_group',
+                                'Editor':'creator',
+                                'Commentor':'context_agent',
+                                'Unknown': 'context_agent'},
+                           'constraints':['Viewer>=Editor']
+                           },
+                      'Site' : 
+                          {'defaults':
+                               {'Manager':'context_admin'},
+                           'constraints':
+                               [] 
+                           },
+                      'Application':
+                          { 'defaults' : {'Viewer':'all_members_group',
+                                          'Editor':'creator',
+                                          'Accept':'context_agent',
+                                          },
+                            'constraints':['Viewer>=Editor', 'Editor<$anonymous_group']
+                            },                      
+                      'Contact':
+                          { 'defaults' : {'ContactAdmin':'creator',
+                                          },
+                            'constraints':[]
+                            }
+
                       }
                  }
 

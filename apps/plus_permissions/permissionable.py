@@ -128,6 +128,7 @@ def add_create_method(content_type, child_type) :
         # now create its security_context etc.        
         resource.acquires_from(self)
         resource.get_ref().creator = user
+        resource.get_ref().save()
 
         return secure_wrap(resource, user)
     

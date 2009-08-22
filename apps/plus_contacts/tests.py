@@ -73,6 +73,9 @@ class TestApplication(unittest.TestCase) :
         god = User(username='trickster', email_address='trickster@the-hub.net')
         god.save()
 
+        import ipdb
+        ipdb.set_trace()
+
         contact = site.create_Contact(god, first_name='kate', last_name='smith', email_address='kate@z.x.com')
         contact.save()
 
