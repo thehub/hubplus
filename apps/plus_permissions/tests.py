@@ -259,8 +259,8 @@ class TestAccess(unittest.TestCase) :
         # assert now that blog2's security context is NOT the same as blog's
         self.assertNotEquals(blog2._inner.get_security_context(), blog._inner.get_security_context())
         # but that the admin and agent are
-        self.assertEquals(blog2._inner.get_security_context().get_context_agent(), blog._inner.get_security_context().get_context_agent())
-        self.assertEquals(blog2._inner.get_security_context().get_context_admin(), blog._inner.get_security_context().get_context_admin())
+        self.assertEquals(blog2._inner.get_security_context().context_agent, blog._inner.get_security_context().context_agent)
+        self.assertEquals(blog2._inner.get_security_context().context_admin, blog._inner.get_security_context().context_admin)
 
         # another kings cross host
         elenor = User(username='elenor', email_address='elenor@the-hub.net')
@@ -407,9 +407,6 @@ class TestDecorators(unittest.TestCase) :
         # confirm we really customized them
         self.assertTrue(TgGroup.objects.is_custom())
         self.assertTrue(User.objects.is_custom())
-        
-        import ipdb
-        #ipdb.set_trace()
 
         god = User(username='Loki', email_address='loki@the-hub.net')
         god.save()
@@ -419,20 +416,31 @@ class TestDecorators(unittest.TestCase) :
                                                       place=None, level='member', user=god)
 
         blog1 = group.create_OurPost(user=god, title='post1', body='X')
+        self.assertEquals(blog1._inner.get_ref().acquires_from, group.get_ref())
         blog2 = group.create_OurPost(user=god, title='post2', body='X')
+        self.assertEquals(blog2._inner.get_ref().acquires_from, group.get_ref())
         blog3 = group.create_OurPost(user=god, title='post3', body='X')
+        self.assertEquals(blog3._inner.get_ref().acquires_from, group.get_ref())
 
         manfred = User(username='manfred', email_address='manfred@the-hub.net')
         manfred.save()
+        self.assertEquals(OurPost.objects.plus_count(manfred, body='X'), 0)  #these two are the culprits
+        blog2._inner.get_ref().save()
 
-        self.assertEquals(OurPost.objects.plus_count(manfred, body='X'),0)
-        
+        self.assertEquals(blog2._inner.get_ref().acquires_from, group.get_ref())
+
+
         sc2 = blog2.create_custom_security_context()
-        sc2.add_arbitrary_agent(manfred, 'OurPost.Viewer', god)
+        self.assertEquals(blog3._inner.get_ref().acquires_from, group.get_ref())
+        self.assertEquals(blog2._inner.get_ref().acquires_from, group.get_ref())
 
+        sc2.add_arbitrary_agent(manfred, 'OurPost.Viewer', god)
 
         self.assertEquals(OurPost.objects.plus_count(manfred, body='X'), 1)
         p = OurPost.objects.plus_get(manfred, title='post2')
+
+        blog2._inner.get_ref().save()
+        self.assertEquals(blog2._inner.get_ref().acquires_from, group.get_ref())
 
         self.assertEquals(p.__class__, SecureWrapper)
 

@@ -105,13 +105,6 @@ class SecurityContext(models.Model):
          # Maybe?  isinstance(target.obj, Site) ... 
          # at the moment we make Site acquire_from all_members_group's admin
 
-     def get_agent_level_scontext(self):
-         """This will return the first security context up the acquisition tree where the target is an agent
-         """
-         target = self.target.all()[0]
-         while ( not self.is_agent(target) ) :
-                 target = target.acquires_from
-         return target.explicit_scontext
 
      context_agent = models.ForeignKey('GenericReference', null=True, related_name="agent_scontexts")
      # The agent which this security context is associated with
@@ -121,14 +114,6 @@ class SecurityContext(models.Model):
              raise TypeError("Agent must be a user, a group or a site")
          self.context_agent = agent
 
-     def get_context_agent(self):
-         if self.context_agent:
-             return self.context_agent
-
-         agent_scontext = self.get_agent_level_scontext()
-         self.context_agent = agent_scontext.context_agent
-         return self.context_agent
-
      context_admin = models.ForeignKey('GenericReference', null=True, related_name="admin_scontexts") 
      # The admin which this security context is associated with
 
@@ -137,11 +122,6 @@ class SecurityContext(models.Model):
              raise TypeError("Admin must be a user of a group")
          self.context_admin = admin
 
-     def get_context_admin(self):
-         if self.context_admin:
-             return self.context_admin
-         agent_scontext = self.get_agent_level_scontext()
-         self.context_admin = agent_scontext.context_admin
          return self.context_admin
                     
      def create_security_tag(self, interface, agents=None):
@@ -388,12 +368,12 @@ def has_access(agent, resource, interface) :
      
     allowed_agents = set([a.obj for a in allowed_agents.all()])
     
-    if get_anonymous_group in allowed_agents: 
+    if get_anonymous_group() in allowed_agents: 
         # in other words, if this resource is matched with anyone, we don't have to test 
         #that user is in the "anyone" group
         return True
 
-    if get_creator_agent() in allowed_agents:
+    if get_creator_agent().obj in allowed_agents:
         actual_creator = resource.get_ref().creator
         if agent == actual_creator:
             return True

@@ -20,21 +20,18 @@ class MissingSecurityContextException(Exception):
         self.msg = 'Missing %s when creating a %s' % (context,cls)
 
 
+from apps.plus_permissions.models import has_access
+from apps.plus_permissions.interfaces import secure_wrap
 
 class PermissionableManager(models.Manager) :
     # if a permission_agent is passed, only get or filter items which 
     # pass a security check
     def plus_filter(self, user, **kwargs) : 
-        from apps.plus_permissions.models import has_access
-        from apps.plus_permissions.interfaces import secure_wrap
-        import ipdb
-        ipdb.set_trace()
         return (secure_wrap(resource, user)  
-                for resource in super(self.__class__, self).filter(**kwargs) 
+                for resource in super(self.__class__, self).filter(**kwargs)
                 if has_access(user, resource, '%s.%s'%(resource.__class__.__name__,'Viewer')))
         
     def plus_get(self, user, **kwargs) :
-        from apps.plus_permissions.interfaces import secure_wrap
         a = super(self.__class__,self).get(**kwargs)
         return secure_wrap(a, user)
  
@@ -70,12 +67,10 @@ def create_custom_security_context(self) :
     original_sc = self.get_security_context()
     # create a new sc
     # set it's agent and admin
-    # copy the tags
-    # copy the permissions
-
+    # copy the tags and therefore the permissions to the new sec context
     new_sc = self.to_security_context()
-    new_sc.get_context_agent()  #the first this is called it will set the context agent
-    new_sc.get_context_admin()
+    new_sc.context_agent = original_sc.context_agent
+    new_sc.context_admin = original_sc.context_admin
     new_sc.save()
 
     types = [self.__class__] + PossibleTypes[self.__class__]
@@ -97,7 +92,6 @@ def set_security_context(self, scontext):
     ref.explicit_scontext = scontext
     ref.save()
 
-
 def get_security_context(self):
     """Get the security context for this object """
     ref = self.get_ref()
@@ -106,16 +100,23 @@ def get_security_context(self):
     elif ref.acquired_scontext:
         return ref.acquired_scontext
     else:
-        self.acquired_scontext = ref.acquires_from.obj.get_security_context()
-    return self.acquired_scontext
+        try:
+            ref.acquired_scontext = ref.acquires_from.obj.get_security_context()
+            ref.save()
+        except:
+            import ipdb
+            ipdb.set_trace()
+    return ref.acquired_scontext
     
 def get_ref(self):
     return self.ref.all()[0]
 
 def acquires_from(self, content_obj):
     ref = self.get_ref()
+    assert(content_obj.get_ref())
     ref.acquires_from = content_obj.get_ref()
     ref.save()
+    return ref
 
 def get_creator(self):
     return self.get_ref().creator
@@ -127,17 +128,12 @@ def add_create_method(content_type, child_type) :
         # phil's version
         resource = child_type(**kwargs)
         resource.save()
-        
         # now create its security_context etc.        
         resource.acquires_from(self)
         ref = resource.get_ref()
-
         ref.creator = user
         ref.save()
-        print "XX", resource.get_creator(), user
         assert(resource.get_creator()==user)
-
-        # phil's version
         return secure_wrap(resource, user)
     
     setattr(content_type,'create_%s' % child_type.__name__, f)
@@ -188,7 +184,7 @@ def get_tag_for_interface(self, interface) :
 
 
 from apps.plus_permissions.models import GenericReference, SecurityContext
-from django.db.models.signals import post_init
+from django.db.models.signals import post_save
 
 def security_patch(content_type, type_list):  
     content_type.add_to_class('ref', generic.GenericRelation(GenericReference))
@@ -223,13 +219,14 @@ def security_patch(content_type, type_list):
     from apps.plus_permissions.site import Site
     Site.create_TgGroup = site_create_group
 
-    post_init.connect(create_reference, sender=content_type)
+    post_save.connect(create_reference, sender=content_type)
+
 
 def create_reference(sender, instance=None, **kwargs):
     if instance is None:
         return
-    instance.save()
-    ref = GenericReference(obj=instance)
-    ref.save()
-
-
+    content_type = ContentType.objects.get_for_model(instance)
+    if GenericReference.objects.filter(content_type=content_type,
+                                       object_id=instance.id).count() < 1:
+        ref = GenericReference(obj=instance)
+        ref.save()

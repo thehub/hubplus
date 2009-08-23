@@ -15,6 +15,7 @@ from models import Contact, Application
 from apps.plus_permissions.default_agents import get_site, get_all_members_group
 from apps.plus_permissions.interfaces import PlusPermissionsNoAccessException
 
+from apps.plus_permissions.models import has_access
 
 class TestContact(unittest.TestCase):
 
@@ -78,8 +79,6 @@ class TestApplication(unittest.TestCase) :
 
         self.assertTrue(contact.get_inner().get_creator())
 
-        import ipdb
-        #ipdb.set_trace()
         group = site.create_TgGroup(god, group_name='sexy_salad', display_name='Sexy Salad', level='member')
         
 
@@ -88,9 +87,17 @@ class TestApplication(unittest.TestCase) :
         
         application = site.create_Application(god, applicant=contact, request='I want to join in')
         
+        # the following should be true because application was created by god
+        # so god is its "creator" and default for Application.Editor is "creator"
+
+        import ipdb
+        ipdb.set_trace()
+
+        self.assertTrue(has_access(god, application, 'Application.Editor'))
         application.group = group
         application.save()
 
+        self.assertTrue(has_access(group,application,'Application.Viewer'))
 
         self.assertEquals(application.date.date(),datetime.datetime.today().date())
         self.assertEquals(application.applicant, contact)
@@ -100,8 +107,7 @@ class TestApplication(unittest.TestCase) :
         self.assertEquals(application.admin_comment,'')
         self.assertEquals(application.accepted_by,None)
 
-        self.assertTrue(has_access(group,application,'Application.Viewer'))
-        self.assertTrue(has_access(group,application,'Application.Viewer'))
+
 
         # adding a couple more 
         ap2 = make_application(applicant=contact,request='ap2',group=get_anonymous_group(),security_context=group)
