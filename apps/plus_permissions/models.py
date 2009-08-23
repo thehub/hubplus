@@ -93,12 +93,13 @@ class SecurityContext(models.Model):
                  except KeyError:
                      selected_agent = sad[agent_defaults[typ.__name__]['defaults']['Unknown']]
                  self.move_slider(selected_agent, interface_str, skip_validation=True, no_user=True)
+        
          
 
          tag = self.create_security_tag(interface='SetPermissionManager')
          tag.save()
          tag.add_agents([self.context_admin])
-
+ 
      def is_agent(self, target):
          return ( isinstance(target.obj, User) or isinstance(target.obj, TgGroup) )
          # Maybe?  isinstance(target.obj, Site) ... 
@@ -144,7 +145,6 @@ class SecurityContext(models.Model):
          return self.context_admin
                     
      def create_security_tag(self, interface, agents=None):
-         #print "creating security tag", self, interface, agents
          tag = SecurityTag(security_context=self, interface=interface)
          tag.save()
          
@@ -332,6 +332,9 @@ class SecurityTag(models.Model) :
                      adds.append(agent)
          self.agents.add(*adds)
          self.save()
+
+
+
 
     def remove_agents(self, agents=None):
          """pass in a list of users and groups

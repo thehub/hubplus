@@ -117,19 +117,27 @@ def acquires_from(self, content_obj):
     ref.acquires_from = content_obj.get_ref()
     ref.save()
 
+def get_creator(self):
+    return self.get_ref().creator
 
 
 def add_create_method(content_type, child_type) :
 
     def f(self, user, **kwargs) :
+        # phil's version
         resource = child_type(**kwargs)
         resource.save()
         
         # now create its security_context etc.        
         resource.acquires_from(self)
-        resource.get_ref().creator = user
-        resource.get_ref().save()
+        ref = resource.get_ref()
 
+        ref.creator = user
+        ref.save()
+        print "XX", resource.get_creator(), user
+        assert(resource.get_creator()==user)
+
+        # phil's version
         return secure_wrap(resource, user)
     
     setattr(content_type,'create_%s' % child_type.__name__, f)
@@ -196,6 +204,7 @@ def security_patch(content_type, type_list):
     content_type.remove_arbitrary_agent = remove_arbitrary_agent
     content_type.get_all_sliders = get_all_sliders
     content_type.get_slider_level = get_slider_level
+    content_type.get_creator = get_creator
 
     for typ in type_list:
         add_create_method(content_type, typ)
@@ -208,7 +217,8 @@ def security_patch(content_type, type_list):
 
     def site_create_group(self, user, **kwargs):
         from apps.plus_permissions.types.TgGroup import get_or_create
-        return get_or_create(user=user, **kwargs)
+        group, created =  get_or_create(user=user, **kwargs)
+        return secure_wrap(group, user)
 
     from apps.plus_permissions.site import Site
     Site.create_TgGroup = site_create_group

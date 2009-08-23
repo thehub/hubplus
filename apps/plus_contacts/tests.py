@@ -76,16 +76,22 @@ class TestApplication(unittest.TestCase) :
         contact = site.create_Contact(god, first_name='kate', last_name='smith', email_address='kate@z.x.com')
         contact.save()
 
-
-        group = site.create_TgGroup(god, group_name='sexy_salad', display_name='Sexy Salad', level='member')
+        self.assertTrue(contact.get_inner().get_creator())
 
         import ipdb
-        ipdb.set_trace()
+        #ipdb.set_trace()
+        group = site.create_TgGroup(god, group_name='sexy_salad', display_name='Sexy Salad', level='member')
         
-        application = site.create_Application(god, applicant=contact, request='I want to join in', group=group)
+
+        self.assertTrue(group.get_inner().get_creator()) # group should have a creator
+        self.assertEquals(group.get_inner().get_creator().id,god.id)
+        
+        application = site.create_Application(god, applicant=contact, request='I want to join in')
+        
         application.group = group
         application.save()
-        
+
+
         self.assertEquals(application.date.date(),datetime.datetime.today().date())
         self.assertEquals(application.applicant, contact)
         self.assertEquals(application.request, 'I want to join in')
