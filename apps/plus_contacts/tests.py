@@ -9,7 +9,7 @@ from django.contrib.contenttypes import generic
 from django.contrib.auth.models import *
 from apps.plus_groups.models import *
 
-from models import Contact, Application
+from models import Contact, Application, PENDING
 
 
 from apps.plus_permissions.default_agents import get_site, get_admin_user, get_all_members_group
@@ -40,8 +40,8 @@ class TestContact(unittest.TestCase):
         self.assertEquals(self.ct.invited_by.username,'phil')
 
     def test_become_member(self):
-        u2 = User(username='admin',email_address='y@y.com')
-        u2.save()
+        u2 = get_admin_user()
+
         # now upgrade to a user
         u3 = self.ct.become_member('tom.salfield',  invited_by=self.u, accepted_by=u2)
         self.assertEquals(u2.__class__, User)
@@ -98,18 +98,17 @@ class TestApplication(unittest.TestCase) :
         self.assertEquals(application.date.date(),datetime.datetime.today().date())
 
 
-        self.assertEquals(application.applicant, contact)
+        self.assertTrue(application.applicant.s_eq(contact))
         self.assertEquals(application.request, 'I want to join in')
-        self.assertEquals(application.group, group)
+        self.assertTrue(application.group.s_eq(group))
         self.assertEquals(application.status, PENDING)
         self.assertEquals(application.admin_comment,'')
         self.assertEquals(application.accepted_by,None)
 
 
-
         # adding a couple more 
-        ap2 = make_application(applicant=contact,request='ap2',group=get_anonymous_group(),security_context=group)
-        ap3 = make_application(applicant=contact,request='ap3',group=get_all_members_group(),security_context=group)
+        ap2 = site.create_application(god, applicant=contact,request='ap2',group=get_anonymous_group(),security_context=group)
+        ap3 = site.create_application(god, applicant=contact,request='ap3',group=get_all_members_group(),security_context=group)
         
         self.assertEquals(self.count(Application.objects.filter()),3)
         self.assertEquals(self.count(Application.objects.filter(request='ap2')),1)

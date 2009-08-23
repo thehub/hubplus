@@ -182,6 +182,16 @@ def get_tag_for_interface(self, interface) :
                                    interface=interface)
     
 
+def s_eq(self, other):
+    """Secure Equality : compares self and other directly and the _inner of each with each."""
+    if self == other : return True
+    try :
+        if self == other.get_inner() : return True
+    except :
+        return False
+    return False
+
+
 
 from apps.plus_permissions.models import GenericReference, SecurityContext
 from django.db.models.signals import post_save
@@ -201,6 +211,7 @@ def security_patch(content_type, type_list):
     content_type.get_all_sliders = get_all_sliders
     content_type.get_slider_level = get_slider_level
     content_type.get_creator = get_creator
+    content_type.s_eq = s_eq
 
     for typ in type_list:
         add_create_method(content_type, typ)

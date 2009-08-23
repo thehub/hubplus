@@ -159,6 +159,18 @@ class SecureWrapper:
         raise PlusPermissionsReadOnlyException(self.get_inner_class(),name)        
 
 
+    def s_eq(self, other):
+        """Secure Equality : compares self and other directly and the _inner of each with each."""
+        inner = self.get_inner()
+        if inner == other : return True
+        try :
+            if inner == other.get_inner() : return True
+        except :
+            return False
+        return False
+
+
+
 def add_creator_interface(type):
     class CanCreate:
         pk = InterfaceReadProperty

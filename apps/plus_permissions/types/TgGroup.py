@@ -49,9 +49,11 @@ def get_or_create(group_name=None, display_name=None, place=None, level=None, us
             sec_context.save()
             group.add_member(admin_group)
             group.add_member(user)
+            group.save()
+
             if group.id != get_all_members_group().id :
                 get_all_members_group().add_member(group)
-            group.save()
+
             group.get_security_context().set_up()
 
             ref = group.get_ref()
