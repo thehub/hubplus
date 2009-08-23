@@ -51,6 +51,11 @@ def get_or_create(group_name=None, display_name=None, place=None, level=None, us
             group.add_member(user)
             group.save()
             group.get_security_context().set_up()
+
+            ref = group.get_ref()
+            ref.creator = user
+            ref.save()
+
         elif level == 'host':
             group.to_security_context()
             sec_context = group.get_security_context() 
@@ -61,9 +66,10 @@ def get_or_create(group_name=None, display_name=None, place=None, level=None, us
             group.save()
             group.get_security_context().set_up()
 
-    ref = group.get_ref()
-    ref.creator = user
-    ref.save()
+            ref = group.get_ref()
+            ref.creator = user
+            ref.save()
+
     return group, created
 
 # XXX will be moved to patch.py
