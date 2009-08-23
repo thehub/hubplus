@@ -342,13 +342,21 @@ class SecurityTag(models.Model) :
 def has_access(agent, resource, interface) :
     """Does the agent have access to this interface in this resource
     """
+    
+    # make sure we've stripped resource from any SecureWrappers
     if resource.__class__.__name__ == "SecureWrapper":
         resource = resource.get_inner()
+
+    # make sure we've stripped agent from any SecureWrappers
+    if agent.__class__.__name__ == "SecureWrapper":
+        agent = agent.get_inner()
+ 
     # we're always interested in the security_context of this resource
 
     context = resource.get_security_context()
-
     context_type = ContentType.objects.get_for_model(context)
+
+    
 
     # which agents have access?
 

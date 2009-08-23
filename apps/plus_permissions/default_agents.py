@@ -6,7 +6,7 @@ from django.db import models
 
 from apps.plus_permissions.site import Site
 
-def get_site() :
+def get_site(user) :
     ss = Site.objects.all()
     if len(ss) > 0 :
         return ss[0]
@@ -14,9 +14,11 @@ def get_site() :
     s.save() 
 
     admin = get_all_members_group().get_admin_group()
+    # permission-wise, the site lives under the all_members_admin group
     s.acquires_from(admin)
 
-    return s
+    from apps.plus_permissions.interfaces import secure_wrap
+    return secure_wrap(s, user)
 
 
 def get_or_create_root_location():
@@ -24,6 +26,7 @@ def get_or_create_root_location():
     if created:
         root_location.save()
     return root_location
+
 
 def get_admin_user():
     try:

@@ -49,6 +49,8 @@ def get_or_create(group_name=None, display_name=None, place=None, level=None, us
             sec_context.save()
             group.add_member(admin_group)
             group.add_member(user)
+            if group.id != get_all_members_group().id :
+                get_all_members_group().add_member(group)
             group.save()
             group.get_security_context().set_up()
 
@@ -183,7 +185,7 @@ AgentDefaults = {'public':
                             },
                       'Site' : 
                           {'defaults':
-                               {'Manager':'context_admin',
+                                {'create_Application':'anonymous_group',
                                 'Unknown': 'context_agent'},
                            'constraints':
                                [] 

@@ -12,7 +12,7 @@ from apps.plus_groups.models import *
 from models import Contact, Application
 
 
-from apps.plus_permissions.default_agents import get_site, get_all_members_group
+from apps.plus_permissions.default_agents import get_site, get_admin_user, get_all_members_group
 from apps.plus_permissions.interfaces import PlusPermissionsNoAccessException
 
 from apps.plus_permissions.models import has_access
@@ -69,10 +69,9 @@ class TestApplication(unittest.TestCase) :
         return count
 
     def test_application(self) :
-        site = get_site()
 
-        god = User(username='trickster', email_address='trickster@the-hub.net')
-        god.save()
+        god = get_admin_user() # now a standard user, and member of the site_members_group's admin
+        site = get_site(god)
 
         contact = site.create_Contact(god, first_name='kate', last_name='smith', email_address='kate@z.x.com')
         contact.save()
@@ -90,16 +89,15 @@ class TestApplication(unittest.TestCase) :
         # the following should be true because application was created by god
         # so god is its "creator" and default for Application.Editor is "creator"
 
-        import ipdb
-        ipdb.set_trace()
-
         self.assertTrue(has_access(god, application, 'Application.Editor'))
-        application.group = group
+        application.group = group.get_inner()
         application.save()
 
         self.assertTrue(has_access(group,application,'Application.Viewer'))
 
         self.assertEquals(application.date.date(),datetime.datetime.today().date())
+
+
         self.assertEquals(application.applicant, contact)
         self.assertEquals(application.request, 'I want to join in')
         self.assertEquals(application.group, group)

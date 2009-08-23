@@ -278,7 +278,7 @@ def apply(request, form_class=HubPlusApplicationForm,
         form = form_class(request.POST)
         print form
         if form.is_valid():
-            contact, application = form.save()
+            contact, application = form.save(request.user)
             return render_to_response('plus_contacts/application_thanks.html',{
             'group' : form.cleaned_data['group'],
             },context_instance=RequestContext(request))

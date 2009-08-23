@@ -22,7 +22,8 @@ from timezones.forms import TimeZoneField
 
 from account.models import PasswordReset
 
-from plus_contacts.models import Contact, Application, make_application
+from plus_contacts.models import Contact, Application
+from plus_permissions.default_agents import get_site
 
 from hubspace_compatibility.models import TgGroup
 
@@ -388,7 +389,7 @@ class HubPlusApplicationForm(forms.Form):
         return self.cleaned_data
 
         
-    def save(self):
+    def save(self, user):
 
         username = self.cleaned_data["username"]
         email = self.cleaned_data["email_address"]
@@ -399,7 +400,9 @@ class HubPlusApplicationForm(forms.Form):
             first_name=username
             last_name = ''
         
-        contact,created = Contact.objects.get_or_create(email_address=email)
+        site = get_site()
+
+        contact,created = site.create_Contact(user, email_address=email)
         if created :
             contact.first_name = first_name
             contact.last_name = last_name
@@ -409,7 +412,7 @@ class HubPlusApplicationForm(forms.Form):
             contact.save()
 
 
-        application = make_application(applicant=contact,
+        application = site.create_Application(user, applicant=contact,
                                        request=self.cleaned_data["about_and_why"],
                                        group=self.cleaned_data["group"])
 
