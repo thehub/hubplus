@@ -105,7 +105,7 @@ def get_security_context(self):
             ref.save()
         except:
             import ipdb
-            ipdb.set_trace()
+            #ipdb.set_trace()
     return ref.acquired_scontext
     
 def get_ref(self):

@@ -22,8 +22,8 @@ from avatar.templatetags.avatar_tags import avatar
 
 from apps.plus_lib.models import DisplayStatus, add_edit_key
 
-from apps.plus_permissions.models import SecurityTag
-from apps.plus_permissions.models import PlusPermissionsNoAccessException, PlusPermissionsReadOnlyException
+from apps.plus_permissions.models import SecurityTag, has_access
+from apps.plus_permissions.interfaces import PlusPermissionsNoAccessException, PlusPermissionsReadOnlyException
 
 
 from django.contrib.auth.decorators import login_required
@@ -138,12 +138,12 @@ def profile(request, username, template_name="profiles/profile.html"):
     skills = get_tags(tagged = other_user.get_profile(), tagger = other_user, tag_type = 'skill')
     needs = get_tags(tagged = other_user.get_profile(), tagger = other_user, tag_type = 'need')
 
-    if ps.has_access(request.user, other_user.get_profile(), ps.get_interface_factory().get_id(Profile,'Viewer')) :
+    if has_access(request.user, other_user.get_profile(), 'Profile.Viewer') :
 
         dummy_status = DisplayStatus("Dummy Status"," about 3 hours ago")
 
         profile = other_user.get_profile()
-        profile = interface_wrap(profile)
+        profile = secure_wrap(profile, request.user)
 
         return render_to_response(template_name, {
                 "profile_form": profile_form,
@@ -172,7 +172,7 @@ def profile(request, username, template_name="profiles/profile.html"):
 Current Permissions
 <ul>%s</ul>...""" % (request.user, other_user.get_profile(),'Viewer', 
        ''.join([
-          ('<li>%s</li>'%x) for x in ps.get_tags_on(other_user.get_profile())
+          ('<li>%s</li>'%x) for x in ps.get_security_context().get_tags()
           ]),
        ), status=401 )
 
@@ -181,7 +181,7 @@ def our_profile_permission_test(fn) :
     def our_fn(request,username,*args,**kwargs) :
         other_user = get_object_or_404(User,username=username)
         profile = other_user.get_profile()
-        if not ps.has_access(request.user,profile,ps.get_interface_id(Profile,'Editor')) :
+        if not has_access(request.user,profile,'Profile.Viewer') :
             return HttpResponse("You don't have permission to do that to %s, you are %s" % (username,request.user),status=401)
         else :
             return fn(request, username, *args, **kwargs)
@@ -201,7 +201,7 @@ def update_profile_form(request,username) :
     """ Get a prefilled basic form for the profile """
     other_user = get_object_or_404(User,username=username)
     p = other_user.get_profile()
-    if not ps.has_access(request.user,p,ps.get_interface_id(Profile,'Editor')) :
+    if not has_access(request.user,p,'Profile.Viewer') :
         raise PlusPermissionsNoAccessException(Profile,p.pk,'update_profile_form')
     else :
         profile_form = ProfileForm(request.POST, p)
@@ -216,7 +216,7 @@ def profile_field(request,username,classname,fieldname,*args,**kwargs) :
     print "username %s, classname %s, fieldname %s" % (username,classname,fieldname)
     other_user = get_object_or_404(User,username=username)
     p = other_user.get_profile()
-    if not ps.has_access(request.user,p,ps.get_interface_id(Profile,'Editor')) :
+    if not has_access(request.user,p,'Profile.Viewer') :
         return HttpResponse("You aren't authorized to access %s in %s for %s. You are %s" % (fieldname,classname,username,request.user),status=401)
     else :
         if classname == 'Profile' :
@@ -250,11 +250,8 @@ def one_model_field(request, object, formClass, fieldname, default, other_object
 
 @login_required
 def get_main_permission_sliders(request,username):
-    pm = ps.get_permission_manager(Profile)
-    p = request.user.get_profile()
-    json = pm.main_json_slider_group(p)
-    print json
-    return HttpResponse(json, mimetype='text/plain')
+    """XXX NEEDS REWRITING"""
+    return HttpResponse(MAKE_MY_JSON_FOR_THIS, mimetype='text/plain')
 
 def content_object(c_type, c_id) :
     a_type = ContentType.objects.get_for_id(c_type)
@@ -264,25 +261,5 @@ def content_object(c_type, c_id) :
 
 @login_required
 def update_main_permission_sliders(request,username) :
-    
-    p = request.user.get_profile()
-    post = request.POST
-
-    print post
-    kill = [(x[0],x[1]) for x in eval(post.get('kill'))]
-
-    resource = content_object(post['resource_type'], post['resource_id'])
-
-    for iface in post.iterkeys() :
-        print "interface ",iface
-        if iface != 'kill' and iface != 'resource_type' and iface != 'resource_id' : 
-            opt = eval(post.get(iface))
-            agent = content_object(opt[0], opt[1])
-            print "AA"
-
-            SecurityTag.objects.update(name='from update_main_permission_sliders',new=agent,resource=resource,interface=iface,creator=request.user,kill=kill)
-            print "BB"
-
-
-    for x in ps.get_tags_on(resource) :  print x
-    return HttpResponse('ok', mimetype='text/plain')
+    """XXX REWRITE"""
+    pass
