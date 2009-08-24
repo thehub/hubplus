@@ -118,7 +118,8 @@ INSTALLED_APPS = (
     'django.contrib.sites',
     'django.contrib.humanize',
     'django.contrib.markup',
-    
+    'django_evolution',
+
     # external
     'notification', # must be first
     'django_openid',
