@@ -3,6 +3,7 @@ from apps.plus_permissions.models import SetSliderOptions, SetAgentDefaults, Set
 from apps.hubspace_compatibility.models import TgGroup
 from apps.plus_permissions.OurPost import OurPost
 from apps.plus_contacts.models import Application, Contact
+from apps.profiles.models import Profile
 from apps.plus_permissions.site import Site
 from django.db.models.signals import post_save
 import datetime
@@ -143,7 +144,7 @@ SetSliderOptions(TgGroup, SliderOptions)
 
 # ChildTypes are used to determine what types of objects can be created in this security context (and acquire security context from this). These are used when creating an explicit security context for an object of this type. 
 
-child_types = [OurPost, Site, Application, Contact]
+child_types = [OurPost, Site, Application, Contact, Profile]
 SetPossibleTypes(TgGroup, child_types)
 
 
@@ -205,6 +206,22 @@ AgentDefaults = {'public':
                                           'Unknown': 'context_agent'
                                           },
                             'constraints':[]
+                            },
+                      'Profile':
+                          { 'defaults': {'Viewer': 'anonymous_group',
+                                         'Editor': 'creator',
+                                         'EmailAddressViewer' : 'context_agent',
+                                         'HomeViewer' : 'context_agent',
+                                         'WorkViewer' : 'context_agent',
+                                         'MobileViewer' : 'context_agent',
+                                         'FaxViewer' : 'context_agent',
+                                         'AddressViewer' : 'context_agent',
+                                         'SkypeViewer' : 'context_agent',
+                                         'SipViewer' : 'context_agent',
+                                         'Unknown' : 'creator',
+                                         
+                                         },
+                            'constraints':[]
                             }
                       },
                  
@@ -250,7 +267,24 @@ AgentDefaults = {'public':
                                           'Unknown': 'context_agent',
                                           },
                             'constraints':[]
+                            },
+                      'Profile':
+                          { 'defaults': {'Viewer': 'anonymous_group',
+                                         'Editor': 'creator',
+                                         'EmailAddressViewer' : 'context_agent',
+                                         'HomeViewer' : 'context_agent',
+                                         'WorkViewer' : 'context_agent',
+                                         'MobileViewer' : 'context_agent',
+                                         'FaxViewer' : 'context_agent',
+                                         'AddressViewer' : 'context_agent',
+                                         'SkypeViewer' : 'context_agent',
+                                         'SipViewer' : 'context_agent',
+                                         'Unknown' : 'creator',
+                                         
+                                         },
+                            'constraints':[]
                             }
+
 
                       }
                  }

@@ -10,6 +10,9 @@ from django.core.urlresolvers import reverse
 from django.contrib.auth.decorators import login_required
 from django.db import models
 
+from django.contrib.auth.models import AnonymousUser
+
+from apps.plus_permissions.default_agents import get_anonymous_group, get_anon_user
 
 from account.utils import get_default_redirect
 from account.models import OtherServiceInfo
@@ -274,11 +277,14 @@ other_services_remove = login_required(other_services_remove)
 def apply(request, form_class=HubPlusApplicationForm,
         template_name="account/apply_form.html"):
 
+    user = request.user
     if request.method == "POST":
         form = form_class(request.POST)
         print form
         if form.is_valid():
-            contact, application = form.save(request.user)
+            if user.__class__ == AnonymousUser :
+                user = get_anon_user()
+            contact, application = form.save(user)
             return render_to_response('plus_contacts/application_thanks.html',{
             'group' : form.cleaned_data['group'],
             },context_instance=RequestContext(request))

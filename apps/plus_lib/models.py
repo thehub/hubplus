@@ -23,3 +23,12 @@ def extract(d,key) :
     else :
         v = None
     return v
+
+
+def make_user(name, password, email_address) :
+    from django.contrib.auth.models import User
+
+    u = User(username=name, email_address=email_address)
+    u.save()
+    u.set_password(password)
+    

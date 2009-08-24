@@ -26,18 +26,18 @@ from apps.plus_permissions.interfaces import secure_wrap
 class PermissionableManager(models.Manager) :
     # if a permission_agent is passed, only get or filter items which 
     # pass a security check
-    def plus_filter(self, user, **kwargs) : 
-        return (secure_wrap(resource, user)  
+    def plus_filter(self, p_user, **kwargs) : 
+        return (secure_wrap(resource, p_user)  
                 for resource in super(self.__class__, self).filter(**kwargs)
-                if has_access(user, resource, '%s.%s'%(resource.__class__.__name__,'Viewer')))
+                if has_access(p_user, resource, '%s.%s'%(resource.__class__.__name__,'Viewer')))
         
-    def plus_get(self, user, **kwargs) :
+    def plus_get(self, p_user, **kwargs) :
         a = super(self.__class__,self).get(**kwargs)
-        return secure_wrap(a, user)
+        return secure_wrap(a, p_user)
  
-    def plus_count(self, user, **kwargs) :
+    def plus_count(self, p_user, **kwargs) :
         count = 0
-        for res in self.plus_filter(user, **kwargs) :
+        for res in self.plus_filter(p_user, **kwargs) :
             count = count + 1
         return count
 
@@ -124,19 +124,22 @@ def get_creator(self):
 
 def add_create_method(content_type, child_type) :
 
-    def f(self, user, **kwargs) :
+    def f(self, creator, **kwargs) :
         # phil's version
         resource = child_type(**kwargs)
         resource.save()
         # now create its security_context etc.        
         resource.acquires_from(self)
         ref = resource.get_ref()
-        ref.creator = user
+        ref.creator = creator
         ref.save()
-        assert(resource.get_creator()==user)
-        return secure_wrap(resource, user)
+        assert(resource.get_creator()==creator)
+        return secure_wrap(resource, creator)
+
     
     setattr(content_type,'create_%s' % child_type.__name__, f)
+
+
 
 from apps.plus_permissions.interfaces import PlusPermissionsNoAccessException
 
@@ -145,15 +148,20 @@ def move_sliders(self, interface_level_map, type_name, user):
     if scontext:
         return scontext.move_sliders(interface_level_map, type_name, user)
 
-def add_arbitrary_agent(self, interface, user):
+def add_arbitrary_agent(self, new_agent, interface, p_user):
     scontext = self.get_ref().explicit_scontext
     if scontext:
-        return scontext.add_arbitrary_agent(old_agent, interface, user)
+        return scontext.add_arbitrary_agent(new_agent, interface, p_user)
+    else :
+        raise Exception("Shouldn't try to assign arbitrary agent to content_type %s which doesn't have over-ridden security_context" % self)
 
-def remove_arbitrary_agent(self, old_agent, interface, user):
+def remove_arbitrary_agent(self, old_agent, interface, p_user):
     scontext = self.get_ref().explicit_scontext
     if scontext:
-        return scontext.remove_arbitrary_agent(old_agent, interface, user)
+        return scontext.remove_arbitrary_agent(old_agent, interface, p_user)
+    else :
+        raise Exception("Shouldn't try to remove arbitrary agent to content_type %s which doesn't have over-ridden security_context" %self)
+
 
 def get_all_sliders(self, type):
     scontext = self.get_ref().explicit_scontext

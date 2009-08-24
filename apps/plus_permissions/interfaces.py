@@ -82,6 +82,7 @@ class SecureWrapper:
             lambda x : x[0] == '_',
             lambda x : x == 'id',
             lambda x : x == 'save',
+            lambda x : x == 'get_ref',
         ]
         self.__dict__['_permissions'] = {InterfaceReadProperty: set(),
                                          InterfaceCallProperty: set(),

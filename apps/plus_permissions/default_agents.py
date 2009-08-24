@@ -49,6 +49,16 @@ def get_anonymous_group():
         anonymous_group = anonymous_group[0] # filter returns a QuerySet
     return anonymous_group
 
+
+def get_anon_user():
+    try:
+        anon_user =  User.objects.filter(username='anon')[0]
+    except IndexError:
+        anon_user = User(username='anon', email_address='anon@null.com')
+        anon_user.save()
+        get_anonymous_group().add_member(anon_user)
+    return anon_user
+
 def set_all_members_group():
     admin_user = get_admin_user()
     return TgGroup.objects.get_or_create(group_name='all_members', display_name='All Members', place=get_or_create_root_location(), level='member', user=admin_user)
@@ -75,4 +85,6 @@ def get_creator_agent() :
     return c.get_ref()
 
 
+
+    
 
