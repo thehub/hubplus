@@ -12,10 +12,12 @@ from apps.plus_groups.models import *
 from models import Contact, Application, PENDING
 
 
-from apps.plus_permissions.default_agents import get_site, get_admin_user, get_all_members_group
+from apps.plus_permissions.default_agents import get_site, get_admin_user, get_all_members_group, get_anonymous_group
 from apps.plus_permissions.interfaces import PlusPermissionsNoAccessException
 
 from apps.plus_permissions.models import has_access
+
+from apps.plus_lib.utils import i_debug
 
 class TestContact(unittest.TestCase):
 
@@ -68,6 +70,7 @@ class TestApplication(unittest.TestCase) :
             count= count+1
         return count
 
+    #@i_debug
     def test_application(self) :
 
         god = get_admin_user() # now a standard user, and member of the site_members_group's admin
@@ -107,34 +110,37 @@ class TestApplication(unittest.TestCase) :
 
 
         # adding a couple more 
-        ap2 = site.create_application(god, applicant=contact,request='ap2',group=get_anonymous_group(),security_context=group)
-        ap3 = site.create_application(god, applicant=contact,request='ap3',group=get_all_members_group(),security_context=group)
+
+        ap2 = site.create_Application(god, applicant=contact,request='ap2',group=get_anonymous_group())
+        ap3 = site.create_Application(god, applicant=contact,request='ap3',group=get_all_members_group())
         
         self.assertEquals(self.count(Application.objects.filter()),3)
         self.assertEquals(self.count(Application.objects.filter(request='ap2')),1)
 
         u = User(username='mable',email_address='mable@b.com')
         u.save()
-        self.assertEquals(self.count(Application.objects.filter(permission_agent=u)),0)
+        self.assertEquals(Application.objects.plus_count(u),0)
 
         # now there's a security tag which links "group" as context to the interface "ApplicationViewer"
-        t = ps.create_security_tag(group,ps.get_interface_id(Application,'Viewer'),[u])
-        t.save()
+
+        site.get_inner().get_security_context().add_arbitrary_agent(group, 'Application.Viewer', god)
         
-        self.assertEquals(self.count(Application.objects.filter(permission_agent=u)),3)
-        
-        application = Application.objects.get(id=application.id,permission_agent=u)
+        self.assertEquals(Application.objects.plus_count(u),3)
+            
+        application = Application.objects.plus_get(id=application.id,p_agent=u)
         
         def f(application,sponsor) :
             application.accept(sponsor)
+        
         self.assertRaises(PlusPermissionsNoAccessException,f,application,u)
-
+            
         self.assertEquals(application.status,PENDING)
 
         application = Application.objects.get(id=application.id,permission_agent=application.group)
         application.accept(u,admin_comment='great choice')
         self.assertEquals(application.status,WAITING_USER_SIGNUP)
         self.assertEquals(application.admin_comment,'great choice')
+
 
         
         

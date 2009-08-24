@@ -25,9 +25,6 @@ class ProfileViewer:
     display_name = InterfaceReadProperty
     title = InterfaceReadProperty
 
-    @classmethod
-    def get_id(self) : 
-        return 'Profile.Viewer'
 
 class ProfileEmailAddressViewer:
     email_address = InterfaceReadProperty

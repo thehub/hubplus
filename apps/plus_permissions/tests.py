@@ -142,14 +142,13 @@ class TestAccess(unittest.TestCase) :
         nahia = User(username='nahia', email_address='nahia@the-hub.net')
         nahia.save()
         
-        adam = User(username='adam', email_address='adam@the-hub.net')
-        adam.save()
+        adam = get_admin_user()
 
         kx, created = TgGroup.objects.get_or_create(group_name='kingsX', display_name='Hub Kings Cross', 
                                                 level='member', user=adam)
         kxsc = kx.to_security_context()
 
-        blog = kx.create_OurPost(title='my blog', user=adam)
+        blog = kx.create_OurPost(title='my blog', creator=adam)
         blog.save()
         
         # assert that the blog post acquires it's security context from Kings Cross
@@ -185,7 +184,7 @@ class TestAccess(unittest.TestCase) :
         self.assertTrue( has_access(tuba, blog, "OurPost.Viewer"))
         
         # Now we test that a second blog-post that's created starts with similar access
-        blog2 = kx.create_OurPost(user=adam, title='second post')
+        blog2 = kx.create_OurPost(creator=adam, title='second post')
         blog2.save()
 
         self.assertTrue(has_access(tuba, blog2, "OurPost.Viewer"))
@@ -195,9 +194,9 @@ class TestAccess(unittest.TestCase) :
         self.assertFalse(has_access(tuba, blog2, "OurPost.Editor"))
         
         # add an arbitrary agent and remove her agaiin 
-        blog._inner.get_security_context().add_arbitrary_agent(tuba, 'OurPost.Editor', adam)
+        blog._inner.get_context().add_arbitrary_agent(tuba, 'OurPost.Editor', adam)
         self.assertTrue(has_access(tuba, blog, "OurPost.Editor"))
-        blog._inner.get_security_context().remove_arbitrary_agent(tuba, 'OurPost.Editor', adam)
+        blog._inner.get_context().remove_arbitrary_agent(tuba, 'OurPost.Editor', adam)
         self.assertFalse(has_access(tuba, blog, "OurPost.Editor"))        
 
         #test moving the sliders around
@@ -311,7 +310,7 @@ class TestAccess(unittest.TestCase) :
 
         #
         def try_create_post(secure_kx):
-            return secure_kx.create_OurPost(title='another post', body="Here's what", user=caroline)
+            return secure_kx.create_OurPost(title='another post', body="Here's what", creator=caroline)
         self.assertRaises(PlusPermissionsNoAccessException, try_create_post, carolines_kx_secure)
 
         def view_attribute(sec_object, attr_name):
@@ -355,11 +354,11 @@ class TestSecurityContexts(unittest.TestCase):
                                                       place=None, level='member', user=u)
         group.to_security_context()
         group.add_member(u)
-        blog = group.create_OurPost(title='using defaults', user=u)
+        blog = group.create_OurPost(title='using defaults', creator=u)
         
         self.assertEquals(blog.get_inner().get_security_context().id, group.get_security_context().id)
 
-        blog2 = group.create_OurPost(title='I did it my way', user=u)
+        blog2 = group.create_OurPost(title='I did it my way', creator=u)
 
         sc2 = blog2.get_inner().to_security_context()
         blog2.get_inner().set_security_context(sc2)
@@ -415,11 +414,11 @@ class TestDecorators(unittest.TestCase) :
                                                       display_name="Loki's Group", 
                                                       place=None, level='member', user=god)
 
-        blog1 = group.create_OurPost(user=god, title='post1', body='X')
+        blog1 = group.create_OurPost(creator=god, title='post1', body='X')
         self.assertEquals(blog1._inner.get_ref().acquires_from, group.get_ref())
-        blog2 = group.create_OurPost(user=god, title='post2', body='X')
+        blog2 = group.create_OurPost(creator=god, title='post2', body='X')
         self.assertEquals(blog2._inner.get_ref().acquires_from, group.get_ref())
-        blog3 = group.create_OurPost(user=god, title='post3', body='X')
+        blog3 = group.create_OurPost(creator=god, title='post3', body='X')
         self.assertEquals(blog3._inner.get_ref().acquires_from, group.get_ref())
 
         manfred = User(username='manfred', email_address='manfred@the-hub.net')

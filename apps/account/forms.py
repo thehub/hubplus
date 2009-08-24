@@ -402,14 +402,16 @@ class HubPlusApplicationForm(forms.Form):
         
         site = get_site(get_admin_user())
 
-        contact,created = site.create_Contact(user, email_address=email)
-        if created :
+        if Contact.objects.filter(email_address=email).count() < 1 :
+            contact= site.create_Contact(user, email_address=email)
             contact.first_name = first_name
             contact.last_name = last_name
             contact.username = username
             contact.find_out = self.cleaned_data["find_out"]
             contact.email_address = email
             contact.save()
+        else :
+            contact = Contact.objects.get(email_address=email)
 
 
         application = site.create_Application(user, applicant=contact,

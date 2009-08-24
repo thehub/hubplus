@@ -138,6 +138,26 @@ class SecurityContext(models.Model):
      def get_tags(self) :
          return SecurityTag.objects.filter(security_context=self)
 
+     def get_tags_for_interface(self, interface):
+         return SecurityTag.objects.filter(security_context=self, interface=interface)
+
+     def get_interfaces(self):
+         s = set([tag.interface for tag in self.get_tags()])
+         return [x for x in s]
+
+     def diagnose_interface(self, iface):
+         print iface
+         for t in self.get_tags_for_interface(iface):
+             print t.security_context.context_agent.obj,
+             for a in t.agents.all() :
+                 print a.obj
+
+     def diagnose(self, interface=None):
+         if interface : self.diagnose_interface(interface)
+         for i in self.get_interfaces():
+             self.diagnose_interface(i)
+             
+
      def validate_constraints(self, type_name):
          slider_agents = SliderAgents[self.context_agent.obj.__class__](self)
          slider_agents.reverse()
@@ -231,7 +251,7 @@ class SecurityContext(models.Model):
                  break
              highest = agent
          return highest.obj
-     
+
      def add_arbitrary_agent(self, new_agent, interface, user):
          self.can_set_manage_permissions(interface, user)
          tag = SecurityTag.objects.get(interface=interface, security_context=self)

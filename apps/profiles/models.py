@@ -6,6 +6,8 @@ from django.utils.translation import ugettext_lazy as _
 from django.contrib.contenttypes import generic
 from django.contrib.contenttypes.models import ContentType
 
+from apps.plus_permissions.default_agents import get_admin_user, get_site
+
 from timezones.fields import TimeZoneField
 
 import itertools
@@ -91,7 +93,17 @@ import logging
 def create_profile(sender, instance=None, **kwargs):
    if instance is None:
       return
-   profile, created = Profile.objects.get_or_create(user=instance)
+
+   # The admin user can't have a profile created automatically like this 
+   if instance.username == 'admin' : 
+      return
+   import ipdb
+   #ipdb.set_trace()
+   
+   god = get_admin_user()
+   site = get_site(god)
+   if Profile.objects.filter(user__username=instance.username).count() < 1 :
+      profile = site.create_Profile(instance, user=instance)
 
 post_save.connect(create_profile, sender=User)
 
