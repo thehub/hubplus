@@ -1,3 +1,5 @@
+import ipdb
+ipdb.set_trace()
 
 from apps.plus_permissions.permissionable import security_patch
 from apps.plus_permissions import types
@@ -16,7 +18,9 @@ def add_create_interfaces(content_type, child_types):
         SliderOptions[content_type]['InterfaceOrder'].append(key)
 
 
+
 for module in types.__all__:
+    print "patching %s"% module
     content_type =  globals()[module].content_type
     child_types  =  globals()[module].child_types
     security_patch(content_type, child_types)

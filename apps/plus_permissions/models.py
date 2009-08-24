@@ -2,7 +2,7 @@ from django.db import models
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes import generic
 
-from django.contrib.auth.models import User
+from django.contrib.auth.models import User, AnonymousUser
 from apps.hubspace_compatibility.models import TgGroup
 from django.db.transaction import commit_on_success
 
@@ -405,7 +405,11 @@ def has_access(agent, resource, interface) :
         actual_creator = resource.get_ref().creator
         if agent == actual_creator:
             return True
-          
+
+    if agent.__class__ == AnonymousUser :
+        # we clearly shouldn't be seeing this 
+        return False
+
     agents_held = agent.get_enclosure_set()
     if allowed_agents.intersection(agents_held):
         return True

@@ -31,11 +31,18 @@ if association_model is not None:
 def login(request, form_class=LoginForm,
         template_name="account/login.html", success_url=None,
         associate_openid=False, openid_success_url=None, url_required=False):
+
     if success_url is None:
         success_url = get_default_redirect(request)
+
+
+
     if request.method == "POST" and not url_required:
+
+
         form = form_class(request.POST)
         if form.login(request):
+            print "DDD"
             if associate_openid and association_model is not None:
                 for openid in request.session.get('openids', []):
                     assoc, created = UserOpenidAssociation.objects.get_or_create(
@@ -44,8 +51,13 @@ def login(request, form_class=LoginForm,
                 success_url = openid_success_url or success_url
             return HttpResponseRedirect(success_url)
     else:
+
+
         form = form_class()
+
+
     return render_to_response(template_name, {
+
         "form": form,
         "url_required": url_required,
     }, context_instance=RequestContext(request))

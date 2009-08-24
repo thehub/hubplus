@@ -205,6 +205,7 @@ from apps.plus_permissions.models import GenericReference, SecurityContext
 from django.db.models.signals import post_save
 
 def security_patch(content_type, type_list):  
+    print "I iz in ur security_patch, patching ur type %s" %content_type
     content_type.add_to_class('ref', generic.GenericRelation(GenericReference))
     content_type.get_ref = get_ref
     content_type.to_security_context = to_security_context
