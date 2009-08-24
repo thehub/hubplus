@@ -96,10 +96,7 @@ def create_profile(sender, instance=None, **kwargs):
 
    # The admin user can't have a profile created automatically like this 
    if instance.username == 'admin' : 
-      return
-   import ipdb
-   #ipdb.set_trace()
-   
+      return   
    god = get_admin_user()
    site = get_site(god)
    if Profile.objects.filter(user__username=instance.username).count() < 1 :
