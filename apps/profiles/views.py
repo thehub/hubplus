@@ -138,12 +138,18 @@ def profile(request, username, template_name="profiles/profile.html"):
     skills = get_tags(tagged = other_user.get_profile(), tagger = other_user, tag_type = 'skill')
     needs = get_tags(tagged = other_user.get_profile(), tagger = other_user, tag_type = 'need')
 
-    if has_access(request.user, other_user.get_profile(), 'Profile.Viewer') :
+    profile = other_user.get_profile()
+    user = request.user
+
+    print "KKK"
+    print user
+    print profile
+
+    if has_access(user, profile, 'Profile.Viewer') :
 
         dummy_status = DisplayStatus("Dummy Status"," about 3 hours ago")
 
-        profile = other_user.get_profile()
-        profile = secure_wrap(profile, request.user)
+        profile = secure_wrap(profile, user)
 
         return render_to_response(template_name, {
                 "profile_form": profile_form,
@@ -263,3 +269,5 @@ def content_object(c_type, c_id) :
 def update_main_permission_sliders(request,username) :
     """XXX REWRITE"""
     pass
+
+

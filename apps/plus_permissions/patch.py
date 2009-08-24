@@ -5,6 +5,9 @@ from apps.plus_permissions.types import *
 from apps.plus_permissions.models import type_interfaces_map, SliderOptions
 from apps.plus_permissions.interfaces import add_creator_interface, add_manage_permissions_interface
 
+from django.db.models.signals import post_save
+
+
 # Add the create_* interfaces and sliders 
 def add_create_interfaces(content_type, child_types):
     for child in child_types:
@@ -22,9 +25,18 @@ for module in types.__all__:
     type_interfaces_map[content_type.__name__]['ManagePermissions'] = add_manage_permissions_interface()
 
 
+# The following two patches are being done here, because both 
+def site_create_group(self, user, **kwargs):
+    from apps.plus_permissions.types.TgGroup import get_or_create
+    group, created =  get_or_create(user=user, **kwargs)
+    return secure_wrap(group, user)
 
-from django.contrib.auth.models import User
-security_patch(User,[])
+from apps.plus_permissions.site import Site
+Site.create_TgGroup = site_create_group
+
+from apps.profiles.models import Profile, create_profile
+post_save.connect(create_profile, sender=User)
+
 
 from default_agents import CreatorMarker
 security_patch(CreatorMarker,[])

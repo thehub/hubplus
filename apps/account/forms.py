@@ -404,6 +404,7 @@ class HubPlusApplicationForm(forms.Form):
 
         if Contact.objects.filter(email_address=email).count() < 1 :
             contact= site.create_Contact(user, email_address=email)
+            contact = contact.get_inner()
             contact.first_name = first_name
             contact.last_name = last_name
             contact.username = username

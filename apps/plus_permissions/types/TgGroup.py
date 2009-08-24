@@ -202,7 +202,7 @@ AgentDefaults = {'public':
                             'constraints':['Viewer>=Editor', 'Editor<$anonymous_group']
                             },                      
                       'Contact':
-                          { 'defaults' : {'ContactAdmin':'creator',
+                          { 'defaults' : {'ContactAdmin':'context_admin',
                                           'Unknown': 'context_agent'
                                           },
                             'constraints':[]
@@ -263,7 +263,7 @@ AgentDefaults = {'public':
                             'constraints':['Viewer>=Editor', 'Editor<$anonymous_group']
                             },                      
                       'Contact':
-                          { 'defaults' : {'ContactAdmin':'creator',
+                          { 'defaults' : {'ContactAdmin':'context_admin',
                                           'Unknown': 'context_agent',
                                           },
                             'constraints':[]

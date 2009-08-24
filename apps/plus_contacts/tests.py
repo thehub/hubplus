@@ -9,7 +9,7 @@ from django.contrib.contenttypes import generic
 from django.contrib.auth.models import *
 from apps.plus_groups.models import *
 
-from models import Contact, Application, PENDING
+from models import Contact, Application, PENDING, WAITING_USER_SIGNUP
 
 
 from apps.plus_permissions.default_agents import get_site, get_admin_user, get_all_members_group, get_anonymous_group
@@ -117,30 +117,35 @@ class TestApplication(unittest.TestCase) :
         self.assertEquals(self.count(Application.objects.filter()),3)
         self.assertEquals(self.count(Application.objects.filter(request='ap2')),1)
 
-        u = User(username='mable',email_address='mable@b.com')
-        u.save()
-        self.assertEquals(Application.objects.plus_count(u),0)
+        mable = User(username='mable',email_address='mable@b.com')
+        mable.save()
+        self.assertEquals(Application.objects.plus_count(mable),0)
 
         # now there's a security tag which links "group" as context to the interface "ApplicationViewer"
-
         site.get_inner().get_security_context().add_arbitrary_agent(group, 'Application.Viewer', god)
         
-        self.assertEquals(Application.objects.plus_count(u),3)
+        self.assertTrue(has_access(group, ap2, 'Application.Viewer'))
+
+        self.assertFalse(has_access(mable, ap2, 'Application.Viewer'))
+
+        self.assertEquals(Application.objects.plus_count(group),3)
             
-        application = Application.objects.plus_get(id=application.id,p_agent=u)
+        s_application = Application.objects.plus_get(mable, id=application.id)
         
         def f(application,sponsor) :
             application.accept(sponsor)
         
-        self.assertRaises(PlusPermissionsNoAccessException,f,application,u)
+        self.assertRaises(PlusPermissionsNoAccessException,f,s_application,mable)
             
-        self.assertEquals(application.status,PENDING)
+        self.assertEquals(s_application.get_inner().status,PENDING)
 
-        application = Application.objects.get(id=application.id,permission_agent=application.group)
-        application.accept(u,admin_comment='great choice')
+        application = Application.objects.get(id=application.id)
+
+        application.accept(mable,admin_comment='great choice')
+
         self.assertEquals(application.status,WAITING_USER_SIGNUP)
         self.assertEquals(application.admin_comment,'great choice')
-
+        self.assertEquals(application.accepted_by, mable)
 
         
         
