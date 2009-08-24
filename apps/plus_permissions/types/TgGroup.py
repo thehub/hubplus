@@ -196,13 +196,13 @@ AgentDefaults = {'public':
                       'Application':
                           { 'defaults' : {'Viewer':'all_members_group',
                                           'Editor':'creator',
-                                          'Accept':'context_agent',
+                                          'Accept':'all_members_group',
                                           'Unknown': 'context_agent'
                                           },
                             'constraints':['Viewer>=Editor', 'Editor<$anonymous_group']
                             },                      
                       'Contact':
-                          { 'defaults' : {'ContactAdmin':'creator',
+                          { 'defaults' : {'ContactAdmin':'context_admin',
                                           'Unknown': 'context_agent'
                                           },
                             'constraints':[]
@@ -263,7 +263,7 @@ AgentDefaults = {'public':
                             'constraints':['Viewer>=Editor', 'Editor<$anonymous_group']
                             },                      
                       'Contact':
-                          { 'defaults' : {'ContactAdmin':'creator',
+                          { 'defaults' : {'ContactAdmin':'context_admin',
                                           'Unknown': 'context_agent',
                                           },
                             'constraints':[]

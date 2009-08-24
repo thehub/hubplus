@@ -15,6 +15,16 @@
 <p>The resource is {{resource}}</p>
 
 <p>{{msg}}</p> 
-
+{% if tags %}
+This security context : {{security_context}} :
+<table>
+{% for t in tags %}
+   <tr>
+     <td>{{t.interface}}</td>
+     <td>{{t.agents.all.obj}}</td>
+   </tr>
+{% endfor %}
+</table>
+{% endif %}
 
 {% endblock %}

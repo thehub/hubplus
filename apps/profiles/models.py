@@ -90,19 +90,6 @@ class Profile(models.Model):
 import logging
 
 
-def create_profile(sender, instance=None, **kwargs):
-   if instance is None:
-      return
-
-   # The admin user can't have a profile created automatically like this 
-   if instance.username == 'admin' : 
-      return   
-   god = get_admin_user()
-   site = get_site(god)
-   if Profile.objects.filter(user__username=instance.username).count() < 1 :
-      profile = site.create_Profile(instance, user=instance)
-
-post_save.connect(create_profile, sender=User)
 
 class HostInfo(models.Model):
     """ Information asked by hosts about this user """
@@ -114,13 +101,29 @@ class HostInfo(models.Model):
     project_stage = models.TextField(max_length=250,null=True,blank=True)
     assistance_offered = models.TextField(max_length=250,null=True,blank=True)
 
-
-
  
 def create_host_info(sender, instance=None, **kwargs) :
     if instance is None : 
         return
-    host_info, created = HostInfo.objects.get_or_create(user=instance)
+    host_info, created = HostInfo.objects.get_or_create(user=instance.user)
 
-post_save.connect(create_host_info,sender=User) 
+post_save.connect(create_host_info,sender=Profile) 
+
+
+def create_profile(sender, instance=None, **kwargs):
+   if instance is None:
+      return
+   
+   if Profile.objects.filter(user__username=instance.username).count() < 1 :
+      profile = instance.create_Profile(instance, user=instance)
+
+
+
+
+
+
+
+
+
+
 

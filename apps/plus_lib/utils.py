@@ -1,9 +1,10 @@
 
 def i_debug(f):
-    def g(self):
+    def g(*args, **kwargs):
         try :
-            f(self)
+            f(*args,**kwargs)
         except Exception, e :
             import ipdb
             ipdb.set_trace()
     return g
+

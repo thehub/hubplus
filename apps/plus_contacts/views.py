@@ -15,6 +15,7 @@ from django.template import RequestContext
 
 from apps.plus_contacts.models import Application, PENDING, WAITING_USER_SIGNUP
 
+from apps.plus_permissions.interfaces import PlusPermissionsNoAccessException
  
 
 @login_required
@@ -33,7 +34,7 @@ def list_of_applications(request, template_name="plus_contacts/applicant_list.ht
 
 @login_required
 def accept_application(request,id) :
-    application = Application.objects.get(id=id,permission_agent=request.user)
+    application = Application.objects.plus_get(request.user, id=id)
 
     try :
         # now approved ... we need to send a confirmation mail, however, for the moment, we'll just 
@@ -70,10 +71,14 @@ def accept_application(request,id) :
         
         return HttpResponseRedirect(reverse('list_open_applications'))
     except PlusPermissionsNoAccessException :
+        
+        sc = application.get_inner().get_security_context()
         return render_to_response('no_permission.html', {
             'msg' : "You don't have permission to accept this application",
             'user' : request.user,
-            'resource' : "an appl"
+            'resource' : "an application that you can't accept",
+            'security_context' :sc.context_agent.obj,
+            'tags' : sc.get_tags()
             }, context_instance=RequestContext(request))
     
     

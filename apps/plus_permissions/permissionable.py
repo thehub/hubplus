@@ -103,9 +103,9 @@ def get_security_context(self):
         try:
             ref.acquired_scontext = ref.acquires_from.obj.get_security_context()
             ref.save()
-        except:
-            import ipdb
-            #ipdb.set_trace()
+        except Exception, e:
+            print e
+            raise e
     return ref.acquired_scontext
     
 def get_ref(self):
@@ -125,7 +125,6 @@ def get_creator(self):
 def add_create_method(content_type, child_type) :
 
     def f(self, creator, **kwargs) :
-        # phil's version
         resource = child_type(**kwargs)
         resource.save()
         # now create its security_context etc.        
@@ -205,6 +204,7 @@ from apps.plus_permissions.models import GenericReference, SecurityContext
 from django.db.models.signals import post_save
 
 def security_patch(content_type, type_list):  
+    print "patching %s" %content_type
     content_type.add_to_class('ref', generic.GenericRelation(GenericReference))
     content_type.get_ref = get_ref
     content_type.to_security_context = to_security_context
@@ -229,14 +229,6 @@ def security_patch(content_type, type_list):
          content_type.add_to_class('objects',UserPermissionableManager())
     else :
          content_type.add_to_class('objects',PermissionableManager())
-
-    def site_create_group(self, user, **kwargs):
-        from apps.plus_permissions.types.TgGroup import get_or_create
-        group, created =  get_or_create(user=user, **kwargs)
-        return secure_wrap(group, user)
-
-    from apps.plus_permissions.site import Site
-    Site.create_TgGroup = site_create_group
 
     post_save.connect(create_reference, sender=content_type)
 

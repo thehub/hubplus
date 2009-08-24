@@ -23,7 +23,7 @@ from avatar.templatetags.avatar_tags import avatar
 from apps.plus_lib.models import DisplayStatus, add_edit_key
 
 from apps.plus_permissions.models import SecurityTag, has_access
-from apps.plus_permissions.interfaces import PlusPermissionsNoAccessException, PlusPermissionsReadOnlyException
+from apps.plus_permissions.interfaces import PlusPermissionsNoAccessException, PlusPermissionsReadOnlyException, secure_wrap
 
 
 from django.contrib.auth.decorators import login_required
@@ -138,12 +138,15 @@ def profile(request, username, template_name="profiles/profile.html"):
     skills = get_tags(tagged = other_user.get_profile(), tagger = other_user, tag_type = 'skill')
     needs = get_tags(tagged = other_user.get_profile(), tagger = other_user, tag_type = 'need')
 
-    if has_access(request.user, other_user.get_profile(), 'Profile.Viewer') :
+    profile = other_user.get_profile()
+    user = request.user
+
+
+    if has_access(user, profile, 'Profile.Viewer') :
 
         dummy_status = DisplayStatus("Dummy Status"," about 3 hours ago")
 
-        profile = other_user.get_profile()
-        profile = secure_wrap(profile, request.user)
+        profile = secure_wrap(profile, user)
 
         return render_to_response(template_name, {
                 "profile_form": profile_form,
@@ -263,3 +266,5 @@ def content_object(c_type, c_id) :
 def update_main_permission_sliders(request,username) :
     """XXX REWRITE"""
     pass
+
+

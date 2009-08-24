@@ -73,56 +73,31 @@ class HubspaceAuthenticationBackend :
     Authenticate against HubSpace database for user login and 
     """
 
-    def getUserClass(self) : return User
-    def createUser(self,username,password,email='') :
-        self.getUserClass()(username=username,password=password,email=email)
-    def findUser(self,username) :
-        return self.getUserClass().objects.filter(username=username)[0]
-    def getOrCreateUser(self,username,password='',email='') :
-        try :
-            u = self.findUser(username)
-        except Exception, e:
-            try :
-                u = self.createUser(username,password,email)
-            except Exception, e:
-                u = None
-        return u
-
-
     def authenticate(self, username=None, password=None):
         login_valid = True
         pwd_valid = True
 
-        UserClass = self.getUserClass()
-
         try:
-            hubspaceUser = getHubspaceUser(username)
-            if  hubspaceUser == None : 
+            if User.objects.filter(username=username).count() < 1 :
                 print "there is no hubspace user called '%s'" % username
                 return None # Doesn't exist in Hubspace database
 
-            print "user password %s :: encrypt %s" % (hubspaceUser.password,encrypt_password(password))
-            if not (hubspaceUser.password == encrypt_password(password)) : return None # Password doesn't match
-            djangoUser = self.getOrCreateUser(username,hubspaceUser.password)
-            self.refresh(hubspaceUser,djangoUser)  # allow subclasses to over-ride the refresh 
-            print "got %s" % djangoUser
-            return djangoUser
+            user = User.objects.get(username=username)
+            print "user password %s :: encrypt %s" % (user.password,encrypt_password(password))
+            if not (user.password == encrypt_password(password)) : return None # Password doesn't match
+            print "got %s" % user
+            return user
         except Exception, e:
             print 'Error3 %s' % e
             # What went wrong here? Needs handling
             pass
         return None
 
-    def refresh(self,hubspaceUser,djangoUser) :
-        #djangoUser.password = hubspaceUser.password
-        #djangoUser.save()
-        pass
 
     def get_user(self, user_id):
-        UserClass = self.getUserClass()
         try:
-            return UserClass.objects.get(pk=user_id)
-        except UserClass.DoesNotExist:
+            return User.objects.get(pk=user_id)
+        except User.DoesNotExist:
             return None
 
 class Location(models.Model):
