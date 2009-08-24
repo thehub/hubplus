@@ -194,9 +194,9 @@ class TestAccess(unittest.TestCase) :
         self.assertFalse(has_access(tuba, blog2, "OurPost.Editor"))
         
         # add an arbitrary agent and remove her agaiin 
-        blog._inner.get_context().add_arbitrary_agent(tuba, 'OurPost.Editor', adam)
+        blog._inner.get_security_context().add_arbitrary_agent(tuba, 'OurPost.Editor', adam)
         self.assertTrue(has_access(tuba, blog, "OurPost.Editor"))
-        blog._inner.get_context().remove_arbitrary_agent(tuba, 'OurPost.Editor', adam)
+        blog._inner.get_security_context().remove_arbitrary_agent(tuba, 'OurPost.Editor', adam)
         self.assertFalse(has_access(tuba, blog, "OurPost.Editor"))        
 
         #test moving the sliders around
