@@ -196,7 +196,7 @@ AgentDefaults = {'public':
                       'Application':
                           { 'defaults' : {'Viewer':'all_members_group',
                                           'Editor':'creator',
-                                          'Accept':'context_agent',
+                                          'Accept':'all_members_group',
                                           'Unknown': 'context_agent'
                                           },
                             'constraints':['Viewer>=Editor', 'Editor<$anonymous_group']

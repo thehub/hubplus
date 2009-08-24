@@ -22,6 +22,7 @@ def create_user(user_name, email_address, password='dummy') :
     if User.objects.filter(username=user_name).count() < 0 :
         user = User.objects.get(username=user_name)
     else :
+
         user = User(username=user_name, password=password, email=email_address)
         user.email_address=email_address
         user.user_name = user_name

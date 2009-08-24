@@ -1,5 +1,3 @@
-import ipdb
-ipdb.set_trace()
 
 from apps.plus_permissions.permissionable import security_patch
 from apps.plus_permissions import types
@@ -40,7 +38,7 @@ Site.create_TgGroup = site_create_group
 
 from apps.profiles.models import Profile, create_profile
 post_save.connect(create_profile, sender=User)
-
+print "added signal to create Profile from User"
 
 from default_agents import CreatorMarker
 security_patch(CreatorMarker,[])
