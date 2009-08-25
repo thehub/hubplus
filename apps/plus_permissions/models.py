@@ -365,6 +365,7 @@ class SecurityTag(models.Model) :
 def has_access(agent, resource, interface) :
     """Does the agent have access to this interface in this resource
     """
+    
     # make sure we've stripped resource from any SecureWrappers
     if resource.__class__.__name__ == "SecureWrapper":
         resource = resource.get_inner()
@@ -378,47 +379,45 @@ def has_access(agent, resource, interface) :
     context = resource.get_security_context()
     context_type = ContentType.objects.get_for_model(context)
 
-    try :
+    
 
-        # which agents have access?
+    # which agents have access?
 
-        if SecurityTag.objects.filter(interface=interface,security_context=context) :
-            allowed_agents = SecurityTag.objects.get(interface=interface,
+    if SecurityTag.objects.filter(interface=interface,security_context=context) :
+        allowed_agents = SecurityTag.objects.get(interface=interface,
                                                  security_context=context).agents
-            
-        else :
-            
-            # force the exception again
-            allowed_agents = SecurityTag.objects.get(interface=interface,
+
+    else :
+
+        # force the exception again
+        allowed_agents = SecurityTag.objects.get(interface=interface,
                                                 security_context=context).agents
     
 
-            # probably should memcache both allowed agents (per .View interface) and 
-            # agents held per user to allow many queries very quickly. e.g. to only return the searc
+    # probably should memcache both allowed agents (per .View interface) and 
+    # agents held per user to allow many queries very quickly. e.g. to only return the searc
      
-            allowed_agents = set([a.obj for a in allowed_agents.all()])
+    allowed_agents = set([a.obj for a in allowed_agents.all()])
     
-            if get_anonymous_group() in allowed_agents: 
-                # in other words, if this resource is matched with anyone, we don't have to test 
-                #that user is in the "anyone" group
-                return True
+    if get_anonymous_group() in allowed_agents: 
+        # in other words, if this resource is matched with anyone, we don't have to test 
+        #that user is in the "anyone" group
+        return True
 
-            if get_creator_agent().obj in allowed_agents:
-                actual_creator = resource.get_ref().creator
-                if agent == actual_creator:
-                    return True
+    if get_creator_agent().obj in allowed_agents:
+        actual_creator = resource.get_ref().creator
+        if agent == actual_creator:
+            return True
 
-                if agent.__class__ == AnonymousUser :
-                    # we clearly shouldn't be seeing this 
-                    return False
-
-                agents_held = agent.get_enclosure_set()
-                if allowed_agents.intersection(agents_held):
-                    return True
-
+    if agent.__class__ == AnonymousUser :
+        # we clearly shouldn't be seeing this 
         return False
-    except Exception, e :
-        print "has_access raised exception : interface: %s, agent: %s, resource: %s, sec_context: %s" %(interface, agent, resource, context)
-        raise e
+
+    agents_held = agent.get_enclosure_set()
+    if allowed_agents.intersection(agents_held):
+        return True
+
+    return False
+
 
 

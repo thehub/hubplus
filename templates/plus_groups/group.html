@@ -20,62 +20,22 @@
       </li>
       
       <li><dl><dt>{% trans "Hosts" %}:</dt>
-	  <dd></dd></dl>
+	  <dd>
+	    {% for host in hosts %}
+	    <li>{{host}}</li>
+	    {% endif %}
+	  </dd>
+	</dl>
       </li>
     </ul>
-    <h3>{% trans "Links" %}</h3>
+
+    <h3 class='disabled'>{% trans "Links" %}</h3>
 
     <ul class='disabled'>
       <li><dl><dt>Website:</dt><dd><a href="http://www.children-psychosocial-wellbeing.org">www.children-psychosocial-wellbeing.org</a></dd></dl></li>
       <li><dl><dt>Photos:</dt><dd><a href="#">www.flickr.com/cpsw</a></dd></dl></li>
       
     </ul>
-    <h3>{% trans "Skills and needs" %}</h3>
-    <ul>
-      <li>
-        <dl>
-          <dt>Skills:</dt>
-          <dd class="tag_manager" id="skills">
-            <span class="tag_list">
-              {% for s in skills %}
-              <span><a href="/plus_tags/tag/{{s.keyword}}/" class="tag option">{{s.keyword}}</a>
-		<a class="delete_tag" href="/plus_tags/TgGroup/{{group.pk}}/delete/">X</a>
-	      </span>
-              {% endfor %}
-            </span>
-            <span class="error_message"></span>
-            <form method='post' class="add_tag_form" action='/plus_tags/add_tag/' >
-              <input name="target_class" class="target_class" value="TgGroup" type="hidden" />
-              <input name="target_id" class="target_id" value="{{group.pk}}" type="hidden" />
-              <input name="tag_type" class="tag_type" value="skill" type="hidden" />
-              <input name="tag_value" class="tag_value" />
-              <input class="add_tag" type="submit" value="add a skill" />
-            </form>
-          </dd>
-        </dl>
-      </li>
-      
-      <li>
-        <dl>
-          <dt>Needs:</dt>
-          <dd class="tag_manager" id="needs">
-              <span class="tag_list">
-                {% for s in needs %}
-                <span><a href="/plus_tags/tag/{{s.keyword}}/" class="tag option">{{s.keyword}}</a>
-		  <a class="delete_tag" href="/plus_tags/TgGroup/{{group.pk}}/delete/">X</a></span>
-                {% endfor %}
-              </span>
-              <span class="error_message"></span>
-             <form method='post' class="add_tag_form" action=''>
-               <input name="target_class" class="target_class" value="TgGroup" type="hidden" />
-               <input name="target_id" class="target_id" value="{{group.pk}}" type="hidden" />
-               <input name="tag_type" class="tag_type" value="need" type="hidden" />
-               <input name="tag_value" class="tag_value" />
-               <input class="add_tag" type="submit" value="add a need" />
-             </form>
-          </dd>
-        </dl>
-      </li>
 
 
 
@@ -85,6 +45,9 @@
     <ul>
       <li><dl><dt>Members:</dt><dd>
 	    <ul id="members_list">
+	      {% for member in members %}
+	      <li>{{member}}</li>
+	      {% endfor %}
 	    </ul>
 	    <a href="#" class='disabled'>Show all (35)</a>
       </dd></dl></li>
@@ -99,8 +62,16 @@
       <li class="first"><a href="#">Message members</a></li>
       <li><a href="#">Invite members</a></li>
       
+      {{if group.join}}
       <li><a href="#">Join Group</a></li>
+
+      {{ else }}
+      <li><a href="/groups/apply/{{group.id}}//">Apply to Group</a></li>
+
+
+      {{ endif }}
       <li class="last"><a href="#">Follow group ?</a></li>
+
     </ul>
   </div>
   

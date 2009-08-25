@@ -23,7 +23,7 @@ from avatar.templatetags.avatar_tags import avatar
 from apps.plus_lib.models import DisplayStatus, add_edit_key
 
 from apps.plus_permissions.models import SecurityTag, has_access
-from apps.plus_permissions.interfaces import PlusPermissionsNoAccessException, PlusPermissionsReadOnlyException, secure_wrap
+from apps.plus_permissions.interfaces import PlusPermissionsNoAccessException, PlusPermissionsReadOnlyException, secure_wrap, TemplateSecureWrapper
 
 
 from django.contrib.auth.decorators import login_required
