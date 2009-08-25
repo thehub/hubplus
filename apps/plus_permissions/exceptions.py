@@ -12,3 +12,6 @@ class PlusPermissionsReadOnlyException(Exception) :
 
 class NonExistentPermission(Exception) : 
     pass
+
+class PlusPermissionAnonUserException(Exception):
+    pass
