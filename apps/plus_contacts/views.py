@@ -21,7 +21,7 @@ from apps.plus_permissions.interfaces import PlusPermissionsNoAccessException
 @login_required
 def list_of_applications(request, template_name="plus_contacts/applicant_list.html"):
     if request.user.is_authenticated() :
-        applications= Application.objects.filter(status=PENDING)
+        applications= Application.objects.plus_filter(request.user, status=PENDING)
     else :
         HttpResponseRedirect()
 
