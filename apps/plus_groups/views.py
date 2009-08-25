@@ -22,28 +22,35 @@ from django.contrib.auth.decorators import login_required
 
 
 from apps.plus_permissions.api import has_interfaces_decorator
+from apps.plus_permissions.default_agents import get_anon_user
 
 def group(request, group_id, template_name="plus_groups/group.html"):
     group = get_object_or_404(TgGroup, pk=group_id)
-    group = TemplateSecureWrapper(secure_wrap(group, request.user))
 
     dummy_status = DisplayStatus("Group's Status"," about 3 hours ago")
     
     members = group.get_users()
     print "members :", members
-    user = request.user
 
+    user = request.user
     if user.is_authenticated():
-        if user.is_member_of(group.get_inner()):
+        if user.is_member_of(group):
             leave = True
         else :
             leave = False
+    else:
+        leave = False
+        
+    if not user.is_authenticated():
+        user = get_anon_user()
+    group = TemplateSecureWrapper(secure_wrap(group, user))
+
     return render_to_response(template_name, {
             "head_title" : "%s" % group.display_name,
             "head_title_status" : dummy_status,
             "group" : group,
             "extras" : group.groupextras, 
-            "leave":leave,
+            "leave": leave,
             }, context_instance=RequestContext(request))
 
 
