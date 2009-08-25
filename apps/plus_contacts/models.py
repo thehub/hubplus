@@ -15,7 +15,7 @@ from django.conf import settings
 from apps.plus_lib.models import extract 
 
 from apps.plus_permissions.default_agents import get_site, get_all_members_group
-
+from apps.plus_permissions.types.User import create_user
 
 
 class Contact(models.Model):
@@ -40,7 +40,7 @@ class Contact(models.Model):
         XXX If application is accepted trigger an email with confirmation page to set password
         XXX if invitation is accepted by user then they go straight to set password page
         """
-        u = User.objects.create_user(username, self.email_address)
+        u = create_user(username, self.email_address)
         u.save()
         p = u.get_profile()
         p.first_name = self.first_name

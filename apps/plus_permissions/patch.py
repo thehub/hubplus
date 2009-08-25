@@ -3,7 +3,7 @@ from apps.plus_permissions.permissionable import security_patch
 from apps.plus_permissions import types
 from apps.plus_permissions.types import *
 from apps.plus_permissions.models import type_interfaces_map, SliderOptions
-from apps.plus_permissions.interfaces import add_creator_interface, add_manage_permissions_interface
+from apps.plus_permissions.interfaces import add_creator_interface, add_manage_permissions_interface, secure_wrap
 
 from django.db.models.signals import post_save
 
@@ -36,9 +36,7 @@ def site_create_group(self, user, **kwargs):
 from apps.plus_permissions.site import Site
 Site.create_TgGroup = site_create_group
 
-from apps.profiles.models import Profile, create_profile
-post_save.connect(create_profile, sender=User)
-print "added signal to create Profile from User"
+
 
 from default_agents import CreatorMarker
 security_patch(CreatorMarker,[])

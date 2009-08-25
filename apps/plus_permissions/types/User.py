@@ -26,25 +26,28 @@ def create_user(user_name, email_address, password='dummy') :
         user = User(username=user_name, password=password, email=email_address)
         user.email_address=email_address
         user.user_name = user_name
-        
         user.save()
         
-        user.to_security_context()
-        sec_context = user.get_security_context()
-                    
-        sec_context.set_context_agent(user.get_ref())
-        sec_context.set_context_admin(get_all_members_group().get_admin_group().get_ref())
-        sec_context.save()
-        
-        sec_context.set_up()
-
-        ref = user.get_ref()
-        ref.creator = user
-        ref.save()
+        setup_user_security(user)
 
         user.create_Profile(user,user=user)
 
     return user
+
+
+def setup_user_security(user):
+    user.to_security_context()
+    sec_context = user.get_security_context()
+                    
+    sec_context.set_context_agent(user.get_ref())
+    sec_context.set_context_admin(get_all_members_group().get_admin_group().get_ref())
+    sec_context.save()
+        
+    sec_context.set_up()
+
+    ref = user.get_ref()
+    ref.creator = user
+    ref.save()
 
 
 content_type = User

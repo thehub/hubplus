@@ -113,7 +113,6 @@ post_save.connect(create_host_info,sender=Profile)
 def create_profile(sender, instance=None, **kwargs):
    if instance is None:
       return
-   
    if Profile.objects.filter(user__username=instance.username).count() < 1 :
       profile = instance.create_Profile(instance, user=instance)
 
