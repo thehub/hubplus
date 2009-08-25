@@ -210,6 +210,23 @@ def update_profile_form(request,username) :
         profile_form = ProfileForm(request.POST, p)
 
 
+from apps.plus_permissions.permissionable import create_reference
+from apps.plus_permissions.types.User import setup_user_security
+
+@login_required
+def patch_in_profiles(request):
+    """create profiles for all users who don't have them
+    """
+    users = User.objects.filter(profile__isnull=True)
+    no_of_users = users.count()
+
+    for user in users:
+        create_reference(User, user)
+        setup_user_security(user)
+        user.create_Profile(user, user=user)
+        
+    return HttpResponse("patched %s users to have profiles" % str(no_of_users))
+
 
 @login_required
 @transaction.commit_on_success
