@@ -291,6 +291,9 @@ try :
             self.add_member(user)
             return user
 
+        def apply(self, user):
+            pass
+
 
         def is_group(self) : return True
 
