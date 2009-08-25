@@ -23,7 +23,7 @@
 	  <dd>
 	    {% for host in hosts %}
 	    <li>{{host}}</li>
-	    {% endif %}
+	    {% endfor %}
 	  </dd>
 	</dl>
       </li>
@@ -62,14 +62,12 @@
       <li class="first"><a href="#">Message members</a></li>
       <li><a href="#">Invite members</a></li>
       
-      {{if group.join}}
-      <li><a href="#">Join Group</a></li>
+      {% if group.join %}
+      <li><a href="{%s url join_group group.id %}">Join Group</a></li>
+      {% else %}
+      <li><a href="{%s url apply_group group.id %}/">Apply to Group</a></li>
+      {% endif %}
 
-      {{ else }}
-      <li><a href="/groups/apply/{{group.id}}//">Apply to Group</a></li>
-
-
-      {{ endif }}
       <li class="last"><a href="#">Follow group ?</a></li>
 
     </ul>

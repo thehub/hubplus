@@ -19,13 +19,15 @@ from apps.plus_permissions.types.TgGroup import *
 from django.contrib.auth.decorators import login_required
 
 
+from apps.plus_permissions.api import has_interfaces_decorator
+
 def group(request, group_id, template_name="plus_groups/group.html"):
     group = get_object_or_404(TgGroup, pk=group_id)
     group = TemplateSecureWrapper(secure_wrap(group, request.user))
 
     dummy_status = DisplayStatus("Group's Status"," about 3 hours ago")
     
-    members = [u for u in User.objects.all() if u.is_member_of(group)]
+    members = group.users
     return render_to_response(template_name, {
             "head_title" : "%s" % group.display_name,
             "head_title_status" : dummy_status,
@@ -45,5 +47,17 @@ def groups(request, template_name='plus_groups/groups.html'):
 
             }, context_instance=RequestContext(request))
 
-def join(request, group_id):
+
+@has_interfaces_decorator(TgGroup, [TgGroupJoin])
+def join(request, group):
+    group.join(request.user)
+    return render_to_response(template_name, {
+            "head_title" : "%s" % group.display_name,
+            "head_title_status" : dummy_status,
+            "group" : group,
+            "extras" : group.groupextras, 
+            }, context_instance=RequestContext(request))
+    
+
+def apply(request, group_id):
     pass
