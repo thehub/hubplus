@@ -32,7 +32,7 @@ def get_admin_user():
     try:
         admin_user =  User.objects.filter(username='admin')[0]
     except IndexError:
-        admin_user = User(username='admin', email_address='tom.salfield@the-hub.net', password='blah')
+        admin_user = User(username='admin', email_address='plus.admin@the-hub.net', password='blah')
         admin_user.save()
     return admin_user
 

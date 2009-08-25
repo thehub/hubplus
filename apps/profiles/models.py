@@ -90,6 +90,7 @@ class Profile(models.Model):
 import logging
 
 
+
 class HostInfo(models.Model):
     """ Information asked by hosts about this user """
     user = models.ForeignKey(User, unique=True, verbose_name=_('user'))

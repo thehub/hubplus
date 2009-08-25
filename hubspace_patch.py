@@ -6,8 +6,11 @@ import local_settings as db_config
 def patch_hubspace(patch):
     con = getPostgreSQLConnection()
     cur = con.cursor()
-    cur.execute(patch)
-    con.commit()
+    try:
+        cur.execute(patch)
+        con.commit()
+    except Exception, e:
+        print `e`
 
 
 def getPostgreSQLConnection():
@@ -43,5 +46,18 @@ CREATE TABLE "tg_user_user_permissions" (
 )
 ;
 """
-
 patch_hubspace(sql_patch)
+
+
+patch2 = """
+Alter Table tg_group ADD "psn_id" varchar(100);
+Alter Table tg_group ADD "path" varchar(120);
+Alter Table tg_group ADD "about" text;
+Alter Table tg_group ADD "group_type" varchar(30);
+Alter Table tg_group ADD "title" varchar(60);
+Alter Table tg_group ADD "description" text;
+Alter Table tg_group ADD "body" text;
+Alter Table tg_group ADD "rights" text;
+"""
+
+patch_hubspace(patch2)
