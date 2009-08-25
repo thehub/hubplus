@@ -142,42 +142,32 @@ def profile(request, username, template_name="profiles/profile.html"):
     user = request.user
 
 
-    if has_access(user, profile, 'Profile.Viewer') :
+    profile = secure_wrap(profile, user)
 
-        dummy_status = DisplayStatus("Dummy Status"," about 3 hours ago")
+    dummy_status = DisplayStatus("Dummy Status"," about 3 hours ago")
+    
+    profile = TemplateSecureWrapper(secure_wrap(profile, user))
 
-        profile = secure_wrap(profile, user)
+    return render_to_response(template_name, {
+            "profile_form": profile_form,
+            "is_me": is_me,
+            "is_friend": is_friend,
+            "is_following": is_following,
+            "other_user": other_user,
+            "profile":profile,
+            "other_friends": other_friends,
+            "invite_form": invite_form,
+            "previous_invitations_to": previous_invitations_to,
+            "previous_invitations_from": previous_invitations_from,
+            "head_title" : "%s" % other_user.get_profile().name,
+            "head_title_status" : dummy_status,
+            "host_info" : other_user.get_profile().get_host_info(),
+            "skills" : skills,
+            "needs" : needs,
+            "interests" : interests,
+            }, context_instance=RequestContext(request))
 
-        return render_to_response(template_name, {
-                "profile_form": profile_form,
-                "is_me": is_me,
-                "is_friend": is_friend,
-                "is_following": is_following,
-                "other_user": other_user,
-                "profile":profile,
-                "other_friends": other_friends,
-                "invite_form": invite_form,
-                "previous_invitations_to": previous_invitations_to,
-                "previous_invitations_from": previous_invitations_from,
-                "head_title" : "%s" % other_user.get_profile().name,
-                "head_title_status" : dummy_status,
-                "host_info" : other_user.get_profile().get_host_info(),
-                "skills" : skills,
-                "needs" : needs,
-                "interests" : interests,
-                }, context_instance=RequestContext(request))
 
-    else :
-        return HttpResponse("""
-<p>You don't have permission to see or do this.</p>
-<p>You are %s</p>
-<p>This is the profile for %s via interface %s</p>
-Current Permissions
-<ul>%s</ul>...""" % (request.user, other_user.get_profile(),'Viewer', 
-       ''.join([
-          ('<li>%s</li>'%x) for x in ps.get_security_context().get_tags()
-          ]),
-       ), status=401 )
 
 def our_profile_permission_test(fn) :
     """ Trying to put our permission testing into a decorator """

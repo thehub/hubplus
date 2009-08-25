@@ -10,15 +10,7 @@ except Exception, e:
     print "ABC"
     print e
 
-class AliasOf(object):
-   def __init__(self,name): 
-       self.name = name
 
-   def __get__(self,obj,typ=None): 
-       return getattr(obj,self.name)
-
-   def __set__(self,obj,val): 
-       setattr(obj,self.name,val)
 
 
 try :
@@ -26,20 +18,18 @@ try :
 except :
     # do it once
     hub_local_settings = True
-    print "**************"
     
+    User._meta.db_table = 'tg_user'
 
     # Patching the User class
 
     User.add_to_class('user_name', UserNameField(unique=True, max_length=255))
     User.add_to_class('email_address', models.CharField(max_length=255,unique=True))
-
+    del User.groups
     #User.add_to_class('active',models.SmallIntegerField(null=True)) # not shown
- 
     User.add_to_class('display_name', models.CharField(max_length=255,null=True))
 
     User.add_to_class('description', models.TextField())
- 
     User.add_to_class('organisation', models.CharField(max_length=255)) 
     User.add_to_class('title', models.CharField(max_length=255,null=True))
     User.add_to_class('mobile', models.CharField(max_length=30))
@@ -57,7 +47,6 @@ except :
     User.add_to_class('homeplace',models.ForeignKey(Location,null=True))
     
     User.email = AliasOf('email_address')
-    User._meta.db_table = 'tg_user'
     User.set_password = set_password
     User.check_password = check_password
     User.is_member_of = is_member_of

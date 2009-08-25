@@ -266,6 +266,9 @@ class SecurityContext(models.Model):
 
 
 class GenericReference(models.Model):
+    class Meta:
+        unique_together = (("content_type", "object_id"),)
+
     content_type = models.ForeignKey(ContentType, related_name='security_tag_agent')
     object_id = models.PositiveIntegerField()
     obj = generic.GenericForeignKey()
