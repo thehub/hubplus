@@ -63,9 +63,9 @@
       <li><a href="#">Invite members</a></li>
       
       {% if group.join %}
-      <li><a href="{%s url join_group group.id %}">Join Group</a></li>
+      <li><a href="{% url join_group group.id %}">Join Group</a></li>
       {% else %}
-      <li><a href="{%s url apply_group group.id %}/">Apply to Group</a></li>
+      <li><a href="{% url apply_group group.id %}/">Apply to Group</a></li>
       {% endif %}
 
       <li class="last"><a href="#">Follow group ?</a></li>
