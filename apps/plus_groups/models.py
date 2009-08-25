@@ -20,14 +20,3 @@ HOSTS   = 'HOSTS'
 
 
 
-def create_hub(name, **kwargs) :
-    g,h = get_or_create_group(name, HUB, **kwargs)
-    g.add_member(h)
-    return g,h
-
-    
-def create_site_group(name,  **kwargs) :
-    g,h = get_or_create_group(name, GROUP, **kwargs)
-    g.add_member(h)
-    return g,h
-

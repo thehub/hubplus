@@ -7,6 +7,10 @@
 
 {% block body %}
 
+{% if site.create_TgGroup %}
+    <a class="button" href="{% url create_group%}">{% trans "Create a new group"%}</a>
+{% endif %}
+
 <ul>
 {% for group in groups %}
 <li><a href='/groups/{{group.id}}/'>{{group.display_name}}</a></li>

@@ -11,11 +11,14 @@ from apps.profiles.models import Profile
 from apps.hubspace_compatibility.models import TgGroup
 
 from django.contrib.contenttypes.models import ContentType
+from apps.plus_permissions.api import has_interfaces_decorator
 
-def tag_permission_test(fn) :
+
+def tag_permission_test(fn):
     """ Decorator for permissions for adding and removing tags. """
+    
     def our_fn(request,*args,**kwargs) :
-        ps = get_permission_system()
+        
         target_class = request.POST['target_class']
         target_id = request.POST['target_id']
 
@@ -25,13 +28,11 @@ def tag_permission_test(fn) :
         except Exception, e :
             return HttpResponseNotFound("error evaling target_class %s : $%s$" % (target_class,e))
         
-        if not ps.has_access(request.user,tagged_resource,ps.get_interface_id(cls,'Editor')) :
+        if not has_access(request.user,tagged_resource,'%s.Viewer'%cls.__class__.__name__) :
             return HttpResponse("You don't have permission to tag %s, you are %s" % (tagged_resource,request.user),status=401)
         else :
             return fn(request, tagged_resource, *args, **kwargs)
     return our_fn
-
-
 
 
 @login_required

@@ -10,8 +10,12 @@ from django.contrib.admin.views.decorators import staff_member_required
 
 from account.utils import get_default_redirect
 from signup_codes.models import check_signup_code
+#from account.forms import SignupForm as BaseSignupForm
 from signup_codes.forms import SignupForm, InviteUserForm
 
+from apps.plus_permissions.default_agents import get_admin_user, get_anon_user, get_site
+
+from apps.plus_permissions.api import has_interfaces_decorator
 
 def signup(request, form_class=SignupForm,
         template_name="account/signup.html", success_url=None):
@@ -67,5 +71,23 @@ def admin_invite_user(request, form_class=InviteUserForm,
         form = form_class()
     return render_to_response(template_name, {
         "title": "Invite user",
+        "form": form,
+    }, context_instance=RequestContext(request))
+
+
+
+def plus_signup(request, key) :
+    # here, we just confirm the key and forward to a change password form
+    
+    # we're going to try to use the existing SignupForm, even though we 
+    # have the key in the URL
+
+    admin = get_admin_user()
+    site = get_site(admin)
+    site.create_user_from_key(admin, key=key)
+    form = SignUpForm(initial={"signup_code":key})
+    print request.POST
+
+    return render_to_response('account/accepted_signup.html', {
         "form": form,
     }, context_instance=RequestContext(request))
