@@ -3,10 +3,10 @@ HUB PLUS 2009
 */
 
 
-
 /* Main Generic */
 
 #main h2 {
+	clear		: both;
 	color		: #5a0000;
 	font-size	: 2.6em;
 	font-weight	: normal;
@@ -15,6 +15,7 @@ HUB PLUS 2009
 }
 
 #main h3 {
+	clear		: both;
 	font-size	: 1.0em;
 	padding-bottom	: .5em;
 	text-transform	: uppercase;
@@ -32,18 +33,42 @@ HUB PLUS 2009
 	font-size	: 1.5em; 
 }
 
-
-
-
-
+.error_message {
+	color		: #FF0000;
+}
 
 #permission_button {
-	text-align:right;
-	margin-bottom:1.5em;
+	text-align	:right;
+	margin-bottom	:1.5em;
 }
 
 
+/* Images & Thumbnails */
 
+.image {
+	border		: 1px solid #ddd;
+	display		: block;
+	margin-bottom 	: 1.5em;
+}
+
+.image img {
+	margin		: 10px;
+}
+
+.image.member img,
+.image.group  img { width : 179px; }
+.image.hub    img { width : 598px; }
+
+.thumb {
+	border		: 1px solid #ddd;
+	display		: block;
+	float		: left;
+	margin 		: 0 10px 10px 0;
+}
+
+.thumb.tiny   img { margin : 2px; width : 25px; }
+.thumb.small  img { margin : 3px; width : 35px; }
+.thumb.medium img {	margin : 4px; width : 80px; }
 
 
 /* Divided lists */
@@ -60,13 +85,6 @@ HUB PLUS 2009
 	border-top	: 1px solid #ddd;
 	padding		: 5px 0;
 	overflow	: hidden;
-}
-
-.content_list li .thumb,
-.link_list li .thumb {
-	float		: left;
-	margin-right: 10px;
-	width		: 25px;
 }
 
 .content_list li .preview {
@@ -104,7 +122,6 @@ HUB PLUS 2009
 	padding		: 0 0 12px;
 }
 
-
 .tabbed ul.tabbed_navigation li a:hover,
 .tabbed ul.tabbed_navigation li.selected a {
 	color		: #777;
@@ -114,26 +131,6 @@ HUB PLUS 2009
 .tabbed ul.tabbed_navigation li.selected a {
 	color		: #5a0000;	
 }
-
-
-/* Page Tab Content: Alternative */
-
-/*
-.tabbed ul.tabbed_navigation li {
-	margin		: 0 3px 0 0;
-}
-
-.tabbed ul.tabbed_navigation li a {
-	border		: 1px solid #ddd;
-	border-width: 1px 1px 0;
-	margin		: 0;
-	padding		: 3px 10px 1px;
-}
-
-.tabbed ul.tabbed_navigation li.selected a {
-	border-bottom	: 1px solid #fff;
-}
-*/
 
 
 /* Block: Updates */
@@ -176,10 +173,6 @@ HUB PLUS 2009
 	width		: 200px;
 }
 
-#intro #member_image {
-	border		: 1px solid #ddd;
-	padding		: 10px;
-}
 
 #intro #extra {
 	float		: left;
@@ -257,11 +250,6 @@ HUB PLUS 2009
 
 #members_list li {
 	float		: left;
-	margin-right: 10px;
-}
-
-#members_list .member_thumb {
-	width		: 35px;
 }
 
 
@@ -324,35 +312,198 @@ HUB PLUS 2009
 	background	: #5a0000;
 	border-color: #500000 #300000 #300000 #500000;
 	color		: #eee;
+	filter		: alpha(opacity=100);
+	opacity		: 1.0; 
 }
+
+.tag_list .pop8 { opacity: 1.0; filter: alpha(opacity=100); }
+.tag_list .pop7 { opacity: 0.9; filter: alpha(opacity=90);  }
+.tag_list .pop6 { opacity: 0.8; filter: alpha(opacity=80);  }
+.tag_list .pop5 { opacity: 0.7; filter: alpha(opacity=70);  }
+.tag_list .pop4 { opacity: 0.6; filter: alpha(opacity=60);  }
+.tag_list .pop3 { opacity: 0.5; filter: alpha(opacity=50);  }
+.tag_list .pop2 { opacity: 0.4; filter: alpha(opacity=40);  }
+.tag_list .pop1 { opacity: 0.3; filter: alpha(opacity=30);  }
 
 .tag_list a.delete_tag:hover {
 	background	: #ccc;
 	border-color: #aaa #999 #aaa #999;
 }
 
-.error_message {
-	color: #FF0000;
+
+/* Forms */
+
+form h4 {
+	clear		: both;
+	font-weight	: normal;
+	font-size	: 1.5em;
+	padding-bottom	: 9px;
 }
 
+form p {
+	color		: #888888;
+}
 
-/* Forms & Buttons */
+form fieldset {
+	border		: none;
+}
 
-input.text{
+form label span.required {
+	color		: #5a0000;
+	font-size	: 1.2em;
+	line-height	: 0em;
+}
+
+input.text,
+textarea {
 	background	: #fff url('../images/input_bg.gif') 0 0 repeat-x;
 	border		: 1px solid #999;
 	border-color: #777 #bbb #ddd #aaa;
-	padding		: 2px 3px;
-	margin-bottom	: 3px;
+	padding		: 3px 3px;
 }
+
+form input.checkbox,
+form input.radio {
+	float		: left;
+	margin		: 2px 5px 0 0;
+}
+
+
+/* Forms: Full Size */
+
+form.full fieldset {
+	padding		: 0 0 10px;
+}
+
+form.full ul {
+	list-style	: none;
+	overflow	: hidden;
+	padding-bottom	: 10px;
+}
+
+form.full ul ul {
+	padding-bottom	: 0;
+}
+
+form.full ul li {
+	overflow	: hidden;
+	padding-bottom	: 3px;
+}
+
+form.full label,
+form.full .label_extended {
+	display		: block;
+	float		: left;
+	font-size	: 1.1em;
+	text-align	: right;
+	padding		: 0 10px 0 30px;
+	width		: 200px;
+}
+
+form.full .label_extended {
+	padding-left: 0;
+}
+
+form.full .label_extended label {
+	font-size	: 1em;
+	padding-left: 0;
+}
+
+form.full .label_extended input.text {
+	width		: 200px;
+}
+
+form.full label .extra {
+	color		: #888888;
+	font-size	: 0.8181em;
+	display		: block;
+}
+
+form.full input.text,
+form.full textarea {
+	width		: 250px;
+}
+
+form.full select {
+	width		: 260px;
+}
+
+form.full input.submit {
+	margin-left	: 240px;
+}
+
+form.full ul ul {
+	float: left;
+}
+
+form.full ul ul li {
+	width		: 260px;
+}
+
+form.full ul ul li label {
+	padding-right	: .2em;
+	text-align	: left;
+}
+
+form.full ul ul li label {
+	font-size	: 1.1em;
+	padding-left: 0;
+	width		: auto;
+}
+
+
+/* Forms: Custom Labels */
+
+form.full .custom_labels label {
+	text-align	: left;
+}
+
+form.full .custom_labels label .extra {
+	display		: inline;
+}
+
+form.full .custom_labels .input_extended label {
+	padding-left: 0;
+	width		: 248px
+}
+
+form.full .custom_labels .label_extended {
+	padding-left: 30px;
+}
+
+form.full .custom_labels .label_extended input.text {
+	width		: 190px;
+}
+
+
+/* Forms: Checkbox/Radio Button Labelling */
+
+form.full fieldset .checkboxes .label_extended {
+	float		: left;
+	padding-right	: 0;
+	text-align	: left;
+	width		: 240px;
+}
+
+form.full fieldset .checkboxes .label_extended label {
+	text-align	: left;
+	padding-right	: 0;
+	width		: 240px;
+}
+
+form.full fieldset .checkboxes select {
+	width		: 240px;
+}
+
+
+/* Form Buttons */
 
 .button {
 	background	: #e2e2e2 url('../images/button_bg.gif') 0 0 repeat-x;
 	border		: 1px solid #bbb;
 	border-color: #bbb #999 #999 #bbb;
 	cursor		: pointer;
-	margin-bottom	: 3px;
-	padding		: 2px 5px 2px !important;	
+	padding		: 3px 5px 3px;	
 	text-transform	: uppercase;
 }
 
@@ -367,6 +518,12 @@ input.text{
 }
 
 
+/* Form: Permissions Label */
+
+form .label_permissions {
+	background	: url('../images/icon_permissions.gif') 100% 0 no-repeat;
+	padding-right	: 17px;
+}
 
 
 /* Side Blocks: Members Online */
@@ -391,7 +548,6 @@ input.text{
 #feature_my_hub .hub_thumb {
 	float		: left;
 	margin-right: 10px;
-	width		: 80px;
 }
 
 #feature_my_hub .links {
@@ -413,5 +569,4 @@ input.text{
 	margin-right: 0;
 	padding-right	: 0;
 }
-
 

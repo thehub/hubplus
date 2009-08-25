@@ -23,6 +23,10 @@ img {
 
 /* Layout */
 
+html {
+	overflow-y	: scroll;
+}
+
 body {
 	background	: #fff url('../images/header_bg.gif') 0 0 repeat-x;
 	color		: #222222;
@@ -73,8 +77,10 @@ body {
 }
 
 #yui-history-iframe {
-  position:absolute;
-  top:0; left:0;
-  width:1px; height:1px; /* avoid scrollbars */
-  visibility:hidden;
+	height		:1px; /* avoid scrollbars */
+	left		:0;
+	position	:absolute;
+	top			:0;
+	width		:1px;	
+	visibility	:hidden;
 }

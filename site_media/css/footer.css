@@ -1,20 +1,19 @@
 /* Layout: Footer */
 
 #footer {
-	background	: #EEE;
-	padding		: 10px;
+	border-top	: 1px solid #cccccc;
 	position	: relative;
 }
 
 #footer p {
-	padding		: 4px 3px;
+	padding		: 10px 0 30px;
 }
 
 #footer #extra_navigation {
 	list-style	: none;
-	padding		: 3px;
+	overflow	: hidden;
 	position	: absolute;
-	right		: 10px;
+	right		: 0;
 	top			: 10px;
 }
 
