@@ -110,6 +110,7 @@ class TgGroupEditor:
 class TgGroupJoin:
     pk = InterfaceReadProperty
     join = InterfaceCallProperty
+    leave = InterfaceCallProperty
 
 class TgGroupInviteMember:
     pk = InterfaceReadProperty

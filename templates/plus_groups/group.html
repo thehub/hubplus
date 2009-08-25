@@ -67,6 +67,9 @@
       {% else %}
       <li><a href="{% url apply_group group.id %}/">Apply to Group</a></li>
       {% endif %}
+      {% if leave %}
+      <li><a href="{% url leave_group group.id %}">Leave Group</a></li>
+      {% endif %}
 
       <li class="last"><a href="#">Follow group ?</a></li>
 
