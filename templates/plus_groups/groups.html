@@ -1,0 +1,15 @@
+{% extends "site_base.html" %}
+
+{% load i18n %}
+{% load avatar_tags %}
+{% load app_plugins %}
+{% load uni_form %}
+
+{% block body %}
+
+<ul>
+{% for group in groups %}
+<li><a href='/groups/{{group.id}}/'>{{group.display_name}}</a></li>
+{% endfor %}
+</li>
+{% endblock %}
