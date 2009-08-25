@@ -1,7 +1,12 @@
-fix server
-application process
+Phil - fix server
+     - application process
 
-Tom  - generate slider (views)
+Tom  - hubspace compatability - finish - patch users and groups
+     - create group form
+     - create wiki page form
+
+Slider UI
+     - generate slider (views)
      - set slider (view)
      - on create profile set user as admin, and profile to acquire from user
      - single slider UI

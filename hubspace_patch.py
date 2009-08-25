@@ -61,3 +61,10 @@ Alter Table tg_group ADD "rights" text;
 """
 
 patch_hubspace(patch2)
+
+patch3 = """
+Alter Table tg_group DROP CONSTRAINT "tg_group_level_check";
+Alter Table tg_group ADD CONSTRAINT "tg_group_level_check" CHECK (level::text = ANY (ARRAY['superuser'::character varying, 'director'::character varying, 'member'::character varying, 'host'::character varying, 'public'::character varying]::text[]));
+"""
+
+patch_hubspace(patch3)
