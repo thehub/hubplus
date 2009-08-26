@@ -291,6 +291,11 @@ try :
             self.add_member(user)
             return user
 
+        def apply(self, user):
+            pass
+
+        def leave(self, user):
+            return self.remove_member(user)
 
         def is_group(self) : return True
 

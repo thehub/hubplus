@@ -148,6 +148,20 @@ class TestApplication(unittest.TestCase) :
         self.assertEquals(application.accepted_by, mable)
 
         
+class TestInvite(unittest.TestCase) :
+    def test_invite(self):
+        site = get_site(get_admin_user())
+        all_members = get_all_members_group()
+
+        u = create_user('fred','fred@fred.com')
+
+        inv1 = site.invite_non_member('fred@fred.com')
+        inv2 = site.invite_non_member('j.bloke@random_mail.com')
+
+        self.assertTrue(inv1.is_existing_member())
+        self.assertFalse(inv2.is_existing_member())
         
+        self.assertEquals(inv1.get_user().id, u.id)
+        self.assertNone(inv2.get_user())
         
         

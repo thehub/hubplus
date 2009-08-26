@@ -1,0 +1,162 @@
+{% extends "site_base.html" %}
+
+{% load i18n %}
+{% load avatar_tags %}
+{% load app_plugins %}
+{% load uni_form %}
+
+{% block body %}
+
+<div id="intro" class="block">
+
+<form class="full">
+  <h4>About your group</h4>
+  <p>Please enter your details below to create a new group.</p>
+  <fieldset>
+    <ul>
+      <li>
+	<label for="name"><span class="required">*</span> Name</label>
+	<input  id="name" class="text" type="text" />
+      </li>
+      <li>
+	<label for="type"><span class="required">*</span> Type</label>
+	<select id="type" name="group_type">
+	  <option value="a" readonly="readonly" selected="selected">Please select a group type...</option>
+	  <option value="b">Interest group</option>
+	  <option value="c">Organisation</option>
+	  <option value="d">Project</option>
+	  <option value="e">Internal</option>
+	</select>
+      </li>
+      <li>
+	<label for="about"><span class="required">*</span> Description <span class="extra">what you do and why you're interested in the Hub?</span></label>
+	<textarea id="about" rows="5"></textarea>
+      </li>
+      <li>
+	<label for="location">Location <span class="extra">postcode, country</span></label>
+	<input  id="location" class="text" type="text" />
+	<br /><span style="color:red">(Use existing google maps here)</span>
+      </li>
+      <li>
+	<label for="about"><span class="required">*</span> What is the group about?</label>
+	<span style="color:red">(Use existing tag functionality here)</span>
+      </li>
+      <li>
+	<label for="skills">What are the group's skills?</label>
+	<span style="color:red">(Use existing tag functionality here)</span>
+      </li>
+      <li>
+	<label for="needs">What are the group's needs?</label>
+	<span style="color:red">(Use existing tag functionality here)</span>
+      </li>
+    </ul>
+    <ul>
+      <li class="checkboxes">
+	<label><span class="required">*</span> <span class="label_permissions">Permissions</span> <span class="extra">These settings that can be customised once your group has been created<br /><a href="#">more info</a></span></label>
+	<ul>
+	  <li>
+	    <input  id="public" name="permissions_set" class="radio" type="radio" checked="checked" />
+	    <div class="label_extended">
+	      <label for="public">Public <span class="extra">Visible to the world<br />Site members can join</span></label>
+	    </div>
+	  </li>
+	  <li>
+	    <input  id="open" name="permissions_set" class="radio" type="radio" />
+	    <div class="label_extended">
+	      <label for="open">Hub+ Open <span class="extra">Visible to site members<br />Site members can join</span></label>
+	    </div>
+	  </li>
+	  <li>
+	    <input  id="invite" name="permissions_set" class="radio" type="radio" />
+	    <div class="label_extended">
+	      <label for="invite">Hub+ Invite only <span class="extra">Visible to site members<br /> Invited or approved members can join</span></label>
+	    </div>
+	  </li>
+	  <li>
+	    <input  id="private" name="permissions_set" class="radio" type="radio" />
+	    <div class="label_extended">
+	      <label for="private">Private <span class="extra">Contents visible to group members only<br /> Invited or approved members can join</span></label>
+	    </div>
+	  </li>
+	</ul>
+      </li>
+    </ul>
+    <h4>Links</h4>
+    <ul class="custom_labels">
+      
+      <li>
+	<div class="label_extended">
+	  <input  id="link_title" class="text" type="text" value="Website" />
+	</div>
+	<div class="input_extended">
+	  <input  id="link_url" class="text" type="text" value="www.mysite.com" />
+	  <button class="button add_link">X</button>
+	</div>
+      </li>
+      <li>
+	<div class="label_extended">
+	  <input  id="link_title" class="text" type="text" />
+	</div>
+	<div class="input_extended">
+	  <input  id="link_url" class="text" type="text" />
+	  <button class="button add_link">Add</button>
+	</div>
+      </li>
+      <li>
+	<div class="label_extended">
+	  <label for="link_title"><span class="extra">Title ('Website', 'Flickr')</span></label>
+	</div>
+	<div class="input_extended">
+	  <label for="link_url"><span class="extra">Website ('www.mysite.com')</span></label>
+	</div>
+      </li>
+    </ul>
+    <h4>Contact</h4>
+    <ul class="custom_labels">
+      <li>
+	<div class="label_extended">
+	  <input  id="link_title" class="text" type="text" />
+	</div>
+	<div class="input_extended">
+	  <input  id="link_url" class="text" type="text" />
+	  <button class="button add_link">Add</button>
+	</div>
+      </li>
+      <li>
+	<div class="label_extended">
+	  <label for="link_title"><span class="extra">Title ('Phone', 'Skype')</span></label>
+	</div>
+	<div class="input_extended">
+	  <label for="link_url"><span class="extra">Username/Group ('Meme2009')</span></label>
+				</div>
+      </li>
+    </ul>
+    <h4>Email</h4>
+    <ul class="custom_labels">
+      <li>
+	<div class="label_extended">
+	  <input  id="link_title" class="text" type="text" />
+	</div>
+	<div class="input_extended">
+	  <input  id="link_url" class="text" type="text" />
+	  <button class="button add_link">Add</button>
+	</div>
+      </li>
+      <li>
+	<div class="label_extended">
+	  <label for="link_title"><span class="extra">Title ('Email')</span></label>
+	</div>
+	<div class="input_extended">
+	  <label for="link_url"><span class="extra">Email address ('me@domain.com')</span></label>
+	</div>
+      </li>
+    </ul>
+  </fieldset>
+  <input class="submit button" type="Submit" value="Create new group" /> or <a href="#">Go back</a>
+</form>
+
+</div>
+
+
+
+{% endblock %}

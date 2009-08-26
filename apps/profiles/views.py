@@ -1,4 +1,3 @@
-
 from django.shortcuts import render_to_response, get_object_or_404
 from django.template import RequestContext
 from django.contrib.auth.models import User
@@ -23,8 +22,8 @@ from avatar.templatetags.avatar_tags import avatar
 from apps.plus_lib.models import DisplayStatus, add_edit_key
 
 from apps.plus_permissions.models import SecurityTag, has_access
-from apps.plus_permissions.interfaces import PlusPermissionsNoAccessException, PlusPermissionsReadOnlyException, secure_wrap
-
+from apps.plus_permissions.interfaces import PlusPermissionsNoAccessException, PlusPermissionsReadOnlyException, secure_wrap, TemplateSecureWrapper
+from apps.plus_permissions.default_agents import get_anon_user
 
 from django.contrib.auth.decorators import login_required
 
@@ -141,6 +140,8 @@ def profile(request, username, template_name="profiles/profile.html"):
     profile = other_user.get_profile()
     user = request.user
 
+    if not user.is_authenticated():
+        user = get_anon_user()
 
     profile = secure_wrap(profile, user)
 

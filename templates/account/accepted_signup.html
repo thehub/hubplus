@@ -1,0 +1,49 @@
+{% extends "site_base.html" %}
+
+{% load i18n %}
+{% load avatar_tags %}
+{% load app_plugins %}
+{% load uni_form %}
+
+{% block body %}
+    
+{% if user.is_authenticated %}
+  <p>{% trans "You are already logged in." %}</p>
+{% else %}
+  <p>{% trans "Already have an account?" %} <a href="{% url acct_login %}">{% trans "Log In" %}</a>!</p>
+
+
+<div id="intro" class="block">
+
+<form class="full">
+	<h4>Your details</h4>
+	<p>Please enter your details below to finish creating your account.</p>
+	<fieldset>
+		<ul>
+			<li>
+				<label for="name">Name</label>
+				<!-- <input  id="name" class="text" type="text" /> -->
+				Jesson Yip
+			</li>
+			<li>
+				<label for="username"><span class="required">*</span> Username</label>
+				<input  id="username" class="text" type="text" />
+			</li>
+			<li>
+				<label for="password"><span class="required">*</span> Password</label>
+				<input  id="password" class="text" type="text" />
+			</li>
+			<li>
+				<label for="password_two"><span class="required">*</span> Re-enter password</label>
+				<input  id="password_two" class="text" type="text" />
+			</li>
+		</ul>
+	</fieldset>
+	<input class="submit button" type="Submit" value="Create account" />
+</form>
+
+</div>
+
+{% endif %}
+
+{% endblock %}

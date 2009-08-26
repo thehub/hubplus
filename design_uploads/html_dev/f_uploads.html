@@ -1,0 +1,231 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xml:lang="en" dir="ltr" xmlns="http://www.w3.org/1999/xhtml" lang="en">
+<head>
+      <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+      <title>Hub+ : Upload file</title>
+      <!--[if IE]><style>
+          div {
+          zoom: 1; /<span class="required">*<span> trigger hasLayout <span class="required">*<span>/
+          }
+          </style><![endif]-->
+      <link rel="stylesheet" href="../../site_media/css/site.css" type="text/css" media="all">
+      <link rel="stylesheet" href="../../site_media/css/header.css" type="text/css" media="all">
+      <link rel="stylesheet" href="../../site_media/css/main.css" type="text/css" media="all">
+      <link rel="stylesheet" href="../../site_media/css/serendipity.css" type="text/css" media="all">
+      <link rel="stylesheet" href="../../site_media/css/footer.css" type="text/css" media="all">
+      <link rel="stylesheet" href="../../site_media/themes/plus/css/theme.css" type="text/css" media="screen">
+      <link rel="stylesheet" href="../../site_media/css/tabview.css" type="text/css" media="all">
+      <link rel="stylesheet" type="text/css" href="../../site_media/css/tabview.css">
+      <link rel="stylesheet" type="text/css" href="../../site_media/css/list-edit-table.css">
+      <link rel="stylesheet" type="text/css" href="../../site_media/css/jit.css">      
+</head>
+
+<body>
+      <div id="wrapper">
+
+	<!-- header -->
+
+<div id="header">
+
+
+	<h1><a href="http://plusdemo.the-hub.net/profiles/phil/index.html">Hub+</a></h1>
+    <!--<div id='logo'>
+      <a href="/"><img src="/site_media/pinax/images/logo.png" alt="Pinax"/></a>
+    </div>-->
+
+    
+    <ul id="account_navigation">
+        
+             <li class="first">Welcome phil</li>
+	     <li><a href="http://plusdemo.the-hub.net/profiles/phil">Profile</a></li>
+             <li><a href="http://plusdemo.the-hub.net/account/email/" class="disabled">Settings</a></li>
+	     <!-- Do we have this notion of admin now? -->
+ 	     
+	     <li><a href="http://plusdemo.the-hub.net/openid/logout/?next=/account/logout/">Logout</a></li>
+        
+    </ul>
+
+    <ul id="main_navigation">
+        <li class="first"><a href="http://plusdemo.the-hub.net/">Home</a></li>
+        <li class="disabled"><a href="#">Explore</a></li>
+
+	<li><a href="http://plusdemo.the-hub.net/profiles/">Members</a></li>
+	<li class="disabled"><a href="#">Groups</a></li>
+	<li class="disabled"><a href="#">Regions</a></li>
+	<li class="last disabled"><a href="#">Events</a></li>
+    </ul>
+
+</div>
+
+<!--div id="subnav" class="clearfix">&nbsp;</div-->
+ 
+	<!-- main -->
+	<div id="main">
+          
+	  <div id="permission_sliders"></div>
+      
+	  <h2>Share a file</h2>
+	  
+	  <div id="site_wide_messages">
+            
+		</div>
+	  
+			<div id="body">
+
+				<form class="full block">
+					<h4>Upload resource</h4>
+					<p>Fill in the form below to upload a new resource.</p>
+					<fieldset>
+						<ul>
+							<li>
+								<label for="title"><span class="required">*</span> Title</label>
+								<input  id="title" class="text" type="text" />
+							</li>
+							<li>
+								<label for="description"><span class="required">*</span> Description</label>
+								<textarea id="description" rows="3" maxlength="20"></textarea>
+							</li>
+							<li>
+								<label for="author"><span class="required">*</span> Author</label>
+								<input  id="author" class="text" type="text" />
+							</li>
+							<li>
+								<label for="tags"><span class="required">*</span> Tags</label>
+								<!-- <input  id="tags" class="text" type="text" /> -->
+								<span style="color:red">(Use existing tag functionality profiles here)</span>
+							</li>
+						</ul>
+						<ul>
+							<li>
+								<label for="resource"><span class="required">*</span> Select resource</label>
+								<input  id="resource" class="file" type="file" />
+							</li>
+						</ul>
+						<ul>
+							<li>
+								<label for="license">License <span class="extra">('©2009', 'GPL')</span></label>
+								<input  id="license" class="text" type="text" />
+							</li>
+						</ul>
+						<ul>
+							<li>
+								<label><span class="required">*</span> <span class="label_permissions">Permissions</span></label>
+								<ul class="checkboxes">
+									<li>
+										<input  id="group" name="permissions_set" class="radio" type="radio" checked="checked" />
+										<div class="label_extended">
+											<label for="group">Use group permission – <a href="#">Show settings</a> <span class="extra">Currently set to Public</span></label>
+										</div>
+									</li>
+									<li>
+										<input  id="custom" name="permissions_set" class="radio" type="radio" />
+										<div class="label_extended">
+											<label for="custom">Custom settings – <a href="#">Edit settings</a> <span class="extra">Choose you're own permissions</span></label>
+										</div>
+									</li>
+								</ul>
+							</li>
+						</ul>
+					</fieldset>
+					<input class="submit button" type="Submit" value="Upload" /> or <a href="#">Go back</a>
+				</form>
+
+			</div>
+
+			<div id="side_bar">
+
+<div id="feature_search" class="block">
+    <h3>Search</h3>
+    <form>
+      <input name="search_term" type="text" class="text"> <input class="button" value="Search" type="submit"><br>
+      <input name="current_area" checked="checked" type="checkbox"> Groups only<br>      
+    </form>
+</div>
+
+<div id="feature_explore" class="block">
+  <h3>Explore groups</h3>
+  <ol class="tag_list">
+	<li><a href="#" class="tag pop7">activism</a></li>
+	<li><a href="#" class="tag pop8">architecture</a></li>
+	<li><a href="#" class="tag pop6">better</a></li>
+	<li><a href="#" class="tag pop3">big</a></li>
+	<li><a href="#" class="tag pop5">climatechange</a></li>
+	<li><a href="#" class="tag pop2">clothing</a></li>
+	<li><a href="#" class="tag pop8">design</a></li>
+	<li><a href="#" class="tag pop8">dip</a></li>
+	<li><a href="#" class="tag pop7">developement</a></li>
+	<li><a href="#" class="tag pop3">energy</a></li>
+
+	<li><a href="#" class="tag pop6">environment</a></li> 
+	<li><a href="#" class="tag pop8">fairtrade</a></li>
+	<li><a href="#" class="tag pop1">gender</a></li>
+	<li><a href="#" class="tag pop8">green</a></li>
+	<li><a href="#" class="tag pop7">hub</a></li>
+	<li><a href="#" class="tag pop4">innovation</a></li>
+	<li><a href="#" class="tag pop2">living</a></li>
+	<li><a href="#" class="tag pop6">product</a></li>
+	<li><a href="#" class="tag pop8">reference</a></li> 
+	<li><a href="#" class="tag pop5">salad</a></li>
+	<li><a href="#" class="tag pop5">org</a></li>
+
+	<li><a href="#" class="tag pop8">science</a></li>
+	<li><a href="#" class="tag pop2">shopping</a></li>
+	<li><a href="#" class="tag pop6">sustainability</a></li>
+	<li><a href="#" class="tag pop1">web</a></li>
+  </ol>
+</div>
+
+<div id="feature_my_hub" class="block">
+  <h3>My Hub</h3>
+  <img class="hub_thumb" src="#">
+  
+  <p><a href="#">Hub Kings Cross</a> is having a bit of a spring clean.</p>
+  <ul class="links">
+    <li class="first"><a href="#">Hub page</a></li>
+    <li class="last"><a href="#">Book space</a></li>
+    </ul>
+</div>
+
+
+          </div>
+          
+	</div>
+
+	<!-- footer -->
+	<div id="footer">
+	  
+    <p id="copyright">© 2009 The Hub</p>
+    <ul id="extra_navigation">
+      <li class="first"><a href="http://plusdemo.the-hub.net/about/">About</a></li>
+      <li><a href="http://plusdemo.the-hub.net/about/terms/">Terms of Service</a></li>
+      <li class="last"><a href="http://plusdemo.the-hub.net/about/privacy/">Privacy Policy</a></li>
+    </ul>
+
+
+	</div>
+      </div>
+            
+    
+    <!-- script src="/site_media/base.js" type="text/javascript"></script -->
+    
+    <script type="text/javascript">
+        $(document).ready(function() {
+
+            $('#edit_profile_info').hide();
+            $('#edit_profile_info_toggle').click(function() {
+                $('#edit_profile_info').toggle();
+
+                //$('#edit_profile_info').autoscroll();
+	        
+                return false;
+            });
+            if ($('#edit_profile_info ul.errorlist').length) {
+                $('#edit_profile_info').show();
+                //$('#edit_profile_info ul.errorlist').autoscroll();
+            }
+        });
+    </script>
+
+
+
+    </body></html>

@@ -17,7 +17,7 @@
 
     <div id='permission_sliders'></div>
     
-    <div id="member_image">{% avatar other_user 180 %}</div>
+    <div id="page_image" class="image member">{% avatar other_user 180 %}</div>
     {% if is_me %}
     <a href="{% url avatar_change %}" id="avatar_replace">(replace)</a>
     {% endif %}
@@ -101,49 +101,52 @@
 <div id="feature_search" class="block">
     <h3>Search</h3>
     <form>
-      <input name="search_term" type="text" /> <input class="button" type="submit" value="Search" /><br />
+      <input name="search_term" type="text" class="text" /> <input class="button" type="submit" value="Search" /><br />
       <input name="current_area" type="checkbox" checked="checked" /> Members only<br />      
     </form>
 </div>
 
 <div id="feature_explore" class="block">
-  <h3>Explore Members</h3>
+  <h3>Explore members</h3>
   <ol class="tag_list">
-	<li><a href="#" class="tag">green</a></li><li><a href="#" class="tag">environment</a></li> 
-	<li><a href="#" class="tag">fairtrade</a></li><li><a href="#" class="tag">reference</a></li> 
-	<li><a href="#" class="tag">clothes</a></li><li><a hryef="#" class="tag">design</a></li>
-	<li><a href="#" class="tag">sustainability</a></li><li><a href="#" class="tag">energy</a></li>
-	<li><a href="#" class="tag">shopping</a></li><li><a href="#" class="tag">climatechange</a></li>
-	<li><a href="#" class="tag">science</a></li><li><a href="#" class="tag">activism</a></li>
-	<li><a href="#" class="tag">health</a></li><li><a href="#" class="tag">architecture</a></li>
-	<li><a href="#" class="tag">shopping</a></li><li><a href="#" class="tag">green</a></li>
-	<li><a href="#" class="tag">environment</a></li><li><a href="#" class="tag">fairtrade</a></li>
-	<li><a href="#" class="tag">reference</a></li><li><a href="#" class="tag">clothes</a></li>
-	<li><a href="#" class="tag">design</a></li>
+	<li><a href="#" class="tag pop7">activism</a></li>
+	<li><a href="#" class="tag pop8">architecture</a></li>
+	<li><a href="#" class="tag pop6">better</a></li>
+	<li><a href="#" class="tag pop3">big</a></li>
+	<li><a href="#" class="tag pop5">climatechange</a></li>
+	<li><a href="#" class="tag pop2">clothing</a></li>
+	<li><a href="#" class="tag pop8">design</a></li>
+	<li><a href="#" class="tag pop8">dip</a></li>
+	<li><a href="#" class="tag pop7">developement</a></li>
+	<li><a href="#" class="tag pop3">energy</a></li>
+
+	<li><a href="#" class="tag pop6">environment</a></li> 
+	<li><a href="#" class="tag pop8">fairtrade</a></li>
+	<li><a href="#" class="tag pop1">gender</a></li>
+	<li><a href="#" class="tag pop8">green</a></li>
+	<li><a href="#" class="tag pop7">hub</a></li>
+	<li><a href="#" class="tag pop4">innovation</a></li>
+	<li><a href="#" class="tag pop2">living</a></li>
+	<li><a href="#" class="tag pop6">product</a></li>
+	<li><a href="#" class="tag pop8">reference</a></li> 
+	<li><a href="#" class="tag pop5">salad</a></li>
+	<li><a href="#" class="tag pop5">org</a></li>
+
+	<li><a href="#" class="tag pop8">science</a></li>
+	<li><a href="#" class="tag pop2">shopping</a></li>
+	<li><a href="#" class="tag pop6">sustainability</a></li>
+	<li><a href="#" class="tag pop1">web</a></li>
   </ol>
 </div>
 
-<!--div id="feature_members_online" class="block">
-  <h3>Who's online</h3>
-  <ul id="members_list">
-    <li class="first"><a href="#"><img class="member_thumb" src="image/member.jpg" /></a></li>
-    <li><a href="#"><img class="member_thumb" src="image/member.jpg" /></a></li>
-    <li><a href="#"><img class="member_thumb" src="image/member.jpg" /></a></li>
-    <li><a href="#"><img class="member_thumb" src="image/member.jpg" /></a></li>
-    <li class="last" ><a href="#"><img class="member_thumb" src="image/member.jpg" /></a></li>
-  </ul>
-  <a href="#">Show all (43)</a>
-</div-->
-
 <div id="feature_my_hub" class="block">
-  <h3>My Hub</h3>
-  <img class="hub_thumb" src="image/group.jpg" />
-  
-  <p><a href="#">Hub Kings Cross</a> is having a bit of a spring clean.</p>
-  <ul class="links">
-    <li class="first"><a href="#">Hub page</a></li>
-    <li class="last" ><a href="#">Book space</a></li>
-    </ul>
+	<h3>My Hub</h3>
+	<div class="thumb medium"><img src="../../site_media/images/group.jpg" /></div>
+	<p><a href="#">Hub Kings Cross</a> is having a bit of a spring clean.</p>
+	<ul class="links">
+		<li class="first"><a href="#">Hub page</a></li>
+		<li class="last" ><a href="#">Book space</a></li>
+	</ul>
 </div>
 
 {% endblock %}

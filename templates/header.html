@@ -1,4 +1,3 @@
-
 {% load openid_tags %}
 {% load i18n %}
 
@@ -13,18 +12,18 @@
     {% block login %}
     <ul id='account_navigation'>
         {% if user.is_authenticated %}
-             <li class='first'>{% openid_icon openid user %}{% trans "Welcome" %} {{ user }}</li>
-	     <li><a href='/profiles/{{user.username}}'>{% trans "Profile" %}</a></li>
-             <li><a href="{% url acct_email %}" class='disabled'>{% trans "Settings" %}</a></li>
-	     <!-- Do we have this notion of admin now? -->
- 	     {% if user.is_staff %}
-	        <li><a href="/admin/">{% trans "Admin" %}</a></li>
-	     {% endif %}
-	     <li><a href="/openid/logout/?next={% url acct_logout %}">{% trans "Logout" %}</a></li>
+			<li class='first'>{% openid_icon openid user %}{% trans "Welcome" %} {{ user }}</li>
+			<li><a href='/profiles/{{user.username}}'>{% trans "Profile" %}</a></li>
+			<li><a href="{% url acct_email %}" class='disabled'>{% trans "Settings" %}</a></li>
+			<!-- Do we have this notion of admin now? -->
+			{% if user.is_staff %}
+				<li><a href="/admin/">{% trans "Admin" %}</a></li>
+			{% endif %}
+			<li class="last"><a href="/openid/logout/?next={% url acct_logout %}">{% trans "Logout" %}</a></li>
         {% else %}
-             <li class='last'><a href="{% url acct_login %}">{% trans "Login" %}</a>
-	       {% trans "or" %} <a href="{% url acct_apply %}"><b>{% trans "Apply to Join" %}</b></a>
-	     </li>
+            <li><a href="{% url acct_apply %}">{% trans "Apply to join" %}</a></li>
+			<li><span>{% trans "or" %}</span></li>
+            <li class='last'><a href="{% url acct_login %}">{% trans "Login" %}</a></li>
         {% endif %}
     </ul>
     {% endblock %}
@@ -47,7 +46,7 @@
         <li class="disabled"><a href='#'>{% trans "Explore" %}</a></li>
 
 	<li><a href='/profiles/'>{% trans "Members" %}</a></li>
-	<li class="disabled"><a href='#'>{% trans "Groups" %}</a></li>
+	<li><a href='{% url groups %}'>{% trans "Groups" %}</a></li>
 	<li class="disabled"><a href='#'>{% trans "Regions" %}</a></li>
 	<li class="last disabled"><a href='#'>{% trans "Events" %}</a></li>
     </ul>

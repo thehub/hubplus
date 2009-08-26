@@ -41,7 +41,8 @@
 	margin-left	: 0;
 }
 
-#header #account_navigation li a {
+#header #account_navigation li a,
+#header #account_navigation li span {
 	color		: #ccc;
 	display		: block;
 	padding-top	: 10px;

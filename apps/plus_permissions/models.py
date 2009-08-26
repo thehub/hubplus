@@ -59,7 +59,8 @@ def SetPossibleTypes(type, options):
      PossibleTypes[type] = options
 
 from apps.plus_permissions.default_agents import get_anonymous_group, get_admin_user, get_all_members_group, get_creator_agent, CreatorMarker
-from apps.plus_permissions.exceptions import PlusPermissionsReadOnlyException, PlusPermissionsNoAccessException, NonExistentPermission
+from apps.plus_permissions.exceptions import PlusPermissionsReadOnlyException, PlusPermissionsNoAccessException, NonExistentPermission, PlusPermissionAnonUserException
+
 
 class SecurityContext(models.Model):
      """Target is the thing the context is associated with e.g. Group. 
@@ -411,11 +412,12 @@ def has_access(agent, resource, interface) :
 
     if agent.__class__ == AnonymousUser :
         # we clearly shouldn't be seeing this 
-        return False
+        raise PlusPermissionAnonUserException('%s:%s'%(interface, resource))
 
     agents_held = agent.get_enclosure_set()
     if allowed_agents.intersection(agents_held):
         return True
 
+    print "has_access fails for %s, %s, %s, %s" %(interface, resource, context.context_agent.obj, agent)
     return False
 

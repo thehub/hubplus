@@ -61,3 +61,5 @@ class InviteUserForm(forms.Form):
         })
         send_mail(subject, message, settings.DEFAULT_FROM_EMAIL, [email], priority="high")
         
+
+

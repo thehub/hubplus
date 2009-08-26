@@ -1,0 +1,19 @@
+{% extends "site_base.html" %}
+
+{% load i18n %}
+{% load avatar_tags %}
+{% load app_plugins %}
+{% load uni_form %}
+
+{% block body %}
+
+{% if site.create_TgGroup %}
+    <a class="button" href="{% url create_group%}">{% trans "Create a new group"%}</a>
+{% endif %}
+
+<ul>
+{% for group in groups %}
+<li><a href='/groups/{{group.id}}/'>{{group.display_name}}</a></li>
+{% endfor %}
+</li>
+{% endblock %}

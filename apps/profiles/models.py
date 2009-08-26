@@ -117,12 +117,3 @@ def create_profile(sender, instance=None, **kwargs):
       profile = instance.create_Profile(instance, user=instance)
 
 
-
-
-
-
-
-
-
-
-
