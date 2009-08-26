@@ -419,5 +419,3 @@ def has_access(agent, resource, interface) :
 
     return False
 
-
-

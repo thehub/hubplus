@@ -23,10 +23,10 @@ class MissingSecurityContextException(Exception):
 from apps.plus_permissions.models import has_access
 from apps.plus_permissions.interfaces import secure_wrap
 
-class PermissionableManager(models.Manager) :
+class PermissionableManager(models.Manager):
     # if a permission_agent is passed, only get or filter items which 
     # pass a security check
-    def plus_filter(self, p_user, **kwargs) : 
+    def plus_filter(self, p_user, **kwargs): 
         return (secure_wrap(resource, p_user)  
                 for resource in super(self.__class__, self).filter(**kwargs)
                 if has_access(p_user, resource, '%s.%s'%(resource.__class__.__name__,'Viewer')))
@@ -241,3 +241,4 @@ def create_reference(sender, instance=None, **kwargs):
                                        object_id=instance.id).count() < 1:
         ref = GenericReference(obj=instance)
         ref.save()
+

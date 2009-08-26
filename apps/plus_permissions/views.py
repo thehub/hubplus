@@ -9,6 +9,30 @@ from django.utils.translation import ugettext
 from django.db import transaction
 from django.utils import simplejson
 
+from django.contrib.auth.decorators import login_required
+
+
+@login_required
+def patch_in_profiles(request):
+    """create profiles for all users who don't have them
+    """
+    from apps.plus_permissions.permissionable import create_reference
+    from apps.plus_permissions.types.User import setup_user_security
+
+    from django.contrib.auth.models import User
+    users = User.objects.filter(profile__isnull=True)
+    no_of_users = users.count()
+
+    for user in users:
+        create_reference(User, user)
+        setup_user_security(user)
+        profile = user.create_Profile(user, user=user)
+        profile.save()
+        print `profile`
+
+    return HttpResponse("patched %s users to have profiles" % str(no_of_users))
+
+"""
     def json_slider_group(self, title, intro, resource, interfaces, mins, constraints) :
         owner = self.get_owner(resource)
         creator = self.get_creator(resource)
@@ -69,3 +93,4 @@ def update_main_permission_sliders(request,username) :
     print json
     return HttpResponse(json, mimetype='text/plain')
 
+"""
