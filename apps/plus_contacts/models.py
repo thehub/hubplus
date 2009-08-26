@@ -15,8 +15,13 @@ from django.conf import settings
 from apps.plus_lib.models import extract 
 
 from apps.plus_permissions.default_agents import get_site, get_all_members_group
+
 from apps.plus_permissions.types.User import create_user
 
+import datetime
+
+from hashlib import sha1
+import hmac as create_hmac
 
 class Contact(models.Model):
     """Use this for the sign-up / invited sign-up process, provisional users"""
@@ -82,8 +87,9 @@ class Application(models.Model) :
     accepted_by = models.ForeignKey(User, null=True) 
 
 
-    def generate_accept_url(self, accepted_by) :
-        url = '/contacts/signup/%s-%s/' % (self.applicant.id,accepted_by.id)
+    def generate_accept_url(self, accepted_by) : 
+        # XXX decide what this URL should be
+        url = 'signup/contacts/signup/'
         return url
 
 
@@ -127,4 +133,26 @@ Please visit the following link to confirm your account : %s
         return message, url
 
 
+
+
+
+def attach_hmac(url, proxy):
+    # NB: url needs to be result of django request.get_full_path()
+    if url.find('=') > 0 :
+        url += '&'
+    else :
+        url += '?'
+    url += "proxy=%s" %proxy
+    hm = create_hmac.new(settings.HMAC_KEY, url, sha1)
+    url += "&hmac=%s" %hm.hexdigest()
+    return url
+
+def confirm_hmac(request):
+    url = request.get_full_path()
+    url, auth_code = url.split("&hmac=")
+    hmd = create_hmac.new(settings.HMAC_KEY, url, sha1).hexdigest()
+    if hmd == auth_code and "proxy=" in url:
+       user = User.objects.get(username=request.GET.get("proxy"))       
+       return (True, user)
+    return False, None
 

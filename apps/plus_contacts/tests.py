@@ -9,7 +9,8 @@ from django.contrib.contenttypes import generic
 from django.contrib.auth.models import *
 from apps.plus_groups.models import *
 
-from models import Contact, Application, PENDING, WAITING_USER_SIGNUP
+from models import Contact, Application
+from models import PENDING, WAITING_USER_SIGNUP, attach_hmac, confirm_hmac
 
 
 from apps.plus_permissions.default_agents import get_site, get_admin_user, get_all_members_group, get_anonymous_group
@@ -18,6 +19,8 @@ from apps.plus_permissions.interfaces import PlusPermissionsNoAccessException
 from apps.plus_permissions.models import has_access
 
 from apps.plus_lib.utils import i_debug
+
+from apps.plus_permissions.types.User import create_user
 
 class TestContact(unittest.TestCase):
 
@@ -154,14 +157,34 @@ class TestInvite(unittest.TestCase) :
         all_members = get_all_members_group()
 
         u = create_user('fred','fred@fred.com')
+        
+        #XXX continue
+        #inv1 = site.invite_non_member('fred@fred.com')
+        #inv2 = site.invite_non_member('j.bloke@random_mail.com')
 
-        inv1 = site.invite_non_member('fred@fred.com')
-        inv2 = site.invite_non_member('j.bloke@random_mail.com')
+        #self.assertTrue(inv1.is_existing_member())
+        #self.assertFalse(inv2.is_existing_member())
+        
+        #self.assertEquals(inv1.get_user().id, u.id)
+        #self.assertNone(inv2.get_user())
+        
+        
 
-        self.assertTrue(inv1.is_existing_member())
-        self.assertFalse(inv2.is_existing_member())
+class TestHMAC(unittest.TestCase):
+
         
-        self.assertEquals(inv1.get_user().id, u.id)
-        self.assertNone(inv2.get_user())
+    def test_hmacs(self):
+        user = get_admin_user()
+        url = 'site/do_stuff'
+        newrl = attach_hmac(url, user)
         
-        
+        self.assertEquals(newrl.split('proxy=')[0],url+'?')
+
+        class A : pass
+        request = A()
+        request.GET = {'proxy':user.username}
+        request.get_full_path = lambda : 'site/do_stuff?proxy=%s&hmac=a755617f7bb602f224cb836d6ebd5736229b041c' % user.username
+        flag, agent = confirm_hmac(request)
+        self.assertTrue(flag)
+        self.assertEquals(agent.username, user.username)
+
