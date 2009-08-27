@@ -147,7 +147,7 @@ def create_notifications(sender, instance, **kwargs):
     if instance is None :
         return
     from notification import models as notification
-    notification.send(instance.get_approvers(), "new_app", {})
+    notification.send(instance.get_approvers(), "new_application", {})
     print "sent a notification to %s" % instance.get_approvers()
     
     
