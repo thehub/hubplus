@@ -1,0 +1,2 @@
+{% load i18n %}
+{% if show %}<dl><dt>{% trans label %} :</dt><dd><a class="bt_edit button" id="{{obj.edit_key}}{{name}}_trigger" title="edit">Edit</a><div {% if edit %} class='editable' {% endif %} id='{{obj.edit_key}}{{name}}'>{{value}}</div></dd></dl>{% endif %}

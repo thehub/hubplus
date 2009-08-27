@@ -181,11 +181,12 @@ var inplace_editor = function (element_id, url, special_options) {
     var editing = false;
     var elementTop = 0;
     var widget_ready = false;
-    if (special_options.externalControl) {
-        trigger = jq('#' + special_options.externalControl);
+    var external_trigger = jq('#' + element_id + '_trigger');
+    if (external_trigger.length) {
+	trigger = external_trigger;
     }
     var options = jq.extend({
-        okText: "ok",
+        okText: "save",
         cancelText: "cancel",
         savingText: "Saving...",
         clickToEditText: "Click here to edit",
@@ -243,8 +244,7 @@ var inplace_editor = function (element_id, url, special_options) {
     };
     var init = function () {
         trigger.one(options.edit_event, enterEditMode);
-        trigger.mouseover(enterHover);
-        trigger.mouseout(leaveHover);
+        element.parent().one('mouseover', enterHover);
     };
     var createForm = function (response) {
         if (typeof(response) !== 'string') {
@@ -306,17 +306,18 @@ var inplace_editor = function (element_id, url, special_options) {
         } else {
             add_submit_button();
         }
+	element.parent().unbind();
     };
     var add_submit_button = function () {
         var submit_html = "";
         if (options.textarea) {
             submit_html = "<br />";
         }
-        submit_html += "<div class='buttons'><input type='image' src='/site_media/images/button_save.gif' class='submit' value='{okText}'/><input type='image' src='/site_media/images/button_cancel.gif' class='cancel' value='{cancelText}' /></div><br class='clear' />".supplant({okText: options.okText, cancelText: options.cancelText});
+        submit_html += "<div class='buttons'><input type='submit' class='save' value='{okText}'/><input type='submit' class='cancel' value='{cancelText}' /></div><br class='clear' />".supplant({okText: options.okText, cancelText: options.cancelText});
         var dom_nodes = jq(submit_html);
         dom_nodes.appendTo(form);
         dom_nodes.find('.cancel').one('click', onclickCancel);
-        dom_nodes.find('.submit').one('click', onSubmit);
+        dom_nodes.find('.save').one('click', onSubmit);
     };
     var getText = function () {
         return element.html();
@@ -489,16 +490,19 @@ var inplace_editor = function (element_id, url, special_options) {
         if (saving) {
             return;
         }
-        element.effect("highlight", {}, 4000);
+	element.parent().one('mouseout', leaveHover);
+	trigger.show();
     };
     var leaveHover = function () {
         if (saving) {
             return;
         }
+	element.parent().one('mouseover', enterHover);
+	trigger.hide();
     };
     var leaveEditMode = function () {
         removeForm();
-        leaveHover();
+	element.parent().one('mouseover', enterHover);
         element.removeClass(options.savingClassName).show();
         trigger.show();
         trigger.one(options.edit_event, enterEditMode);

@@ -58,13 +58,15 @@ urlpatterns = patterns('',
     (r'^swaps/', include('swaps.urls')),
     (r'^flag/', include('flag.urls')),
     (r'^locations/', include('locations.urls')),
-    
+    (r'^permissions/', include('plus_permissions.urls')),                       
     (r'^feeds/tweets/(.*)/$', 'django.contrib.syndication.views.feed', tweets_feed_dict),
     (r'^feeds/posts/(.*)/$', 'django.contrib.syndication.views.feed', blogs_feed_dict),
     (r'^feeds/bookmarks/(.*)/?$', 'django.contrib.syndication.views.feed', bookmarks_feed_dict),
 
     (r'^signup/', include('signup_codes.urls')),
     (r'^contacts/', include('plus_contacts.urls')),
+
+    (r'^notices/', include('notification.urls')),
 
     (r'^testing/sliders/$', direct_to_template, {'template' : 'plus_permissions/tester.html'}),
     (r'^testing/sliders/p$', direct_to_template, {'template' : 'plus_permissions/permissions.html'}), # temp

@@ -164,12 +164,10 @@ INSTALLED_APPS = (
     'plus_tags',
     'profiles',
 
-    'state_machine',
     'plus_groups',
     'plus_links',
     'plus_contacts',
-    #'plus_signup',
-
+  
     'staticfiles',
     'account',
     'tribes',
@@ -278,6 +276,7 @@ try:
     print "import hubspace_compatibility succeeded"
 except ImportError, e:
     print "import hubspace_compatibility failed :: " + `e`
+
 
 try:
     from apps.plus_permissions import patch

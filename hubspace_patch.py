@@ -68,3 +68,15 @@ Alter Table tg_group ADD CONSTRAINT "tg_group_level_check" CHECK (level::text = 
 """
 
 patch_hubspace(patch3)
+
+
+patch4 = """
+CREATE TABLE "tg_group_child_groups" (
+    "id" serial NOT NULL PRIMARY KEY,
+    "from_tggroup_id" integer NOT NULL REFERENCES "tg_group" ("id") DEFERRABLE INITIALLY DEFERRED,
+    "to_tggroup_id" integer NOT NULL REFERENCES "tg_group" ("id") DEFERRABLE INITIALLY DEFERRED,
+    UNIQUE ("from_tggroup_id", "to_tggroup_id")
+);
+"""
+
+patch_hubspace(patch4)

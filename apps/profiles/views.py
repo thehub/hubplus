@@ -74,7 +74,7 @@ def profile(request, username, template_name="profiles/profile.html"):
     p = other_user.get_profile()
     p.save()
 
-    request.user.message_set.create(message="this is a test message")
+
 
     if request.user.is_authenticated():
 
@@ -208,27 +208,8 @@ def update_profile_form(request,username) :
         profile_form = ProfileForm(request.POST, p)
 
 
-from apps.plus_permissions.permissionable import create_reference
-from apps.plus_permissions.types.User import setup_user_security
-
 @login_required
-def patch_in_profiles(request):
-    """create profiles for all users who don't have them
-    """
-    users = User.objects.filter(profile__isnull=True)
-    no_of_users = users.count()
-
-    for user in users:
-        create_reference(User, user)
-        setup_user_security(user)
-        user.create_Profile(user, user=user)
-        
-    return HttpResponse("patched %s users to have profiles" % str(no_of_users))
-
-
-@login_required
-@transaction.commit_on_success
-def profile_field(request,username,classname,fieldname,*args,**kwargs) :
+def profile_field(request, username, classname, fieldname, *args,**kwargs) :
     """ Get the value of one field from the user profile, so we can write an ajaxy editor """
     print "In profile_field"
     print "username %s, classname %s, fieldname %s" % (username,classname,fieldname)
@@ -238,14 +219,16 @@ def profile_field(request,username,classname,fieldname,*args,**kwargs) :
         return HttpResponse("You aren't authorized to access %s in %s for %s. You are %s" % (fieldname,classname,username,request.user),status=401)
     else :
         if classname == 'Profile' :
-            return one_model_field(request,p,ProfileForm,fieldname, kwargs.get('default', ''),[p.user])
+            return one_model_field(request, p, ProfileForm, fieldname, kwargs.get('default', ''),[p.user])
         elif classname == 'HostInfo' :
-            return one_model_field(request,p.get_host_info(),HostInfoForm,fieldname, kwargs.get('default', ''),[p.user])
+            return one_model_field(request, p.get_host_info(), HostInfoForm, fieldname, kwargs.get('default', ''), [p.user])
 
 
 def one_model_field(request, object, formClass, fieldname, default, other_objects=None) :
     val = getattr(object, fieldname)
     if not request.POST:
+        if not val:
+            val = ""
         return HttpResponse("%s" % val, mimetype="text/plain")
 
     field_validator = formClass.base_fields[fieldname]

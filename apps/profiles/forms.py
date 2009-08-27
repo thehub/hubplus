@@ -39,7 +39,7 @@ class ProfileForm(forms.ModelForm):
     sip_id = forms.CharField(max_length=100)
     website = forms.CharField(max_length=100)
     homeplace = forms.CharField(max_length=100)
-    location = forms.CharField(max_length=100)
+    place = forms.CharField(max_length=100)
 
 class HostInfoForm(forms.ModelForm) :
     class Meta:

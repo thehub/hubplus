@@ -2,7 +2,8 @@ var widget_map = {
     'Profile':{'about':'text_wysiwyg',
                'find_out':'text_wysiwyg',
 	       'project_stage':'text_wysiwyg',
-    },
+	       'place': 'gmap'
+    }
 };
 
 var editing = function () {
@@ -45,7 +46,7 @@ var editing = function () {
 };
 var tag_list = function (ele) {
     var manager = jq(ele);
-    
+
     var tag_type = manager.find('.tag_type').val();
     var target_id = manager.find('.target_id').val();
     var target_class = manager.find('.target_class').val();
@@ -68,10 +69,10 @@ var tag_list = function (ele) {
 	}
     };
 
-    manager.find('.tag_value').autocomplete('/plus_tags/autocomplete_tag/'+ 
+    manager.find('.tag_value').autocomplete('/plus_tags/autocomplete_tag/'+
 					    manager.find('.tag_type').val()+ '/'+
 					    manager.find('.target_class').val()+'/'+
-					    manager.find('.target_id').val()+'/' , 
+					    manager.find('.target_id').val()+'/' ,
                                             {width: 175,
 					     matchSubset: false,
 					     selectFirst: false,

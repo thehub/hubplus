@@ -421,5 +421,3 @@ def has_access(agent, resource, interface) :
     print "has_access fails for %s, %s, %s, %s" %(interface, resource, context.context_agent.obj, agent)
     return False
 
-
-

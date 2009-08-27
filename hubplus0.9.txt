@@ -1,7 +1,12 @@
-Phil - fix server
-     - application process
+Groups - group name based_url
+       - group template editing etc      
 
-Tom  - hubspace compatability - finish - patch users and groups
+User page - editing and tagging
+
+
+Phil - application process
+
+Tom  - make users member of all_members group
      - create group form
      - create wiki page form
 
