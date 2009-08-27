@@ -32,8 +32,7 @@ def site_context(f) :
     """ wrap this around a view if you want a wrapped site added to the request """
     def g(request, *args, **kwargs):
         user = request.user
-        request['Site'] = get_site(user)
-        f(request, *args, **kwargs)
+        f(request, get_site(user), *args, **kwargs)
 
     return g
 

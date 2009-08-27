@@ -105,7 +105,6 @@ def leave(request, group, template_name="plus_groups/group.html"):
 @login_required
 @site_context
 def create_group(request, site, template_name="plus_groups/create_group.html"):
-
     if request.POST :
         form = TgGroupForm(request.user, request.POST)
         print form
