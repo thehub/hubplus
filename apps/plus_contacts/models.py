@@ -20,6 +20,8 @@ from apps.plus_permissions.types.User import create_user
 from apps.plus_permissions.proxy_hmac import attach_hmac
 import datetime
 
+from django.db.models.signals import post_save
+
 
 class Contact(models.Model):
     """Use this for the sign-up / invited sign-up process, provisional users"""
@@ -94,6 +96,7 @@ class Application(models.Model) :
 
 
 
+
     def is_site_application(self) :
         """ Is this an application by someone who's not yet a site-member and needs an User / Profile object created"""
 
@@ -135,7 +138,18 @@ Please visit the following link to confirm your account : %s
 
         return message, url
 
+
+    def get_approvers(self):
+        return [u for u in get_all_members_group().get_admin_group().get_users()]
+
     
-
-
-
+def create_notifications(sender, instance, **kwargs):
+    if instance is None :
+        return
+    from notification import models as notification
+    notification.send(instance.get_approvers(), "new_app", {})
+    print "sent a notification to %s" % instance.get_approvers()
+    
+    
+if "notification" in settings.INSTALLED_APPS:
+    post_save.connect(create_notifications,sender=Application)

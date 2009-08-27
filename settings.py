@@ -164,12 +164,10 @@ INSTALLED_APPS = (
     'plus_tags',
     'profiles',
 
-    'state_machine',
     'plus_groups',
     'plus_links',
     'plus_contacts',
-    #'plus_signup',
-
+  
     'staticfiles',
     'account',
     'tribes',
