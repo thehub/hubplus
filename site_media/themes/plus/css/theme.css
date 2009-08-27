@@ -6,6 +6,11 @@ body {
 
 
 /* Elements */
+
+h2 {
+	color		: #5a0000;
+}
+
 a {
 	color		: #540000;
 }
@@ -25,3 +30,5 @@ a {
 #header #main_navigation li a {
 	color		: #f7efef;
 }
+
+

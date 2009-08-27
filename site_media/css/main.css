@@ -7,7 +7,6 @@ HUB PLUS 2009
 
 #main h2 {
 	clear		: both;
-	color		: #5a0000;
 	font-size	: 2.6em;
 	font-weight	: normal;
 	line-height	: 1.1em;
@@ -45,30 +44,34 @@ HUB PLUS 2009
 
 /* Images & Thumbnails */
 
-.image {
+.image,
+.thumb {
 	border		: 1px solid #ddd;
+	border-color: #ddd #ccc #bbb #ddd;
 	display		: block;
-	margin-bottom 	: 1.5em;
 }
 
-.image img {
-	margin		: 10px;
+.image {
+	margin-bottom 	: 1.5em;
+	padding		: 10px;
+}
+
+.thumb {
+	float		: left;
+	margin 		: 0 10px 10px 0;
 }
 
 .image.member img,
 .image.group  img { width : 179px; }
 .image.hub    img { width : 598px; }
 
-.thumb {
-	border		: 1px solid #ddd;
-	display		: block;
-	float		: left;
-	margin 		: 0 10px 10px 0;
-}
+.thumb.tiny       { padding : 2px; margin-bottom : 0; }
+.thumb.small      { padding : 3px; }
+.thumb.medium     {	padding : 4px; }
 
-.thumb.tiny   img { margin : 2px; width : 25px; }
-.thumb.small  img { margin : 3px; width : 35px; }
-.thumb.medium img {	margin : 4px; width : 80px; }
+.thumb.tiny   img { width : 25px; }
+.thumb.small  img { width : 35px; }
+.thumb.medium img {	width : 80px; }
 
 
 /* Divided lists */
