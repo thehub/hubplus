@@ -71,37 +71,30 @@ def proxied_signup(request, application, form_class=SignupForm,
     if success_url is None:
         success_url = get_default_redirect(request)
 
-
-    print "AAA"
     # because this is a signup request that has an application object we, expect the application
 
     if request.method == "POST":
-        print "BBB"
         form = form_class(request.POST)
         if form.is_valid():
             username = form.cleaned_data['username']
             password = form.cleaned_data['password1']
             
             application.applicant.become_member(username, accepted_by=request.user, password = password)
-
-            print "CCC"
-            #username, password = form.save()
             user = authenticate(username=username, password=password)
             
-            print "DDD %s"% user
             auth_login(request, user)
             request.user.message_set.create(
                 message=ugettext("Successfully logged in as %(username)s.") % {
                 'username': user.username
             })
+            application.delete()
             return HttpResponseRedirect(success_url)
     else:
-        print "EEE"
+
         form = form_class()
         applicant = application.get_inner().applicant
         form.email_address = applicant.email_address
 
-        print "FFF %s" % form
 
     # the outstanding issue is how to make sure that the form we're rendering comes back here
     # ie. with the hmac, let's pass it down as a "submit_url"

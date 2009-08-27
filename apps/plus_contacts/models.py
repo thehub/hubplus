@@ -133,7 +133,6 @@ Please visit the following link to confirm your account : %s
         
         print "Done email"
 
-        #self.delete()
         return message, url
 
     

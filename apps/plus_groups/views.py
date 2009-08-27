@@ -56,10 +56,11 @@ def group(request, group_id, template_name="plus_groups/group.html"):
 
 
 def groups(request, template_name='plus_groups/groups.html'):
-    groups = TgGroup.objects.filter(level='member')
+    
+    groups = TgGroup.objects.plus_filter(request.user, level='member' )
     groups = [g for g in groups]
     create = False
-    print "AAA %s"% request.user
+
     if request.user.is_authenticated():
         print "BBB"
         site = get_site(request.user)
@@ -102,8 +103,8 @@ def leave(request, group, template_name="plus_groups/group.html"):
     
 
 @login_required
-
-def create_group(request, template_name="plus_groups/create_group.html"):
+@site_context
+def create_group(request, site, template_name="plus_groups/create_group.html"):
 
     if request.POST :
         form = TgGroupForm(request.user, request.POST)
