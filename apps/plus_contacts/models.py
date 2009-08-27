@@ -45,7 +45,7 @@ class Contact(models.Model):
         """
         u = create_user(username, self.email_address)
         if password:
-            u.set_password()
+            u.set_password(password)
         u.save()
         p = u.get_profile()
         p.first_name = self.first_name

@@ -16,13 +16,8 @@ from signup_codes.models import SignupCode, check_signup_code
 
 
 class SignupForm(BaseSignupForm):
-    signup_code = forms.CharField(max_length=40, required=False, widget=forms.HiddenInput())
-    
-    def clean_signup_code(self):
-        if signup_code:
-            return signup_code
-        else:
-            raise forms.ValidationError("Signup code was not valid.")
+    # turns out we haven't had to customize this yet
+    pass
 
 
 class InviteUserForm(forms.Form):

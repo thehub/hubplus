@@ -63,7 +63,7 @@ def signup(request, form_class=SignupForm,
 @hmac_proxy
 @has_interfaces_decorator(Application)
 def proxied_signup(request, application, form_class=SignupForm,
-                   template_name="account/signup.html", success_url=None):
+                   template_name="account/accepted_signup.html", success_url=None):
     # if we've got here, we already know that this function was called 
     # with request.user as the agent who's inviting / authorizing this new member
     # so we don't need to explicitly test.
@@ -79,9 +79,9 @@ def proxied_signup(request, application, form_class=SignupForm,
         print "BBB"
         form = form_class(request.POST)
         if form.is_valid():
+            username = form.cleaned_data['username']
+            password = form.cleaned_data['password1']
             
-            username = form.get_username()
-            password = form.get_password()
             application.applicant.become_member(username, accepted_by=request.user, password = password)
 
             print "CCC"
@@ -98,7 +98,8 @@ def proxied_signup(request, application, form_class=SignupForm,
     else:
         print "EEE"
         form = form_class()
-        form.email_address = application.get_inner().applicant.email_address
+        applicant = application.get_inner().applicant
+        form.email_address = applicant.email_address
 
         print "FFF %s" % form
 
@@ -111,7 +112,9 @@ def proxied_signup(request, application, form_class=SignupForm,
 
     return render_to_response(template_name, {
         "form": form,
-        "submit_url" : request.build_absolute_uri()
+        "submit_url" : request.build_absolute_uri(),
+        "display_name" : applicant.first_name + " " + applicant.last_name,
+        
     }, context_instance=RequestContext(request))
 
 
