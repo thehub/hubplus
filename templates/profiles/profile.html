@@ -90,7 +90,7 @@
       </li>
       <br />
       <li>
-	<dl class="disabled"><dt >{% trans "Location" %} : </dt><dd class='editable_temp_off' id='{{profile.edit_key}}location'>{% if profile.location %}{{profile.location}}{% else %}Your location{% endif  %}</dd></dl>
+	   {% editable "Location" profile 'place' 'Your Location' %}
       </li>
       <li>
 	<dl class="disabled"><dt >{% trans "Region" %} : </dt>

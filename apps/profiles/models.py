@@ -42,7 +42,7 @@ class Profile(models.Model):
    sip_id = DelegateToUser('sip_id')
    website = DelegateToUser('website')
    homeplace = DelegateToUser('homeplace')
-   location = DelegateToUser('location')
+   place = DelegateToUser('place')
    
    invited_by = models.ForeignKey(User, related_name='invited_users', null=True)
    accepted_by = models.ForeignKey(User, related_name='accepted_users', null=True)
