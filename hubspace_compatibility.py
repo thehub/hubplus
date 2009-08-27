@@ -36,6 +36,7 @@ except :
     User.add_to_class('work', models.CharField(max_length=30))
     User.add_to_class('home', models.CharField(max_length=30))
     User.add_to_class('fax', models.CharField(max_length=30))
+    User.add_to_class('place', models.CharField(max_length=50, null=True))
 
     User.add_to_class('created',models.DateTimeField(default=datetime.datetime.now))
     User.add_to_class('email2',models.CharField(max_length=255))

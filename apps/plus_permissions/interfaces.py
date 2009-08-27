@@ -65,13 +65,20 @@ class InterfaceCallProperty:
     """ Add this to a SecureWrapper to allow a property to be called """
     pass
 
-        
-class NotViewable:
-    @classmethod
+
+
+class EmptyString(type):
+    def __str__(cls):
+        return ""
+
+class NotViewable(object):
+    __metaclass__= EmptyString
+    def __unicode__(self):
+        return ""
+
     def __str__(self):
         return ""
 
-    @classmethod
     def __repr__(self):
         return ""
 

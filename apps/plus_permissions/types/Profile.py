@@ -16,7 +16,7 @@ child_types = []
         
 class ProfileViewer: 
     about = InterfaceReadProperty
-    location = InterfaceReadProperty
+    place = InterfaceReadProperty
     website = InterfaceReadProperty
     homeplace = InterfaceReadProperty
     organisation = InterfaceReadProperty
@@ -53,7 +53,7 @@ class ProfileSipViewer:
 class ProfileEditor: 
     pk = InterfaceReadProperty
     about = InterfaceWriteProperty
-    location = InterfaceWriteProperty
+    place = InterfaceWriteProperty
     website = InterfaceWriteProperty
 
     organisation = InterfaceWriteProperty

@@ -497,7 +497,9 @@ form.full fieldset .checkboxes select {
 
 
 /* Form Buttons */
-
+.bt_edit {
+        display: none;
+}
 .button {
 	background	: #e2e2e2 url('../images/button_bg.gif') 0 0 repeat-x;
 	border		: 1px solid #bbb;
