@@ -1,7 +1,12 @@
-Phil - fix server
-     - application process
+Groups - groups page should be viewable by anonymous - line 64 in apps/plus_groups/views.py "if site.create_TgGroup "
+       - group name based_url
+      
+User page - editing and tagging
 
-Tom  - hubspace compatability - finish - patch users and groups
+
+Phil - application process
+
+Tom  - make users member of all_members group
      - create group form
      - create wiki page form
 
