@@ -210,7 +210,7 @@ def update_profile_form(request,username) :
 
 @login_required
 @transaction.commit_on_success
-def profile_field(request,username,classname,fieldname,*args,**kwargs) :
+def profile_field(request, username, classname, fieldname,*args,**kwargs) :
     """ Get the value of one field from the user profile, so we can write an ajaxy editor """
     print "In profile_field"
     print "username %s, classname %s, fieldname %s" % (username,classname,fieldname)

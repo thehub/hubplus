@@ -7,7 +7,7 @@
 {% load uni_form %}
 {% load profile_tags %}
 {% load plus_tags %}
-
+{% load editable_attribute %}
 {% block body %}
 
 <div id="intro" class="block">
@@ -83,11 +83,10 @@
       </li>
       <br />
       <li>
-	
-        <dl><dt >{% trans "Organisation" %} :</dt><dd class='editable' id='{{profile.edit_key}}organisation'>{% if profile.organisation %}{{profile.organisation}}{% else %}Your organisation{% endif  %}</dd></dl>
+	   {% editable "Organisation" profile 'organisation' 'Your organisation' %}
       </li>
       <li>
-	<dl><dt >{% trans "Role" %} : </dt><dd  class='editable' id='{{profile.edit_key}}role'>{% if profile.role %}{{profile.role}}{% else %}Your role{% endif  %}</dd></dl>
+	   {% editable "Role" profile 'role' 'Your role' %}
       </li>
       <br />
       <li>

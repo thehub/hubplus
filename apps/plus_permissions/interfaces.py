@@ -26,11 +26,16 @@ class TemplateSecureWrapper:
         self.SecureWrapper = SecureWrapper
 
     def __getattr__(self, name):
+        if name.startswith("has_write_"):
+            write_attr = name.split('has_write_')[1]
+            return self.can_write(write_attr)
         try:
             return getattr(self.SecureWrapper, name)
         except:
             return NotViewable
 
+    def can_write(self, name):
+        return self.SecureWrapper.has_permission(name, InterfaceReadWriteProperty) or self.SecureWrapper.has_permission(name, InterfaceWriteProperty)
 
 
 
@@ -83,6 +88,7 @@ class SecureWrapper:
             lambda x : x == 'id',
             lambda x : x == 'save',
             lambda x : x == 'get_ref',
+            lambda x : x == 'edit_key'
         ]
         self.__dict__['_permissions'] = {InterfaceReadProperty: set(),
                                          InterfaceCallProperty: set(),
@@ -125,10 +131,10 @@ class SecureWrapper:
                 if attr not in permitted:
                     permitted.add(attr)
 
-    def has_permission(self, name, interface) :
+    def has_permission(self, name, perm) :
         """The moment of truth!"""
         try: 
-            perms = self._permissions[interface]
+            perms = self._permissions[perm]
         except KeyError:
             raise NonExistentPermission
         else:
