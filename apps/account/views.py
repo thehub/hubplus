@@ -14,6 +14,8 @@ from django.contrib.auth.models import AnonymousUser
 
 from apps.plus_permissions.default_agents import get_anonymous_group, get_anon_user
 
+from apps.hubspace_compatibility.models import TgGroup
+
 from account.utils import get_default_redirect
 from account.models import OtherServiceInfo
 from account.forms import SignupForm, AddEmailForm, LoginForm, \
@@ -290,6 +292,8 @@ def apply(request, form_class=HubPlusApplicationForm,
         template_name="account/apply_form.html"):
 
     user = request.user
+
+    hubs = TgGroup.objects.filter(level='hub')
     if request.method == "POST":
         form = form_class(request.POST)
         print form
@@ -307,6 +311,7 @@ def apply(request, form_class=HubPlusApplicationForm,
         form = form_class()
     return render_to_response(template_name, {
         "form": form,
+        "hubs":hubs,
     }, context_instance=RequestContext(request))
 
 

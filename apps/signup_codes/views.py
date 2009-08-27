@@ -10,12 +10,15 @@ from django.contrib.admin.views.decorators import staff_member_required
 
 from account.utils import get_default_redirect
 from signup_codes.models import check_signup_code
-#from account.forms import SignupForm as BaseSignupForm
+
+
 from signup_codes.forms import SignupForm, InviteUserForm
 
 from apps.plus_permissions.default_agents import get_admin_user, get_anon_user, get_site
 
 from apps.plus_permissions.api import has_interfaces_decorator
+from apps.plus_permissions.proxy_hmac import hmac_proxy
+from apps.plus_contacts.models import Application
 
 def signup(request, form_class=SignupForm,
         template_name="account/signup.html", success_url=None):
@@ -38,7 +41,9 @@ def signup(request, form_class=SignupForm,
             return HttpResponseRedirect(success_url)
     else:
         code = request.GET.get("code")
-        signup_code = check_signup_code(code)
+        #signup_code = check_signup_code(code)
+
+
         if signup_code:
             form = form_class(initial={"signup_code": code})
         else:
@@ -53,6 +58,58 @@ def signup(request, form_class=SignupForm,
     return render_to_response(template_name, {
         "form": form,
     }, context_instance=RequestContext(request))
+
+
+@hmac_proxy
+@has_interfaces_decorator(Application)
+def proxied_signup(request, application, form_class=SignupForm,
+                   template_name="account/accepted_signup.html", success_url=None):
+    # if we've got here, we already know that this function was called 
+    # with request.user as the agent who's inviting / authorizing this new member
+    # so we don't need to explicitly test.
+
+    if success_url is None:
+        success_url = get_default_redirect(request)
+
+    # because this is a signup request that has an application object we, expect the application
+
+    if request.method == "POST":
+        form = form_class(request.POST)
+        if form.is_valid():
+            username = form.cleaned_data['username']
+            password = form.cleaned_data['password1']
+            
+            application.applicant.become_member(username, accepted_by=request.user, password = password)
+            user = authenticate(username=username, password=password)
+            
+            auth_login(request, user)
+            request.user.message_set.create(
+                message=ugettext("Successfully logged in as %(username)s.") % {
+                'username': user.username
+            })
+            application.delete()
+            return HttpResponseRedirect(success_url)
+    else:
+
+        form = form_class()
+        applicant = application.get_inner().applicant
+        form.email_address = applicant.email_address
+
+
+    # the outstanding issue is how to make sure that the form we're rendering comes back here
+    # ie. with the hmac, let's pass it down as a "submit_url"
+
+    # we must now get the original user (probably Anon) back ... otherwise it thinks we're
+    # logged in as the proxy, which circumvents showing the signup form
+    request.user = request.old_user         
+
+    return render_to_response(template_name, {
+        "form": form,
+        "submit_url" : request.build_absolute_uri(),
+        "display_name" : applicant.first_name + " " + applicant.last_name,
+        
+    }, context_instance=RequestContext(request))
+
 
 
 
@@ -75,19 +132,3 @@ def admin_invite_user(request, form_class=InviteUserForm,
     }, context_instance=RequestContext(request))
 
 
-
-def plus_signup(request, key) :
-    # here, we just confirm the key and forward to a change password form
-    
-    # we're going to try to use the existing SignupForm, even though we 
-    # have the key in the URL
-
-    admin = get_admin_user()
-    site = get_site(admin)
-    site.create_user_from_key(admin, key=key)
-    form = SignUpForm(initial={"signup_code":key})
-    print request.POST
-
-    return render_to_response('account/accepted_signup.html', {
-        "form": form,
-    }, context_instance=RequestContext(request))

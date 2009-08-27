@@ -15,6 +15,17 @@
   <div id="extra" class="block_column">
 
     <div id='permission_sliders'></div>
+
+    <div id='messages'>
+      {% if messages %}
+      <ul>
+	{% for message in messages %}
+	<li>{{ message }}</li>
+	{% endfor %}
+      </ul>
+      {% endif %}
+    </div>
+
     
     <div id="page_image" class="image member">{% avatar other_user 180 %}</div>
     {% if is_me %}

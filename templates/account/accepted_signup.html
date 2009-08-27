@@ -15,7 +15,7 @@
 
 <div id="intro" class="block">
 
-<form class="full">
+<form class="full" action="{{submit_url}}" method="POST">
 	<h4>Your details</h4>
 	<p>Please enter your details below to finish creating your account.</p>
 	<fieldset>
@@ -23,19 +23,19 @@
 			<li>
 				<label for="name">Name</label>
 				<!-- <input  id="name" class="text" type="text" /> -->
-				Jesson Yip
+				{{display_name}}
 			</li>
 			<li>
 				<label for="username"><span class="required">*</span> Username</label>
-				<input  id="username" class="text" type="text" />
+				<input  id="username" name="username" class="text" type="text" />
 			</li>
 			<li>
-				<label for="password"><span class="required">*</span> Password</label>
-				<input  id="password" class="text" type="text" />
+				<label for="password1"><span class="required">*</span> Password</label>
+				<input  id="password1" name="password1" class="text" type="text" />
 			</li>
 			<li>
-				<label for="password_two"><span class="required">*</span> Re-enter password</label>
-				<input  id="password_two" class="text" type="text" />
+				<label for="password2"><span class="required">*</span> Re-enter password</label>
+				<input  id="password2" name="password2" class="text" type="text" />
 			</li>
 		</ul>
 	</fieldset>
