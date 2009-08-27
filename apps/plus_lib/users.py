@@ -32,3 +32,5 @@ def make_groups() :
 
     ss = site.create_TgGroup(get_admin_user(), group_name='sexysalad', display_name='Sexy Salad Club', level='member')
     print ss.display_name, ss.id
+
+

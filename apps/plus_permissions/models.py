@@ -412,7 +412,7 @@ def has_access(agent, resource, interface) :
 
     if agent.__class__ == AnonymousUser :
         # we clearly shouldn't be seeing this 
-        raise PlusPermissionAnonUserException('%s:%s'%(interface, resource))
+        return False
 
     agents_held = agent.get_enclosure_set()
     if allowed_agents.intersection(agents_held):

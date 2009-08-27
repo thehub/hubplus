@@ -39,7 +39,7 @@ def accept_application(request,id) :
         if application.is_site_application() :
 
             # contact is not a user 
-            msg,url = application.accept(request.user)
+            msg,url = application.accept(request.user, request.get_host())
             print url
             return render_to_response('plus_contacts/dummy_email.html',
                                           {'url':url, 'message':msg},                                      

@@ -16,15 +16,8 @@ from signup_codes.models import SignupCode, check_signup_code
 
 
 class SignupForm(BaseSignupForm):
-    signup_code = forms.CharField(max_length=40, required=False, widget=forms.HiddenInput())
-    
-    def clean_signup_code(self):
-        code = self.cleaned_data.get("signup_code")
-        signup_code = check_signup_code(code)
-        if signup_code:
-            return signup_code
-        else:
-            raise forms.ValidationError("Signup code was not valid.")
+    # turns out we haven't had to customize this yet
+    pass
 
 
 class InviteUserForm(forms.Form):
@@ -61,5 +54,3 @@ class InviteUserForm(forms.Form):
         })
         send_mail(subject, message, settings.DEFAULT_FROM_EMAIL, [email], priority="high")
         
-
-

@@ -22,7 +22,7 @@ from apps.plus_permissions.api import has_access, has_interfaces_decorator
 from apps.plus_permissions.interfaces import secure_wrap, PlusPermissionsNoAccessException, SecureWrapper
 from apps.plus_permissions.models import InvalidSliderConfiguration
 from apps.plus_permissions.default_agents import get_anonymous_group, get_all_members_group
-
+from apps.plus_permissions.proxy_hmac import attach_hmac, confirm_hmac, hmac_proxy
 
 
 class TestHierarchy(unittest.TestCase):
@@ -449,4 +449,21 @@ class TestDecorators(unittest.TestCase) :
         self.assertRaises(PlusPermissionsNoAccessException, f, p)
 
 
+
+class TestHMAC(unittest.TestCase):
+        
+    def test_hmacs(self):
+        user = get_admin_user()
+        url = 'site/do_stuff/?a=1'
+        newrl = attach_hmac(url, user)
+        
+        self.assertEquals(newrl.split('proxy=')[0],url+'&')
+
+        class A : pass
+        request = A()
+        request.GET = {'proxy':user.username}
+        request.get_full_path = lambda : 'site/do_stuff/?a=1&proxy=%s&hmac=dd876a36785ea82a1b01d957162398f913e48aeb' % user.username
+        flag, agent = confirm_hmac(request)
+        self.assertTrue(flag)
+        self.assertEquals(agent.username, user.username)
 
