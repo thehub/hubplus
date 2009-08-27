@@ -277,6 +277,7 @@ try:
 except ImportError, e:
     print "import hubspace_compatibility failed :: " + `e`
 
+
 try:
     from apps.plus_permissions import patch
 except ImportError, e:

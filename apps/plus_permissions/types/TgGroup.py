@@ -13,6 +13,27 @@ content_type = TgGroup
 
 from apps.plus_permissions.default_agents import get_or_create_root_location, get_anonymous_group, get_all_members_group, get_creator_agent
 
+def setup_group_security(group, context_agent, context_admin, creator):
+    group.to_security_context()
+    sec_context = group.get_security_context() 
+    sec_context.set_context_agent(context_agent.get_ref())
+    sec_context.set_context_admin(context_admin.get_ref())
+    sec_context.save()
+    group.add_member(creator)
+    group.add_member(context_admin)
+
+    group.save()
+    group.get_security_context().set_up()
+    
+    ref = group.get_ref()
+    ref.creator = creator
+    ref.save()
+
+    if group.id != get_all_members_group().id :
+        get_all_members_group().add_member(group)
+
+
+
 # override object managers, filter, get, get_or_create
 def get_or_create(group_name=None, display_name=None, place=None, level=None, user=None) :
     """get or create a group
@@ -35,8 +56,6 @@ def get_or_create(group_name=None, display_name=None, place=None, level=None, us
         group.save()
 
         if level == 'member':
-            group.to_security_context()
-            sec_context = group.get_security_context() 
             admin_group, created = TgGroup.objects.get_or_create(
                 group_name=group_name + "_hosts", 
                 display_name=display_name + " Hosts", 
@@ -44,36 +63,9 @@ def get_or_create(group_name=None, display_name=None, place=None, level=None, us
                 place=place,
                 user=user
                 )
-            
-            sec_context.set_context_agent(group.get_ref())
-            sec_context.set_context_admin(admin_group.get_ref())
-            sec_context.save()
-            group.add_member(admin_group)
-            group.add_member(user)
-            group.save()
-
-            if group.id != get_all_members_group().id :
-                get_all_members_group().add_member(group)
-
-            group.get_security_context().set_up()
-
-            ref = group.get_ref()
-            ref.creator = user
-            ref.save()
-
+            setup_group_security(group, group, admin_group, user)
         elif level == 'host':
-            group.to_security_context()
-            sec_context = group.get_security_context() 
-            sec_context.set_context_agent(group.get_ref())
-            sec_context.set_context_admin(group.get_ref())
-            sec_context.save()
-            group.add_member(user)
-            group.save()
-            group.get_security_context().set_up()
-
-            ref = group.get_ref()
-            ref.creator = user
-            ref.save()
+            setup_group_security(group, group, group, user)
 
     return group, created
 

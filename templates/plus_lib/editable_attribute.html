@@ -1,0 +1,2 @@
+{% load i18n %}
+{% if show %}<dl><dt>{% trans label %} :</dt><dd {% if edit %} class='editable' {% endif %} id='{{obj.edit_key}}{{name}}'>{{value}}</dd></dl>{% endif %}
