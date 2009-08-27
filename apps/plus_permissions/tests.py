@@ -454,15 +454,15 @@ class TestHMAC(unittest.TestCase):
         
     def test_hmacs(self):
         user = get_admin_user()
-        url = 'site/do_stuff'
+        url = 'site/do_stuff/?a=1'
         newrl = attach_hmac(url, user)
         
-        self.assertEquals(newrl.split('proxy=')[0],url+'?')
+        self.assertEquals(newrl.split('proxy=')[0],url+'&')
 
         class A : pass
         request = A()
         request.GET = {'proxy':user.username}
-        request.get_full_path = lambda : 'site/do_stuff?proxy=%s&hmac=a755617f7bb602f224cb836d6ebd5736229b041c' % user.username
+        request.get_full_path = lambda : 'site/do_stuff/?a=1&proxy=%s&hmac=dd876a36785ea82a1b01d957162398f913e48aeb' % user.username
         flag, agent = confirm_hmac(request)
         self.assertTrue(flag)
         self.assertEquals(agent.username, user.username)

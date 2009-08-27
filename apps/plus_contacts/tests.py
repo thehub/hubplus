@@ -10,11 +10,12 @@ from django.contrib.auth.models import *
 from apps.plus_groups.models import *
 
 from models import Contact, Application
-from models import PENDING, WAITING_USER_SIGNUP, attach_hmac, confirm_hmac
+from models import PENDING, WAITING_USER_SIGNUP
 
 
 from apps.plus_permissions.default_agents import get_site, get_admin_user, get_all_members_group, get_anonymous_group
 from apps.plus_permissions.interfaces import PlusPermissionsNoAccessException
+from apps.plus_permissions.proxy_hmac import attach_hmac
 
 from apps.plus_permissions.models import has_access
 
@@ -50,7 +51,11 @@ class TestContact(unittest.TestCase):
         # now upgrade to a user
         u3 = self.ct.become_member('tom.salfield',  invited_by=self.u, accepted_by=u2)
         self.assertEquals(u2.__class__, User)
-        self.assertEquals(len(Contact.objects.filter(id=self.ct.id)), 0)
+
+        # the following commented test was to confirm that becoming a member deleted the Contact
+        # as I'm not deleting contacts at the moment, this test is redundant
+        # self.assertEquals(len(Contact.objects.filter(id=self.ct.id)), 0)
+        
         p = u3.get_profile() 
         self.assertEquals(p.first_name, self.ct.first_name)
         self.assertEquals(p.last_name, self.ct.last_name)
@@ -144,7 +149,7 @@ class TestApplication(unittest.TestCase) :
 
         application = Application.objects.get(id=application.id)
 
-        application.accept(mable,admin_comment='great choice')
+        application.accept(mable, 'site_root', admin_comment='great choice')
 
         self.assertEquals(application.status,WAITING_USER_SIGNUP)
         self.assertEquals(application.admin_comment,'great choice')
@@ -170,21 +175,4 @@ class TestInvite(unittest.TestCase) :
         
         
 
-class TestHMAC(unittest.TestCase):
-
-        
-    def test_hmacs(self):
-        user = get_admin_user()
-        url = 'site/do_stuff'
-        newrl = attach_hmac(url, user)
-        
-        self.assertEquals(newrl.split('proxy=')[0],url+'?')
-
-        class A : pass
-        request = A()
-        request.GET = {'proxy':user.username}
-        request.get_full_path = lambda : 'site/do_stuff?proxy=%s&hmac=a755617f7bb602f224cb836d6ebd5736229b041c' % user.username
-        flag, agent = confirm_hmac(request)
-        self.assertTrue(flag)
-        self.assertEquals(agent.username, user.username)
 

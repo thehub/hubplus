@@ -30,6 +30,7 @@ from django.contrib.auth.decorators import login_required
 from apps.plus_tags.models import  tag_add, tag_delete, get_tags, tag_autocomplete
 
 from django.contrib.contenttypes.models import ContentType
+from django.db.models import Q
 
 
 # need 
@@ -47,6 +48,9 @@ else:
 
 def profiles(request, template_name="profiles/profiles.html"):
     users = User.objects.all().order_by("-date_joined")
+
+    users = users.filter(~Q(username='admin')).filter(~Q(username='anon'))
+
     search_terms = request.GET.get('search', '')
     order = request.GET.get('order')
     if not order:

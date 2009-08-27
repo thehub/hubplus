@@ -14,7 +14,7 @@ from apps.plus_permissions.models import has_access
 
 __all__ = ['secure_wrap', 'TemplateSecureWrapper', 'Location', 'TgGroup', 'has_access', 'anonymous_group', 'all_members_group', 'get_or_create_root_location']
 
-def has_interfaces_decorator(cls, interface_names) :
+def has_interfaces_decorator(cls, interface_names=None) :
     def decorator(f) :
         def g(request, resource_id, *args, **kwargs) :
             resource=cls.objects.get(id=resource_id)
@@ -31,7 +31,7 @@ def site_context(f) :
         request['Site'] = get_site(user)
         f(request, *args, **kwargs)
 
-            
+    return g
 
 
 

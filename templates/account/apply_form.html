@@ -13,15 +13,79 @@
   <p>{% trans "Already have an account?" %} <a href="{% url acct_login %}">{% trans "Log In" %}</a>!</p>
 {% endif %}
 
-  <form class="full uniForm" id="apply_form" method="post" action="{% url acct_apply %}">
-    <fieldset class="inlineLabels">
-      {{ form|as_uni_form }}
-      <div  class="form_blick">
-        <input type="submit" value="{% trans "Apply to Join &raquo;" %}" />
-      </div>
-    </fieldset>
-  </form>
 
+
+  <form class="full uniForm" id="apply_form" method="post" action="{% url acct_apply %}">
+
+    <h4>Your details</h4>
+    <p>Please enter your details below to request an account.</p>
+    <fieldset>
+      <ul>
+	<li>
+	  {{ form.username.errors }}
+	  <label for="id_username"><span class="required">*</span> Name</label>
+	  <input  id="id_username" name="username" class="text" type="text" />
+	</li>
+	<li>
+	  {{ form.email_address.errors}}
+	  <label for="id_email_address"><span class="required">*</span> Email</label>
+	  <input  id="email_address" name="email_address" class="text" type="text" />
+	</li>
+	<li>
+	  {{ form.organisation.errors}}
+	  <label for="id_organisation"><span class="required">*</span> Organisation</label>
+	  <input  id="id_organisation" name="organisation" class="text" type="text" />
+	</li>
+	<li>
+	  {{ form.location.errors}}
+	  <label for="id_location"><span class="required">*</span> Location <span class="extra">postcode, country</span></label>
+	  <input  id="id_location" name="location" class="text" type="text" />
+	  <br /><span style="color:red">(Use existing google maps here)</span>
+	</li>
+	<li>
+	  {{ form.about_and_why.errors}}
+	  <label for="id_about"><span class="required">*</span> Tell us a bit about yourself <span class="extra">what you do and why you're interested in the Hub?</span></label>
+	  <textarea id="id_about" name="about_and_why" rows="5"></textarea>
+	</li>
+	<li>
+
+	  <label for="interests"><span class="required">*</span> What are your interests?</label>
+	  <!-- <input  id="interests" class="text" type="text" /> -->
+	  <span style="color:red">(Use existing tag functionality profiles here)</span>
+	</li>
+	<li>
+	  <label for="skills"><span class="required">*</span> What are your skills?</label>
+	  <!-- <input  id="skills" class="text" type="text" /> -->
+	  <span style="color:red">(Use existing tag functionality from profiles here)</span>
+	</li>
+	<li>
+	  {{form.find_out.errors}}
+	  <label for="id_referal"><span class="required">*</span> How did you find out about the Hub?</label>
+	  <textarea id="id_referal" name="find_out" rows="2"></textarea>
+	</li>
+	<li class="checkboxes">
+	  <label>&nbsp;</label>
+	  <input id="physical_hub" name="physical_hub_check" class="checkbox" type="checkbox">
+	  <div class="label_extended">
+	    {{ form.which_hub.errors }}
+	    <label for="physical_hub">I'm interested in joining a physical Hub.</label>
+	    <select class="disabled" id="which_hub" name="group">
+	   
+	      <option value="" readonly="readonly" selected="selected">Please select a Hub...</option>
+
+	      {% for h in hubs %}
+	      <option value="{{h.group_name}}">{{h.display_name}}</option>
+	      {% endfor %}
+	    </select>
+
+	    <a href="#">Tell me more</a>
+	  </div>
+	</li>
+      </ul>
+    </fieldset>
+    <input class="submit button" type="submit" value="{% trans "Request account &raquo;" %}" />
+    
+  </form>
 
         
 {% url terms as terms_url %}
@@ -33,6 +97,8 @@
 <p>If you have OpenID, <a href="{% url acct_login %}">log in</a> using that to begin using this site with OpenID right away.</p>
 
 
+
+
 {% endblock %}
 
 
@@ -41,8 +107,12 @@
     {% include_validation %}
     <script type="text/javascript">
         $(function(){
+	    $("#physical_hub").checked(function() {
+	      $("#which_hub").class("disabled");
+	    });
             $('#signup_form').validate('{% url signup_form_validate %}', {type: 'table', fields: ['username'], dom: $('#id_username'), event: 'change'});
             $("#id_username").focus();
+	    
         });
     </script>
 {% endblock %}
