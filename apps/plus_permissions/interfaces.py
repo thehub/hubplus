@@ -93,6 +93,8 @@ class SecureWrapper:
                                          InterfaceCallProperty: set(),
                                          InterfaceWriteProperty: set(),
                                          InterfaceReadWriteProperty: set()}
+        self.__dict__['_interfaces'] = set()
+
     def depth(self) :
         if self._inner.__class__ != SecureWrapper:
             return 0
@@ -115,6 +117,7 @@ class SecureWrapper:
             interface = interface_map[iname]
             iface_name = self.get_inner().__class__.__name__ + '.' + iname
             if has_access(agent=agent, resource=resource, interface=iface_name):
+                self._interfaces.add(iface_name)
                 self.add_permissions(interface)
     
     def add_permissions(self, interface):
@@ -157,7 +160,7 @@ class SecureWrapper:
     def __setattr__(self, name, val):
         for rule in self.__dict__['_exceptions']:
             if rule(name) :
-                setattr(self,name,val)
+                setattr(self, name, val)
 
         if self.has_permission(name, InterfaceWriteProperty) or self.has_permission(name, InterfaceReadWriteProperty):
             self.get_inner().__setattr__(name,val)

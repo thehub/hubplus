@@ -17,7 +17,7 @@ from apps.plus_contacts.models import Application, PENDING, WAITING_USER_SIGNUP
 from apps.plus_contacts.forms import InviteForm
 
 from apps.plus_permissions.interfaces import PlusPermissionsNoAccessException
-from apps.plus_permissions.api import site_context, has_interfaces_decorator
+from apps.plus_permissions.api import site_context, secure_resource
 
 from apps.hubspace_compatibility.models import TgGroup
 
@@ -107,7 +107,7 @@ def site_invite(request, site, template_name='plus_contacts/invite_non_member.ht
                               
 
 @login_required
-@has_interfaces_decorator(TgGroup, ['Inviter','Viewer'])    
+@secure_resource(TgGroup, required_interfaces=['Inviter','Viewer'])    
 def group_invite(request, group, template_name='plus_groups/invite.html', **kwargs):
     pass
     

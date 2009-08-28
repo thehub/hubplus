@@ -88,19 +88,21 @@ class SecurityContext(models.Model):
          for typ in types:
              for interface_name in get_interface_map(typ.__name__):
                  interface_str = '%s.%s' %(typ.__name__, interface_name)
-                 self.create_security_tag(interface_str)
-                 try:
-                     selected_agent = sad[agent_defaults[typ.__name__]['defaults'][interface_name]]
-                 except KeyError:
-                     selected_agent = sad[agent_defaults[typ.__name__]['defaults']['Unknown']]
-                 self.move_slider(selected_agent, interface_str, skip_validation=True, no_user=True)
-        
-         
+                 self.setup_tag_from_defaults(typ, interface_name, interface_str, sad, agent_defaults)
 
          tag = self.create_security_tag(interface='SetPermissionManager')
          tag.save()
          tag.add_agents([self.context_admin])
  
+     def setup_tag_from_defaults(self, typ, interface_name, interface_str, sad, agent_defaults):
+         self.create_security_tag(interface_str)
+         try:
+             selected_agent = sad[agent_defaults[typ.__name__]['defaults'][interface_name]]
+         except KeyError:
+             selected_agent = sad[agent_defaults[typ.__name__]['defaults']['Unknown']]
+         self.move_slider(selected_agent, interface_str, skip_validation=True, no_user=True)
+
+
      def is_agent(self, target):
          return ( isinstance(target.obj, User) or isinstance(target.obj, TgGroup) )
          # Maybe?  isinstance(target.obj, Site) ... 
@@ -377,22 +379,22 @@ def has_access(agent, resource, interface) :
  
     # we're always interested in the security_context of this resource
 
-    context = resource.get_security_context()
-    context_type = ContentType.objects.get_for_model(context)
-
-    
+    context = resource.get_security_context()    
 
     # which agents have access?
 
-    if SecurityTag.objects.filter(interface=interface,security_context=context) :
-        allowed_agents = SecurityTag.objects.get(interface=interface,
-                                                 security_context=context).agents
+    if not SecurityTag.objects.filter(interface=interface, security_context=context):
+        #lets create it if it is in defaults for the type -- this allows adding new interfaces to the type at runtime
+        typ = resource.__class__
+        interface_name = interface.split('.')[1]
+        if interface_name in get_interface_map(typ.__name__):
+            agent_defaults = AgentDefaults[context.context_agent.obj.__class__]['public']
+            slider_agents = SliderAgents[context.context_agent.obj.__class__](context)
+            sad = dict(slider_agents)
+            context.setup_tag_from_defaults(typ, interface_name, interface, sad, agent_defaults)
 
-    else :
-
-        # force the exception again
-        allowed_agents = SecurityTag.objects.get(interface=interface,
-                                                security_context=context).agents
+    allowed_agents = SecurityTag.objects.get(interface=interface,
+                                             security_context=context).agents
     
 
     # probably should memcache both allowed agents (per .View interface) and 

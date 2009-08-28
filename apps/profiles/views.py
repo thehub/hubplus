@@ -21,9 +21,7 @@ from avatar.templatetags.avatar_tags import avatar
 
 from apps.plus_lib.models import DisplayStatus, add_edit_key
 
-from apps.plus_permissions.models import SecurityTag, has_access
-from apps.plus_permissions.interfaces import PlusPermissionsNoAccessException, PlusPermissionsReadOnlyException, secure_wrap, TemplateSecureWrapper
-from apps.plus_permissions.default_agents import get_anon_user
+from apps.plus_permissions.api import secure_resource, secure_wrap, TemplateSecureWrapper, PlusPermissionsNoAccessException, PlusPermissionsReadOnlyException, get_anon_user
 
 from django.contrib.auth.decorators import login_required
 
@@ -209,19 +207,17 @@ def update_profile_form(request,username) :
 
 
 @login_required
-def profile_field(request, username, classname, fieldname, *args,**kwargs) :
+@secure_resource(User)
+def profile_field(request, other_user, classname, fieldname, *args,**kwargs) :
     """ Get the value of one field from the user profile, so we can write an ajaxy editor """
     print "In profile_field"
-    print "username %s, classname %s, fieldname %s" % (username,classname,fieldname)
-    other_user = get_object_or_404(User,username=username)
-    p = other_user.get_profile()
-    if not has_access(request.user,p,'Profile.Viewer') :
-        return HttpResponse("You aren't authorized to access %s in %s for %s. You are %s" % (fieldname,classname,username,request.user),status=401)
-    else :
-        if classname == 'Profile' :
-            return one_model_field(request, p, ProfileForm, fieldname, kwargs.get('default', ''),[p.user])
-        elif classname == 'HostInfo' :
-            return one_model_field(request, p.get_host_info(), HostInfoForm, fieldname, kwargs.get('default', ''), [p.user])
+    print "username %s, classname %s, fieldname %s" % (other_user.username,classname,fieldname)
+    p = secure_wrap(other_user.get_profile(), request.user)
+
+    if classname == 'Profile' :
+        return one_model_field(request, p, ProfileForm, fieldname, kwargs.get('default', ''),[p.user])
+    elif classname == 'HostInfo' :
+        return one_model_field(request, p.get_host_info(), HostInfoForm, fieldname, kwargs.get('default', ''), [p.user])
 
 
 def one_model_field(request, object, formClass, fieldname, default, other_objects=None) :

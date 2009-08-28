@@ -22,7 +22,7 @@ from django.contrib.auth.decorators import login_required
 
 from apps.plus_groups.forms import TgGroupForm
 
-from apps.plus_permissions.api import has_interfaces_decorator, site_context
+from apps.plus_permissions.api import secure_resource, site_context
 from apps.plus_permissions.default_agents import get_anon_user, get_site
 
 def group(request, group_id, template_name="plus_groups/group.html"):
@@ -85,7 +85,7 @@ def groups(request, template_name='plus_groups/groups.html'):
 
 
 @login_required
-@has_interfaces_decorator(TgGroup, ['Join','Viewer'])
+@secure_resource(TgGroup, required_interfaces=['Join','Viewer'])
 def join(request, group,  template_name="plus_groups/group.html"):
     group.join(request.user)
     return HttpResponseRedirect(reverse('group',args=(group.id,)))
@@ -96,7 +96,7 @@ def apply(request, group_id):
     pass
 
 @login_required
-@has_interfaces_decorator(TgGroup, ['Join','Viewer']) 
+@secure_resource(TgGroup, required_interfaces=['Join','Viewer']) 
 def leave(request, group, template_name="plus_groups/group.html"):
     group.leave(request.user)
     return HttpResponseRedirect(reverse('group',args=(group.id,)))
