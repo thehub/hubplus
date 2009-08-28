@@ -57,8 +57,13 @@ content_type = User
 
 from apps.plus_permissions.models import add_type_to_interface_map
 
-UserInterfaces = {
+class UserViewer:
+    pk = InterfaceReadProperty
+    username = InterfaceReadProperty
+    get_profile = InterfaceCallProperty
 
+UserInterfaces = {
+    'Viewer':UserViewer
     }
 
 add_type_to_interface_map(User, UserInterfaces)
@@ -96,6 +101,7 @@ AgentDefaults = {'public':
 
                      {'User':
                           {'defaults': {
+                                'Viewer': 'all_members_group',
                                 'Unknown': 'context_agent'
                                 },                           
                            'constraints':

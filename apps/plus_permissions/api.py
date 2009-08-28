@@ -24,6 +24,8 @@ def secure(request, cls, resource_id, interface_names, f, *args, **kwargs):
         resource = cls.objects.get(username=resource_id)
     else:
         resource=cls.objects.get(pk=resource_id)
+
+    # surely this can be done be inspecting the constucted secure_wrapped object, thus avoiding the extra has_access queries? TS
     if interface_names:
         for i_name in interface_names :
             if_name = '%s.%s' % (cls.__name__, i_name)
@@ -42,8 +44,6 @@ def has_interfaces_decorator(cls=None, interface_names=None) :
             return g
         else:
             def g(request, cls_id, resource_id, *args, **kwargs):
-                import ipdb
-                ipdb.set_trace()
                 #cls
                 return secure(request, cls, resource_id, interface_names, f, *args, **kwargs)
             return g            

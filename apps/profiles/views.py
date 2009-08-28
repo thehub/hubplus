@@ -211,7 +211,7 @@ def update_profile_form(request,username) :
 def profile_field(request, other_user, classname, fieldname, *args,**kwargs) :
     """ Get the value of one field from the user profile, so we can write an ajaxy editor """
     print "In profile_field"
-    print "username %s, classname %s, fieldname %s" % (username,classname,fieldname)
+    print "username %s, classname %s, fieldname %s" % (other_user.username,classname,fieldname)
     p = secure_wrap(other_user.get_profile(), request.user)
 
     if classname == 'Profile' :

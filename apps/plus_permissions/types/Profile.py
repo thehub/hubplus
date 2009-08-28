@@ -15,6 +15,7 @@ content_type = Profile
 child_types = []
         
 class ProfileViewer: 
+    user = InterfaceReadProperty
     about = InterfaceReadProperty
     place = InterfaceReadProperty
     website = InterfaceReadProperty
