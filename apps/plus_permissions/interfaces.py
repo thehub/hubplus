@@ -73,14 +73,6 @@ class EmptyString(type):
 
 class NotViewable(object):
     __metaclass__= EmptyString
-    def __unicode__(self):
-        return ""
-
-    def __str__(self):
-        return ""
-
-    def __repr__(self):
-        return ""
 
 from apps.plus_permissions.models import type_interfaces_map, has_access
 
