@@ -83,10 +83,9 @@ def accept_application(request,id) :
 
 @login_required
 @site_context
-def site_invite(request, site, template_name='account/invite.html', **kwargs) :
-    import ipdb
-    ipdb.set_trace()
-    if request.POST():
+def site_invite(request, site, template_name='plus_contacts/invite.html', **kwargs) :
+
+    if request.POST:
         pass
 
     else :
