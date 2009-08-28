@@ -146,8 +146,15 @@ Please visit the following link to confirm your account : %s
 def create_notifications(sender, instance, **kwargs):
     if instance is None :
         return
+    application = instance
     from notification import models as notification
-    notification.send(instance.get_approvers(), "new_application", {})
+    notification.send(instance.get_approvers(), "new_application", 
+                      {'first_name':application.applicant.first_name,
+                       'last_name':application.applicant.last_name,
+                       'organisation':application.applicant.organisation,
+                       'find_out':application.applicant.find_out,
+                       'request':application.request
+                       })
     print "sent a notification to %s" % instance.get_approvers()
     
     
