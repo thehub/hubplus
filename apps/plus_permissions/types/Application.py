@@ -46,7 +46,7 @@ class ApplicationAccept:
     generate_accept_url = InterfaceCallProperty
     status = InterfaceReadWriteProperty
     accepted_by = InterfaceReadWriteProperty
-
+    delete = InterfaceCallProperty
 
 
 
