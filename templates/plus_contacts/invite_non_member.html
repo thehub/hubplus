@@ -15,22 +15,22 @@
       <ul>
 	<li>
 	  {{ form.username.errors }}
-	  <label for="id_username"><span class="required">*</span> Name</label>
+	  <label for="id_username"><span class="required">*</span> {% trans "Name" %}</label>
 	  <input  id="id_username" name="username" class="text" type="text" />
 	</li>
 	<li>
 	  {{ form.email_address.errors}}
-	  <label for="id_email_address"><span class="required">*</span> Email</label>
-	  <input  id="email_address" name="email_address" class="text" type="text" />
+	  <label for="id_email_address"><span class="required">*</span> {% trans "Email" %}</label>
+	  <input id="email_address" name="email_address" class="text" type="text" />
 	</li>
 
 	<li class="checkboxes">
 	  <label>&nbsp;</label>
-	  <input id="physical_hub" name="physical_hub_check" class="checkbox" type="checkbox">
+	  <input id="group" name="physical_hub_check" class="checkbox" type="checkbox">
 	  <div class="label_extended">
 	    {{ form.which_hub.errors }}
-	    <label for="physical_hub">I'm interested in joining a physical Hub.</label>
-	    <select class="disabled" id="which_hub" name="group">
+	    <label for="physical_hub">{% blocktrans %}Invite to a specific hub{% endblocktrans %}.</label>
+	    <select class="disabled" id="group" name="group">
 	   
 	      <option value="" readonly="readonly" selected="selected">Please select a Hub...</option>
 
