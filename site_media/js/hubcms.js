@@ -668,7 +668,7 @@ var plot_point = function(map, point) {
 };
 var create_map = function (map_ele, callback) {
     if (GBrowserIsCompatible()) {
-        location_str = map_ele.html();
+        var location_str = map_ele.html();
         map_ele.html("");
         var map = new GMap2(map_ele.get(0));
         var geocoder = new GClientGeocoder();
