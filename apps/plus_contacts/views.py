@@ -83,11 +83,21 @@ def accept_application(request,id) :
 
 @login_required
 @site_context
-def site_invite(request, site, template_name='plus_contacts/invite.html', **kwargs) :
+def site_invite(request, site, template_name='plus_contacts/invite_non_member.html', **kwargs) :
 
     if request.POST:
-        pass
-
+        form = InviteForm(request.POST)
+        import ipdb
+        ipdb.set_trace()
+        if form.is_valid() :
+            if User.objects.filter(email_address=form.clean_data['email_address']) :
+                print "We know this user already"
+                return HttpResponse('This user is already a member')
+            elif Contact.objects.filter(email_address=form.clean_data['email_address']):
+                print "We know this person as a contact"
+            else :
+                print "New person"
+                
     else :
         form = InviteForm()
         
