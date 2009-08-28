@@ -5,7 +5,6 @@ from django.db.models import Q
 from django.contrib.auth import authenticate
 from django.contrib.auth import login as auth_login
 from django.template import RequestContext
-from django.utils.translation import ugettext, ugettext_lazy as _
 from django.core.urlresolvers import reverse
 from django.contrib.auth.decorators import login_required
 from django.db import models
@@ -29,6 +28,14 @@ from emailconfirmation.models import EmailAddress, EmailConfirmation
 association_model = models.get_model('django_openid', 'Association')
 if association_model is not None:
     from django_openid.models import UserOpenidAssociation
+
+
+def home(request):
+    if request.user.is_authenticated():
+        return render_to_response('logged_in_home.html', {}, context_instance=RequestContext(request))
+    else :
+        return render_to_response('homepage.html', {}, context_instance=RequestContext(request))
+
 
 def login(request, form_class=LoginForm,
         template_name="account/login.html", success_url=None,
@@ -315,4 +322,5 @@ def apply(request, form_class=HubPlusApplicationForm,
     }, context_instance=RequestContext(request))
 
 
+    
 

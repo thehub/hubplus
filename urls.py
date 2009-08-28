@@ -26,7 +26,7 @@ bookmarks_feed_dict = {"feed_dict": { '': BookmarkFeed }}
 admin.autodiscover()
 
 urlpatterns = patterns('',
-    url(r'^$', direct_to_template, {"template": "homepage.html"}, name="home"),
+    url(r'^$', 'apps.account.views.home', name="home"),
     
     (r'^about/', include('about.urls')),
     (r'^account/', include('account.urls')),

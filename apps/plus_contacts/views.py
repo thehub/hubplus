@@ -14,9 +14,12 @@ from django.db import models
 from django.template import RequestContext
 
 from apps.plus_contacts.models import Application, PENDING, WAITING_USER_SIGNUP
+from apps.plus_contacts.forms import InviteForm
 
 from apps.plus_permissions.interfaces import PlusPermissionsNoAccessException
- 
+from apps.plus_permissions.api import site_context, has_interfaces_decorator
+
+from apps.hubspace_compatibility.models import TgGroup
 
 @login_required
 def list_of_applications(request, template_name="plus_contacts/applicant_list.html"):
@@ -76,4 +79,26 @@ def accept_application(request,id) :
             'tags' : sc.get_tags()
             }, context_instance=RequestContext(request))
     
+    
+
+@login_required
+@site_context
+def site_invite(request, site, template_name='account/invite.html', **kwargs) :
+    import ipdb
+    ipdb.set_trace()
+    if request.POST():
+        pass
+
+    else :
+        form = InviteForm()
+        
+    return render_to_response(template_name, {
+            'form':form,
+            }, context_instance=RequestContext(request))
+                              
+
+@login_required
+@has_interfaces_decorator(TgGroup, ['Inviter','Viewer'])    
+def group_invite(request, group, template_name='plus_groups/invite.html', **kwargs):
+    pass
     
