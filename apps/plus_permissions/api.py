@@ -15,9 +15,9 @@ from django.http import HttpResponseForbidden
 from apps.plus_permissions.exceptions import PlusPermissionsReadOnlyException, PlusPermissionsNoAccessException
 
 
-__all__ = ['secure_wrap', 'TemplateSecureWrapper', 'has_access', 'get_or_create_root_location', 'get_site', 'get_anonymous_group', 'get_all_members_group', 'get_admin_user', 'get_admin_user', 'has_interfaces_decorator', 'site_context', 'PlusPermissionsNoAccessException', 'PlusPermissionsReadOnlyException']
+__all__ = ['secure_wrap', 'TemplateSecureWrapper', 'has_access', 'get_or_create_root_location', 'get_site', 'get_anonymous_group', 'get_all_members_group', 'get_admin_user', 'get_admin_user', 'secure_resource', 'site_context', 'PlusPermissionsNoAccessException', 'PlusPermissionsReadOnlyException']
 
-def secure(request, cls, resource_id, interface_names, f, *args, **kwargs):
+def secure(request, cls, resource_id, required_interfaces, with_interfaces, f, *args, **kwargs):
     """
     """
     if cls.__name__ == 'User':
@@ -25,17 +25,9 @@ def secure(request, cls, resource_id, interface_names, f, *args, **kwargs):
     else:
         resource=cls.objects.get(pk=resource_id)
 
-    # surely this can be done be inspecting the constucted secure_wrapped object, thus avoiding the extra has_access queries? TS
-    #if interface_names:
-    #    for i_name in interface_names :
-    #        if_name = '%s.%s' % (cls.__name__, i_name)
-    #        if not has_access(request.user, resource, if_name ) :
-    #            return HttpResponseForbidden(
-    #                "User %s is not authorized to call %s with interface %s" % (request.user, resource, if_name ))
-
-    r2 = secure_wrap(resource, request.user, interface_names=interface_names)
-    if interface_names:
-        for i_name in interface_names:
+    r2 = secure_wrap(resource, request.user, interface_names=with_interfaces)
+    if required_interfaces:
+        for i_name in required_interfaces:
             iface_name = '%s.%s' % (cls.__name__, i_name)
             if iface_name not in r2._interfaces:
                 return HttpResponseForbidden(
@@ -43,16 +35,17 @@ def secure(request, cls, resource_id, interface_names, f, *args, **kwargs):
                     )
     return f(request, r2, *args,**kwargs)
 
-def has_interfaces_decorator(cls=None, interface_names=None) :
+
+def secure_resource(cls=None, with_interfaces=None, required_interfaces=None) :
     def decorator(f):
         if cls:
             def g(request, resource_id, *args, **kwargs):
-                return secure(request, cls, resource_id, interface_names, f, *args, **kwargs)
+                return secure(request, cls, resource_id, required_interfaces, with_interfaces, f, *args, **kwargs)
             return g
         else:
             def g(request, cls_id, resource_id, *args, **kwargs):
                 #cls
-                return secure(request, cls, resource_id, interface_names, f, *args, **kwargs)
+                return secure(request, cls, resource_id, required_interfaces, with_interfaces, f, *args, **kwargs)
             return g            
 
     return decorator

@@ -1,4 +1,4 @@
-
+- secure resource to work for arbitrary resource types
 
 User - empty fields disappear
      - google maps not there error

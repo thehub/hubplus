@@ -18,7 +18,7 @@ from apps.plus_groups import *
 
 from OurPost import OurPost
 
-from apps.plus_permissions.api import has_access, has_interfaces_decorator
+from apps.plus_permissions.api import has_access, secure_resource
 from apps.plus_permissions.interfaces import secure_wrap, PlusPermissionsNoAccessException, SecureWrapper
 from apps.plus_permissions.models import InvalidSliderConfiguration
 from apps.plus_permissions.default_agents import get_anonymous_group, get_all_members_group
@@ -382,7 +382,7 @@ class TestDecorators(unittest.TestCase) :
         from apps.plus_permissions.models import get_interface_map
         i_editor = get_interface_map(OurPost)['Editor']
 
-        @has_interfaces_decorator(OurPost, ['Editor'])
+        @secure_resource(OurPost, required_interfaces=['Editor'])
         def foo(request, resource, *args, **kwargs) :
             resource.title = "blah"
             return True

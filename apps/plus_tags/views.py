@@ -11,7 +11,7 @@ from apps.profiles.models import Profile
 from apps.hubspace_compatibility.models import TgGroup
 
 from django.contrib.contenttypes.models import ContentType
-from apps.plus_permissions.api import has_interfaces_decorator
+from apps.plus_permissions.api import secure_resource
 
 
 def tag_permission_test(fn):

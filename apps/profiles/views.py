@@ -21,7 +21,7 @@ from avatar.templatetags.avatar_tags import avatar
 
 from apps.plus_lib.models import DisplayStatus, add_edit_key
 
-from apps.plus_permissions.api import has_interfaces_decorator, secure_wrap, TemplateSecureWrapper, PlusPermissionsNoAccessException, PlusPermissionsReadOnlyException, get_anon_user
+from apps.plus_permissions.api import secure_resource, secure_wrap, TemplateSecureWrapper, PlusPermissionsNoAccessException, PlusPermissionsReadOnlyException, get_anon_user
 
 from django.contrib.auth.decorators import login_required
 
@@ -207,7 +207,7 @@ def update_profile_form(request,username) :
 
 
 @login_required
-@has_interfaces_decorator(User)
+@secure_resource(User)
 def profile_field(request, other_user, classname, fieldname, *args,**kwargs) :
     """ Get the value of one field from the user profile, so we can write an ajaxy editor """
     print "In profile_field"

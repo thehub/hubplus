@@ -1,4 +1,4 @@
-from django.conf import settings
+#from django.conf import settings
 from django.shortcuts import render_to_response
 from django.template import RequestContext
 from django.http import HttpResponseRedirect
@@ -16,7 +16,7 @@ from signup_codes.forms import SignupForm, InviteUserForm
 
 from apps.plus_permissions.default_agents import get_admin_user, get_anon_user, get_site
 
-from apps.plus_permissions.api import has_interfaces_decorator
+from apps.plus_permissions.api import secure_resource
 from apps.plus_permissions.proxy_hmac import hmac_proxy
 from apps.plus_contacts.models import Application
 
@@ -61,7 +61,7 @@ def signup(request, form_class=SignupForm,
 
 
 @hmac_proxy
-@has_interfaces_decorator(Application)
+@secure_resource(Application)
 def proxied_signup(request, application, form_class=SignupForm,
                    template_name="account/accepted_signup.html", success_url=None):
     # if we've got here, we already know that this function was called 
