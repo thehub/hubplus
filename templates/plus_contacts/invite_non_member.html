@@ -1,0 +1,68 @@
+{% extends "site_base.html" %}
+
+{% load i18n %}
+{% load avatar_tags %}
+{% load app_plugins %}
+{% load uni_form %}
+
+{% block body %}
+
+  <form class="full uniForm" id="invite_non_member_form" method="post" action="{% url site_invite %}">
+
+    <h4>{% trans "Invites" %}</h4>
+    <p>{% blocktrans %}Please enter the name and email of someone to invite to Hub+{% endblocktrans %}</p>
+    <fieldset>
+      <ul>
+	<li>
+	  {{ form.username.errors }}
+	  <label for="id_username"><span class="required">*</span> Name</label>
+	  <input  id="id_username" name="username" class="text" type="text" />
+	</li>
+	<li>
+	  {{ form.email_address.errors}}
+	  <label for="id_email_address"><span class="required">*</span> Email</label>
+	  <input  id="email_address" name="email_address" class="text" type="text" />
+	</li>
+
+	<li class="checkboxes">
+	  <label>&nbsp;</label>
+	  <input id="physical_hub" name="physical_hub_check" class="checkbox" type="checkbox">
+	  <div class="label_extended">
+	    {{ form.which_hub.errors }}
+	    <label for="physical_hub">I'm interested in joining a physical Hub.</label>
+	    <select class="disabled" id="which_hub" name="group">
+	   
+	      <option value="" readonly="readonly" selected="selected">Please select a Hub...</option>
+
+	      {% for h in hubs %}
+	      <option value="{{h.group_name}}">{{h.display_name}}</option>
+	      {% endfor %}
+	    </select>
+
+	  </div>
+	</li>
+      </ul>
+    </fieldset>
+    <input class="submit button" type="submit" value="{% trans "Request account &raquo;" %}" />
+    
+  </form>
+
+        
+
+{% endblock %}
+
+
+{% block extra_body %}
+    {% load jquery_validation %}
+    {% include_validation %}
+    <script type="text/javascript">
+        $(function(){
+	    $("#physical_hub").checked(function() {
+	      $("#which_hub").class("disabled");
+	    });
+            $('#signup_form').validate('{% url signup_form_validate %}', {type: 'table', fields: ['username'], dom: $('#id_username'), event: 'change'});
+            $("#id_username").focus();
+	    
+        });
+    </script>
+{% endblock %}
