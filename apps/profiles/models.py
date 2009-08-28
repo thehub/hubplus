@@ -96,10 +96,11 @@ class HostInfo(models.Model):
     user = models.ForeignKey(User, unique=True, verbose_name=_('user'))
    
     find_out = models.TextField(_('find_out'), null=True, blank=True)
-    peer_mentoring = models.BooleanField()
-    project = models.TextField(_('project'),max_length=250, null=True,blank=True)
-    project_stage = models.TextField(max_length=250,null=True,blank=True)
-    assistance_offered = models.TextField(max_length=250,null=True,blank=True)
+    peer_mentoring = models.BooleanField() 
+    expected_membership_benefits = models.TextField(max_length=250, null=True, blank=True)   
+    project = models.TextField(_('project'),max_length=250, null=True, blank=True)
+    project_stage = models.TextField(max_length=250,null=True, blank=True)
+    assistance_offered = models.TextField(max_length=250,null=True, blank=True)
 
  
 def create_host_info(sender, instance=None, **kwargs) :

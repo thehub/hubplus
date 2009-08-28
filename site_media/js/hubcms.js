@@ -313,7 +313,7 @@ var inplace_editor = function (element_id, url, special_options) {
         if (options.textarea) {
             submit_html = "<br />";
         }
-        submit_html += "<div class='buttons'><input type='submit' class='save' value='{okText}'/><input type='submit' class='cancel' value='{cancelText}' /></div><br class='clear' />".supplant({okText: options.okText, cancelText: options.cancelText});
+        submit_html += "<div class='buttons'><input type='submit' class='save button' value='{okText}'/><input type='submit' class='cancel button' value='{cancelText}' /></div><br class='clear' />".supplant({okText: options.okText, cancelText: options.cancelText});
         var dom_nodes = jq(submit_html);
         dom_nodes.appendTo(form);
         dom_nodes.find('.cancel').one('click', onclickCancel);
@@ -660,3 +660,21 @@ var Upload = function (id, type, attr, img, trigger, relative_url, options) {
         img.src = "/display_image/" + source_no + "/" + type + '/' + id + '/' + attr;
     };
 };
+
+var plot_point = function(map, point) {
+    map.setCenter(point, 15);
+    var marker = new GMarker(point);
+    map.addOverlay(marker);
+};
+var create_map = function (map_ele, callback) {
+    if (GBrowserIsCompatible()) {
+        location_str = map_ele.html();
+        map_ele.html("");
+        var map = new GMap2(map_ele.get(0));
+        var geocoder = new GClientGeocoder();
+        geocoder.getLatLng(location_str, function (point) {
+           callback(map, point);
+        });
+    }
+};
+

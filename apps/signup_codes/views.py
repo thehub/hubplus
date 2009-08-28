@@ -71,6 +71,7 @@ def proxied_signup(request, application, form_class=SignupForm,
     if success_url is None:
         success_url = get_default_redirect(request)
 
+
     # because this is a signup request that has an application object we, expect the application
 
     if request.method == "POST":
@@ -83,13 +84,14 @@ def proxied_signup(request, application, form_class=SignupForm,
             user = authenticate(username=username, password=password)
             
             auth_login(request, user)
-            request.user.message_set.create(
+            user.message_set.create(
                 message=ugettext("Successfully logged in as %(username)s.") % {
                 'username': user.username
             })
             application.delete()
             return HttpResponseRedirect(success_url)
     else:
+
 
         form = form_class()
         applicant = application.get_inner().applicant

@@ -1,1 +1,20 @@
-
+{% load i18n %}
+{% load editable_attribute %}
+    <h3>Host Questions (Private)</h3>
+    <ul>
+      <li>
+          {% editable "How did you find out about the Hub?" host_info 'find_out' 'Answer' %}
+      </li>
+      <li>
+          {% editable "What would you like to get from being a member?" host_info 'expected_membership_benefits' 'Answer' %}
+      </li>
+      <li>
+          {% editable "What is your project?" host_info 'project' 'Answer' %}
+      </li>
+      <li>
+          {% editable "What stage is your project at?" host_info 'project_stage' 'Answer' %}
+      </li>
+      <li>
+          {% editable "What assistance would you like to offer other members?" host_info 'assistance_offered' 'Answer'%}
+      </li>
+    </ul>

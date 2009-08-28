@@ -63,13 +63,16 @@
           </dd>
 	</dl>
       </li>
-      
-
       <!-- li>
 	{ % plus_tag 'interest2' 'interests' profile.id profile.user.id % }
 	
       </li -->
-
+      <li>
+	<dl class="disabled"><dt >{% trans "Region" %} : </dt>
+	  <dd>
+	    <a href="hub.html" class='editable_temp_off' id='{{profile.edit_key}}hub'>{{profile.get_hub}}</a>
+	</dd></dl>
+      </li>
       <li>
 	<dl>
 	  <dt>{% trans "Groups" %} :</dt>
@@ -90,12 +93,6 @@
       <br />
       <li>
 	   {% editable "Location" profile 'place' 'Your Location' %}
-      </li>
-      <li>
-	<dl class="disabled"><dt >{% trans "Region" %} : </dt>
-	  <dd>
-	    <a href="hub.html" class='editable_temp_off' id='{{profile.edit_key}}hub'>{{profile.get_hub}}</a>
-	</dd></dl>
       </li>	
     </ul>
   </div>
