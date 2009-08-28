@@ -187,7 +187,9 @@ HUB PLUS 2009
 	margin-left	: 10px;
 	width		: 388px;
 }
-
+li.place div.editable {
+	height		: 250px;
+}
 #intro dl {
 	overflow	: hidden;
 }
