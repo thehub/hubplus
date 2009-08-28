@@ -11,6 +11,7 @@ from apps.plus_permissions.models import SecurityTag, SecurityContext, has_acces
 from apps.hubspace_compatibility.models import Location, TgGroup
 from apps.plus_permissions.default_agents import get_anon_user, get_admin_user, get_anonymous_group, get_all_members_group, get_site
 from django.http import HttpResponseForbidden
+
 from apps.plus_permissions.exceptions import PlusPermissionsReadOnlyException, PlusPermissionsNoAccessException
 
 
@@ -46,6 +47,7 @@ def has_interfaces_decorator(cls=None, interface_names=None) :
                 #cls
                 return secure(request, cls, resource_id, interface_names, f, *args, **kwargs)
             return g            
+
     return decorator
 
 

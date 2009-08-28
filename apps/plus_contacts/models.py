@@ -131,10 +131,12 @@ Please visit the following link to confirm your account : %s
         email_address = self.applicant.email_address
 
         print settings.EMAIL_HOST, settings.EMAIL_PORT
-        send_mail('Confirmation of account on Hub+', message, settings.CONTACT_EMAIL,
+        try :
+            send_mail('Confirmation of account on Hub+', message, settings.CONTACT_EMAIL,
                   [self.applicant.email_address], fail_silently=False)
-        
-        print "Done email"
+            print "Done email"
+        except Exception, e :
+            print e
 
         return message, url
 
