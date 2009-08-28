@@ -21,11 +21,12 @@ def has_interfaces_decorator(cls, interface_names=None) :
     def decorator(f) :
         def g(request, resource_id, *args, **kwargs) :
             resource=cls.objects.get(id=resource_id)
-            for i_name in interface_names :
-                if_name = '%s.%s' % (cls.__name__, i_name)
-                if not has_access(request.user, resource, if_name ) :
-                    return HttpResponseForbidden(
-                        "User %s is not authorized to call %s with interface %s" % (request.user, resource, if_name ))
+            if interface_names : 
+                for i_name in interface_names :
+                    if_name = '%s.%s' % (cls.__name__, i_name)
+                    if not has_access(request.user, resource, if_name ) :
+                        return HttpResponseForbidden(
+                            "User %s is not authorized to call %s with interface %s" % (request.user, resource, if_name ))
 
             r2 = secure_wrap(resource, request.user, interface_names=interface_names)
             return f(request, r2, *args,**kwargs)
