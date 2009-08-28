@@ -5,9 +5,9 @@ register = template.Library()
 def editable(label, obj, name, default, no_escape="False"):
     edit = obj.can_write(name)
     value = getattr(obj, name)
+    show = edit or value
     if not value:
         value = default
-    show = edit or value
     if no_escape == "False":
         no_escape = False
     else:

@@ -105,16 +105,17 @@ var setup_tag_lists = function () {
     });
 };
 var setup_maps = function () {
-   jq("[id$='-place']").each(function () {
-       create_map(jq(this), plot_point);
-   });
+    jq("[id$='-place']").each(function () {
+	create_map(jq(this), plot_point);
+    });
 };
-
 
 var profile_ready = function () {
     editing();
     setup_tag_lists();
-    setup_maps();
+    if (jq('li.place .editable').length) {
+	jq.getScript("http://maps.google.com/maps?file=api&v=2.x&key=ABQIAAAAiA7tLHdzZr8yhGAEbo5FGxS_srkAJTD0j5T3EF3o06M_52NTAhQM2w0ugG9dZdoyPl3s9RqydGrzpQ&async=2&callback=setup_maps");
+    }
     //jq.getJSON('map_tags/', {}, init_rgraph);
 };
 

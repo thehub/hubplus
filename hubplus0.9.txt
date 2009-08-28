@@ -1,8 +1,6 @@
-- secure resource to work for arbitrary resource types
+- about - filter
 
-User - empty fields disappear
-     - google maps not there error
-     - fix up tags
+User  - fix up tags - re: tag permissions: think about host crm tagging
 
 Groups - group name based_url
        - group template editing etc      
@@ -20,6 +18,12 @@ Slider UI
      - set slider (view)
      - on create profile set user as admin, and profile to acquire from user
      - single slider UI
+
+
+misc
+----
+- secure resource to work for arbitrary resource types
+- google maps need to be made more accurate in identifying addresses - api
      
 
 

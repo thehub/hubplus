@@ -662,19 +662,21 @@ var Upload = function (id, type, attr, img, trigger, relative_url, options) {
 };
 
 var plot_point = function(map, point) {
-    map.setCenter(point, 15);
-    var marker = new GMarker(point);
-    map.addOverlay(marker);
+    if (point) {
+	map.setCenter(point, 15);
+	var marker = new GMarker(point);
+	map.addOverlay(marker);
+    }
 };
 var create_map = function (map_ele, callback) {
     if (GBrowserIsCompatible()) {
-        var location_str = map_ele.html();
-        map_ele.html("");
-        var map = new GMap2(map_ele.get(0));
-        var geocoder = new GClientGeocoder();
-        geocoder.getLatLng(location_str, function (point) {
-           callback(map, point);
-        });
+	var location_str = map_ele.html();
+	map_ele.html("");
+	var map = new GMap2(map_ele.get(0));
+	var geocoder = new GClientGeocoder();
+	geocoder.getLatLng(location_str, function (point) {
+	    callback(map, point);
+	});
     }
 };
 
