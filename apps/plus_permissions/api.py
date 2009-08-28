@@ -26,14 +26,21 @@ def secure(request, cls, resource_id, interface_names, f, *args, **kwargs):
         resource=cls.objects.get(pk=resource_id)
 
     # surely this can be done be inspecting the constucted secure_wrapped object, thus avoiding the extra has_access queries? TS
-    if interface_names:
-        for i_name in interface_names :
-            if_name = '%s.%s' % (cls.__name__, i_name)
-            if not has_access(request.user, resource, if_name ) :
-                return HttpResponseForbidden(
-                    "User %s is not authorized to call %s with interface %s" % (request.user, resource, if_name ))
+    #if interface_names:
+    #    for i_name in interface_names :
+    #        if_name = '%s.%s' % (cls.__name__, i_name)
+    #        if not has_access(request.user, resource, if_name ) :
+    #            return HttpResponseForbidden(
+    #                "User %s is not authorized to call %s with interface %s" % (request.user, resource, if_name ))
 
     r2 = secure_wrap(resource, request.user, interface_names=interface_names)
+    if interface_names:
+        for i_name in interface_names:
+            iface_name = '%s.%s' % (cls.__name__, i_name)
+            if iface_name not in r2._interfaces:
+                return HttpResponseForbidden(
+                    "User %s is not authorized to call %s with interface %s" % (request.user, resource, iface_name )
+                    )
     return f(request, r2, *args,**kwargs)
 
 def has_interfaces_decorator(cls=None, interface_names=None) :

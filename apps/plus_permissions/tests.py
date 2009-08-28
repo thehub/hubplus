@@ -7,7 +7,7 @@ from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes import generic
 
 from django.contrib.auth.models import User
-
+from django.http import HttpResponseForbidden
 from apps.hubspace_compatibility.models import TgGroup, Location
 
 from models import *
@@ -396,8 +396,7 @@ class TestDecorators(unittest.TestCase) :
 
         self.assertFalse(has_access(u, b, 'OurPost.Editor'))
 
-
-        self.assertRaises(PlusPermissionsReadOnlyException, foo, FakeRequest(u), b.id)
+        self.assertEquals(HttpResponseForbidden, foo(FakeRequest(u), b.id).__class__)
 
         b.get_inner().get_security_context().add_arbitrary_agent(u, 'OurPost.Editor', god)
         self.assertTrue(foo(FakeRequest(u), b.id))

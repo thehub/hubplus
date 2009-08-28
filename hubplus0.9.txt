@@ -1,3 +1,9 @@
+
+
+User - empty fields disappear
+     - google maps not there error
+     - fix up tags
+
 Groups - group name based_url
        - group template editing etc      
 
@@ -6,8 +12,7 @@ Phil - application process
 
 -- more button
 
-Tom  - make users member of all_members group
-     - create group form
+Tom  - create group form
      - create wiki page form
 
 Slider UI

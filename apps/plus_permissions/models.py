@@ -88,7 +88,7 @@ class SecurityContext(models.Model):
          for typ in types:
              for interface_name in get_interface_map(typ.__name__):
                  interface_str = '%s.%s' %(typ.__name__, interface_name)
-                 setup_tag_from_defaults(typ, interface_name, interface_str, sad, agentdefaults)
+                 self.setup_tag_from_defaults(typ, interface_name, interface_str, sad, agent_defaults)
 
          tag = self.create_security_tag(interface='SetPermissionManager')
          tag.save()
@@ -383,11 +383,7 @@ def has_access(agent, resource, interface) :
 
     # which agents have access?
 
-    if SecurityTag.objects.filter(interface=interface,security_context=context) :
-        allowed_agents = SecurityTag.objects.get(interface=interface,
-                                                 security_context=context).agents
-        
-    else :
+    if not SecurityTag.objects.filter(interface=interface, security_context=context):
         #lets create it if it is in defaults for the type -- this allows adding new interfaces to the type at runtime
         typ = resource.__class__
         interface_name = interface.split('.')[1]
@@ -396,8 +392,9 @@ def has_access(agent, resource, interface) :
             slider_agents = SliderAgents[context.context_agent.obj.__class__](context)
             sad = dict(slider_agents)
             context.setup_tag_from_defaults(typ, interface_name, interface, sad, agent_defaults)
-            allowed_agents = SecurityTag.objects.get(interface=interface,
-                                                     security_context=context).agents
+
+    allowed_agents = SecurityTag.objects.get(interface=interface,
+                                             security_context=context).agents
     
 
     # probably should memcache both allowed agents (per .View interface) and 
