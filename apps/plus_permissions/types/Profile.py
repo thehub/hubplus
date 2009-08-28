@@ -63,11 +63,13 @@ class ProfileEditor:
     title = InterfaceWriteProperty
 
     mobile = InterfaceWriteProperty
+    work = InterfaceWriteProperty
+    home = InterfaceWriteProperty
+    fax = InterfaceWriteProperty
     email_address = InterfaceWriteProperty
     address = InterfaceWriteProperty
     skype_id = InterfaceWriteProperty
     sip_id = InterfaceWriteProperty
-    website = InterfaceWriteProperty
     homeplace = InterfaceWriteProperty
 
 

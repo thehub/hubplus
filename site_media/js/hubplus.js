@@ -104,10 +104,17 @@ var setup_tag_lists = function () {
 	tag_list(ele);
     });
 };
+var setup_maps = function () {
+   jq("[id$='-place']").each(function () {
+       create_map(jq(this), plot_point);
+   });
+};
+
 
 var profile_ready = function () {
     editing();
     setup_tag_lists();
+    setup_maps();
     //jq.getJSON('map_tags/', {}, init_rgraph);
 };
 

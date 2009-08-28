@@ -19,9 +19,8 @@ class ProfileHostInfoForm(forms.Form) :
 
 
 class ProfileForm(forms.ModelForm):
-    
-    about = forms.CharField(max_length=500)
-    email_address = forms.CharField(max_length=100)
+    about = forms.CharField()
+    email_address = forms.EmailField(max_length=100)
     name = forms.CharField(max_length=100)
     display_name = forms.CharField(max_length=100)
     first_name = forms.CharField(max_length=100)
