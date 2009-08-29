@@ -9,6 +9,18 @@ var widget_map = {
 var editing = function () {
     //jq('#section_tab_navigation').tabs();
     tab_history('profile');
+    jq('.more').click(function () {
+	var trunc = jq(this).parent().parent();
+	trunc.hide();
+	trunc.next().show();
+	return false;
+    });
+    jq('.less').click(function () {
+	var trunc = jq(this).parent().parent();
+	trunc.hide();
+	trunc.prev().show();
+	return false;
+    });
     jq('.editable').each(function (i, ele) {
 	var element_id = jq(ele).attr('id');
 	var prop_data = element_id.split('-');

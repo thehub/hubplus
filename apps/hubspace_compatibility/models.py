@@ -381,9 +381,9 @@ def get_enclosures(self) :
     """Give us all the things of which this user/group is a member_of
     """
     if isinstance(self, User):
-        return self.tggroup_set.all()
+        return self.tggroup_set.filter(level__in=['member', 'host'])
     elif isinstance(self, TgGroup):
-        return self.parent_groups.all()
+        return self.parent_groups.filter(level__in=['member', 'host'])
 
 TgGroup.get_enclosures = get_enclosures
 
