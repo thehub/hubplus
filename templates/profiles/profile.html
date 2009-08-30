@@ -78,7 +78,7 @@
 	  <dt>{% trans "Groups" %} :</dt>
 	  <dd>
 	    {% for g in other_user.get_enclosures %}
-	    <a href="/groups/{{g.pk}}/">{{g.get_permission_agent_name}}</a>, 
+	      <a href="/groups/{{g.pk}}/">{{g.get_permission_agent_name}}</a>{% if forloop.last %}{% else %},{% endif %}
 	    {% endfor %}
 	  </dd>
 	</dl>

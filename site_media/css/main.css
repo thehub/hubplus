@@ -40,7 +40,9 @@ HUB PLUS 2009
 	text-align	:right;
 	margin-bottom	:1.5em;
 }
-
+.untruncated {
+        display         :none;
+}
 
 /* Images & Thumbnails */
 

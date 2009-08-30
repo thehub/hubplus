@@ -5,8 +5,7 @@
     <h3>About me</h3>
     <ul class="yui-skin-sam">
       <li>
-	   {% editable "A bit about me" profile 'about' 'About me' 'True' %}
-           <a href="#">more</a>
+	   {% editable "A bit about me" profile 'about' 'About me' 'html' %}
       </li>
     </ul>
 
@@ -28,14 +27,14 @@
          {% editable "Address" profile 'address' 'My address' %} 
       </li>
       <li>
-         {% editable "Email" profile 'email_address' 'My email' %} 
+         {% editable "Email" profile 'email_address' 'My email' 'url'%} 
       </li> 
     </ul>
 
     <h3>Links</h3>
     <ul>
       <li>
-         {% editable "Website" profile 'website' 'My site' %} 
+         {% editable "Website" profile 'website' 'My site' 'url' %} 
       </li> 
     </ul>
     <h3>Skills and needs</h3>

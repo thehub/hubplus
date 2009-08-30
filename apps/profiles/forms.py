@@ -32,11 +32,11 @@ class ProfileForm(forms.ModelForm):
     work = forms.CharField(max_length=100)
     fax = forms.CharField(max_length=100)
 
-    email2 = forms.CharField(max_length=100)
+    email2 = forms.EmailField(max_length=100)
     address = forms.CharField(max_length=100)
     skype_id = forms.CharField(max_length=100)
     sip_id = forms.CharField(max_length=100)
-    website = forms.CharField(max_length=100)
+    website = forms.URLField(required=False)
     homeplace = forms.CharField(max_length=100)
     place = forms.CharField(max_length=100)
 
