@@ -4,6 +4,7 @@ class PlusPermissionsNoAccessException(Exception):
         self.id=id
         self.msg=msg
         self.silent_variable_failure = True
+        self.message = msg
 
 class PlusPermissionsReadOnlyException(Exception) : 
     def __init__(self,cls,msg) :

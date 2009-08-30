@@ -5,6 +5,8 @@ from django.http import HttpResponseRedirect, HttpResponseForbidden, Http404
 from django.db.models import Q
 from django.contrib.auth import authenticate
 from django.contrib.auth import login as auth_login
+from django.contrib.auth.models import User
+
 from django.template import RequestContext
 from django.utils.translation import ugettext, ugettext_lazy as _
 from django.core.urlresolvers import reverse
@@ -13,7 +15,7 @@ from django.db import models
 
 from django.template import RequestContext
 
-from apps.plus_contacts.models import Application, PENDING, WAITING_USER_SIGNUP
+from apps.plus_contacts.models import Application, Contact, PENDING, WAITING_USER_SIGNUP
 from apps.plus_contacts.forms import InviteForm
 
 from apps.plus_permissions.interfaces import PlusPermissionsNoAccessException
@@ -78,25 +80,50 @@ def accept_application(request,id) :
             'security_context' :sc.context_agent.obj,
             'tags' : sc.get_tags()
             }, context_instance=RequestContext(request))
-    
-    
+
+
+def split_name(username):
+    if username.find(' ') > 0 :
+        first_name, last_name = (username.split(' ')) # note that if users need > 2 names, we have to do something
+        username = '%s.%s' % (first_name,last_name)
+    else : 
+        first_name=username
+        last_name = ''
+    return username, first_name, last_name
+
+
 
 @login_required
 @site_context
 def site_invite(request, site, template_name='plus_contacts/invite_non_member.html', **kwargs) :
-
     if request.POST:
         form = InviteForm(request.POST)
-        import ipdb
-        ipdb.set_trace()
         if form.is_valid() :
-            if User.objects.filter(email_address=form.clean_data['email_address']) :
+            form.clean()
+            email_address = form.cleaned_data['email_address']
+            if User.objects.filter(email_address=email_address) :
                 print "We know this user already"
                 return HttpResponse('This user is already a member')
-            elif Contact.objects.filter(email_address=form.clean_data['email_address']):
+            elif Contact.objects.filter(email_address=email_address):
                 print "We know this person as a contact"
+                contact = Contact.objects.plus_get(request.user, email_address=email_address)
             else :
-                print "New person"
+                print "New contact"
+                username, first_name, last_name = split_name(form.cleaned_data['username'])
+                contact = site.create_Contact(request.user, 
+                                    email_address = email_address, 
+                                    first_name=first_name,
+                                    last_name=last_name)
+            msg,url = contact.invite(site, request.user, request.get_host())
+
+            if form.cleaned_data['group'] :
+                pass
+                # XXX it's an invite to a group ... do something about this
+
+            return render_to_response('plus_contacts/dummy_email.html',
+                                          {'url':url, 'message':msg},                                      
+                                          context_instance=RequestContext(request))                 
+
                 
     else :
         form = InviteForm()

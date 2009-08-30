@@ -25,9 +25,9 @@ class ContactAdmin:
     apply_msg = InterfaceReadWriteProperty
     find_out = InterfaceReadWriteProperty
     invited_by = InterfaceReadWriteProperty
-
+    
     become_member = InterfaceCallProperty
-
+    invite = InterfaceCallProperty
 
 from apps.plus_permissions.models import add_type_to_interface_map
 
