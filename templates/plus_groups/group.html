@@ -4,63 +4,85 @@
 {% load avatar_tags %}
 {% load app_plugins %}
 {% load uni_form %}
+{% load plus_tags %}
+{% load editable_attribute %}
 
 {% block body %}
 
 <div id="intro" class="block">
   
   <div id="info" class="block_column">
-    <h3>{% trans "About" %}</h3>
+    <h3>{% trans "About" %} ....</h3>
     <ul>
-      <li><dl><dt>{% trans "Type" %} :</dt>
-	  <dd>{{extras.group_type}}</dd></dl>
+      <li>
+	   {% editable "Type" group 'group_type' 'Type of Group' %}
       </li>
-      <li><dl><dt>{% trans "Description" %} : </dt>
-	  <dd>{{extras.about}}</dd></dl>
+
+      <li>
+	   {% editable "Description" group 'about' 'Description of the group' %}
       </li>
       
       <li><dl><dt>{% trans "Hosts" %}:</dt>
 	  <dd>
 	    {% for host in hosts %}
-	    <li>{{host}}</li>
+ 	       {{host}}, 
 	    {% endfor %}
 	  </dd>
 	</dl>
       </li>
     </ul>
 
+    
     <h3 class='disabled'>{% trans "Links" %}</h3>
-
+    
     <ul class='disabled'>
       <li><dl><dt>Website:</dt><dd><a href="http://www.children-psychosocial-wellbeing.org">www.children-psychosocial-wellbeing.org</a></dd></dl></li>
-      <li><dl><dt>Photos:</dt><dd><a href="#">www.flickr.com/cpsw</a></dd></dl></li>
-      
+      <li><dl><dt>Photos:</dt><dd><a href="#">www.flickr.com/cpsw</a></dd></dl></li>      
     </ul>
 
+    <h3>Skills and Needs</h3>
 
-
+    <ul>
+      <li>
+	<dl>
+	  {% plus_tag 'Skills' 'skills'  group  request.user %}
+	</dl>
+      </li>
     </ul>
 
-    <h3 class='disabled'>Members</h3>
+    <ul>
+      <li>
+	<dl>
+	  {% plus_tag 'Needs' 'needs'  group  request.user %}
+	</dl>
+      </li>
+    </ul>
+    
+    <h3>Members</h3>
     <ul>
       <li><dl><dt>Members:</dt><dd>
 	    <ul id="members_list">
 	      {% for member in members %}
-	      <li>{{member}}</li>
+	      <li><a href="{% url profile_detail member.username %}" 
+		     class="thumb small"><img src="../../site_media/images/member_id.jpg" />
+		  <br/>
+		  {% if member.display_name %}{{member.display_name}}{% else %}{{member.username}}{%endif%}
+
 	      {% endfor %}
 	    </ul>
-	    <a href="#" class='disabled'>Show all (35)</a>
-      </dd></dl></li>
-      <li><dl><dt>Group hosts:</dt><dd><a href="#">Esther Mckenzie</a>, <a href="#">Matthew Mcgowan</a></dd></dl></li>
-      
+	    <a href="#" class='disabled'>Show all ({{member_count}})</a>
+      </dd></dl>
+      </li>
     </ul>
-  </div>
+
+      
+</div>
   
   <div id="extra" class="block_column">
     <div id="page_image" class="image group"><img id="group_image" src="image/group.jpg" /></div>
     <ul id="actions" class="link_list">
-      <li class="first"><a href="#">Message members</a></li>
-      <li><a href="#">Invite members</a></li>
+      <li class="disabled first"><a href="#">Message members</a></li>
+      <li class="disabled"><a href="#">Invite members</a></li>
       
       {% if group.join %}
       <li><a href="{% url join_group group.id %}">Join Group</a></li>

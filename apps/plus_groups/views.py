@@ -31,8 +31,10 @@ def group(request, group_id, template_name="plus_groups/group.html"):
     dummy_status = DisplayStatus("Group's Status"," about 3 hours ago")
     
     members = group.get_users()
+    member_count = group.get_no_members()
     print "members :", members
 
+    hosts = group.get_admin_group().get_users()
     user = request.user
     if user.is_authenticated():
         if user.is_member_of(group):
@@ -50,8 +52,11 @@ def group(request, group_id, template_name="plus_groups/group.html"):
             "head_title" : "%s" % group.display_name,
             "head_title_status" : dummy_status,
             "group" : group,
+            "members" : members,
+            "member_count" : member_count,
             "extras" : group.groupextras, 
             "leave": leave,
+            "hosts": hosts,
             }, context_instance=RequestContext(request))
 
 
@@ -62,18 +67,13 @@ def groups(request, template_name='plus_groups/groups.html'):
     create = False
 
     if request.user.is_authenticated():
-        print "BBB"
         site = get_site(request.user)
-        print "CCC %s" %site.__class__
         try :
             site.create_TgGroup 
-            print "DDD"
             create = True
-            print "EEE %s"%create
         except Exception, e:
-            print "FFF %s", e
+            print e
 
-            
     print groups
     return render_to_response(template_name, {
             "head_title" : "Groups",
