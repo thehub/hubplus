@@ -195,7 +195,6 @@ def name_to_profile(fn):
     
 
 @login_required
-@transaction.commit_on_success
 def update_profile_form(request,username) :
     """ Get a prefilled basic form for the profile """
     other_user = get_object_or_404(User,username=username)
@@ -208,7 +207,7 @@ def update_profile_form(request,username) :
 
 @login_required
 @secure_resource(User)
-def profile_field(request, other_user, classname, fieldname, *args,**kwargs) :
+def profile_field(request, other_user, classname, fieldname, *args, **kwargs) :
     """ Get the value of one field from the user profile, so we can write an ajaxy editor """
     print "In profile_field"
     print "username %s, classname %s, fieldname %s" % (other_user.username,classname,fieldname)

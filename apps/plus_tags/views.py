@@ -9,62 +9,56 @@ from django.http import HttpResponse, HttpResponseRedirect, HttpResponseForbidde
 # CHANGE THIS
 from apps.profiles.models import Profile
 from apps.hubspace_compatibility.models import TgGroup
-
+from django.contrib.auth.models import User
 from django.contrib.contenttypes.models import ContentType
 from apps.plus_permissions.api import secure_resource
 
 
-def tag_permission_test(fn):
-    """ Decorator for permissions for adding and removing tags. """
-    
-    def our_fn(request,*args,**kwargs) :
-        
-        target_class = request.POST['target_class']
-        target_id = request.POST['target_id']
-
-        try :
-            cls = ContentType.objects.get(model=target_class)
-            tagged_resource = cls.get_object_for_this_type(pk=target_id)
-        except Exception, e :
-            return HttpResponseNotFound("error evaling target_class %s : $%s$" % (target_class,e))
-        
-        if not has_access(request.user,tagged_resource,'%s.Viewer'%cls.__class__.__name__) :
-            return HttpResponse("You don't have permission to tag %s, you are %s" % (tagged_resource,request.user),status=401)
-        else :
-            return fn(request, tagged_resource, *args, **kwargs)
-    return our_fn
-
-
 @login_required
-@tag_permission_test
-@transaction.commit_on_success
-def add_tag(request, tagged_resource):
+@secure_resource(obj_schema={'tagged':'any', 'tagged_for':[User, TgGroup]})
+def add_tag(request, tagged, tagged_for=None):
     """ This is actually a way to add typed keywords (e.g. skills, interests, needs) as well as 'free tags'"""
+    tagged_by = request.user
+    if not tagged_for:
+        tagged_for = tagged_by
     tag_type = request.POST['tag_type']
     tag_value = request.POST['tag_value']
-    tagger = request.user
-    tag, added = tag_add(tagged_resource, tag_type, tag_value, tagger)
-    data = simplejson.dumps({'keyword':tag.keyword, 'tag_type':tag.tag_type, 'tagged':'yourself', 'added':added})
+    tag, added = tag_add(tagged, tag_type, tag_value, tagged_by)
+    data = simplejson.dumps({'keyword':tag.keyword, 'tag_type':tag.tag_type, 'tagged':'yourself', 'added':added}) #why yourself?
     return HttpResponse(data, mimetype='application/json')
 
 
 @login_required
-@transaction.commit_on_success
-def autocomplete_tag(request, tag_type):
+@secure_resource(obj_schema={'tagged':'any', 'tagged_for':[User, TgGroup]})
+def autocomplete_tag(request, tag_type, tagged=None, tagged_for=None):
+    """
+      - autocomplete should look for a partial match in the following in order until it finds 10 results:
+      1. the users tags, 
+      2. the tags of the resource's agent 
+      3. all the user's enclosures, 
+      4. all tags in the system ++ filter by the type of tags
+
+      for now its very basic and completes on the tag_type and the partial value, globally
+      """
+    tagged_by = request.user
+    if not tagged_for:
+        tagged_for = tagged_by
     q = request.GET['q']
     limit = request.GET['limit']
-    options = tag_autocomplete(tag_type, q, limit)
+    options = tag_autocomplete(tagged_for, tagged, tag_type, q, limit)
     options = '\n'.join(options)
     return HttpResponse(options)
 
 @login_required
-@tag_permission_test
-@transaction.commit_on_success
-def delete_tag(request, tagged_resource):
+@secure_resource(obj_schema={'tagged':'any', 'tagged_for':[User, TgGroup]})
+def delete_tag(request, tagged, tagged_for=None):
+    tagged_by = request.user
+    if not tagged_for:
+        tagged_for = tagged_by
     tag_type = request.POST['tag_type']
     tag_value = request.POST['tag_value']
-    tagger = request.user
-    tag, deleted = tag_delete(tagged_resource, tag_type, tag_value, tagger)
+
+    tag, deleted = tag_delete(tagged, tag_type, tag_value, tagged_by)
     data = simplejson.dumps({'deleted':deleted})
     return HttpResponse(data, mimetype='application/json')
 
@@ -85,7 +79,7 @@ def plot_tag(tag, depth=0):
 
 def plot_resource(resource, depth=0):
     if depth:
-        children = [plot_tag(tag, depth=depth-1) for tag in get_tags(tagged = resource, tagger = resource.user, tag_type = 'skill')]
+        children = [plot_tag(tag, depth=depth-1) for tag in get_tags(tagged = resource, tagged_by = resource.user, tag_type = 'skill')]
     else:
         children = []
     return {  
@@ -97,7 +91,7 @@ def plot_resource(resource, depth=0):
 
 
 @login_required
-def map_tags(request, tagged_resource):
-    json = plot_resource(tagged_resource, depth=2)
+def map_tags(request, tagged):
+    json = plot_resource(tagged, depth=2)
     json = simplejson.dumps(json)
     return HttpResponse(json, mimetype='application/json')

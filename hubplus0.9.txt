@@ -1,7 +1,7 @@
 User  *Tom*
       - image	 
       - permissions
-      - tags
+      - tags page
 
       *Phil*
       - follow
@@ -12,29 +12,31 @@ User  *Tom*
 
 
 Tags *Tom*
-      - secure resource to work for arbitrary resource types - and for multiple input resources
-      - Tags get created in an agent - need create_Tag for that agent
-      - Tags created on groups are created by the user on behalf of the group.
-      - autocomplete looks first in the users tags, then in the tags of the resource's agent, and then in all the users enclosures, and then, all tags in the system ++ filter by the type of tags
+      - Tag is a permissionable type - separate tag object from instances of objects tagged? (type, value, tagged_for) --> tagged_item (tag, generic_reference)
+      - Tags get created in an agent - the tagged_for agent - need create_Tag for that agent
       - tags have a view interface which can be set by the tagger on any tag
+      - tags have no delete method, they delete themselve when they no long exist
 
-      - html5lib sanitize - htmlField + beautiful soup  ++ use mark_safe instead of turning autoescaping off
-
-Groups - group name based_url
-       - group template editing etc      
-
-Phil - application process
-     - host info security setup
-
-
-Tom  - create group form
-     - create wiki page form
-
+Monday
+------
 Slider UI
      - generate slider (views)
      - set slider (view)
      - on create profile set user as admin, and profile to acquire from user
      - single slider UI
+
+Groups - group name based_url
+
+
+
+Phil - application process
+     - host info security setup
+     - separate Hubs from groups
+
+Tom  - create group form
+     - html5lib sanitize - htmlField + beautiful soup  ++ use mark_safe instead of turning autoescaping off
+     - create wiki page form
+
 
 
 hubspace
@@ -46,7 +48,7 @@ misc
 ----
 - google maps need to be made more accurate in identifying addresses - api
 - inplace editing deal with errors - and error messages
-
+- deep copy the request querydict to make request.user etc secure
 
 
 

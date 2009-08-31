@@ -1,5 +1,6 @@
 {% load i18n %}
 {% load editable_attribute %}
+{% load plus_tags %}
   <div id="about_block">
   
     <h3>About me</h3>
@@ -41,45 +42,14 @@
     <ul>
       <li>
 	<dl>
-	  <dt>Skills:</dt>
-	  <dd class="tag_manager" id="skills">
-              <ul class="tag_list">
-		{% for s in skills %}
-		<li><a href="/plus_tags/tag/{{s.keyword}}/" class="tag option">{{s.keyword}}</a><a class="delete_tag" href="/plus_tags/Profile/{{profile.pk}}/delete/">X</a></li>
-		{% endfor %}
-	      </ul>
-              <span class="error_message"></span>
-             <form method='post' class="add_tag_form" action='/plus_tags/add_tag/' >
-	       <input name="target_class" class="target_class" value="Profile" type="hidden" />
-	       <input name="target_id" class="target_id" value="{{profile.pk}}" type="hidden" />
-               <input name="tag_type" class="tag_type" value="skill" type="hidden" />
-               <input name="tag_value" class="tag_value" />
-               <input class="button add_tag" type="submit" value="Add" />
-             </form>
-	  </dd>
+	  {% plus_tag 'Skills' 'skills'  profile  profile.user %}
 	</dl>
       </li>
-      
       <li>
 	<dl>
-	  <dt>Needs:</dt>
-	  <dd class="tag_manager" id="needs">
-              <ul class="tag_list">
-		{% for s in needs %}
-		<li><a href="/plus_tags/tag/{{s.keyword}}/" class="tag option">{{s.keyword}}</a><a class="delete_tag" href="/plus_tags/Profile/{{profile.pk}}/delete/">X</a></li>
-		{% endfor %}
-	      </ul>
-              <span class="error_message"></span>
-             <form method='post' class="add_tag_form" action=''>
-               <input name="target_class" class="target_class" value="Profile" type="hidden" />
-               <input name="target_id" class="target_id" value="{{profile.pk}}" type="hidden" />
-               <input name="tag_type" class="tag_type" value="need" type="hidden" />
-               <input name="tag_value" class="tag_value" />
-               <input class="button add_tag" type="submit" value="Add" />
-             </form>
-	  </dd>
+	  {% plus_tag 'Needs' 'needs'  profile  profile.user %}
 	</dl>
-      </li>
+      </li>      
     </ul>
     
     {% include "profiles/profile_about_form.html" %}

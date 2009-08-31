@@ -4,12 +4,12 @@ from django import template
 register = template.Library()
 
 @register.inclusion_tag('plus_tags/list_and_form.html')
-def plus_tag(dd_id, tag_type, target, tagger) :
-    tags = get_tags(tagged = target, tagger = tagger, tag_type = 'interest')
-    return {'tags' : tags, 
-            'target_class' : target.__class__.__name__ ,
-            'target_id' : target.id,
-            'dd_id' : dd_id,
+def plus_tag(label, tag_type, tagged, tagger) :
+    tags = get_tags(tagged=tagged, tagger=tagger, tag_type=tag_type)
+    return {'label':label,
+            'tags' : tags, 
+            'tagged_class' : tagged.obj().__class__.__name__ ,
+            'tagged_id' : tagged.id,
             'tag_type' : tag_type}
 
 

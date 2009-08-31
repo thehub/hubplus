@@ -1,17 +1,17 @@
-<dt>{{tag_type}}</dt>
-<dd class="tag_manager" id="{{dd_id}}">
+<dt>{{label}}</dt>
+<dd class="tag_manager" id="{{tag_type}}">
   <ul class="tag_list">
     {% for t in tags %}
     <li><a href="/plus_tags/tag/{{t.keyword}}/" class="tag option">{{t.keyword}}</a>
-        <a class="delete_tag" href="/plus_tags/{{target_class}}/{{target_id}}/delete/">X</a></li>
-    {% endfor %}
+        <a class="delete_tag" href="/plus_tags/{{tagged_class}}/{{tagged_id}}/delete/">X</a></li>
+    {% endfor %}                   
   </ul>
   <span class="error_message"></span>
   <form method='post' class="add_tag_form" action='/plus_tags/add_tag/' >
-    <input name="target_class" class="target_class" value="{{target_class}}" type="hidden" />
-    <input name="target_id" class="target_id" value="{{target_id}}" type="hidden" />
+    <input name="tagged_class" class="tagged_class" value="{{tagged_class}}" type="hidden" />
+    <input name="tagged_id" class="tagged_id" value="{{tagged_id}}" type="hidden" />
     <input name="tag_type" class="tag_type" value="{{tag_type}}" type="hidden" />
     <input name="tag_value" class="tag_value" />
-    <input class="add_tag" type="submit" value="add an interest" />
+    <input class="button add_tag" type="submit" value="Add" />
   </form>
 </dd>

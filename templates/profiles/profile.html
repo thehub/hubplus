@@ -5,7 +5,6 @@
 {% load avatar_tags %}
 {% load app_plugins %}
 {% load uni_form %}
-{% load profile_tags %}
 {% load plus_tags %}
 {% load editable_attribute %}
 {% block body %}
@@ -44,29 +43,9 @@
     <ul>
       <li>
 	<dl>
-	  <dt>{% trans "Interests" %}:</dt>
-          <dd class="tag_manager" id="interests">
-            <ul class="tag_list">
-              {% for s in interests %}
-              <li><a href="/plus_tags/tag/{{s.keyword}}/" class="tag option">{{s.keyword}}</a><a class="delete_tag" href="/plus_tags/Profile/{{profile.p\
-															    k}}/delete/">X</a></li>
-              {% endfor %}
-            </ul>
-            <span class="error_message"></span>
-            <form method='post' class="add_tag_form" action='/plus_tags/add_tag/' >
-              <input name="target_class" class="target_class" value="Profile" type="hidden" />
-              <input name="target_id" class="target_id" value="{{profile.pk}}" type="hidden" />
-              <input name="tag_type" class="tag_type" value="interest" type="hidden" />
-              <input name="tag_value" class="text tag_value" />
-              <input class="button add_tag" type="submit" value="Add" />
-            </form>
-          </dd>
+	  {% plus_tag 'Interests' 'interests'  profile  profile.user %}
 	</dl>
-      </li>
-      <!-- li>
-	{ % plus_tag 'interest2' 'interests' profile.id profile.user.id % }
-	
-      </li -->
+      </li>  
       <li>
 	<dl class="disabled"><dt >{% trans "Region" %} : </dt>
 	  <dd>
