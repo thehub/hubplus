@@ -8,4 +8,6 @@ def configs(context):
     return {
 
         'COPYRIGHT_HOLDER' : settings.COPYRIGHT_HOLDER,
-        'PROJECT_THEME': settings.PROJECT_THEME}
+        'PROJECT_THEME': settings.PROJECT_THEME,
+        'WELCOME_PAGE' : 'clients/%s/welcome.html' % settings.PROJECT_THEME,
+        }
