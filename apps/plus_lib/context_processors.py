@@ -7,5 +7,5 @@ def configs(context):
 
     return {
 
-        'COPYRIGHT' : settings.COPYRIGHT_HOLDER,
+        'COPYRIGHT_HOLDER' : settings.COPYRIGHT_HOLDER,
         'PROJECT_THEME': settings.PROJECT_THEME}
