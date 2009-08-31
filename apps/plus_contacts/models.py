@@ -87,7 +87,7 @@ Please visit the following link to confirm your account : %s""" % url
         try :
             send_mail(title, message, settings.CONTACT_EMAIL,
                   [self.email_address], fail_silently=False)
-            print "Done email"
+            print "Email sent to %s" % self.email_address
         except Exception, e :
             print settings.EMAIL_HOST, settings.EMAIL_PORT
             print e
@@ -110,9 +110,12 @@ Dear %s %s,
 
 
 
-    def invite(self, site, sponsor, site_root):
+    def invite(self, site, sponsor, site_root, group=None):
         # this called on a contact if someone is inviting them to join the site
         application = site.create_Application(sponsor, applicant=self)
+        if group :
+            # this is an invitation, probably to a hub
+            application.group=group
         return self.invite_mail(sponsor, site_root, application.id)
         
         

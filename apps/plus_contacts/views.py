@@ -98,13 +98,11 @@ def split_name(username):
 def site_invite(request, site, template_name='plus_contacts/invite_non_member.html', **kwargs) :
     if request.POST:
         form = InviteForm(request.POST)
+
         if form.is_valid() :
             form.clean()
             email_address = form.cleaned_data['email_address']
-            if User.objects.filter(email_address=email_address) :
-                print "We know this user already"
-                return HttpResponse('This user is already a member')
-            elif Contact.objects.filter(email_address=email_address):
+            if Contact.objects.filter(email_address=email_address):
                 print "We know this person as a contact"
                 contact = Contact.objects.plus_get(request.user, email_address=email_address)
             else :
@@ -114,11 +112,16 @@ def site_invite(request, site, template_name='plus_contacts/invite_non_member.ht
                                     email_address = email_address, 
                                     first_name=first_name,
                                     last_name=last_name)
-            msg,url = contact.invite(site, request.user, request.get_host())
+
 
             if form.cleaned_data['group'] :
-                pass
-                # XXX it's an invite to a group ... do something about this
+                # XXX it's an invite to a hub ... 
+                group = form.cleaned_data['group']
+            else :
+                group = None
+            
+            msg,url = contact.invite(site, request.user, request.get_host(), group=group)
+
 
             return render_to_response('plus_contacts/dummy_email.html',
                                           {'url':url, 'message':msg},                                      

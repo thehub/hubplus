@@ -15,14 +15,14 @@
       <ul>
 	<li>
 	  {{ form.username.errors }}
-	  <label for="id_username"><span class="required">*</span> {% trans "Name" %}</label>
-	  <input  id="id_username" name="username" class="text" type="text" />
+	  <p><label for="id_username"><span class="required">*</span> {% trans "Name" %}</label>
+	  <input  id="id_username" name="username" class="text" type="text" /></p>
 	</li>
 	<li>
-	  {{ form.email_address.errors}}
-	  <label for="id_email_address"><span class="required">*</span> {% trans "Email" %}</label>
-	  <input id="email_address" name="email_address" class="text" type="text" />
-	</li>
+	  {{ form.email_address.errors}} 
+	  <p><label for="id_email_address"><span class="required">*</span> {% trans "Email" %}</label>
+	  <input id="email_address" name="email_address" class="text" type="text" /></p>
+ 	</li>
 
 	<li class="checkboxes">
 	  <label>&nbsp;</label>

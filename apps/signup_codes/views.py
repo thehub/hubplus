@@ -79,19 +79,39 @@ def proxied_signup(request, application, form_class=SignupForm,
         if form.is_valid():
             username = form.cleaned_data['username']
             password = form.cleaned_data['password1']
-            
+
             application.applicant.become_member(username, accepted_by=request.user, password = password)
             user = authenticate(username=username, password=password)
+
             
             auth_login(request, user)
             user.message_set.create(
                 message=ugettext("Successfully logged in as %(username)s.") % {
                 'username': user.username
             })
+            # Now, what happens if this application or invite came with a group?
+            # If the group is not a Hub and the user has permissions on the group, then it's ok to add
+            if group.group_type != 'hub' :
+                group = secure_wrap(group, request.user)
+                group.add_member(user)
+            else :
+                # but if the group *is* a hub, we need to do something over in Hubspace.
+                # So alert an appropriate admin
+                admins = group.get_admin_group().get_members()
+                from notification import models as notification
+                    
+                for a in admin :
+                    notification.send(admin, "new_application_for_hub", 
+                      {'first_name':user.first_name,
+                       'last_name':user.last_name,
+                       'email_address':user.email_address,
+                       'hub':group.display_name,
+                       })
+            
+
             application.delete()
             return HttpResponseRedirect(success_url)
     else:
-
 
         form = form_class()
         applicant = application.get_inner().applicant
