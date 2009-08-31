@@ -60,8 +60,8 @@ var tag_list = function (ele) {
     var manager = jq(ele);
 
     var tag_type = manager.find('.tag_type').val();
-    var target_id = manager.find('.target_id').val();
-    var target_class = manager.find('.target_class').val();
+    var tagged_id = manager.find('.tagged_id').val();
+    var tagged_class = manager.find('.tagged_class').val();
 
     //console.log(tag_type+","+target_id+","+target_class);
 
@@ -80,11 +80,10 @@ var tag_list = function (ele) {
 	    tag.remove();
 	}
     };
-
     manager.find('.tag_value').autocomplete('/plus_tags/autocomplete_tag/'+
-					    manager.find('.tag_type').val()+ '/'+
-					    manager.find('.target_class').val()+'/'+
-					    manager.find('.target_id').val()+'/' ,
+					    manager.find('.tag_type').val()+
+					    '/?tagged_class=' + manager.find('.tagged_class').val()+
+					    '&tagged_id=' + manager.find('.tagged_id').val(),
                                             {width: 175,
 					     matchSubset: false,
 					     selectFirst: false,
@@ -98,11 +97,10 @@ var tag_list = function (ele) {
     var delete_tags = '#'+ manager.attr('id') + ' .delete_tag';
     jq(delete_tags).live('click', function () {
 	var tag_value = jq(this).prev().html();
-	console.log(tag_value);
 	var tag_data = [{name : 'tag_type', value : tag_type},
 			{name : 'tag_value', value : tag_value},
-			{name : 'target_class', value : target_class},
-			{name : 'target_id', value : target_id}
+			{name : 'tagged_class', value : tagged_class},
+			{name : 'tagged_id', value : tagged_id}
 			];
 	var tag = jq(this).parent();
 	jq.post('/plus_tags/delete_tag/', tag_data, function(data) {

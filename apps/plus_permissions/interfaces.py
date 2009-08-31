@@ -34,6 +34,9 @@ class TemplateSecureWrapper:
         except:
             return NotViewable
 
+    def obj(self):
+        return self.SecureWrapper._inner
+
     def can_write(self, name):
         return self.SecureWrapper.has_permission(name, InterfaceReadWriteProperty) or self.SecureWrapper.has_permission(name, InterfaceWriteProperty)
 

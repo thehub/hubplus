@@ -16,7 +16,7 @@ class GenericTag(models.Model) :
     subject = generic.GenericForeignKey('subject_content_type', 'subject_object_id')
 
 
-def tag_autocomplete(tag_type, tag_value, limit):
+def tag_autocomplete(tagged_for, tagged, tag_type, tag_value, limit):
     tags = get_tags(tag_type=tag_type, partial_tag_value=tag_value)
     return [tag.keyword for tag in tags[0:10]]
 
