@@ -29,6 +29,9 @@ class ContactAdmin:
     become_member = InterfaceCallProperty
     invite = InterfaceCallProperty
 
+class ContactInvite:
+    invite = InterfaceCallProperty
+
 from apps.plus_permissions.models import add_type_to_interface_map
 
 ContactInterfaces = {'ContactAdmin': ContactAdmin,   }
