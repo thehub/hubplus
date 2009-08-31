@@ -14,7 +14,7 @@
 	<link rel="stylesheet" href="{{ MEDIA_URL }}css/main.css"        type="text/css" media="all" />
 	<link rel="stylesheet" href="{{ MEDIA_URL }}css/serendipity.css" type="text/css" media="all" />
 	<link rel="stylesheet" href="{{ MEDIA_URL }}css/footer.css"      type="text/css" media="all" />
-	<link rel="stylesheet" href="{{ MEDIA_URL }}themes/plus/css/theme.css" type="text/css" media="all" />
+	<link rel="stylesheet" href="{{ MEDIA_URL }}themes/{{PROJECT_THEME}}/css/theme.css" type="text/css" media="all" />
 	
 	<link rel="stylesheet" href="{{ MEDIA_URL }}css/tabview.css"      type="text/css" media="all" />
 	
@@ -100,6 +100,7 @@
 	<!-- main -->
 	<div id='main'>
           {% block main %}
+
 	  <div id='permission_sliders'></div>
       
 	  <h2>{{head_title}}</h2>
