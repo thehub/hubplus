@@ -112,12 +112,7 @@ class HubspaceAuthenticationBackend :
 
 
 
-try :
-    if hub_local_settings : pass
-except :
-    # do it once
-    hub_local_settings = True
-    
+def patch_user_class():    
     User._meta.db_table = 'tg_user'
 
     # Patching the User class

@@ -272,7 +272,8 @@ except ImportError:
 
 
 try:
-    from apps.plus_user.models import *
+    from apps.plus_user.models import patch_user_class
+    patch_user_class()
     print "import plus_users succeeded"
 except ImportError, e:
     print "plus user failed :: " + `e`

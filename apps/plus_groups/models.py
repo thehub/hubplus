@@ -1,6 +1,6 @@
 from django.db import models
 from django.db.models.signals import post_save
-
+from itertools import chain
 from django.contrib.auth.models import User, UserManager, check_password
 
 from django.contrib.contenttypes.models import ContentType
