@@ -268,13 +268,18 @@ class User_Group(models.Model):
     
 
 # We're going to add the following method to User class (and to group)
-def is_member_of(self,group) : 
+def is_member_of(self, group, already_seen=None) :
+    if not already_seen:
+        already_seen = set([group.id])
     if not group.is_group() : return False
     if group.has_member(self) : return True
     # not a direct member, but perhaps somewhere up the tree of (enclosures / parents)
-    for x in self.get_enclosures() :
-        if x.is_member_of(group) : 
-            return True
+    for x in self.get_enclosures():
+        if x.id not in already_seen:
+            already_seen.add(x.id)
+        #need to do cycle detection here - since groups can be a member of a any group including a group which is a member of it.
+            if x.is_member_of(group, already_seen): 
+                return True
     return False
     
 # add it to TgGroup too
