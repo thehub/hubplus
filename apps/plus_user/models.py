@@ -4,7 +4,6 @@ from django.contrib.auth.models import User, UserManager, AnonymousUser, check_p
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes import generic
 from django.db.models.signals import post_save
-from itertools import chain
 import hashlib
 import datetime
 from apps.plus_groups.models import is_member_of,  is_direct_member_of,  get_enclosures, get_enclosure_set, Location

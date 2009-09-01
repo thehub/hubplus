@@ -35,6 +35,7 @@ def group(request, group_id, template_name="plus_groups/group.html"):
     print "members :", members
 
     hosts = group.get_admin_group().get_users()[:10]
+    host_count = group.get_admin_group().get_no_members()
     user = request.user
     if user.is_authenticated():
         if user.is_member_of(group):
@@ -57,6 +58,7 @@ def group(request, group_id, template_name="plus_groups/group.html"):
             "extras" : group.groupextras, 
             "leave": leave,
             "hosts": hosts,
+            "host_count": host_count,
             }, context_instance=RequestContext(request))
 
 

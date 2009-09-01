@@ -11,6 +11,11 @@ User  *Tom*
       - Regions
 
 
+Jesson
+------
+show all - members, hosts, groups ?
+wiki page design - in html
+search results / tag filtering - do design work with Tom/Phil
 
 Monday - Tues
 -------------
@@ -28,8 +33,9 @@ Tom  - create group form
      - html5lib sanitize - htmlField + beautiful soup  ++ use mark_safe instead of turning autoescaping off
      - create content page form
 
-
-
+- wiki
+- uploads
+- fulltext search
 
 Tags *Tom*
       - Tag is a permissionable type - separate tag object from instances of objects tagged? tag(type, value) <-- tag_context(tag, tagged_for) <-- tag_item(tagged_by, generic_reference)
@@ -70,14 +76,6 @@ misc
 - Phil + Tom - finish permissions
 
   *** If the user then reverts this wiki to using the "defaults" from Kings Cross again, do we delete these custom SecurityTags? I think so.
-
-  ** SliderSet to manage creation and deletion of agent-mappings. (Never creates or destroys security tags)
-  ** SliderSet to represent and manage constraints
-  ** SliderSet also manages creating or deleting custom security tags
-  ** SliderSet to generate json for javascript sliders-set
-  ** adapt json returned by javascript library to the server, it should be nothing more than {'context_type':context_type,'context_id':context_id, 'settings':  [Interface_id, [agent_type, agent_id]]* } 
-  ** SliderSet default format (create from json?)
-  ** Make sure working for Profile
 
 
 - Phil + Tom - sign-up, invite and apply logic
@@ -202,7 +200,6 @@ invoice redesign + pisa
 Tags, Feed and Search
 ---------------------
 HP 0.9
-- copy ohloh.net for design inspiration
 - look at django-tagging
 - fix existing tagging
 - tag refinements search ... urls: ${}/tag/sustainability+renewable_energy  '+' is AND  and _ is "separator"

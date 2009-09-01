@@ -51,9 +51,8 @@
 	      {% for member in members %}
 	      <li><a href="{% url profile_detail member.username %}" 
 		     class="thumb small"><img src="../../site_media/images/member_id.jpg" />
-		  <br/>
-		  {% if member.display_name %}{{member.display_name}}{% else %}{{member.username}}{%endif%}
-
+		  {% if member.display_name %}{{member.display_name}}{% else %}{{member.username}}{%endif%}</a>
+	      </li>
 	      {% endfor %}
 	    </ul>
 	    <a href="#" class='disabled'>Show all ({{member_count}})</a>
@@ -64,12 +63,14 @@
 	<dt>{% trans "Group Hosts" %}:</dt>
 	<dd>
 	  {% for host in hosts %}
- 	  {{host}},  
+	  <a href="{% url profile_detail host.username %}">
+	    {% if host.display_name %}{{host.display_name}}, {% else %}{{host.username}}, {% endif %}
+	  </a>
 	  {% endfor %}
+	  <br /><a href="#" class='disabled'>Show all ({{host_count}})</a>
 	</dd>
       </dl>
     </li>
-
     </ul>
 </div>
 
