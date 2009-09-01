@@ -4,7 +4,7 @@ from django.contrib.auth.models import User
 from plus_contacts.models import Contact, Application
 from plus_permissions.default_agents import get_site, get_admin_user
 from django.utils.translation import ugettext, ugettext_lazy as _
-from apps.hubspace_compatibility.models import TgGroup
+from apps.plus_groups.models import TgGroup
 
 
 class InviteForm(forms.Form):
