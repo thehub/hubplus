@@ -8,36 +8,18 @@
 
 {% block body %}
 
-
-<h2>Welcome to the mental health & psychosocial network</h2>
-
-
-<p>Please be aware that this is the development site and any content you
-add may be lost at this time. To visit the live site go to
-<a href="http://www.psychosocialnetwork.net">http://www.psychosocialnetwork.net</a></p>
-
-<p>The MHPSS (Mental Health and Psychosocial Network) on-line network
-serves people working in the field of mental health and psychosocial
-support in emergencies and situations of extreme stress across the
-world. It aims to connect practitioners, organisations, academics and
-service users around the world by collaborating and sharing knowledge.</p>
-
-<p>As a member you can add documents, edit them, organise material , and decide who can view and edit material you have posted.</p>
-
-<p>Unless indicated otherwise, all documents on this site are publicly viewable.</p>
-
+  {% include WELCOME_PAGE %}
 
     
-    {% if user.is_authenticated %}
-        {% url what_next as what_next_url %}
-        <p class="what_next">{% blocktrans %}Wondering <a href="{{ what_next_url }}">What Next</a>?{% endblocktrans %}</p>
+  {% if user.is_authenticated %}
+    {% url what_next as what_next_url %}
+      <p class="what_next">{% blocktrans %}Wondering <a href="{{ what_next_url }}">What Next</a>?{% endblocktrans %}</p>
     {% else %}
-        {% url acct_signup as signup_url %}
-        {% url acct_login as login_url %}
-        <p>{% blocktrans %}You can <a href="{{ signup_url }}">Sign up</a> and <a href="{{ login_url }}">Log in</a> to try out the site.{% endblocktrans %}</p>
+      {% url acct_signup as signup_url %}
+      {% url acct_login as login_url %}
+      <p>You can <a href="{% url acct_apply %}">Apply to join</a> or <a href="{{ login_url }}">Log in</a> to try out the site.</p>
         
 <!--        <p><b>{% blocktrans %}At this stage, there is openid support, email verification, password management, site announcements, user-to-user messaging, friend invitation (both internal and external to the site), a basic twitter clone, interest groups (called tribes), projects with basic task and issue management, threaded discussions, wikis, blogging, bookmarks, contact import (from vCard, Google or Yahoo), photo management and a notification framework.{% endblocktrans %}</b></p> -->
-
-    {% endif %}
+ {% endif %}
     
 {% endblock %}

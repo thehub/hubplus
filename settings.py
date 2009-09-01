@@ -102,6 +102,7 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     "messages.context_processors.inbox",
     "friends_app.context_processors.invitations",
     "misc.context_processors.combined_inbox_count",
+    "apps.plus_lib.context_processors.configs"
 )
 
 COMBINED_INBOX_COUNT_SOURCES = (

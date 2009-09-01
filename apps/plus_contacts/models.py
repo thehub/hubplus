@@ -23,6 +23,7 @@ import datetime
 from django.db.models.signals import post_save
 
 
+
 class Contact(models.Model):
     """Use this for the sign-up / invited sign-up process, provisional users"""
     first_name = models.CharField(max_length=60)
@@ -75,6 +76,49 @@ class Contact(models.Model):
         return u
 
 
+    def send_email(self, title, message, sponsor, site_root, id):
+        url = attach_hmac("/signup/%s/" % id, sponsor)
+        url = 'http://%s%s' % (site_root, url)
+
+        message = message + """
+
+Please visit the following link to confirm your account : %s""" % url
+        
+        try :
+            send_mail(title, message, settings.CONTACT_EMAIL,
+                  [self.email_address], fail_silently=False)
+            print "Email sent to %s" % self.email_address
+        except Exception, e :
+            print settings.EMAIL_HOST, settings.EMAIL_PORT
+            print e
+
+        return message, url
+
+
+    def accept_mail(self, sponsor, site_root, application_id):
+        message = """
+Dear %s %s
+We are delighted to confirm you have been accepted as a member of Hub+
+""" % (self.first_name, self.last_name)
+        return self.send_email("Confirmation of account on Hub+", message, sponsor, site_root, application_id)
+
+    def invite_mail(self, sponsor, site_root, application_id) :
+        message = """
+Dear %s %s,
+%s has invited you to become a member of Hub+ ... MORE TEXT HERE""" % (self.first_name, self.last_name, sponsor.display_name)
+        return self.send_email("Invite to join Hub+", message, sponsor, site_root, application_id)
+
+
+
+    def invite(self, site, sponsor, site_root, group=None):
+        # this called on a contact if someone is inviting them to join the site
+        application = site.create_Application(sponsor, applicant=self)
+        if group :
+            # this is an invitation, probably to a hub
+            application.group=group
+        return self.invite_mail(sponsor, site_root, application.id)
+        
+        
 
 PENDING = 0
 WAITING_USER_SIGNUP = 1
@@ -92,9 +136,7 @@ class Application(models.Model) :
 
     admin_comment = models.TextField(default='')
     date = models.DateField(auto_now_add=True)
-    accepted_by = models.ForeignKey(User, null=True) 
-
-
+    accepted_by = models.ForeignKey(User, null=True)
 
 
     def is_site_application(self) :
@@ -117,28 +159,7 @@ class Application(models.Model) :
             self.admin_comment = kwargs['admin_comment']
             self.accepted_by = sponsor
         self.save()
-
-        url = attach_hmac("/signup/%s/" % self.id, sponsor)
-        url = 'http://%s%s' % (site_root, url)
-
-        message = """
-Dear %s %s,
-We are delighted to confirm you have been accepted as a member of Hub+
-
-Please visit the following link to confirm your account : %s
-""" % (self.applicant.first_name, self.applicant.last_name, url)
-
-        email_address = self.applicant.email_address
-
-        print settings.EMAIL_HOST, settings.EMAIL_PORT
-        try :
-            send_mail('Confirmation of account on Hub+', message, settings.CONTACT_EMAIL,
-                  [self.applicant.email_address], fail_silently=False)
-            print "Done email"
-        except Exception, e :
-            print e
-
-        return message, url
+        return self.applicant.accept_mail(sponsor, site_root, self.id)
 
 
     def get_approvers(self):

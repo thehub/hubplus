@@ -9,7 +9,9 @@ if "notification" in settings.INSTALLED_APPS:
         print "creating plus_contact notice types"
         notification.create_notice_type("new_application", "New application to the site.", "Someone has applied to join hubplus")
         notification.create_notice_type("application_approved", "Application Approved", "An application was approved")
+        notification.create_notice_type("new_application_for_hub", "Interest in joining a Hub", "Someone has shown interest in joining your Hub")
 
     post_syncdb.connect(create_notice_types, sender=notification)
 else:
     print "Skipping creation of NoticeTypes as notification app not found"
+

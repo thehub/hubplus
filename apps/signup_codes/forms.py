@@ -15,6 +15,7 @@ from account.forms import SignupForm as BaseSignupForm
 from signup_codes.models import SignupCode, check_signup_code
 
 
+
 class SignupForm(BaseSignupForm):
     # turns out we haven't had to customize this yet
     pass
