@@ -1,7 +1,7 @@
 from django import template
 from django.template.defaultfilters import truncatewords_html
 from django.utils.html import urlize
-
+from apps.plus_permissions.interfaces import NotViewable
 register = template.Library()
 
 class ValueTypes(dict):
@@ -33,7 +33,11 @@ value_types = ValueTypes({'plain': plain,
 def editable(label, obj, name, default, value_type='plain', truncate_at='100'):
     edit = obj.can_write(name)
     value = getattr(obj, name)
-    value, no_escape = value_types[value_type](value, truncate_at)
+    #We use str to manange the NotViewable instance sometimes assigned by the TemplateSecureWrapper, since we have a utf-8 "value" here, if we do then str is okay, a
+    if not value or value == NotViewable:
+        value, no_escape = str(value), False
+    else:
+        value, no_escape = value_types[value_type](value, truncate_at) 
     show = edit or value
     if not value:
         value = default

@@ -13,7 +13,7 @@ from django.contrib.auth.models import AnonymousUser
 
 from apps.plus_permissions.default_agents import get_anonymous_group, get_anon_user
 
-from apps.hubspace_compatibility.models import TgGroup
+from apps.plus_groups.models import TgGroup
 
 from account.utils import get_default_redirect
 from account.models import OtherServiceInfo

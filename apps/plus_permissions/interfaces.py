@@ -73,6 +73,8 @@ class InterfaceCallProperty:
 class EmptyString(type):
     def __str__(cls):
         return ""
+    def __unicode__(cls):
+        return u""
 
 class NotViewable(object):
     __metaclass__= EmptyString

@@ -9,7 +9,7 @@ from apps.plus_permissions.interfaces import InterfaceReadProperty, InterfaceWri
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes import generic
 
-from apps.hubspace_compatibility.models import TgGroup
+from apps.plus_groups.models import TgGroup
 
 from apps.plus_permissions.OurPost import OurPost as content_type
 

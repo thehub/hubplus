@@ -6,7 +6,7 @@ from models import Service, Link, get_links_for, ListOfLinks
 
 from apps.profiles.models import *
 
-from apps.hubspace_compatibility.models import make_object_reference, get_referenced_object
+from apps.plus_groups.models import make_object_reference, get_referenced_object
 
 import unittest
 

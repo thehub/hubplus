@@ -8,7 +8,7 @@ from django.http import HttpResponse, HttpResponseRedirect, HttpResponseForbidde
 # this collection must be kept up-to-date for each type of model which 
 # CHANGE THIS
 from apps.profiles.models import Profile
-from apps.hubspace_compatibility.models import TgGroup
+from apps.plus_groups.models import TgGroup
 from django.contrib.auth.models import User
 from django.contrib.contenttypes.models import ContentType
 from apps.plus_permissions.api import secure_resource

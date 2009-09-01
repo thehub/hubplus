@@ -8,7 +8,7 @@ from django.contrib.contenttypes import generic
 
 from django.contrib.auth.models import User
 from django.http import HttpResponseForbidden
-from apps.hubspace_compatibility.models import TgGroup, Location
+from apps.plus_groups.models import TgGroup, Location
 
 from models import *
 

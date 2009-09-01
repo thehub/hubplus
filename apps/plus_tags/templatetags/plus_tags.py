@@ -5,6 +5,8 @@ register = template.Library()
 
 @register.inclusion_tag('plus_tags/list_and_form.html')
 def plus_tag(label, tag_type, tagged, tagger) :
+    """update to deal with tagged for and tagged by
+    """
     tags = get_tags(tagged=tagged, tagger=tagger, tag_type=tag_type)
     return {'label':label,
             'tags' : tags, 

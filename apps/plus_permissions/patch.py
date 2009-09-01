@@ -1,4 +1,3 @@
-
 from apps.plus_permissions.permissionable import security_patch
 from apps.plus_permissions import types
 from apps.plus_permissions.types import *
@@ -41,7 +40,7 @@ Site.create_TgGroup = site_create_group
 from default_agents import CreatorMarker
 security_patch(CreatorMarker,[])
 
-from apps.hubspace_compatibility.models import TgGroup
+from apps.plus_groups.models import TgGroup
 from apps.plus_permissions.types.TgGroup import get_or_create
 
 TgGroup.objects.get_or_create = get_or_create

@@ -1,0 +1,20 @@
+
+<div id="section_tab_navigation" class="tabbed section yui-navset">
+
+  <ul class="tabbed_navigation yui-nav">
+    <li class="selected" ><a href="#resources"><span>Resources</span></a></li>
+    <li><a href="#activity"><span>Activity</span></a></li>
+    <li><a href="#news"><span>News</span></a></li>
+    <li><a href="#events"><span>Events</span></a></li>
+    <li><a href="#comments"><span>Comments</span></a></li>
+  </ul>
+
+  <div class="tabbed_content yui-content">
+	{% include "plus_groups/resources.html" %}
+	{% include "plus_groups/activity.html" %}
+	{% include "plus_groups/news.html" %}
+	{% include "plus_groups/events.html" %}
+	{% include "plus_groups/comments.html" %}
+  </div>
+
+</div>

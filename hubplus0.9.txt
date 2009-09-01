@@ -11,31 +11,44 @@ User  *Tom*
       - Regions
 
 
-Tags *Tom*
-      - Tag is a permissionable type - separate tag object from instances of objects tagged? (type, value, tagged_for) --> tagged_item (tag, generic_reference)
-      - Tags get created in an agent - the tagged_for agent - need create_Tag for that agent
-      - tags have a view interface which can be set by the tagger on any tag
-      - tags have no delete method, they delete themselve when they no long exist
 
-Monday
-------
+Monday - Tues
+-------------
+Groups - Group model - group extra
+       - hubspace_compatibility to plus_users / profiles
+       - template  1. tags
+       	 	   2. attributes
+		   3. member - first and last  - display members and hosts
+
+
 Slider UI
      - generate slider (views)
      - set slider (view)
      - on create profile set user as admin, and profile to acquire from user
      - single slider UI
 
-Groups - group name based_url
 
+Tags *Tom*
+      - Tag is a permissionable type - separate tag object from instances of objects tagged? tag(type, value) <-- tag_context(tag, tagged_for) <-- tag_item(tagged_by, generic_reference)
+      - Tags get created in an agent - the tagged_for agent - need create_Tag for that agent
+      - tags have a view interface which can be set by the tagger on any tag
+      - tags have no delete method, they delete themselve when they no long exist
 
 
 Phil - application process
      - host info security setup
-     - separate Hubs from groups
+     - separate Hubs from groups by Location/Subclassing
+     - groups page loading time - wtf is going on server side
+     - group links
 
 Tom  - create group form
+     - group name based_url
      - html5lib sanitize - htmlField + beautiful soup  ++ use mark_safe instead of turning autoescaping off
-     - create wiki page form
+     - create content page form
+
+
+Group - Resource - tag filters
+      - begin tag explorer
 
 
 
@@ -52,7 +65,6 @@ misc
 
 
 
-- Tom Group model - group extra + tg_groups to plus_groups
 
 - Phil + Tom - finish permissions
 
@@ -147,10 +159,9 @@ Begin Testing! With Hosts and MHPSS. Data not stored
 - Tom to integrate speeqe or jw chat
 
 
-15th September
+18th September
 --------------
-editor - image inclusion - flickr plugin - autoadjusting height - yui 
-Go live with whole Hub+ team + selection of members
+Go live with whole Hub team + selection of members
 
 15th November
 -------------
@@ -227,6 +238,7 @@ http://code.google.com/p/django-wikiapp/
 http://pypi.python.org/pypi/django-attachments/0.3.1
 - comments (enable)
 - permissions control
+- editor - image inclusion - flickr plugin - autoadjusting height - yui 
 
 
 http://hg.piranha.org.ua/django-history/

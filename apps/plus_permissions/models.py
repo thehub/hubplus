@@ -3,7 +3,7 @@ from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes import generic
 
 from django.contrib.auth.models import User, AnonymousUser
-from apps.hubspace_compatibility.models import TgGroup
+from apps.plus_groups.models import TgGroup
 from django.db.transaction import commit_on_success
 
 from apps.plus_permissions.site import Site
@@ -398,8 +398,7 @@ def has_access(agent, resource, interface) :
     
 
     # probably should memcache both allowed agents (per .View interface) and 
-    # agents held per user to allow many queries very quickly. e.g. to only return the searc
-     
+    # agents held per user to allow many queries very quickly. 
     allowed_agents = set([a.obj for a in allowed_agents.all()])
     
     if get_anonymous_group() in allowed_agents: 

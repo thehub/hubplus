@@ -1,6 +1,6 @@
 from django.db import models
 from django.conf import settings
-from apps.hubspace_compatibility.models import TgGroup
+from apps.plus_groups.models import TgGroup
 
 from django.contrib.contenttypes import generic
 from django.contrib.contenttypes.models import ContentType

@@ -12,12 +12,12 @@ import datetime
 
 # We need our own get_or_create
 
+from apps.plus_groups.models import User
 
 def create_user(user_name, email_address, password='dummy') :
     """create a User
     """
 
-    from hubspace_compatibility import *
 
     if User.objects.filter(username=user_name).count() < 0 :
         user = User.objects.get(username=user_name)

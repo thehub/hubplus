@@ -2,7 +2,7 @@ from django.db import models
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes import generic
 
-from apps.hubspace_compatibility.models import Location
+from apps.plus_groups.models import Location
 from apps.plus_permissions.models import GenericReference
 
 

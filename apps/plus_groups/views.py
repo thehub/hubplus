@@ -9,7 +9,7 @@ from django.utils.translation import ugettext
 from django.db import transaction
 from django.utils import simplejson
 
-from apps.hubspace_compatibility.models import TgGroup
+from apps.plus_groups.models import TgGroup
 from django.core.urlresolvers import reverse
 
 

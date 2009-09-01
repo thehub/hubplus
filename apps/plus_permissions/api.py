@@ -8,7 +8,7 @@ to which anyone is a member)"""
 from apps.plus_permissions.interfaces import secure_wrap, TemplateSecureWrapper
 
 from apps.plus_permissions.models import SecurityTag, SecurityContext, has_access
-from apps.hubspace_compatibility.models import Location, TgGroup
+from apps.plus_groups.models import Location, TgGroup
 from apps.plus_permissions.default_agents import get_anon_user, get_admin_user, get_anonymous_group, get_all_members_group, get_site
 from django.http import HttpResponseForbidden
 

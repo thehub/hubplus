@@ -3,7 +3,7 @@ from apps.plus_permissions.models import SetSliderOptions, SetAgentDefaults, Set
 
 from apps.plus_contacts.models import Application
 
-from apps.hubspace_compatibility.models import TgGroup
+from apps.plus_groups.models import TgGroup
 
 from django.db.models.signals import post_save
 import datetime
