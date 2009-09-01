@@ -13,30 +13,34 @@ User  *Tom*
 
 Jesson
 ------
-show all - members, hosts, groups ?
+show all - members, hosts, groups ? use | separator consistently
 wiki page design - in html
 search results / tag filtering - do design work with Tom/Phil
 
-Monday - Tues
--------------
-
-1. attribute editing on groups
-
+Tues
+----
 Slider UI
      - generate slider (views)
      - set slider (view)
      - on create profile set user as admin, and profile to acquire from user
      - single slider UI
 
-Tom  - create group form
-     - group name based_url
+
+Wed
+---
+Tom  - group name based_url
      - html5lib sanitize - htmlField + beautiful soup  ++ use mark_safe instead of turning autoescaping off
      - create content page form
 
+Thus - Sun
+----------
+Basics of:
 - wiki
-- uploads
 - fulltext search
+- upload
 
+Monday 7th
+---------- 
 Tags *Tom*
       - Tag is a permissionable type - separate tag object from instances of objects tagged? tag(type, value) <-- tag_context(tag, tagged_for) <-- tag_item(tagged_by, generic_reference)
       - Tags get created in an agent - the tagged_for agent - need create_Tag for that agent
@@ -44,14 +48,21 @@ Tags *Tom*
       - tags have no delete method, they delete themselve when they no long exist
       - you should only see the add tag form if you have permission on the tagger_for user. Same for delete.
 
-Phil - application process
+Phil - application process - emails send out, 
+     - create group form
      - host info security setup
      - separate Hubs from groups by Location/Subclassing
      - groups page loading time - wtf is going on server side
-     - links
+     - links + contact details (e.g. host contact address). Some names might be required e.g. enquiries address for Hubs.
      - ordering of lists, members, hosts (group page) and groups (profile page) 
      - default images for group members
 
+Attribute Editing - Phil
+-----------------
+1. attribute editing on groups (make generic) + type attribute
+2. add edit key to all content types at patch time
+3. widget type map for group
+4. add location map
 
 Group - Resource - tag filters
       - begin tag explorer
@@ -72,41 +83,8 @@ misc
 
 
 
-
-- Phil + Tom - finish permissions
-
-  *** If the user then reverts this wiki to using the "defaults" from Kings Cross again, do we delete these custom SecurityTags? I think so.
-
-
-- Phil + Tom - sign-up, invite and apply logic
-  ** 1)Application form (for non-site-members who want to join)
-  ** 2)view to handle the application, creates a record in the "Contacts" table with details, + a record in an "Application" class which holds things like the "request to join" message, the host's reply message etc.
-  ** 3)page, showing a list of outstanding applications to a host, giving a way to authorize them
-  ** 4)view for a host to accept the application. At this point :
-  *** 5)if the applicant is not currently a User, (but will still be a Contact), an hmac activation url is created and sent by email.
-  *** 6)if the applicant is an existing user, a confirmation notification is sent, and the user becomes a member of the group
- 
-  ** 7)Invite form, which allows an existing member or admin to invite either an existing User or a non-site-member to join the site, and optionally further groups.
-  *** 8)the view for this form will create the hmac acceptance url to be sent as part of an invitation, either by email, to a non-user, or by notification to an existing user.
-  **** 9) as in step 6, when the acceptance url is clicked, if this is an existing user, we just add to the relevant group, if, it's just a contact, we create the User and Profile first (from the Contact data) and then add to groups
-  
-
-   
-
-  *** Invites
-  **** start by comparing pinax signup process which has a lot of similarities
-  **** check mail facilities on server
-  **** A "generate invite url" function which takes (inviter, invitee, the id of the thing being invited to (eg. all_members), the secret key) ==> returns a URL; this function tests that the inviter has permission to invite someone to this group
-  **** An "invite" method which fires off an email containing the url
-  **** urls.py which matches this URL and forwards to a view
-  **** view.py which a) creates a new user, if there isn't one already, and b) adds the user to the group
-  **** NO state is kept in the database UNTIL the acceptance link is clicked
-- Phil - sign-up, invite and apply form
-- Phil + Jesson - sign-up template integration s
-- Phil + Tom - sign-up UI - js elements
-
-
 - Tom wiki + group tests - security_context and context/container
+
 
 
 
