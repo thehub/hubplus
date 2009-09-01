@@ -16,23 +16,10 @@
     <li>
       {% editable "Type" group 'group_type' 'Type of Group' %}
     </li>
-
     <li>
       {% editable "Description" group 'about' 'Description of the group' %}
     </li>  
-    <li>
-      <dl>
-	<dt>{% trans "Hosts" %}:</dt>
-	<dd>
-	  {% for host in hosts %}
- 	  {{host}}, 
-	  {% endfor %}
-	</dd>
-      </dl>
-    </li>
   </ul>
-
-
     <li><dl><dt>Address:</dt><dd>The Hub, 5 Torrens Street, London, EC1V 1NQ</dd></dl></li>
   </ul>
   <h3>{% trans "Links" %}</h3>
@@ -72,12 +59,17 @@
 	    <a href="#" class='disabled'>Show all ({{member_count}})</a>
       </dd></dl>
       </li>
-      <li>
-	<dl>
-          <dt>{% trans "Group hosts" %}:</dt>
-          <dd>{% for host in hosts %}<a href="#">{{host}}</a>{% endfor %}
-	</dl>
-      </li>
+    <li>
+      <dl>
+	<dt>{% trans "Group Hosts" %}:</dt>
+	<dd>
+	  {% for host in hosts %}
+ 	  {{host}},  
+	  {% endfor %}
+	</dd>
+      </dl>
+    </li>
+
     </ul>
 </div>
 

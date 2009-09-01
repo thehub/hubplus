@@ -14,12 +14,8 @@ User  *Tom*
 
 Monday - Tues
 -------------
-Groups - Group model - group extra
-       - hubspace_compatibility to plus_users / profiles
-       - template  1. tags
-       	 	   2. attributes
-		   3. member - first and last  - display members and hosts
 
+1. attribute editing on groups
 
 Slider UI
      - generate slider (views)
@@ -27,28 +23,33 @@ Slider UI
      - on create profile set user as admin, and profile to acquire from user
      - single slider UI
 
-
-Tags *Tom*
-      - Tag is a permissionable type - separate tag object from instances of objects tagged? tag(type, value) <-- tag_context(tag, tagged_for) <-- tag_item(tagged_by, generic_reference)
-      - Tags get created in an agent - the tagged_for agent - need create_Tag for that agent
-      - tags have a view interface which can be set by the tagger on any tag
-      - tags have no delete method, they delete themselve when they no long exist
-
-
-Phil - application process
-     - host info security setup
-     - separate Hubs from groups by Location/Subclassing
-     - groups page loading time - wtf is going on server side
-     - group links
-
 Tom  - create group form
      - group name based_url
      - html5lib sanitize - htmlField + beautiful soup  ++ use mark_safe instead of turning autoescaping off
      - create content page form
 
 
+
+
+Tags *Tom*
+      - Tag is a permissionable type - separate tag object from instances of objects tagged? tag(type, value) <-- tag_context(tag, tagged_for) <-- tag_item(tagged_by, generic_reference)
+      - Tags get created in an agent - the tagged_for agent - need create_Tag for that agent
+      - tags have a view interface which can be set by the tagger on any tag
+      - tags have no delete method, they delete themselve when they no long exist
+      - you should only see the add tag form if you have permission on the tagger_for user. Same for delete.
+
+Phil - application process
+     - host info security setup
+     - separate Hubs from groups by Location/Subclassing
+     - groups page loading time - wtf is going on server side
+     - links
+     - ordering of lists, members, hosts (group page) and groups (profile page) 
+     - default images for group members
+
+
 Group - Resource - tag filters
       - begin tag explorer
+      - explore
 
 
 

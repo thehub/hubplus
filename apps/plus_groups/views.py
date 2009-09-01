@@ -30,11 +30,11 @@ def group(request, group_id, template_name="plus_groups/group.html"):
 
     dummy_status = DisplayStatus("Group's Status"," about 3 hours ago")
     
-    members = group.get_users()
+    members = group.get_users()[:10]
     member_count = group.get_no_members()
     print "members :", members
 
-    hosts = group.get_admin_group().get_users()
+    hosts = group.get_admin_group().get_users()[:10]
     user = request.user
     if user.is_authenticated():
         if user.is_member_of(group):
