@@ -66,8 +66,10 @@ def group(request, group_id, template_name="plus_groups/group.html"):
 
 def groups(request, template_name='plus_groups/groups.html'):
     
-    groups = TgGroup.objects.plus_filter(request.user, level='member' )
+
+    groups = TgGroup.objects.plus_filter(request.user, level='member')
     groups = [g for g in groups]
+
     create = False
 
     if request.user.is_authenticated():
@@ -76,7 +78,7 @@ def groups(request, template_name='plus_groups/groups.html'):
             site.create_TgGroup 
             create = True
         except Exception, e:
-            print e
+            print "AAA",e
 
     print groups
     return render_to_response(template_name, {
