@@ -37,7 +37,7 @@ def group(request, group_id, template_name="plus_groups/group.html"):
     hosts = group.get_admin_group().get_users()
     user = request.user
     if user.is_authenticated():
-        if user.is_member_of(group):
+        if user.is_direct_member_of(group):
             leave = True
         else :
             leave = False
@@ -94,6 +94,7 @@ def join(request, group,  template_name="plus_groups/group.html"):
 
 def apply(request, group_id):
     pass
+    
 
 @login_required
 @secure_resource(TgGroup, required_interfaces=['Join','Viewer']) 
