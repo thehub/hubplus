@@ -8,38 +8,25 @@
 {% load editable_attribute %}
 
 {% block body %}
-
-<div id="intro" class="block">
-  
-  <div id="info" class="block_column">
-    <h3>{% trans "About" %} ....</h3>
-    <ul>
-      <li>
-	   {% editable "Type" group 'group_type' 'Type of Group' %}
-      </li>
-
-      <li>
-	   {% editable "Description" group 'about' 'Description of the group' %}
-      </li>
       
-      <li><dl><dt>{% trans "Hosts" %}:</dt>
-	  <dd>
-	    {% for host in hosts %}
- 	       {{host}}, 
-	    {% endfor %}
-	  </dd>
-	</dl>
-      </li>
-    </ul>
-
-    
-    <h3 class='disabled'>{% trans "Links" %}</h3>
-    
-    <ul class='disabled'>
-      <li><dl><dt>Website:</dt><dd><a href="http://www.children-psychosocial-wellbeing.org">www.children-psychosocial-wellbeing.org</a></dd></dl></li>
-      <li><dl><dt>Photos:</dt><dd><a href="#">www.flickr.com/cpsw</a></dd></dl></li>      
-    </ul>
-
+<div id="intro" class="block">
+<div id="info" class="block_column">
+  <h3>{% trans "About" %}</h3>
+  <ul>
+    <li>
+      {% editable "Type" group 'group_type' 'Type of Group' %}
+    </li>
+    <li>
+      {% editable "Description" group 'about' 'Description of the group' %}
+    </li>  
+  </ul>
+    <li><dl><dt>Address:</dt><dd>The Hub, 5 Torrens Street, London, EC1V 1NQ</dd></dl></li>
+  </ul>
+  <h3>{% trans "Links" %}</h3>
+  <ul>
+    <li><dl><dt>Website:</dt><dd><a href="#">www.sexysaladclub.com</a></dd></dl></li>
+    <li><dl><dt>Flickr:</dt><dd><a href="#">www.flickr.com/ssc</a></dd></dl></li>
+  </ul>
     <h3>Skills and Needs</h3>
 
     <ul>
@@ -57,7 +44,6 @@
 	</dl>
       </li>
     </ul>
-    
     <h3>Members</h3>
     <ul>
       <li><dl><dt>Members:</dt><dd>
@@ -65,39 +51,102 @@
 	      {% for member in members %}
 	      <li><a href="{% url profile_detail member.username %}" 
 		     class="thumb small"><img src="../../site_media/images/member_id.jpg" />
-		  <br/>
-		  {% if member.display_name %}{{member.display_name}}{% else %}{{member.username}}{%endif%}
-
+		  {% if member.display_name %}{{member.display_name}}{% else %}{{member.username}}{%endif%}</a>
+	      </li>
 	      {% endfor %}
 	    </ul>
 	    <a href="#" class='disabled'>Show all ({{member_count}})</a>
       </dd></dl>
       </li>
+    <li>
+      <dl>
+	<dt>{% trans "Group Hosts" %}:</dt>
+	<dd>
+	  {% for host in hosts %}
+	  <a href="{% url profile_detail host.username %}">
+	    {% if host.display_name %}{{host.display_name}}, {% else %}{{host.username}}, {% endif %}
+	  </a>
+	  {% endfor %}
+	  <br /><a href="#" class='disabled'>Show all ({{host_count}})</a>
+	</dd>
+      </dl>
+    </li>
     </ul>
-
-      
 </div>
-  
-  <div id="extra" class="block_column">
-    <div id="page_image" class="image group"><img id="group_image" src="image/group.jpg" /></div>
-    <ul id="actions" class="link_list">
-      <li class="disabled first"><a href="#">Message members</a></li>
-      <li class="disabled"><a href="#">Invite members</a></li>
-      
-      {% if group.join %}
-      <li><a href="{% url join_group group.id %}">Join Group</a></li>
-      {% else %}
-      <li><a href="{% url apply_group group.id %}/">Apply to Group</a></li>
-      {% endif %}
-      {% if leave %}
-      <li><a href="{% url leave_group group.id %}">Leave Group</a></li>
-      {% endif %}
 
-      <li class="last"><a href="#">Follow group ?</a></li>
-
-    </ul>
+<div id="extra" class="block_column">
+  <div id="page_image" class="image group">
+    <img id="group_image" src="image/group.jpg" />
   </div>
-  
+  <ul id="actions" class="link_list">
+    <li class="first"><a href="#">Message members</a></li>
+    <li><a href="#">Invite members</a></li>
+    {% if group.join %}
+    <li><a href="{% url join_group group.id %}">Join Group</a></li>
+    {% else %}
+    <li><a href="{% url apply_group group.id %}/">Apply to Group</a></li>
+    {% endif %}
+    {% if leave %}
+    <li><a href="{% url leave_group group.id %}">Leave Group</a></li>
+    {% endif %}
+    <li class="last"><a href="#">Follow group ?</a></li>
+  </ul>
+</div>
+</div>
+<div id="section_tab_navigation" class="section">
+  {% include "plus_groups/tabbed_subs.html" %}
+</div>  
+{% endblock %}
+{% block side_bar %}
+<div id="feature_search" class="block">
+  <h3>Search</h3>
+  <form>
+    <input name="search_term" type="text" class="text" /> <input type="submit" value="Search" /><br />
+    <input name="current_area" type="checkbox" checked="checked" /> Groups only<br />
+    <!--<input name="search_limit" type="radio" checked="checked" /> Groups only <input name="search_limit" type="radio" /> Hub+<br />-->
+  </form>
 </div>
 
+<div id="feature_explore" class="block">
+  <h3>Explore Groups</h3>
+  <ol class="tag_list">
+    <li><a href="#" class="tag pop7">activism</a></li>
+    <li><a href="#" class="tag pop8">architecture</a></li>
+    <li><a href="#" class="tag pop6">better</a></li>
+    <li><a href="#" class="tag pop3">big</a></li>
+    <li><a href="#" class="tag pop5">climatechange</a></li>
+    <li><a href="#" class="tag pop2">clothing</a></li>
+    <li><a href="#" class="tag pop8">design</a></li>
+    <li><a href="#" class="tag pop8">dip</a></li>
+    <li><a href="#" class="tag pop7">developement</a></li>
+    <li><a href="#" class="tag pop3">energy</a></li>
+    
+    <li><a href="#" class="tag pop6">environment</a></li> 
+    <li><a href="#" class="tag pop8">fairtrade</a></li>
+    <li><a href="#" class="tag pop1">gender</a></li>
+    <li><a href="#" class="tag pop8">green</a></li>
+    <li><a href="#" class="tag pop7">hub</a></li>
+    <li><a href="#" class="tag pop4">innovation</a></li>
+    <li><a href="#" class="tag pop2">living</a></li>
+    <li><a href="#" class="tag pop6">product</a></li>
+    <li><a href="#" class="tag pop8">reference</a></li> 
+    <li><a href="#" class="tag pop5">salad</a></li>
+    <li><a href="#" class="tag pop5">org</a></li>
+    
+    <li><a href="#" class="tag pop8">science</a></li>
+    <li><a href="#" class="tag pop2">shopping</a></li>
+    <li><a href="#" class="tag pop6">sustainability</a></li>
+    <li><a href="#" class="tag pop1">web</a></li>
+  </ol>			
+</div>
+
+<div id="feature_my_hub" class="block">
+  <h3>My Hub</h3>
+  <div class="thumb medium"><img src="../../site_media/images/group.jpg" /></div>
+  <p><a href="#">Hub Kings Cross</a> is having a bit of a spring clean.</p>
+  <ul class="links">
+    <li class="first"><a href="#">Hub page</a></li>
+    <li class="last" ><a href="#">Book space</a></li>
+  </ul>
+</div>
 {% endblock %}

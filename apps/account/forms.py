@@ -25,7 +25,7 @@ from account.models import PasswordReset
 from plus_contacts.models import Contact, Application
 from plus_permissions.default_agents import get_site, get_admin_user
 
-from hubspace_compatibility.models import TgGroup
+from plus_groups.models import TgGroup
 
 
 alnum_re = re.compile(r'^[\w\.\s]+$')

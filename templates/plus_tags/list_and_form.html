@@ -4,9 +4,11 @@
     {% for t in tags %}
     <li><a href="/plus_tags/tag/{{t.keyword}}/" class="tag option">{{t.keyword}}</a>
         <a class="delete_tag" href="/plus_tags/{{tagged_class}}/{{tagged_id}}/delete/">X</a></li>
+        <!-- should have a permission delete tag item on the tagged_for agent -->
     {% endfor %}                   
   </ul>
   <span class="error_message"></span>
+  <!-- This should only show if has permission add tags on the tagged_for agent -->
   <form method='post' class="add_tag_form" action='/plus_tags/add_tag/' >
     <input name="tagged_class" class="tagged_class" value="{{tagged_class}}" type="hidden" />
     <input name="tagged_id" class="tagged_id" value="{{tagged_id}}" type="hidden" />
@@ -14,4 +16,5 @@
     <input name="tag_value" class="tag_value" />
     <input class="button add_tag" type="submit" value="Add" />
   </form>
+
 </dd>

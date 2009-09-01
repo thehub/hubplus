@@ -1,7 +1,7 @@
 {% load i18n %}
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" dir="{% if LANGUAGE_BIDI %}rtl{% else %}ltr{% endif %}" xml:lang="{{ LANGUAGE_CODE }}" lang="{{ LANGUAGE_CODE }}">
-
+ 
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
 	<title>{% if site_name %}{{ site_name }} : {% endif %}{% if head_title %}{{head_title}}{% endif %}</title>
@@ -87,60 +87,56 @@
 	{% block extra_head_base %}
 	{% block extra_head %}{% endblock %}
 	{% endblock %}
+
 </head>
-    
-<body >
-	<iframe id="yui-history-iframe" src="assets/blank.html"></iframe> 
-	<input id="yui-history-field" type="hidden"> 
-	<div id='wrapper'>
+
+
+<body>
+  <iframe id="yui-history-iframe" src="assets/blank.html"></iframe> 
+  <input id="yui-history-field" type="hidden"> 
+    <div id='wrapper'>
+      <!-- header -->
+      {% block header %}{% endblock %}
+      <!-- main -->
+      <div id='main'>
+        {% block main %}
+	<div id='permission_sliders'></div>
 	
-
-	<!-- header -->
-	{% block header %}{% endblock %}
-	<!-- main -->
-	<div id='main'>
-          {% block main %}
-
-	  <div id='permission_sliders'></div>
-      
-	  <h2>{{head_title}}</h2>
-	  <p class='disabled'>{{head_title_status}} - <span class="label_time">{{head_title_status.time}}</span></p>
+	<h2>{{head_title}}</h2>
+	<p class='disabled'>{{head_title_status}} - <span class="label_time">{{head_title_status.time}}</span></p>
 	  
-	  <div id='site_wide_messages'>
-            {% if site_wide_announcements %}
-            <div id="site_wide_announcements">
-              <ul>
-                {% for announcement in site_wide_announcements %}
-                <li>
-                  <a href="{{ announcement.get_absolute_url }}">{{ announcement }}</a> -
-                  <a href="{% url announcement_hide announcement.pk %}?next={{ request.path }}">{% trans "Hide announcement" %}</a>
-                </li>
-                {% endfor %}
-              </ul>
-            </div>
-            {% endif %}
-	  </div>
-	  
-          <div id='body'>
-            {% block body %}{% endblock %}
+	<div id='site_wide_messages'>
+          {% if site_wide_announcements %}
+          <div id="site_wide_announcements">
+            <ul>
+              {% for announcement in site_wide_announcements %}
+              <li>
+                <a href="{{ announcement.get_absolute_url }}">{{ announcement }}</a> -
+                <a href="{% url announcement_hide announcement.pk %}?next={{ request.path }}">{% trans "Hide announcement" %}</a>
+              </li>
+              {% endfor %}
+            </ul>
           </div>
+          {% endif %}
+	</div>
+	
+        <div id='body'>
+          {% block body %}{% endblock %}
+        </div>
 
-          <div id='side_bar'>
-            {% block side_bar %}{% endblock %}
-          </div>
+        <div id='side_bar'>
+          {% block side_bar %}{% endblock %}
+        </div>
           {% endblock %}
-	</div>
-	
-	<!-- footer -->
-	<div id='footer'>
-	  {% block footer %} {% endblock %}
-	</div>
       </div>
       
-      <script src="{{ MEDIA_URL }}pinax/js/jquery.js" type="text/javascript"></script>
-      <script src="{{ MEDIA_URL }}pinax/js/uni-form.jquery.js" type="text/javascript"></script>
-      {% block extra_body_base %}{% endblock %}
-
+      <!-- footer -->
+      <div id='footer'>
+	{% block footer %} {% endblock %}
+      </div>
+    </div>
+    {% block extra_body_base %}{% endblock %}
+  </div>
 </body>
-
+  
 </html>

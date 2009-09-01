@@ -1,6 +1,6 @@
 from apps.plus_permissions.interfaces import InterfaceReadProperty, InterfaceWriteProperty, InterfaceCallProperty
 from apps.plus_permissions.models import SetSliderOptions, SetAgentDefaults, SetPossibleTypes, SetSliderAgents
-from apps.hubspace_compatibility.models import TgGroup
+from apps.plus_groups.models import TgGroup
 from apps.plus_contacts.models import Application, Contact
 from apps.profiles.models import Profile
 from apps.plus_permissions.site import Site

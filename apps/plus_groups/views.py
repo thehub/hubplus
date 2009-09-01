@@ -9,7 +9,7 @@ from django.utils.translation import ugettext
 from django.db import transaction
 from django.utils import simplejson
 
-from apps.hubspace_compatibility.models import TgGroup
+from apps.plus_groups.models import TgGroup
 from django.core.urlresolvers import reverse
 
 
@@ -30,11 +30,12 @@ def group(request, group_id, template_name="plus_groups/group.html"):
 
     dummy_status = DisplayStatus("Group's Status"," about 3 hours ago")
     
-    members = group.get_users()
+    members = group.get_users()[:10]
     member_count = group.get_no_members()
     print "members :", members
 
-    hosts = group.get_admin_group().get_users()
+    hosts = group.get_admin_group().get_users()[:10]
+    host_count = group.get_admin_group().get_no_members()
     user = request.user
     if user.is_authenticated():
         if user.is_direct_member_of(group):
@@ -57,6 +58,7 @@ def group(request, group_id, template_name="plus_groups/group.html"):
             "extras" : group.groupextras, 
             "leave": leave,
             "hosts": hosts,
+            "host_count": host_count,
             }, context_instance=RequestContext(request))
 
 

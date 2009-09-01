@@ -136,23 +136,3 @@
 
 {% endblock %}
 
-{% block extra_body %}
-    <script type="text/javascript">
-        $(document).ready(function() {
-
-            $('#edit_profile_info').hide();
-            $('#edit_profile_info_toggle').click(function() {
-                $('#edit_profile_info').toggle();
-
-                //$('#edit_profile_info').autoscroll();
-	        
-                return false;
-            });
-            if ($('#edit_profile_info ul.errorlist').length) {
-                $('#edit_profile_info').show();
-                //$('#edit_profile_info ul.errorlist').autoscroll();
-            }
-        });
-    </script>
-{% endblock %}
-

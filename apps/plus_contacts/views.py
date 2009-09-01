@@ -21,7 +21,7 @@ from apps.plus_contacts.forms import InviteForm
 from apps.plus_permissions.interfaces import PlusPermissionsNoAccessException
 from apps.plus_permissions.api import site_context, secure_resource
 
-from apps.hubspace_compatibility.models import TgGroup
+from apps.plus_groups.models import TgGroup
 
 @login_required
 def list_of_applications(request, template_name="plus_contacts/applicant_list.html"):

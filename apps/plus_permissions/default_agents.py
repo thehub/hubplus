@@ -1,7 +1,6 @@
-from apps.hubspace_compatibility.models import TgGroup
+from apps.plus_groups.models import TgGroup, Location
 from django.contrib.auth.models import User
 
-from apps.hubspace_compatibility.models import Location
 from django.db import models
 
 from apps.plus_permissions.site import Site

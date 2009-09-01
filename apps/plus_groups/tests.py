@@ -1,5 +1,5 @@
 
-from apps.hubspace_compatibility.models import TgGroup, Location
+from apps.plus_groups.models import TgGroup, Location
 from models import *
 
 import unittest

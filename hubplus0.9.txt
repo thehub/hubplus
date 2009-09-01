@@ -11,31 +11,51 @@ User  *Tom*
       - Regions
 
 
-Tags *Tom*
-      - Tag is a permissionable type - separate tag object from instances of objects tagged? (type, value, tagged_for) --> tagged_item (tag, generic_reference)
-      - Tags get created in an agent - the tagged_for agent - need create_Tag for that agent
-      - tags have a view interface which can be set by the tagger on any tag
-      - tags have no delete method, they delete themselve when they no long exist
-
-Monday
+Jesson
 ------
+show all - members, hosts, groups ?
+wiki page design - in html
+search results / tag filtering - do design work with Tom/Phil
+
+Monday - Tues
+-------------
+
+1. attribute editing on groups
+
 Slider UI
      - generate slider (views)
      - set slider (view)
      - on create profile set user as admin, and profile to acquire from user
      - single slider UI
 
-Groups - group name based_url
+Tom  - create group form
+     - group name based_url
+     - html5lib sanitize - htmlField + beautiful soup  ++ use mark_safe instead of turning autoescaping off
+     - create content page form
 
+- wiki
+- uploads
+- fulltext search
 
+Tags *Tom*
+      - Tag is a permissionable type - separate tag object from instances of objects tagged? tag(type, value) <-- tag_context(tag, tagged_for) <-- tag_item(tagged_by, generic_reference)
+      - Tags get created in an agent - the tagged_for agent - need create_Tag for that agent
+      - tags have a view interface which can be set by the tagger on any tag
+      - tags have no delete method, they delete themselve when they no long exist
+      - you should only see the add tag form if you have permission on the tagger_for user. Same for delete.
 
 Phil - application process
      - host info security setup
-     - separate Hubs from groups
+     - separate Hubs from groups by Location/Subclassing
+     - groups page loading time - wtf is going on server side
+     - links
+     - ordering of lists, members, hosts (group page) and groups (profile page) 
+     - default images for group members
 
-Tom  - create group form
-     - html5lib sanitize - htmlField + beautiful soup  ++ use mark_safe instead of turning autoescaping off
-     - create wiki page form
+
+Group - Resource - tag filters
+      - begin tag explorer
+      - explore
 
 
 
@@ -52,19 +72,10 @@ misc
 
 
 
-- Tom Group model - group extra + tg_groups to plus_groups
 
 - Phil + Tom - finish permissions
 
   *** If the user then reverts this wiki to using the "defaults" from Kings Cross again, do we delete these custom SecurityTags? I think so.
-
-  ** SliderSet to manage creation and deletion of agent-mappings. (Never creates or destroys security tags)
-  ** SliderSet to represent and manage constraints
-  ** SliderSet also manages creating or deleting custom security tags
-  ** SliderSet to generate json for javascript sliders-set
-  ** adapt json returned by javascript library to the server, it should be nothing more than {'context_type':context_type,'context_id':context_id, 'settings':  [Interface_id, [agent_type, agent_id]]* } 
-  ** SliderSet default format (create from json?)
-  ** Make sure working for Profile
 
 
 - Phil + Tom - sign-up, invite and apply logic
@@ -147,10 +158,9 @@ Begin Testing! With Hosts and MHPSS. Data not stored
 - Tom to integrate speeqe or jw chat
 
 
-15th September
+18th September
 --------------
-editor - image inclusion - flickr plugin - autoadjusting height - yui 
-Go live with whole Hub+ team + selection of members
+Go live with whole Hub team + selection of members
 
 15th November
 -------------
@@ -190,7 +200,6 @@ invoice redesign + pisa
 Tags, Feed and Search
 ---------------------
 HP 0.9
-- copy ohloh.net for design inspiration
 - look at django-tagging
 - fix existing tagging
 - tag refinements search ... urls: ${}/tag/sustainability+renewable_energy  '+' is AND  and _ is "separator"
@@ -227,6 +236,7 @@ http://code.google.com/p/django-wikiapp/
 http://pypi.python.org/pypi/django-attachments/0.3.1
 - comments (enable)
 - permissions control
+- editor - image inclusion - flickr plugin - autoadjusting height - yui 
 
 
 http://hg.piranha.org.ua/django-history/

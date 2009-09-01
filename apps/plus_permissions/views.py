@@ -14,7 +14,7 @@ from plus_permissions.types.TgGroup import setup_group_security
 from apps.plus_permissions.permissionable import create_reference
 from apps.plus_permissions.default_agents import get_all_members_group, get_or_create_root_location, get_admin_user
 from apps.plus_permissions.types.User import setup_user_security
-from apps.hubspace_compatibility.models import TgGroup
+from apps.plus_groups.models import TgGroup
 
 from django.contrib.auth.models import User
 

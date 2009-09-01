@@ -156,7 +156,6 @@ INSTALLED_APPS = (
     # internal (for now)
     'about',
     'plus_lib',
-    'hubspace_compatibility',
     'plus_permissions',
     
 
@@ -164,7 +163,6 @@ INSTALLED_APPS = (
     
     'plus_tags',
     'profiles',
-
     'plus_groups',
     'plus_links',
     'plus_contacts',
@@ -220,7 +218,7 @@ LANGUAGES = (
 CACHE_BACKEND = "locmem:///?max_entries=3000"
 FEEDUTIL_SUMMARY_LEN = 60*7 # 7 hours
 
-AUTHENTICATION_BACKENDS = ('hubspace_compatibility.models.HubspaceAuthenticationBackend',)
+AUTHENTICATION_BACKENDS = ('plus_user.models.HubspaceAuthenticationBackend',)
 ACCOUNT_OPEN_SIGNUP = False # signups must be accompanied by the appropriate token
 
 MARKUP_CHOICES = (
@@ -264,7 +262,8 @@ HUBPLUSSVCPASS = "secret"
 SYNCER_HOST = "127.0.0.1"
 SYNCER_PORT = 9003
 SESSION_COOKIE_DOMAIN = ".the-hub.net"
-
+COPYRIGHT_HOLDER = "Hub World Ltd"
+PROJECT_THEME = 'plus'
 try:
     from local_settings import *
 except ImportError:
@@ -273,10 +272,18 @@ except ImportError:
 
 
 try:
-    from hubspace_compatibility import *
-    print "import hubspace_compatibility succeeded"
+    from apps.plus_user.models import patch_user_class
+    patch_user_class()
+    print "import plus_users succeeded"
 except ImportError, e:
-    print "import hubspace_compatibility failed :: " + `e`
+    print "plus user failed :: " + `e`
+
+
+try:
+    from apps.plus_groups.models import TgGroup
+    print "import TgGroup succeeded"
+except ImportError, e:
+    print "import TgGroup failed :: " + `e`
 
 
 try:
