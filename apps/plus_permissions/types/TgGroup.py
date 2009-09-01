@@ -258,8 +258,8 @@ AgentDefaults = {'public':
                             },                      
                       'Contact':
                           { 'defaults' : {'ContactAdmin':'context_admin',
-                                          'Unknown': 'context_agent',
                                           'ContactInvite':'all_members_group',
+                                          'Unknown': 'context_agent',
                                           },
                             'constraints':[]
                             },

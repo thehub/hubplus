@@ -119,7 +119,7 @@ def site_invite(request, site, template_name='plus_contacts/invite_non_member.ht
                 group = form.cleaned_data['group']
             else :
                 group = None
-            
+
             msg,url = contact.invite(site, request.user, request.get_host(), group=group)
 
 
