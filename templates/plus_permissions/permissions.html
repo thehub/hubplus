@@ -1,48 +1,46 @@
+<h2>Permissions</h2>
+<p>Control access to things in the {{current_class}} {{current.id}}</p>
 
-{% extends "site_base.html" %}
+<div id="section_tab_navigation" class="tabbed section yui-navset">
+  {% for obj_type, headers, slider_info  in sliders %}
+  <ul class="tabbed_navigation yui-nav">
+    <li class="selected" >
+      <a href="#{{obj_type.lower}}">
+	<span>{{obj_type}}{% if forloop.first %}{% else %}s{% endif %}</span>
+      </a>
+    </li>
+  </ul>
 
-<script>
-(function() {
-    var Event = YAHOO.util.Event;
-    var Dom   = YAHOO.util.Dom;
-    var lang  = YAHOO.lang;
-    var Y     = YAHOO.util.Selector;
+  <div class="tabbed_content yui-content" id="permissions">
+	<table class="permissions_slider">
+	  <tr class="headings">
+	    <th class="group_column">Group</th>
+	    {% for interface in headers %}
+	    <th class="attribute_column">{{interface}}</th>
+	    {% endfor %}
+	  </tr>
+	  {% for agent_ref, agent_data in slider_info %}
+	  <tr {% if forloop.first %}class="first"{% endif %}{% if forloop.last %}class="last"{% endif %}>
+	    <td class="group_label">
+	      {{agent_ref.display_name}}
+	    </td>
+	    {% for css_class, selected, interface in agent_data %}
+	    <td class="setting {{css_class}} {{interface}}">   <!--active inactive and limited -->
+	      {% if selected %}
+	      <div class="slider_holder" id="interface-{{obj_type}}.{{interface}}">
+		<div class="slider" id="slider_view"></div>
+	      </div>
+	      {% endif %}
+	    </td>  
+	    {% endfor %}
+	  </tr>
+	  {% endfor %}
+	</table>
+      </div>
+    </div>
+  </div>
+</div>
 
-    Event.XonDOMReady( function() {
-            options = ['Public','Plus Members','Hub Islington Members','Tech Team','Me'];
-
-
-            sg = SliderGroup({'title':'Permissions',
-		      'intro':'Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod ',
-		      'option_labels':['all','members','group','me'],
-		      'option_types':[1,1,1,2],
-		      'option_ids':[1,2,3,1],
-		      'sliders':['read','write','execute'],
-		      'current':[0,3,3],
-		      'mins':[0,0,0],
-		      'constraints':[[0,1],[0,2]]
-	});
-
-	    h = sg.sliders_as_html('slider_group1',setup_YUI_slider);
-            $('#inserted_table').html(h);
-            sg.update_slider_ticks('slider_group1');
-            
-        });
-
-})();
-
-</script>
-
-{% block body %}
-  <div id='inserted_table'></div>
-  
-
-<hr/>
-
-<div id='scratch'></div>
-<div id='scratch2'></div>
-
-{% endblock %}
-
+{% endfor %}
 
   
