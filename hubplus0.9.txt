@@ -20,9 +20,16 @@ search results / tag filtering - do design work with Tom/Phil
 Tues
 ----
 Slider UI
-     - generate slider (views)
-     - set slider (view)
+     - instantiate slider
+     - calibrate agent levels
+     - snap to offset - with active/inactive
+
+     - implement constraints - hard slider limits - min or max 
+       		 	     - implement relation constraints - update hard slider max, and pull down if the one we are moving is the higher
+
+     - set slider - 
      - on create profile set user as admin, and profile to acquire from user
+
      - single slider UI
 
 
