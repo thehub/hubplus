@@ -35,7 +35,8 @@ def setup_group_security(group, context_agent, context_admin, creator):
 
 
 # override object managers, filter, get, get_or_create
-def get_or_create(group_name=None, display_name=None, place=None, level=None, user=None) :
+def get_or_create(group_name=None, display_name=None, place=None, level=None, user=None, 
+                  group_type='interest', about='') :
     """get or create a group
     """
     # note : we can't use get_or_create for TgGroup, because the created date clause won't match on a different day
@@ -85,7 +86,9 @@ class TgGroupViewer:
     place = InterfaceReadProperty
     website = InterfaceReadProperty
     display_name = InterfaceReadProperty
-    groupextras = InterfaceReadProperty
+
+    group_type = InterfaceReadProperty
+    
 
     apply = InterfaceCallProperty
     leave = InterfaceCallProperty
@@ -258,8 +261,8 @@ AgentDefaults = {'public':
                             },                      
                       'Contact':
                           { 'defaults' : {'ContactAdmin':'context_admin',
-                                          'Unknown': 'context_agent',
                                           'ContactInvite':'all_members_group',
+                                          'Unknown': 'context_agent',
                                           },
                             'constraints':[]
                             },

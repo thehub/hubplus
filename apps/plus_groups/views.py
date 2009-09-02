@@ -6,6 +6,7 @@ from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.utils.translation import ugettext_lazy as _
 from django.utils.translation import ugettext
+from django.utils.encoding import smart_str
 from django.db import transaction
 from django.utils import simplejson
 
@@ -40,7 +41,7 @@ def group(request, group_id, template_name="plus_groups/group.html"):
     host_count = group.get_admin_group().get_no_members()
     user = request.user
     if user.is_authenticated():
-        if user.is_member_of(group):
+        if user.is_direct_member_of(group):
             leave = True
         else :
             leave = False
@@ -66,8 +67,10 @@ def group(request, group_id, template_name="plus_groups/group.html"):
 
 def groups(request, template_name='plus_groups/groups.html'):
     
-    groups = TgGroup.objects.plus_filter(request.user, level='member' )
+
+    groups = TgGroup.objects.plus_filter(request.user, level='member')
     groups = [g for g in groups]
+
     create = False
 
     if request.user.is_authenticated():
@@ -76,7 +79,7 @@ def groups(request, template_name='plus_groups/groups.html'):
             site.create_TgGroup 
             create = True
         except Exception, e:
-            print e
+            print "AAA",e
 
     print groups
     return render_to_response(template_name, {
@@ -95,23 +98,32 @@ def join(request, group,  template_name="plus_groups/group.html"):
     return HttpResponseRedirect(reverse('group',args=(group.id,)))
 
     
-
 def apply(request, group_id):
     pass
+    
 
 @login_required
 @secure_resource(TgGroup, required_interfaces=['Join','Viewer']) 
 def leave(request, group, template_name="plus_groups/group.html"):
     group.leave(request.user)
     return HttpResponseRedirect(reverse('group',args=(group.id,)))
-    
+
+
+
 
 @login_required
 @site_context
 def create_group(request, site, template_name="plus_groups/create_group.html"):
     if request.POST :
-        form = TgGroupForm(request.user, request.POST)
-        print form
+        form = TgGroupForm(request.POST)
+        
+        if not form.is_valid() :
+            print form.errors
+        else :
+            group = form.save(request.user, site)
+            
+            return HttpResponseRedirect(reverse('group', args=(group.id,)))
+
     else :
         form = TgGroupForm()
     

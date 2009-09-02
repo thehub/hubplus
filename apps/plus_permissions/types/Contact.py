@@ -30,11 +30,12 @@ class ContactAdmin:
     invite = InterfaceCallProperty
 
 class ContactInvite:
+    pk = InterfaceReadProperty
     invite = InterfaceCallProperty
 
 from apps.plus_permissions.models import add_type_to_interface_map
 
-ContactInterfaces = {'ContactAdmin': ContactAdmin,   }
+ContactInterfaces = {'ContactAdmin': ContactAdmin,  'ContactInvite' : ContactInvite  }
 
 add_type_to_interface_map(Contact, ContactInterfaces)
 
