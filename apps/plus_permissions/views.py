@@ -1,5 +1,5 @@
 from django.shortcuts import render_to_response, get_object_or_404
-from django.template import RequestContext
+
 from django.contrib.auth.models import User
 from django.http import HttpResponse, HttpResponseRedirect, HttpResponseForbidden
 from django.conf import settings
@@ -8,7 +8,7 @@ from django.utils.translation import ugettext_lazy as _
 from django.utils.translation import ugettext
 from django.db import transaction
 from django.utils import simplejson
-
+from django.contrib.contenttypes.models import ContentType
 from django.contrib.auth.decorators import login_required
 from plus_permissions.types.TgGroup import setup_group_security
 from apps.plus_permissions.permissionable import create_reference
@@ -17,9 +17,10 @@ from apps.plus_permissions.types.User import setup_user_security
 from apps.plus_groups.models import TgGroup
 
 from django.contrib.auth.models import User
+from apps.plus_permissions.api import secure_resource, TemplateSecureWrapper
+from django.template import loader, Context, RequestContext
 
-
-
+##############Hubspace Patching######################################
 def setup_hubs_security(group, creator):
     """creator will be admin user
     """
@@ -73,68 +74,43 @@ def patch_in_profiles(request):
         profile = user.create_Profile(user, user=user)
         profile.save()
         print `profile`
-
+    
     return HttpResponse("patched %s users to have profiles" % str(no_of_users))
 
-"""
-    def json_slider_group(self, title, intro, resource, interfaces, mins, constraints) :
-        owner = self.get_owner(resource)
-        creator = self.get_creator(resource)
-        ps = self.get_permission_system()
+@secure_resource(obj_schema={'current':'any'})
+def json_slider_group(request, current):
+    sec_context = current._inner.get_security_context()
+    custom = False
+    if sec_context.get_target() == current._inner:
+        custom = True
 
-        group_type = ContentType.objects.get_for_model(ps.get_anon_group())
+    slider_sets = sec_context.get_all_sliders(current._inner.__class__, request.user)
+    slider_agents = sec_context.get_slider_agents()
+    slider_data = []
+    for typ, slider_info in slider_sets:
+        flags = {}
+        slider_agent_rows = []
+        for agent_slot, slider_agent in slider_agents:
+            interface_status_list = []
+            for interface, agent_level in slider_info['interface_levels']:
+                #should get the agent more efficiently here, we have it already in reality
+                selected = False
+                if slider_agent.obj.id == agent_level['id'] and slider_agent.obj.__class__.__name__ == agent_level['classname']:
+                    flags[interface] = True
+                    selected = True
+                css_class = flags.get(interface, False) and 'active' or 'inactive'
+                interface_status_list.append((css_class, selected, interface))
+            
+            slider_agent_rows.append((slider_agent.obj, interface_status_list))
 
-        options = self.make_slider_options(resource,owner,creator)
+        slider_data.append((typ, [header[0] for header in slider_info['interface_levels']],  slider_agent_rows))
 
-        option_labels = [o.name for o in options]
-        option_types = [ContentType.objects.get_for_model(o.agent) for o in options]
-        option_ids = [o.agent.id for o in options]
+    t = loader.get_template('plus_permissions/permissions.html')
+    c = RequestContext(request, {'current':current, 'current_class':current._inner.__class__.__name__, 'sliders':slider_data, 'agents':slider_agents, 'custom':custom})
+    rendered = t.render(c)
 
-        resource_type = ContentType.objects.get_for_model(resource)
-        json = {
-          'title':title,
-          'intro':intro,
-          'resource_id':resource.id,
-          'resource_type':resource_type.id,
-          'option_labels':option_labels,
-          'option_types':[type.id for type in option_types],
-          'option_ids':option_ids,
-          'sliders':interfaces,
-          'interface_ids':[ps.get_interface_id(resource.__class__,i) for i in interfaces],
-          'mins':mins,
-          'constraints':constraints,
-          'extras': {} # use for non-slider permissions
-          }
+    agents = sec_context.get_slider_agents_json()
+    json = simplejson.dumps({'current_id':current.id,  'sliders':slider_sets, 'agents':agents, 'custom':custom, 'html':rendered})
+    
+    return HttpResponse(json, mimetype='application/json')
 
-
-        current=[]
-        for i in json['interface_ids'] :
-            for s in SecurityTag.objects.filter(interface=i,resource_content_type=resource_type,resource_object_id=resource.id) :
-                if s.agent in [o.agent for o in options] :
-                    # we've found a SecurityTag which maps one of the agents on the slider, therefore 
-                    # it's THIS agent which is the official slider setting
-                    # map from this agent to position on the slider
-                    j=0
-                    agent_type = ContentType.objects.get_for_model(s.agent)
-                    for (typ,ids) in zip(option_types,option_ids) :
-                        if (typ==agent_type and ids==s.agent.id) :
-                            current.append(j)
-                            break
-                        j=j+1            
-
-        json['current'] = current
-        return simplejson.dumps({'sliders':json})
-
-
-
-
-@login_required
-def update_main_permission_sliders(request,username) :
-    p = request.user.get_profile()
-
-    form = request.form()
-    json = pm.main_json_slider_group(p)
-    print json
-    return HttpResponse(json, mimetype='text/plain')
-
-"""

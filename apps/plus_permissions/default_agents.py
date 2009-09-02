@@ -74,7 +74,8 @@ def get_all_members_group():
 
 class CreatorMarker(models.Model) :
     """ This class is only for a fake "agent" which is used to represent "query for the creator of this content_type" """
-    pass
+    display_name = models.CharField(default="Creator", max_length="20")
+
 
 def get_creator_agent() :
     if CreatorMarker.objects.count() > 0 :

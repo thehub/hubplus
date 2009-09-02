@@ -13,7 +13,8 @@ from apps.plus_permissions.models import SetSliderOptions, SetAgentDefaults, Set
 
 content_type = Profile
 child_types = []
-        
+SetPossibleTypes(Profile, child_types)
+
 class ProfileViewer: 
     user = InterfaceReadProperty
     about = InterfaceReadProperty

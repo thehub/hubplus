@@ -160,9 +160,17 @@ class SecurityContext(models.Model):
          for i in self.get_interfaces():
              self.diagnose_interface(i)
              
+     def get_slider_agents(self):        
+         return SliderAgents[self.context_agent.obj.__class__](self)
+
+     def get_slider_agents_json(self):
+         return [{'agent_label':agent[0],
+                  'agent_id':agent[1].obj.id,
+                  'agent_class':agent[1].obj.__class__.__name__} for agent in self.get_slider_agents()]
+
 
      def validate_constraints(self, type_name):
-         slider_agents = SliderAgents[self.context_agent.obj.__class__](self)
+         slider_agents = self.get_slider_agents()
          slider_agents.reverse()
          slider_agents_names = [t[0] for t in slider_agents]
          slider_agents = [t[1] for t in slider_agents]
@@ -229,22 +237,25 @@ class SecurityContext(models.Model):
 
      def get_all_sliders(self, my_type, user):
          types = [my_type] + PossibleTypes[my_type]
-         return [(type.__name__, self.get_type_slider(type.__name__, user)) for type in types]
+         return [(typ.__name__, self.get_type_slider(typ, user)) for typ in types]
 
-     def get_type_slider(self, type_name, user):
+     def get_type_slider(self, typ, user):
          """get all the sliders associated with a particular type in this SecurityContext
          """
+         type_name = typ.__name__
          constraints = self.get_constraints(type_name)
-         options = SliderOptions[type]['InterfaceOrder']
-         try :
-             self.can_set_manage_permissions(interface, user)
-         except PlusPermissionsNoAccessException :
-             if 'ManagePermissions' in options :
+         options = SliderOptions[typ]['InterfaceOrder']
+         if 'ManagePermissions' in options:
+             if not has_access(agent=user, security_context=self, interface='SetManagePermissions'):
                  options.remove('ManagePermissions')
-         interface_levels = [(interface, self.get_slider_level(type_name + '.' + interface)) for interface in options ]
+         interface_levels = [(interface, self.get_slider_level_json(type_name + '.' + interface)) for interface in options ]
          return {'constraints': constraints,
                  'interface_levels': interface_levels}
          
+     def get_slider_level_json(self, interface):
+         level = self.get_slider_level(interface)
+         return {'classname':level.__class__.__name__, 'id':level.id}
+
      def get_slider_level(self, interface):
          tag = SecurityTag.objects.get(interface=interface, security_context=self)
          slider_agents = SliderAgents[self.context_agent.obj.__class__](self)

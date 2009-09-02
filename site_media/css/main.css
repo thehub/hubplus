@@ -36,9 +36,10 @@ HUB PLUS 2009
 	color		: #FF0000;
 }
 
-#permission_button {
+.permission_button {
 	text-align	:right;
 	margin-bottom	:1.5em;
+	cursor          :pointer;
 }
 .untruncated {
         display         :none;

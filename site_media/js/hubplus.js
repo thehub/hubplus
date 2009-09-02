@@ -7,8 +7,7 @@ var widget_map = {
 };
 
 var editing = function () {
-    //jq('#section_tab_navigation').tabs();
-    tab_history('profile');
+    tab_history();
     jq('.more').click(function () {
 	var trunc = jq(this).parent().parent();
 	trunc.hide();

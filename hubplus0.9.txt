@@ -28,7 +28,7 @@ Slider UI
 
 Wed
 ---
-Tom  - group name based_url
+
      - html5lib sanitize - htmlField + beautiful soup  ++ use mark_safe instead of turning autoescaping off
      - create content page form
 
@@ -36,8 +36,10 @@ Thus - Sun
 ----------
 Basics of:
 - wiki
+- apply wiki naming to group name.	
 - fulltext search
 - upload
+
 
 Monday 7th
 ---------- 
@@ -77,6 +79,8 @@ rename member level hub groups from "group members" to "group"
 
 misc
 ----
+- understand id / naming principles - permissions display
+- tabs to template_tag
 - google maps need to be made more accurate in identifying addresses - api
 - inplace editing deal with errors - and error messages
 - deep copy the request querydict to make request.user etc secure
