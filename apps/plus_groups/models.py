@@ -9,11 +9,6 @@ from django.contrib.contenttypes import generic
 
 import datetime
 
-# Group types
-HUB     = 'HUB'
-GROUP   = 'GROUP'
-MEMBERS = 'MEMBERS'
-HOSTS   = 'HOSTS'
 
 
 
@@ -164,6 +159,19 @@ django.db.models.fields.related.create_many_related_manager = create_many_relate
 
 
 try :
+
+# This is the list of group types we currently know about
+
+    GROUP_TYPES = (
+        (u'interest', u'Interest'),
+        (u'organisation', u'Organisation'),
+        (u'project', u'Project'),
+        (u'internal', u'Internal'),
+        (u'hub', u'Hub'),
+    )
+
+
+
     class TgGroup(models.Model):
         
         class Meta:
@@ -188,7 +196,7 @@ try :
         child_groups = models.ManyToManyField('self', symmetrical=False, related_name='parent_groups')
         
         about = models.TextField('about', null=True, blank=True)
-        group_type = models.CharField('type',max_length=30)
+        group_type = models.CharField('type',max_length=10, choices=GROUP_TYPES)
     
         title = models.CharField(max_length=60)
         description = models.TextField()
@@ -323,4 +331,6 @@ def get_permission_agent_name(self) :
 
 # Now GenericReferences replace "Agents" to make a many-to-many relationship with agents such as 
 # Users and TgGroups
+
+
 

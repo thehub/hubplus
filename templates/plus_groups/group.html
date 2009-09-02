@@ -12,6 +12,7 @@
 <div id="intro" class="block">
 <div id="info" class="block_column">
   <h3>{% trans "About" %}</h3>
+
   <ul>
     <li>
       {% editable "Type" group 'group_type' 'Type of Group' %}
@@ -20,7 +21,9 @@
       {% editable "Description" group 'about' 'Description of the group' %}
     </li>  
   </ul>
-    <li><dl><dt>Address:</dt><dd>The Hub, 5 Torrens Street, London, EC1V 1NQ</dd></dl></li>
+    <li>
+      {% editable "Address" group 'address' 'Address' %}
+    </li>
   </ul>
   <h3>{% trans "Links" %}</h3>
   <ul>

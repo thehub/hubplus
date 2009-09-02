@@ -6,6 +6,7 @@ from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.utils.translation import ugettext_lazy as _
 from django.utils.translation import ugettext
+from django.utils.encoding import smart_str
 from django.db import transaction
 from django.utils import simplejson
 
@@ -97,7 +98,6 @@ def join(request, group,  template_name="plus_groups/group.html"):
     return HttpResponseRedirect(reverse('group',args=(group.id,)))
 
     
-
 def apply(request, group_id):
     pass
     
@@ -107,14 +107,23 @@ def apply(request, group_id):
 def leave(request, group, template_name="plus_groups/group.html"):
     group.leave(request.user)
     return HttpResponseRedirect(reverse('group',args=(group.id,)))
-    
+
+
+
 
 @login_required
 @site_context
 def create_group(request, site, template_name="plus_groups/create_group.html"):
     if request.POST :
-        form = TgGroupForm(request.user, request.POST)
-        print form
+        form = TgGroupForm(request.POST)
+        
+        if not form.is_valid() :
+            print form.errors
+        else :
+            group = form.save(request.user, site)
+            
+            return HttpResponseRedirect(reverse('group', args=(group.id,)))
+
     else :
         form = TgGroupForm()
     

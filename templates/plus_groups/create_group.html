@@ -9,32 +9,38 @@
 
 <div id="intro" class="block">
 
-<form class="full">
+<form class="full" method="POST" action="{% url create_group %}">
   <h4>About your group</h4>
   <p>Please enter your details below to create a new group.</p>
   <fieldset>
     <ul>
       <li>
-	<label for="name"><span class="required">*</span> Name</label>
-	<input  id="name" class="text" type="text" />
+	{{form.name.errors}}
+	<p>
+	  <label for="name"><span class="required">*</span> {% trans "Name" %}</label>
+	  <input  id="name" name="name" class="text" type="text" />
+	</p>
       </li>
       <li>
-	<label for="type"><span class="required">*</span> Type</label>
-	<select id="type" name="group_type">
-	  <option value="a" readonly="readonly" selected="selected">Please select a group type...</option>
-	  <option value="b">Interest group</option>
-	  <option value="c">Organisation</option>
-	  <option value="d">Project</option>
-	  <option value="e">Internal</option>
+	{{form.group_type.errors}}
+	<label for="group_type"><span class="required">*</span> {% trans "Type" %}</label>
+	<select id="group_type" name="group_type">
+	  <option value="" readonly="readonly" selected="selected">Please select a group type...</option>
+	  <option value="interest">Interest group</option>
+	  <option value="organisation">Organisation</option>
+	  <option value="project">Project</option>
+	  <option value="internal">Internal</option>
 	</select>
       </li>
       <li>
-	<label for="about"><span class="required">*</span> Description <span class="extra">what you do and why you're interested in the Hub?</span></label>
-	<textarea id="about" rows="5"></textarea>
+	{{form.about.errors}}
+	<label for="about"><span class="required">*</span> Description <span class="extra">what is this group about?</span></label>
+	<textarea id="about" name="about" rows="5"></textarea>
       </li>
       <li>
+	{{form.location.errors}}
 	<label for="location">Location <span class="extra">postcode, country</span></label>
-	<input  id="location" class="text" type="text" />
+	<input  id="location" class="text" name="location" type="text" />
 	<br /><span style="color:red">(Use existing google maps here)</span>
       </li>
       <li>
@@ -52,28 +58,29 @@
     </ul>
     <ul>
       <li class="checkboxes">
+	{{form.permissions_set.errors}}
 	<label><span class="required">*</span> <span class="label_permissions">Permissions</span> <span class="extra">These settings that can be customised once your group has been created<br /><a href="#">more info</a></span></label>
 	<ul>
 	  <li>
-	    <input  id="public" name="permissions_set" class="radio" type="radio" checked="checked" />
+	    <input  id="public" name="permissions_set" class="radio" type="radio" value="public" checked="checked" />
 	    <div class="label_extended">
 	      <label for="public">Public <span class="extra">Visible to the world<br />Site members can join</span></label>
 	    </div>
 	  </li>
 	  <li>
-	    <input  id="open" name="permissions_set" class="radio" type="radio" />
+	    <input  id="open" name="permissions_set" class="radio" type="radio" value="open"/>
 	    <div class="label_extended">
 	      <label for="open">Hub+ Open <span class="extra">Visible to site members<br />Site members can join</span></label>
 	    </div>
 	  </li>
 	  <li>
-	    <input  id="invite" name="permissions_set" class="radio" type="radio" />
+	    <input  id="invite" name="permissions_set" class="radio" type="radio" value="invite"/>
 	    <div class="label_extended">
 	      <label for="invite">Hub+ Invite only <span class="extra">Visible to site members<br /> Invited or approved members can join</span></label>
 	    </div>
 	  </li>
 	  <li>
-	    <input  id="private" name="permissions_set" class="radio" type="radio" />
+	    <input  id="private" name="permissions_set" class="radio" type="radio" value="private"/>
 	    <div class="label_extended">
 	      <label for="private">Private <span class="extra">Contents visible to group members only<br /> Invited or approved members can join</span></label>
 	    </div>
@@ -81,8 +88,9 @@
 	</ul>
       </li>
     </ul>
+
     <h4>Links</h4>
-    <ul class="custom_labels">
+    <ul class="disabled custom_labels">
       
       <li>
 	<div class="label_extended">
@@ -112,7 +120,7 @@
       </li>
     </ul>
     <h4>Contact</h4>
-    <ul class="custom_labels">
+    <ul class="disabled custom_labels">
       <li>
 	<div class="label_extended">
 	  <input  id="link_title" class="text" type="text" />
@@ -132,7 +140,7 @@
       </li>
     </ul>
     <h4>Email</h4>
-    <ul class="custom_labels">
+    <ul class="disabled custom_labels">
       <li>
 	<div class="label_extended">
 	  <input  id="link_title" class="text" type="text" />
