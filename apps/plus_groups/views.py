@@ -133,3 +133,12 @@ def create_group(request, site, template_name="plus_groups/create_group.html"):
             "group" : form,
 
             }, context_instance=RequestContext(request))
+
+
+
+
+@login_required
+@secure_resource(TgGroup)
+def group_field(request, group, classname, fieldname, *args, **kwargs) :
+    """ Get the value of one field from the group, so we can write an ajaxy editor """
+    return one_model_field(request, p, fieldname, kwargs.get('default', ''), TgGroupForm)
