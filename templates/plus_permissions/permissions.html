@@ -13,7 +13,7 @@
 
   <div class="tabbed_content yui-content" id="permissions">
     <div id="{{obj_type.lower}}-area">
-	<table class="permissions_slider" id="{{obj_type.lower}}-permissions">
+	<table class="permissions_slider" id="{{obj_type}}-permissions">
 	  <tr class="headings">
 	    <th class="group_column">Group</th>
 	    {% for interface in headers %}
@@ -21,7 +21,7 @@
 	    {% endfor %}
 	  </tr>
 	  {% for agent_ref, agent_class, agent_data in slider_info %}
-	  <tr class="agent-{{agent_class}}" id="agent-{{agent_ref.id}}" {% if forloop.first %}class="first"{% endif %}{% if forloop.last %}class="last"{% endif %}>
+	  <tr id="agent-{{agent_class}}-{{agent_ref.id}}" {% if forloop.first %}class="first"{% endif %}{% if forloop.last %}class="last"{% endif %}>
 	    <td class="group_label">
 	      {{agent_ref.display_name}}
 	    </td>
