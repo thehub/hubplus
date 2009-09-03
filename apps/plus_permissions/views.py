@@ -101,15 +101,15 @@ def json_slider_group(request, current):
                 css_class = flags.get(interface, False) and 'active' or 'inactive'
                 interface_status_list.append((css_class, selected, interface))
             
-            slider_agent_rows.append((slider_agent.obj, interface_status_list))
+            slider_agent_rows.append((slider_agent.obj, slider_agent.obj.__class__.__name__, interface_status_list))
 
         slider_data.append((typ, [header[0] for header in slider_info['interface_levels']],  slider_agent_rows))
 
-    t = loader.get_template('plus_permissions/permissions.html')
-    c = RequestContext(request, {'current':current, 'current_class':current._inner.__class__.__name__, 'sliders':slider_data, 'agents':slider_agents, 'custom':custom})
-    rendered = t.render(c)
-
     agents = sec_context.get_slider_agents_json()
+
+    t = loader.get_template('plus_permissions/permissions.html')
+    c = RequestContext(request, {'current':current, 'current_class':current._inner.__class__.__name__, 'sliders':slider_data, 'custom':custom})
+    rendered = t.render(c)
     json = simplejson.dumps({'current_id':current.id,  'sliders':slider_sets, 'agents':agents, 'custom':custom, 'html':rendered})
     
     return HttpResponse(json, mimetype='application/json')

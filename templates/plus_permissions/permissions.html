@@ -12,23 +12,24 @@
   </ul>
 
   <div class="tabbed_content yui-content" id="permissions">
-	<table class="permissions_slider" id="{{obj_type}}-permissions">
+    <div id="{{obj_type.lower}}-area">
+	<table class="permissions_slider" id="{{obj_type.lower}}-permissions">
 	  <tr class="headings">
 	    <th class="group_column">Group</th>
 	    {% for interface in headers %}
 	    <th class="attribute_column">{{interface}}</th>
 	    {% endfor %}
 	  </tr>
-	  {% for agent_ref, agent_data in slider_info %}
-	  <tr {% if forloop.first %}class="first"{% endif %}{% if forloop.last %}class="last"{% endif %}>
+	  {% for agent_ref, agent_class, agent_data in slider_info %}
+	  <tr class="agent-{{agent_class}}" id="agent-{{agent_ref.id}}" {% if forloop.first %}class="first"{% endif %}{% if forloop.last %}class="last"{% endif %}>
 	    <td class="group_label">
 	      {{agent_ref.display_name}}
 	    </td>
 	    {% for css_class, selected, interface in agent_data %}
-	    <td class="setting {{css_class}} {{interface}}">   <!--active inactive and limited -->
-	      {% if selected %}
-	      <div class="slider_holder" id="interface-{{obj_type}}.{{interface}}">
-		<div class="slider" id="slider_view"></div>
+	    <td class="setting {{css_class}} {{obj_type}}_{{interface}}" tabindex="-1">   <!--active inactive and limited -->
+	      {% if forloop.parentloop.first %}
+	      <div class="slider_holder" id="holder-{{obj_type}}_{{interface}}">
+		<div class="slider" id="slider-{{obj_type}}_{{interface}}"></div>
 	      </div>
 	      {% endif %}
 	    </td>  

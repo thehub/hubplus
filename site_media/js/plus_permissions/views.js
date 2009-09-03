@@ -1,6 +1,11 @@
+var initTabView = function (ele) {
+    var tabView = new YAHOO.widget.TabView(ele.id);
+    //tabView.addListener("activeTabChange", handleTabViewActiveTabChange);
+};
+
 var permission_ready = function () {
-    el_sliders = jq('#permission_sliders');
-    // setting up click on the "edit" button
+    var all_sliders = jq('#permission_sliders');
+    initTabView(all_sliders.get(0));
     var Event = YAHOO.util.Event;
     var Dom   = YAHOO.util.Dom;
     var lang  = YAHOO.lang;
@@ -18,39 +23,69 @@ var permission_ready = function () {
 	var custom_default = "/permission/toggle_custom";
 	jq.getJSON(load_url, function(json){
 	    jq('#overlay_content').html(jq(json.html));
-	    tab_history();
 	    var sliders = json.sliders;
 	    var agents = json.agents;
 	    var custom = json.custom;
-	    var setup_slider_group = function () {
-		var type_slider = jq(this);
-		var obj_type = type_slider.split('-')[0];
-		type_slider.find('.slider_holder').each( function () {
-		    var slider = YAHOO.widget.Slider.getVertSlider(type_slider, this, top, bottom, step_size);
+	    var create_slider_points = function (tbody) {
+		var rows = tbody.find('tr').slice(1);
+		var top_row = jq(rows[0]).offset().top;
+		var heights = rows.map(function (i, row) {
+		    var row = jq(row);
+		    var row_top = row.offset().top - top_row;
+		    var row_data = {'agent_id':row.attr('id').split('-')[1],'agent_class':row.attr('class').split()[1], middle:row_top + row.height()/2 - 6.5, 'top':row_top - 6.5, 'bottom':row_top + row.height() - 6.5};
+		    row.data('slider', row_data);
+		    return row_data;
+		});
+		return heights;
+	    };
+	    var setup_slider_group = function (i, ele) {
+		var slider_group = jq(ele);
+		var tbody = slider_group.find('tbody');
+		var heights = create_slider_points(tbody);
+		slider_group.find('.slider_holder').each( function (i, ele) {
+		    var _interface = ele.id.split('-')[1];
+		    var top = 0;
+		    var top_cell = jq(ele).parent();
+		    var bottom = tbody.height() - 13 - (jq(ele).parent().offset().top - tbody.offset().top);
+		    var slider = YAHOO.widget.Slider.getVertSlider(ele.id, jq(ele).find('.slider').get(0), top, bottom);
+		    slider.subscribe("change", function(offsetFromStart) {
+			var s_cells = jq('.' + _interface);
+			s_cells.each(function (i, cell) {
+			    cell = jq(cell);
+			    var row = cell.parent();
+			    var row_data = row.data('slider');
+			    if (offsetFromStart < row_data.bottom) {
+				cell.addClass('active').removeClass('inactive');
+			    } else {
+				cell.addClass('inactive').removeClass('active');
+			    }
+			});
+			return false;
+		    });
+		    slider.subscribe("slideEnd", function () {
+			var offsetFromStart = slider.getValue();
+			heights.each(function (i, row) {
+			    if (offsetFromStart > row.top && offsetFromStart < row.bottom) {
+				if (offsetFromStart != row.middle) {
+				    slider.setValue(row.middle);
+				}
+			    };
+			});
+			return false;
+		    });
+
 		});
 	    };
-	    if (custom) {
+	    //if (custom) {
 		// Pulling in the YUI libraries
-		jq('.permissions_slider').each (function () {
-		    setup_slider_group();
-		});
-	    }
+		jq('.permissions_slider').each(setup_slider_group);
+	    //}
 
         });
     });
+};
 
-    function setup_YUI_slider(slider_model, options, el_bg, el_thumb, init, step_size) {
-	var no_options = options.length;
-	var top = 0;
-	var bottom = (20 * (no_options-1));
-	var key_increment = 20;
-
-
-	var match = jq('#'+slider.id);
-
-	slider.setValue(init);
-
-	var scale = Transform(top,bottom,0,no_options-2,1);
+/*
 
 	slider.subscribe("change",function(offsetFromStart) {
 		scaled = Math.round(scale(this.getValue()));
@@ -69,22 +104,4 @@ var permission_ready = function () {
 	    this.update_position(slider_model);
 	};
 
-
-	slider.update_position = function(slider_model) {
-	    slider.setValue(scale.rev(slider_model.get_current()));
-	    // add colouring here
-	};
-
-
-	slider.subscribe("slideStart", function() {
-		YAHOO.log("slideStart fired", "warn");
-	    });
-
-	slider.subscribe("slideEnd", function() {
-		YAHOO.log("slideEnd fired", "warn");
-	    });
-
-       	return slider;
-
-    }
-}
+*/
