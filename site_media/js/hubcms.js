@@ -57,7 +57,7 @@ jq.extend(widget, {
         return widget_ele;
     },
     gmap: function (widget_id, widget_name, widget_class, value, css, form) {
-        var input = jq('<input type="text" value="{value}" id="{widget_id}" class="{widget_class}" name="{widget_name}" />'.supplant({'value': value, 'widget_id': widget_id,  'widget_class': widget_class, 'widget_name': widget_name}));
+        var input = jq('<input type="text" value="{value}" id="{widget_id}" class="{widget_class} text" name="{widget_name}" />'.supplant({'value': value, 'widget_id': widget_id,  'widget_class': widget_class, 'widget_name': widget_name}));
         var map = jq('<div id="{widget_id}_editable_map" class="gmap">{value}</div>'.supplant({'widget_id': widget_id, 'value': value})).css(css);
         var help = jq('<div class="map_help">Drag the marker or write your address to set your location then press "save" when you are ready.</div>');
         return [input, [map, help]];
@@ -120,7 +120,7 @@ jq.extend(widget, {
     text_small: function (widget_id, widget_name, widget_class, value, css) {
         css.width = Math.max(css.width, 80);
         var ele = jq('<input type="text" />').attr({id: widget_id,
-                                                   name: widget_name}).addClass(widget_class).val(value).css('width', css.width);
+                                                   name: widget_name}).addClass(widget_class).addClass("text").val(value);
         return [ele, null];
     },
     time_range_select: function (widget_id, widget_name, widget_class, value) {
@@ -192,11 +192,11 @@ var inplace_editor = function (element_id, url, special_options) {
         clickToEditText: "Click here to edit",
         edit_event: 'click',
         rows: 1,
-        onComplete: function (data, element) {
+        /*onComplete: function (data, element) {
             element.click(function () {
                 jq(this).effect("highlight", {}, 1000);
             });
-        },
+        },*/
         onFailure: function (xhr) {
             alert("Error communicating with the server: " + xhr.responseText.stripTags());
         },
@@ -226,7 +226,7 @@ var inplace_editor = function (element_id, url, special_options) {
     trigger.attr('title', options.clickToEditText);
     var enterEditMode = function () {
         elementTop = jq(window).scrollTop();
-        element.stop().css('background-color', '#EEE');
+        element.stop();
         if (saving) {
             return;
         }
@@ -313,7 +313,7 @@ var inplace_editor = function (element_id, url, special_options) {
         if (options.textarea) {
             submit_html = "<br />";
         }
-        submit_html += "<div class='buttons'><input type='submit' class='save button' value='{okText}'/><input type='submit' class='cancel button' value='{cancelText}' /></div><br class='clear' />".supplant({okText: options.okText, cancelText: options.cancelText});
+        submit_html += "<div class='buttons'><input type='submit' class='save button' value='{okText}'/><input type='submit' class='cancel button' value='{cancelText}' /></div>".supplant({okText: options.okText, cancelText: options.cancelText});
         var dom_nodes = jq(submit_html);
         dom_nodes.appendTo(form);
         dom_nodes.find('.cancel').one('click', onclickCancel);
@@ -491,7 +491,7 @@ var inplace_editor = function (element_id, url, special_options) {
             return;
         }
 	element.parent().one('mouseout', leaveHover);
-	trigger.show();
+	trigger.css('display', 'block');
     };
     var leaveHover = function () {
         if (saving) {
@@ -502,12 +502,11 @@ var inplace_editor = function (element_id, url, special_options) {
     };
     var leaveEditMode = function () {
         removeForm();
-	element.parent().one('mouseover', enterHover);
         element.removeClass(options.savingClassName).show();
-        trigger.show();
         trigger.one(options.edit_event, enterEditMode);
         editing = false;
         saving = false;
+        leaveHover();
         onLeaveEditMode();
     };
     var onEnterEditMode = function () {
