@@ -28,37 +28,41 @@ from apps.plus_permissions.default_agents import get_anon_user, get_site
 
 add_edit_key(TgGroup)
 
-def group(request, group_id, template_name="plus_groups/group.html"):
-    group = get_object_or_404(TgGroup, pk=group_id)
+@secure_resource(TgGroup)
+def group(request, group, template_name="plus_groups/group.html"):
+
+    user = request.user
+    if not user.is_authenticated():
+        user = get_anon_user()
+        request.user = user 
+        # should we do this next line? ... if we do, then we can't get at the real AnonymousUser object
+        # if we don't ... if the template tries to access request.user by mistake, it won't get our anon_user
+        # object... 
 
     dummy_status = DisplayStatus("Group's Status"," about 3 hours ago")
     
     members = group.get_users()[:10]
     member_count = group.get_no_members()
-    print "members :", members
 
     hosts = group.get_admin_group().get_users()[:10]
     host_count = group.get_admin_group().get_no_members()
-    user = request.user
+
     if user.is_authenticated():
-        if user.is_direct_member_of(group):
+        if user.is_direct_member_of(group.get_inner()):
             leave = True
         else :
             leave = False
     else:
         leave = False
         
-    if not user.is_authenticated():
-        user = get_anon_user()
-    group = TemplateSecureWrapper(secure_wrap(group, user))
 
     return render_to_response(template_name, {
             "head_title" : "%s" % group.display_name,
             "head_title_status" : dummy_status,
-            "group" : group,
+            "group" : TemplateSecureWrapper(group),
             "members" : members,
             "member_count" : member_count,
-            "extras" : group.groupextras, 
+
             "leave": leave,
             "hosts": hosts,
             "host_count": host_count,

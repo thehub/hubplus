@@ -31,6 +31,7 @@ value_types = ValueTypes({'plain': plain,
 
 @register.inclusion_tag('plus_lib/editable_attribute.html')
 def editable(label, obj, name, default, value_type='plain', truncate_at='100'):
+
     edit = obj.can_write(name)
     value = getattr(obj, name)
     #We use str to manange the NotViewable instance sometimes assigned by the TemplateSecureWrapper, since we have a utf-8 "value" here, if we do then str is okay, a
