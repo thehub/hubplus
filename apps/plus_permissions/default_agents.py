@@ -56,6 +56,7 @@ def get_anon_user():
         anon_user = User(username='anon', email_address='anon@null.com')
         anon_user.save()
         get_anonymous_group().add_member(anon_user)
+    anon_user.is_authenticated = lambda : False
     return anon_user
 
 def set_all_members_group():

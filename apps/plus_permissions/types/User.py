@@ -82,7 +82,6 @@ def get_slider_agents(scontext)  :
             ('anonymous_group', get_anonymous_group().get_ref()),
             ('all_members_group', get_all_members_group().get_ref()), 
             ('context_agent', scontext.context_agent), 
-            ('creator', get_creator_agent()),
             ('context_admin', scontext.context_admin)
            ]
 
@@ -109,7 +108,7 @@ AgentDefaults = {'public':
                            },
                       'Profile':
                           { 'defaults' : {'Viewer':'anonymous_group',
-                                          'Editor':'creator',
+                                          'Editor':'context_agent',
                                           'Unknown': 'context_agent'},
                             'constraints':[]
                             },

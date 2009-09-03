@@ -1,6 +1,11 @@
-function permission_ready() {
+var permission_ready = function () {
     el_sliders = jq('#permission_sliders');
     // setting up click on the "edit" button
+    var Event = YAHOO.util.Event;
+    var Dom   = YAHOO.util.Dom;
+    var lang  = YAHOO.lang;
+    var Y     = YAHOO.util.Selector;
+
     jq('.permission_button').overlay({expose: {
             color: '#BAD0DB',
             opacity: 0.7
@@ -14,35 +19,25 @@ function permission_ready() {
 	jq.getJSON(load_url, function(json){
 	    jq('#overlay_content').html(jq(json.html));
 	    tab_history();
-	    var sliders = SliderGroup(json.sliders);
+	    var sliders = json.sliders;
 	    var agents = json.agents;
 	    var custom = json.custom;
-	    h = sg.sliders_as_html('slider_group1', setup_YUI_slider);
-	    el_sliders.html(h);
-	    sg.update_slider_ticks('slider_group1');
+	    var setup_slider_group = function () {
+		var type_slider = jq(this);
+		var obj_type = type_slider.split('-')[0];
+		type_slider.find('.slider_holder').each( function () {
+		    var slider = YAHOO.widget.Slider.getVertSlider(type_slider, this, top, bottom, step_size);
+		});
+	    };
+	    if (custom) {
+		// Pulling in the YUI libraries
+		jq('.permissions_slider').each (function () {
+		    setup_slider_group();
+		});
+	    }
 
-	    // submit
-	    el_sliders.find('#sliders_submit').one('click', function () {
-		ajax_submit();
-	    });
-
-	    // cancel
-	    el_sliders.find('#sliders_cancel').one('click',function() {
-		el_sliders.html('');
-	    });
-	});
+        });
     });
-
-
-    // Pulling in the YUI libraries
-    var Event = YAHOO.util.Event;
-    var Dom   = YAHOO.util.Dom;
-    var lang  = YAHOO.lang;
-    var Y     = YAHOO.util.Selector;
-
-    var on_slider_model_changed = new YAHOO.util.CustomEvent('slider_model_change');
-
-    var valuearea="slider-value", textfield="slider-converted-value";
 
     function setup_YUI_slider(slider_model, options, el_bg, el_thumb, init, step_size) {
 	var no_options = options.length;
@@ -50,7 +45,6 @@ function permission_ready() {
 	var bottom = (20 * (no_options-1));
 	var key_increment = 20;
 
-	var slider = YAHOO.widget.Slider.getVertSlider(el_bg, el_thumb, top, bottom, step_size);
 
 	var match = jq('#'+slider.id);
 
@@ -93,6 +87,4 @@ function permission_ready() {
        	return slider;
 
     }
-
-
-};
+}

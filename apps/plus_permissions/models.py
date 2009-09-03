@@ -417,7 +417,7 @@ def has_access(agent, resource, interface) :
         #that user is in the "anyone" group
         return True
 
-    if get_creator_agent().obj in allowed_agents:
+    if get_creator_agent().obj in allowed_agents :
         actual_creator = resource.get_ref().creator
         if agent == actual_creator:
             return True

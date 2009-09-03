@@ -92,7 +92,8 @@ class SecureWrapper:
             lambda x : x == 'id',
             lambda x : x == 'save',
             lambda x : x == 'get_ref',
-            lambda x : x == 'edit_key'
+            lambda x : x == 'edit_key',
+            lambda x : x == 'can_write', # Added by phil, otherwise we can't test can_write in the editable_attribute templatetag
         ]
         self.__dict__['_permissions'] = {InterfaceReadProperty: set(),
                                          InterfaceCallProperty: set(),

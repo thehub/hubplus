@@ -1,8 +1,8 @@
 
 
-var tab_history = function () {
+var tab_history = function (container_id) {
     var tab_titles = [];
-    jq('#section_tab_navigation .yui-nav li a').each(function(i, ele) {
+    jq('#' + container_id + ' .yui-nav li a').each(function(i, ele) {
         tab_titles[tab_titles.length] = jq(ele).attr('href').substr(1);
     });
     var bookmarkedTabViewState = YAHOO.util.History.getBookmarkedState("tabview");
