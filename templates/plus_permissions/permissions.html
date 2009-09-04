@@ -14,6 +14,7 @@
   <div class="tabbed_content yui-content" id="permissions">
     <div id="{{obj_type.lower}}-area">
 	<table class="permissions_slider" id="{{obj_type}}-permissions">
+	  <tbody>
 	  <tr class="headings">
 	    <th class="group_column">Group</th>
 	    {% for interface in headers %}
@@ -36,6 +37,7 @@
 	    {% endfor %}
 	  </tr>
 	  {% endfor %}
+	  </tbody>
 	</table>
       </div>
     </div>

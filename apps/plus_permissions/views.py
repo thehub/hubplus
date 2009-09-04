@@ -79,6 +79,8 @@ def patch_in_profiles(request):
 
 @secure_resource(obj_schema={'current':'any'})
 def json_slider_group(request, current):
+    """This should be properly secured by doing everything through permissionable objects on the current resource.
+    """
     sec_context = current._inner.get_security_context()
     custom = False
     if sec_context.get_target() == current._inner:
