@@ -69,7 +69,7 @@ var tag_list = function (ele) {
 	    manager.find('.error_message').html("You have already tagged " + data.tagged + " as having the " + data.tag_type + " <em>" +  data.keyword + "</em>");
 	    return;
 	}
-	var tag = jq('<li><a href="/plus_tags/tag/' + data.keyword + '" class="tag option">' + data.keyword + '</a><a class="delete_tag" href="/plus_tags/delete_tag/">X</a></li>');
+	var tag = jq('<span><a href="/plus_tags/tag/' + data.keyword + '" class="tag option">' + data.keyword + '</a><a class="delete_tag" href="/plus_tags/delete_tag/">X</a></span>');
 	manager.find('.tag_list').append(tag);
 	manager.find('input.tag_value').val("");
 	manager.find('.error_message').html("");

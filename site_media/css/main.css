@@ -536,67 +536,6 @@ form .label_permissions {
 }
 
 
-/* Edit in Place */
-
-
-
-.editable_set {
-	border		: 1px solid transparent;
-	border-width: 1px 0;
-}
-
-.editable_set dt,
-.editable_set dd {
-	padding		: 1px 0;
-}
-
-.editable_set:hover {
-	border-color: #DDD;
-}
-
-a.icon_button {
-	display		: none;
-	float		: right;
-	height		: 16px;
-	margin		: 1px 0 0 3px;
-	overflow	: hidden;
-	text-indent	: -2000px;
-	width		: 16px;
-}
-
-a.icon_button:hover {
-	background-position	: 0 -100px;
-}
-
-a.bt_edit {
-	background	: url('../images/icon_edit.gif') 0 0 no-repeat;
-}
-
-.editable a.bt_permissions {
-	background	: url('../images/icon_permissions.gif') 0 0 no-repeat;
-	display		: block;
-}
-
-.editing a.icon_button {
-	display		: block;
-}
-
-.tag_manager form,
-.editable_set form {
-	margin		: 3px 0;
-}
-
-.editable_set input.text {
-	margin-bottom	: 3px;
-	width		: 240px;
-}
-
-.editable_set .buttons .button {
-	margin-right	: 3px;
-}
-
-
-
 /* Side Blocks: Members Online */
 
 #feature_members_online ul {

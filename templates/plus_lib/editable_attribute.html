@@ -1,9 +1,9 @@
 {% load i18n %}
 {% if show %}
-    <dl class="editable_set">
+    <dl>
         <dt>{% trans label %} :</dt>
         <dd>
-             <a class="bt_edit icon_button" id="{{obj.edit_key}}{{name}}_trigger" title="edit">Edit</a>
+             <a class="bt_edit button" id="{{obj.edit_key}}{{name}}_trigger" title="edit">Edit</a>
              <div {% if edit %} class='editable' {% endif %} id='{{obj.edit_key}}{{name}}'>{% if no_escape %}{% autoescape off %}{{value}}{% endautoescape %}{% else  %}{{value}}{% endif %}</div>
         </dd>
     </dl>

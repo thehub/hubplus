@@ -37,7 +37,7 @@ def setup_hubs_security(group, creator):
     print `group`
     return group
 
-@login_required
+#@login_required
 def patch_in_groups(request):
     """Do group security setup for hubspace groups
     XXX patch group names to reflect Location names
@@ -52,7 +52,7 @@ def patch_in_groups(request):
         setup_hubs_security(group, admin_user)
     return HttpResponse("patched %s hub group's security" % str(len(no_security)))
 
-@login_required
+#@login_required
 def patch_in_profiles(request):
     """create profiles and setup security hubspace users
     """
