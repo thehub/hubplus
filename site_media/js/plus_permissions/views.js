@@ -18,14 +18,15 @@ var permission_ready = function () {
 };
 
 var load_sliders = function (perm_button) {
+        var initialising = 0;
 	jq('div.close').click(function () {
 	    jq('#overlay_content').html("");
 	});
 	var resource_id = jq(perm_button).attr('id').split('-')[1];
 	var resource_class= jq(perm_button).attr('id').split('-')[0];
 	var load_url = "/permissions/edit/?current_id={resource_id}&current_class={resource_class}".supplant({'resource_id':resource_id, 'resource_class':resource_class});
-	var change_slider = "/permissions/change_slider";
-	var custom_default = "/permission/toggle_custom";
+	var change_slider = "/permissions/move/";
+	var custom_default = "/permission/toggle_custom/";
 	jq.getJSON(load_url, function(json){
 	    jq('#overlay_content').html(json.html);
 	    var sliders = {};
@@ -45,7 +46,7 @@ var load_sliders = function (perm_button) {
 		var heights = rows.map(function (i, row) {
 		    var row = jq(row);
 		    var row_top = row.offset().top - top_row;
-		    var row_data = {'agent_id':row.attr('id').split('-')[1],'agent_class':row.attr('class').split()[1], middle:row_top + row.height()/2 - 6.5, 'top':row_top - 6.5, 'bottom':row_top + row.height() - 6.5};
+		    var row_data = {'agent_id':row.attr('id').split('-')[2],'agent_class':row.attr('id').split('-')[1], middle:row_top + row.height()/2 - 6.5, 'top':row_top - 6.5, 'bottom':row_top + row.height() - 6.5};
 		    row.data('slider', row_data);
 		    return row_data;
 		});
@@ -57,6 +58,7 @@ var load_sliders = function (perm_button) {
 		var tbody = slider_group.find('tbody');
 		var heights = create_slider_points(tbody);
 		slider_group.find('.slider_holder').each( function (i, ele) {
+		    var slider_holder = jq(ele);
 		    var _interface = ele.id.split('-')[1];
 		    var top = 0;
 		    var top_cell = jq(ele).parent();
@@ -64,8 +66,10 @@ var load_sliders = function (perm_button) {
 		    var slider = YAHOO.widget.Slider.getVertSlider(ele.id, jq(ele).find('.slider').get(0), top, bottom);
 		    var level_agent = sliders[obj_class]['interface_levels'][_interface.split('_')[1]];
 		    var row = jq('#agent-{class}-{id}'.supplant({'class':level_agent.classname, 'id':level_agent.id}));
+		    initialising += 1;
 		    slider.setValue(row.data('slider').middle);
 		    slider.subscribe("change", function(offsetFromStart) {
+			//should move dependent sliders here too
 			var s_cells = jq('.' + _interface);
 			s_cells.each(function (i, cell) {
 			    cell = jq(cell);
@@ -79,14 +83,28 @@ var load_sliders = function (perm_button) {
 			});
 			return false;
 		    });
+		    var saved = function (response) {
+			console.log(response);
+		    };
 		    slider.subscribe("slideEnd", function () {
 			var offsetFromStart = slider.getValue();
 			heights.each(function (i, row) {
 			    if (offsetFromStart > row.top && offsetFromStart < row.bottom) {
 				if (offsetFromStart != row.middle) {
 				    slider.setValue(row.middle);
+				} else {
+				    if (initialising == 0) {
+					//should set dependent sliders here and post there data too if changed.
+					var iface = slider_holder.attr('id').split('-')[1].replace('_', '.');
+					var slider_change = {};
+					slider_change[iface] = [row.agent_class, row.agent_id];
+					jq.post(change_slider, {'current_id':resource_id, 'current_class':resource_class, 'json':JSON.stringify(slider_change)}, 'json', saved); //we want to get json back from this post
+				    } else {
+					initialising -= 1;
+				    }
+
 				}
-			    };
+			    }
 			});
 			return false;
 		    });
@@ -97,8 +115,5 @@ var load_sliders = function (perm_button) {
 		// Pulling in the YUI libraries
 		jq('.permissions_slider').each(setup_slider_group);
 	    //}
-
         });
 };
-
-

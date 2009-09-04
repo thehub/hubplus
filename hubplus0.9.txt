@@ -19,13 +19,23 @@ search results / tag filtering - do design work with Tom/Phil
 
 Thurs
 -----
-     - change sliders - send to server - view should go through sec context target obj
-     - implement constraints - hard slider limits - min or max 
-       		 	     - implement relation constraints - update hard slider max, and pull down if the one we are moving is the higher
+     - implement constraints (client) - get constraints into json
+                                      - hard slider limits - min or max - on initialisation (relative or absolute) 
+       		 	              - relative - update hard slider max, 
+                                                 - register lower to higher. 
+						 --> on pull higher if the one we are moving is the higher - also set the low
+     - read json and display user feedback
 
-     - customize permissions
+     - view should go through sec context target obj
+     - user/profile - edit where? 
+     - customize permissions + apply to group
+     
+     - manage permissions slider for owner
+
      - single slider UI
 
+     - labels and display details (visible/invisible)
+     - error messages - if save failed
 
 
 Thus - Sun
