@@ -12,10 +12,10 @@ from django.contrib.contenttypes.models import ContentType
 from django.contrib.auth.decorators import login_required
 from plus_permissions.types.TgGroup import setup_group_security
 from apps.plus_permissions.permissionable import create_reference
-from apps.plus_permissions.default_agents import get_all_members_group, get_or_create_root_location, get_admin_user
+from apps.plus_permissions.default_agents import get_all_members_group, get_or_create_root_location, get_admin_user, CreatorMarker
 from apps.plus_permissions.types.User import setup_user_security
 from apps.plus_groups.models import TgGroup
-
+from apps.plus_lib.parse_json import json_view
 from django.contrib.auth.models import User
 from apps.plus_permissions.api import secure_resource, TemplateSecureWrapper
 from django.template import loader, Context, RequestContext
@@ -78,7 +78,23 @@ def patch_in_profiles(request):
     return HttpResponse("patched %s users to have profiles" % str(no_of_users))
 
 @secure_resource(obj_schema={'current':'any'})
+@json_view
+def move_sliders(request, json, current):
+    """json is of the form, {interface:[agent_class, agent_id]}
+    """
+    sec_context = current._inner.get_security_context()
+    for interface, agent_tuple in json.iteritems():
+        cls = ContentType.objects.get(model=agent_tuple[0].lower()).model_class()
+        agent = cls.objects.get(id=agent_tuple[1])
+        sec_context.move_slider(agent, interface, request.user)
+    json = {'message':'success'}
+    HttpResponse(json, mimetype='application/json')
+
+
+@secure_resource(obj_schema={'current':'any'})
 def json_slider_group(request, current):
+    """This should be properly secured by doing everything through permissionable objects on the current resource. i.e. without getting the security context.
+    """
     sec_context = current._inner.get_security_context()
     custom = False
     if sec_context.get_target() == current._inner:
@@ -101,15 +117,15 @@ def json_slider_group(request, current):
                 css_class = flags.get(interface, False) and 'active' or 'inactive'
                 interface_status_list.append((css_class, selected, interface))
             
-            slider_agent_rows.append((slider_agent.obj, interface_status_list))
+            slider_agent_rows.append((slider_agent.obj, slider_agent.obj.__class__.__name__, interface_status_list))
 
         slider_data.append((typ, [header[0] for header in slider_info['interface_levels']],  slider_agent_rows))
 
-    t = loader.get_template('plus_permissions/permissions.html')
-    c = RequestContext(request, {'current':current, 'current_class':current._inner.__class__.__name__, 'sliders':slider_data, 'agents':slider_agents, 'custom':custom})
-    rendered = t.render(c)
-
     agents = sec_context.get_slider_agents_json()
+
+    t = loader.get_template('plus_permissions/permissions.html')
+    c = RequestContext(request, {'current':current, 'current_class':current._inner.__class__.__name__, 'sliders':slider_data, 'custom':custom})
+    rendered = t.render(c)
     json = simplejson.dumps({'current_id':current.id,  'sliders':slider_sets, 'agents':agents, 'custom':custom, 'html':rendered})
     
     return HttpResponse(json, mimetype='application/json')

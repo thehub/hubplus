@@ -17,30 +17,32 @@ show all - members, hosts, groups ? use | separator consistently
 wiki page design - in html
 search results / tag filtering - do design work with Tom/Phil
 
-Tues
-----
-Slider UI
-     - instantiate slider
-     - calibrate agent levels
-     - snap to offset - with active/inactive
+Thurs
+-----
+     - implement constraints (client) - get constraints into json
+                                      - hard slider limits - min or max - on initialisation (relative or absolute) 
+       		 	              - relative - update hard slider max, 
+                                                 - register lower to higher. 
+						 --> on pull higher if the one we are moving is the higher - also set the low
+     - read json and display user feedback
 
-     - implement constraints - hard slider limits - min or max 
-       		 	     - implement relation constraints - update hard slider max, and pull down if the one we are moving is the higher
-
-     - set slider - 
-     - on create profile set user as admin, and profile to acquire from user
+     - view should go through sec context target obj
+     - user/profile - edit where? 
+     - customize permissions + apply to group
+     
+     - manage permissions slider for owner
 
      - single slider UI
 
+     - labels and display details (visible/invisible)
+     - error messages - if save failed
 
-Wed
----
-
-     - html5lib sanitize - htmlField + beautiful soup  ++ use mark_safe instead of turning autoescaping off
-     - create content page form
 
 Thus - Sun
 ----------
+- html5lib sanitize - htmlField + beautiful soup  ++ use mark_safe instead of turning autoescaping off
+- create content page form
+
 Basics of:
 - wiki
 - apply wiki naming to group name.	

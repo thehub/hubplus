@@ -13,15 +13,8 @@ class MissingSecurityContextException(Exception):
         self.msg = 'Missing %s when creating a %s' % (context,cls)
 
 
-class MissingSecurityContextException(Exception): 
-    def __init__(self, cls, security_context) :
-        self.cls = cls
-        self.security_context = security_context
-        self.msg = 'Missing %s when creating a %s' % (context,cls)
-
 
 from apps.plus_permissions.models import has_access
-from apps.plus_permissions.interfaces import secure_wrap
 
 class PermissionableManager(models.Manager):
     # if a permission_agent is passed, only get or filter items which 
@@ -162,15 +155,15 @@ def remove_arbitrary_agent(self, old_agent, interface, p_user):
         raise Exception("Shouldn't try to remove arbitrary agent to content_type %s which doesn't have over-ridden security_context" %self)
 
 
-def get_all_sliders(self, type):
+def get_all_sliders(self, type, user):
     scontext = self.get_ref().explicit_scontext
     if scontext:
-        return scontext.get_all_sliders(type)
+        return scontext.get_all_sliders(type, user)
 
-def get_type_slider(self, type_name):
+def get_type_slider(self, type_name, user):
     scontext = self.get_ref().explicit_scontext
     if scontext:
-        return scontext.get_type_slider(type_name)
+        return scontext.get_type_slider(type_name, user)
 
 def get_slider_level(self, interface):
     scontext = self.get_ref().explicit_scontext

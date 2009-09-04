@@ -11,7 +11,6 @@ var tab_history = function (container_id) {
     YAHOO.util.History.register("tabview", initialTabViewState, function (state) {
 	tabView.set("activeIndex",jq.inArray(state,  tab_titles));
     });
-
     function handleTabViewActiveTabChange (e) {
         var newState, currentState;
 	newState = e.newValue._configs.href.value.substr(1);
@@ -31,7 +30,7 @@ var tab_history = function (container_id) {
     }
     YAHOO.util.History.onReady(function () {
         var currentState;
-        jq('.yui-navset').each(function (i, ele) {
+        jq('#' + container_id).each(function (i, ele) {
 	    initTabView(ele);
         });
 	currentState = YAHOO.util.History.getCurrentState("tabview");

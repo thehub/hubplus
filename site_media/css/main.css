@@ -35,7 +35,11 @@ HUB PLUS 2009
 .error_message {
 	color		: #FF0000;
 }
-
+.unselectable {
+   -moz-user-select: none;
+   -khtml-user-select: none;
+   user-select: none;
+}
 .permission_button {
 	text-align	:right;
 	margin-bottom	:1.5em;
