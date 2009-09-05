@@ -18,6 +18,7 @@ from apps.plus_groups.models import TgGroup
 from apps.plus_lib.parse_json import json_view
 from django.contrib.auth.models import User
 from apps.plus_permissions.api import secure_resource, TemplateSecureWrapper
+from apps.plus_permissions.models import serialize_constraint
 from django.template import loader, Context, RequestContext
 
 ##############Hubspace Patching######################################
@@ -81,6 +82,7 @@ def patch_in_profiles(request):
 @json_view
 def move_sliders(request, json, current):
     """json is of the form, {interface:[agent_class, agent_id]}
+    This should be properly secured by doing everything through permissionable objects on the current resource. i.e. without getting the security context.
     """
     sec_context = current._inner.get_security_context()
     for interface, agent_tuple in json.iteritems():

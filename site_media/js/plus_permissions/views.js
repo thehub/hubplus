@@ -57,6 +57,29 @@ var load_sliders = function (perm_button) {
 		var obj_class = slider_group.attr('id').split('-')[0];
 		var tbody = slider_group.find('tbody');
 		var heights = create_slider_points(tbody);
+		var interface_levels = sliders[obj_class]['interface_levels'];
+		var interface_constraints = {};
+		var interpret_constraints = function () {
+		    var constraints = sliders[obj_class]['constraints'];
+		    jq.each(constraints, function (i, constraint) {
+			if (constraint.indexOf('>=') !== -1) {
+			    var op = '>=';
+			    //pixel value of lhs should be less than agent on rhs
+			    var args = constraint.split(op);
+
+			} else if (constraint.indexOf('>') !== -1) {
+			    var op = '>';
+			    var args = constraint.split(op);
+			} else if (constraint.indexOf('<=') !== -1) {
+			    var op = '<=';
+			    var args = constraint.split(op);
+			} else if (constraint.indexOf('<') !== -1) {
+			    var op = '<';
+			    var args = constraint.split(op);
+			}
+		    });
+		};
+		interpret_constraints();
 		slider_group.find('.slider_holder').each( function (i, ele) {
 		    var slider_holder = jq(ele);
 		    var _interface = ele.id.split('-')[1];
@@ -64,12 +87,18 @@ var load_sliders = function (perm_button) {
 		    var top_cell = jq(ele).parent();
 		    var bottom = tbody.height() - 13 - (jq(ele).parent().offset().top - tbody.offset().top);
 		    var slider = YAHOO.widget.Slider.getVertSlider(ele.id, jq(ele).find('.slider').get(0), top, bottom);
-		    var level_agent = sliders[obj_class]['interface_levels'][_interface.split('_')[1]];
+		    var level_agent = interface_levels[_interface.split('_')[1]];
+
 		    var row = jq('#agent-{class}-{id}'.supplant({'class':level_agent.classname, 'id':level_agent.id}));
 		    initialising += 1;
 		    slider.setValue(row.data('slider').middle);
 		    slider.subscribe("change", function(offsetFromStart) {
 			//should move dependent sliders here too
+			if (offsetFromStart < limits.min) {
+			    slider.setValue(limits.min-1);
+			} else if (offsetFromStart > limits.max){
+			    slider.setValue(limits.max+1);
+			}
 			var s_cells = jq('.' + _interface);
 			s_cells.each(function (i, cell) {
 			    cell = jq(cell);
@@ -88,8 +117,14 @@ var load_sliders = function (perm_button) {
 		    };
 		    slider.subscribe("slideEnd", function () {
 			var offsetFromStart = slider.getValue();
+			var limits = slider_holder.data('limits');
 			heights.each(function (i, row) {
-			    if (offsetFromStart > row.top && offsetFromStart < row.bottom) {
+			    if (offsetFromStart < limits.min) {
+				slider.setValue(limits.min-1);
+			    } else if (offsetFromStart > limits.max){
+				slider.setValue(limits.max+1);
+			    } else {
+			      if (offsetFromStart > row.top && offsetFromStart < row.bottom) {
 				if (offsetFromStart != row.middle) {
 				    slider.setValue(row.middle);
 				} else {
@@ -105,6 +140,7 @@ var load_sliders = function (perm_button) {
 
 				}
 			    }
+			  }
 			});
 			return false;
 		    });
