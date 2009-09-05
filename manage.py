@@ -19,7 +19,11 @@ except ImportError:
     sys.exit(1)
 
 # setup the environment before we start accessing things in the settings.
-setup_environ(settings_mod)
+try :
+    setup_environ(settings_mod)
+except Exception, e:
+    import ipdb
+    ipdb.set_trace()
 
 sys.path.insert(0, join(settings.PINAX_ROOT, "apps"))
 sys.path.insert(0, join(settings.PROJECT_ROOT, "apps"))
