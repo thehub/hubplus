@@ -26,7 +26,7 @@ from apps.plus_groups.forms import TgGroupForm
 from apps.plus_permissions.api import secure_resource, site_context
 from apps.plus_permissions.default_agents import get_anon_user, get_site
 
-add_edit_key(TgGroup)
+
 
 @secure_resource(TgGroup)
 def group(request, group, template_name="plus_groups/group.html"):

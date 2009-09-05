@@ -68,6 +68,8 @@ urlpatterns = patterns('',
 
     (r'^notices/', include('notification.urls')),
 
+    (r'^lib/', include('plus_lib.urls')),
+
     (r'^testing/sliders/$', direct_to_template, {'template' : 'plus_permissions/tester.html'}),
     (r'^testing/sliders/p$', direct_to_template, {'template' : 'plus_permissions/permissions.html'}), # temp
 
