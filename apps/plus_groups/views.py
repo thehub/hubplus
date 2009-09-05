@@ -35,9 +35,6 @@ def group(request, group, template_name="plus_groups/group.html"):
     if not user.is_authenticated():
         user = get_anon_user()
         request.user = user 
-        # should we do this next line? ... if we do, then we can't get at the real AnonymousUser object
-        # if we don't ... if the template tries to access request.user by mistake, it won't get our anon_user
-        # object... 
 
     dummy_status = DisplayStatus("Group's Status"," about 3 hours ago")
     
@@ -47,14 +44,26 @@ def group(request, group, template_name="plus_groups/group.html"):
     hosts = group.get_admin_group().get_users()[:10]
     host_count = group.get_admin_group().get_no_members()
 
+    join = False
+    apply = False
+    leave = False
     if user.is_authenticated():
         if user.is_direct_member_of(group.get_inner()):
             leave = True
         else :
-            leave = False
-    else:
-        leave = False
+            try :
+                group.join 
+                join = True
+            except Exception, e: # user doesn't have join permission
+                pass
+            try :
+                if not join :
+                    group.apply
+                    apply = True
+            except Exception, e : # user doesn't have apply permission
+                pass
         
+    
 
     return render_to_response(template_name, {
             "head_title" : "%s" % group.display_name,
@@ -62,8 +71,9 @@ def group(request, group, template_name="plus_groups/group.html"):
             "group" : TemplateSecureWrapper(group),
             "members" : members,
             "member_count" : member_count,
-
             "leave": leave,
+            "join" : join, 
+            "apply" : apply, 
             "hosts": hosts,
             "host_count": host_count,
             }, context_instance=RequestContext(request))
