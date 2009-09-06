@@ -34,11 +34,12 @@ var tab_history = function (container_id) {
 	    initTabView(ele);
         });
 	currentState = YAHOO.util.History.getCurrentState("tabview");
-	tabView.set("activeIndex",jq.inArray(currentState,  tab_titles));
+	tabView.set("activeIndex", jq.inArray(currentState, tab_titles));
     });
     try {
         YAHOO.util.History.initialize("yui-history-field", "yui-history-iframe");
     } catch (e) {
+        console.log(ele);
         initTabView(ele);
     }
 
