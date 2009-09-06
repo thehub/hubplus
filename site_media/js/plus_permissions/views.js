@@ -137,6 +137,7 @@ var load_sliders = function (perm_button) {
 			slider.thumb.setYConstraint(min, max, 1);
 			return slider_limits;
 			// on end_slide make all changes in 1 request - keep a registry of changes, wait for all to complete (each pops from a list and push a result to a list), when list empty while loop makes request
+
 			// evaluate constraints transitively - calculate min agent (lowest) based on absolute constraints of followers and transitive followers
 
 			// offsets for < constraint - one row down (hard) - (changing on follow)
