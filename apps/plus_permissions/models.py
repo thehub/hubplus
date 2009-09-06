@@ -244,12 +244,23 @@ class SecurityContext(models.Model):
          """
          type_name = typ.__name__
          constraints = self.get_constraints(type_name)
+         interpreted_constraints = []
+         slider_agents = self.get_slider_agents()
+         sad = dict(slider_agents)
+         for constraint in constraints:
+             if '$' in constraint:
+                 arg1, arg2, op = interpret_constraint(constraint)
+                 agent = sad[arg2[1:]]
+                 interpreted_constraints.append(serialize_constraint(arg1, agent.obj, op))
+             else:
+                 interpreted_constraints.append(constraint)
+                 
          options = SliderOptions[typ]['InterfaceOrder']
          if 'ManagePermissions' in options:
              if not has_access(agent=user, security_context=self, interface='SetManagePermissions'):
                  options.remove('ManagePermissions')
          interface_levels = [(interface, self.get_slider_level_json(type_name + '.' + interface)) for interface in options ]
-         return {'constraints': constraints,
+         return {'constraints': interpreted_constraints,
                  'interface_levels': interface_levels}
          
      def get_slider_level_json(self, interface):
@@ -328,6 +339,23 @@ def interpret_constraint(constraint):
     if '>' in constraint:
         arg1, arg2 = constraint.split('>')
         return (arg1.strip(), arg2.strip(), operator.gt)
+
+def serialize_constraint(arg1, arg2, op):
+    try:
+        is_agent(arg2)
+        arg2 = "$" + arg2.__class__.__name__ + "-" + str(arg2.id)
+    except NotAnAgent:
+        pass
+
+    if op == operator.ge:
+        return arg1 + ">=" + arg2
+    if op == operator.le:
+        return arg1 + "<=" + arg2
+    if op == operator.lt:
+        return arg1 + "<" + arg2
+    if op == operator.gt:
+        return arg1 + ">" + arg2
+
 
 class SecurityTag(models.Model) :
     interface = models.CharField(max_length=100)
