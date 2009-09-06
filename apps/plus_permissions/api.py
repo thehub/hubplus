@@ -51,12 +51,13 @@ def secure_resource(cls=None, with_interfaces=None, required_interfaces=None, ob
             return g
         elif obj_schema:
             def g(request, *args, **kwargs):
+
                 if request.POST:
                     data = request.POST.copy() 
                 elif request.GET:
                     data = request.GET.copy()
+                data.update(kwargs) # added because we want to keep some params to view eg. class and id in the URL
 
-                    
                 for obj_key, obj_types in obj_schema.iteritems():
                     if isinstance(obj_types, list) and len(obj_types) == 1:
                         cls = obj_types[0]
@@ -74,6 +75,7 @@ def secure_resource(cls=None, with_interfaces=None, required_interfaces=None, ob
                     sec_resource = secure(request, cls, id)
                     #would be better to introspect the view functions signature here, thus allowing us to use args or kwargs
                     kwargs[obj_key] = sec_resource
+
                 return f(request, *args, **kwargs)
             return g
         else:

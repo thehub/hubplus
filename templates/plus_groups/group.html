@@ -2,7 +2,7 @@
 
 {% load i18n %}
 {% load avatar_tags %}
-{% load app_plugins %}
+
 {% load uni_form %}
 {% load plus_tags %}
 {% load editable_attribute %}
@@ -25,8 +25,8 @@
       {% editable "Address" group 'address' 'Address' %}
     </li>
   </ul>
-  <h3>{% trans "Links" %}</h3>
-  <ul>
+  <h3 class='disabled'>{% trans "Links" %}</h3>
+  <ul class='disabled'>
     <li><dl><dt>Website:</dt><dd><a href="#">www.sexysaladclub.com</a></dd></dl></li>
     <li><dl><dt>Flickr:</dt><dd><a href="#">www.flickr.com/ssc</a></dd></dl></li>
   </ul>
@@ -97,10 +97,12 @@
   </ul>
 </div>
 </div>
-<div id="section_tab_navigation" class="section">
+<!--div id="section_tab_navigation" class="section"-->
   {% include "plus_groups/tabbed_subs.html" %}
-</div>  
+<!--/div-->  
 {% endblock %}
+
+
 {% block side_bar %}
 <div id="feature_search" class="block">
   <h3>Search</h3>
