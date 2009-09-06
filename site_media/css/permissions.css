@@ -39,7 +39,11 @@ HUB PLUS 2009
 	background: url('../images/slider_bar.gif') no-repeat 50% 0;
 	vertical-align: top;
 }
+.setting.limited_up {
+}
+.setting.limited_down {
 
+}
 .setting.active {
 	background-position	: 50% -200px;
 }

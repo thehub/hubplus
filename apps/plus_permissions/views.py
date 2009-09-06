@@ -18,7 +18,6 @@ from apps.plus_groups.models import TgGroup
 from apps.plus_lib.parse_json import json_view
 from django.contrib.auth.models import User
 from apps.plus_permissions.api import secure_resource, TemplateSecureWrapper
-from apps.plus_permissions.models import serialize_constraint
 from django.template import loader, Context, RequestContext
 
 ##############Hubspace Patching######################################
@@ -89,8 +88,10 @@ def move_sliders(request, json, current):
         cls = ContentType.objects.get(model=agent_tuple[0].lower()).model_class()
         agent = cls.objects.get(id=agent_tuple[1])
         sec_context.move_slider(agent, interface, request.user)
-    json = {'message':'success'}
-    HttpResponse(json, mimetype='application/json')
+    json = {'message':'success',
+            'id': agent.id,
+            'classname':cls.__name__}
+    return json
 
 
 @secure_resource(obj_schema={'current':'any'})
