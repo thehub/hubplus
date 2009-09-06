@@ -17,13 +17,16 @@ show all - members, hosts, groups ? use | separator consistently
 wiki page design - in html
 search results / tag filtering - do design work with Tom/Phil
 
-Thurs
------
-     - implement constraints (client) - get constraints into json
-                                      - hard slider limits - min or max - on initialisation (relative or absolute) 
+Fri
+---
+     - hard slider limits - min or max - on initialisation (relative or absolute) 
+                                      - constraint color for hard max 
        		 	              - relative - update hard slider max, 
                                                  - register lower to higher. 
 						 --> on pull higher if the one we are moving is the higher - also set the low
+                                                 - if dependency can't move down, neither can the higher
+                                      - constraint color for  hard min)
+     - slider group,  view only mode
      - read json and display user feedback
 
      - view should go through sec context target obj
