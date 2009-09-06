@@ -15,7 +15,7 @@ def html(value, truncate_at):
     #sanitize on output too?
     trunc_value = truncatewords_html(value, truncate_at)
     if len(trunc_value) < len(value):
-        value = '<div class="truncated">%(trunc_value)s<span><a class="more" href="#">more</a><span></div><div class="untruncated">%(value)s<span><a class="less" href="#">less</a></span></div>' %(dict(value=value, trunc_value=trunc_value))
+        value = '<div class="truncated">%(trunc_value)s<a class="more" href="#">more</a></div><div class="untruncated">%(value)s<a class="less" href="#">less</a></div>' %(dict(value=value, trunc_value=trunc_value))
     return value, True
 
 def url(value, truncate_at):
