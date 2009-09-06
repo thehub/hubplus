@@ -5,7 +5,6 @@ var initTabView = function (ele) {
 
 var permission_ready = function () {
     var all_sliders = jq('#permission_sliders');
-    initTabView(all_sliders.get(0));
     jq('.permission_button').overlay({expose: {
 					  color: '#000000',
 					  opacity: 0.5
@@ -29,6 +28,7 @@ var load_sliders = function (perm_button) {
 	var custom_default = "/permission/toggle_custom/";
 	jq.getJSON(load_url, function(json){
 	    jq('#overlay_content').html(json.html);
+            initTabView(all_sliders.get(0));
 	    var sliders = {};
 	    jq.each(json.sliders, function(index, slider_set){
 		sliders[slider_set[0]] = slider_set[1];
