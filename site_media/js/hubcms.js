@@ -182,6 +182,7 @@ var inplace_editor = function (element_id, url, special_options) {
     var elementTop = 0;
     var widget_ready = false;
     var external_trigger = jq('#' + element_id + '_trigger');
+
     if (external_trigger.length) {
 	trigger = external_trigger;
     }
@@ -192,11 +193,11 @@ var inplace_editor = function (element_id, url, special_options) {
         clickToEditText: "Click here to edit",
         edit_event: 'click',
         rows: 1,
-        /*onComplete: function (data, element) {
+        onComplete: function (data, element) {
             element.click(function () {
                 jq(this).effect("highlight", {}, 1000);
             });
-        },*/
+        },
         onFailure: function (xhr) {
             alert("Error communicating with the server: " + xhr.responseText.stripTags());
         },
@@ -250,6 +251,7 @@ var inplace_editor = function (element_id, url, special_options) {
         if (typeof(response) !== 'string') {
             response = '';
         }
+
         form = jq("<form id='{formId}' class='{formClassName}'>{response}</form>".supplant({formId: formId,
                                                                                             formClassName: options.formClassName,
                                                                                             response: response}));
@@ -282,6 +284,8 @@ var inplace_editor = function (element_id, url, special_options) {
         if (!options.widget_name) {
             options.widget_name = options.widget_id;
         }
+	
+	
         if (options.loadTextURL) {
             value = "";
         }
@@ -457,6 +461,7 @@ var inplace_editor = function (element_id, url, special_options) {
         }
         var parameters = options.callback(form, value);
         onLoading();
+
         var xhr = jq.ajax({type: 'post',
                            url: url,
                            data: parameters,
@@ -544,6 +549,7 @@ var set_inplace_edit = function (object_id, object_type, element_id, ui_type, sa
     if (!test_external) {
         alert("can't find id " + external_edit);
     }
+
     var params = {
         callback: function (form, val) {
             return jq.merge(form.serializeArray(), [{name: 'id', value: object_id}, {name: 'value', value: encodeURIComponent(val)}]);
