@@ -1,0 +1,47 @@
+{% extends "site_base.html" %}
+
+{% load i18n %}
+{% load avatar_tags %}
+{% load app_plugins %}
+{% load uni_form %}
+
+{% block main %}
+
+<!-- site_wide_messages -->
+<div id='site_wide_messages'>
+  {% if site_wide_announcements %}
+  <div id="site_wide_announcements">
+    <ul>
+      {% for announcement in site_wide_announcements %}
+      <li>
+	<a href="{{ announcement.get_absolute_url }}">{{ announcement }}</a> -
+	<a href="{% url announcement_hide announcement.pk %}?next={{ request.path }}">{% trans "Hide announcement" %}</a>
+      </li>
+      {% endfor %}
+    </ul>
+  </div>
+  {% endif %}
+</div>
+<!-- end site_wide_messages -->
+
+<!-- page_header -->
+<div id="page_header">
+  <h2>JSLKAFJAOISFJIO {{head_title}}</h2>
+  <p class='disabled'>{{head_title_status}} - <span class="label_time">{{head_title_status.time}}</span></p>
+</div>
+<!-- end page_header -->
+
+<!-- body -->
+<div id='body'>
+  {% block body %}{% endblock %}
+</div>
+<!-- end body -->
+
+<!-- side_bar -->
+<div id='side_bar'>
+  {% block side_bar %}{% endblock %}
+</div>
+<!-- end side_bar -->
+
+{% endblock %}
+

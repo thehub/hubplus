@@ -4,14 +4,14 @@ var initTabView = function (ele) {
 };
 
 var permission_ready = function () {
-    jq('.permission_button').overlay({expose: {
-					  color: '#000000',
-					  opacity: 0.5
-				      },
-				      effect: 'apple',
-				      onLoad: function () {
-					  load_sliders(this.getTrigger());
-				      }
+    jq('.bt_permissions').overlay({expose: {
+				       color: '#000000',
+				       opacity: 0.5
+				   },
+				   effect: 'apple',
+				   onLoad: function () {
+				       load_sliders(this.getTrigger());
+				   }
     });
 };
 

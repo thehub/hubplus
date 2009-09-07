@@ -167,6 +167,8 @@ INSTALLED_APPS = (
     'plus_links',
     'plus_contacts',
   
+    'plus_wiki',
+
     'staticfiles',
     'account',
     'tribes',

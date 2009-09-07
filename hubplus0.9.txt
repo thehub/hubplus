@@ -52,10 +52,12 @@ http://pypi.python.org/pypi/django-attachments/0.3.1
 - permissions control
 - editor - image inclusion - flickr plugin - autoadjusting height - yui 
 
+*http://code.google.com/p/fullhistory/*
+*http://code.google.com/p/django-versioning/*
+http://code.google.com/p/django-reversion
 
-http://hg.piranha.org.ua/django-history/
+
 http://docs.djangoproject.com/en/dev/howto/outputting-pdf/
-
 
 
 
@@ -274,3 +276,5 @@ Financial + User data export HP 0.9
 2) Patch script for hubspace database to add the extra fields
 
 
+useful?
+http://code.djangoproject.com/wiki/AuditTrail

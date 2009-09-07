@@ -3,5 +3,5 @@
 jq(document).ready(function () {
     profile_ready();
     permission_ready();
+	jq(".accordion").accordion({ autoHeight: false });
 });
-

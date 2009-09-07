@@ -5,12 +5,17 @@ HUB PLUS 2009
 
 /* Main Generic */
 
-#main h2 {
+#page_header {
+	width		: 620px;
+}
+
+#page_header #page_title {
 	clear		: both;
 	font-size	: 2.6em;
 	font-weight	: normal;
 	line-height	: 1.1em;
 	margin-bottom	: 10px;
+	width		: 100%;
 }
 
 #main h3 {
@@ -39,11 +44,13 @@ HUB PLUS 2009
 .permission_button {
 	text-align	:right;
 	margin-bottom	:1.5em;
-	cursor          :pointer;
+	cursor		:pointer;
 }
+
 .untruncated {
-        display         :none;
+	display		: none;
 }
+
 
 /* Images & Thumbnails */
 
@@ -100,6 +107,84 @@ HUB PLUS 2009
 
 .content_list li .preview p {
 	padding-bottom	: 0;
+}
+
+
+/* Accordions */
+
+.accordion h3 {
+	border-top	: 1px solid #ddd;
+	background	: url('../images/icon_arrow_dn.gif') 100% 5px no-repeat;
+	-moz-background-clip:border;
+	-moz-background-inline-policy:continuous;
+	-moz-background-origin:padding;
+	outline-color:-moz-use-text-color;
+	outline-style:none;
+	outline-width:medium;
+	padding		: 5px 0 5px !important;
+}
+
+.accordion h3.first {
+	border		: 0;
+	padding-top	: 0;
+}
+
+.accordion h3:hover,
+.accordion h3.ui-state-active {
+	background-position	: 100% -95px;
+}
+
+.accordion div {
+	padding-bottom	: 10px;
+}
+
+.accordion div.last {
+	padding-bottom	: 0;
+}
+
+#parent {
+
+}
+
+
+/* Content Extra */
+
+#content_extra {
+	border-top	: 1px solid #ddd;
+	padding		: 5px 0 1.5em;
+}
+
+#meta {
+	color		: #888;
+	list-style	: none;
+}
+
+#meta a {
+	color		: #444;
+}
+
+#meta li a:hover {
+	border-bottom	: 1px solid #555;
+}
+
+#meta li li a:hover {
+	border			: 0;
+}
+
+.buttons {
+	/*float		: right;*/
+}
+
+.buttons li {
+	display		: inline;
+}
+
+#content {
+}
+
+#content textarea {
+	width		: 100%;
+	margin-bottom	: 10px;
 }
 
 
@@ -208,6 +293,7 @@ li.place div.editable {
 }
 
 #intro #info ul {
+	clear		: both;
 	list-style	: none;
 	padding-bottom	: 1em;
 }
@@ -505,9 +591,7 @@ form.full fieldset .checkboxes select {
 
 
 /* Form Buttons */
-.bt_edit {
-        display: none;
-}
+
 .button {
 	background	: #e2e2e2 url('../images/button_bg.gif') 0 0 repeat-x;
 	border		: 1px solid #bbb;
@@ -538,8 +622,6 @@ form .label_permissions {
 
 /* Edit in Place */
 
-
-
 .editable_set {
 	border		: 1px solid transparent;
 	border-width: 1px 0;
@@ -554,27 +636,56 @@ form .label_permissions {
 	border-color: #DDD;
 }
 
+.editable_set .bt_edit {
+	display: none;
+}
+
+
+.icon_text_button_set {
+	list-style	: none;
+	float		: right;
+}
+
+.icon_text_button_set li {
+	display		: inline;
+	overflow	: hidden;
+}
+
+a.icon_button,
+a.icon_text_button {
+	background-repeat	: no-repeat;
+	color		: #222;
+	float		: left;
+	font-size	: .9em;
+	min-height	: 16px;
+	margin		: 1px 0 0 15px;
+	padding		: 0 0 0 20px;
+	overflow	: hidden;
+	text-transform	: uppercase;
+}
+
 a.icon_button {
-	display		: none;
 	float		: right;
 	height		: 16px;
-	margin		: 1px 0 0 3px;
-	overflow	: hidden;
+	margin-left	: 3px;
+	padding		: 0;
 	text-indent	: -2000px;
 	width		: 16px;
 }
 
-a.icon_button:hover {
+
+a.icon_button:hover,
+a.icon_text_button:hover {
 	background-position	: 0 -100px;
 }
 
-a.bt_edit {
-	background	: url('../images/icon_edit.gif') 0 0 no-repeat;
-}
+a.bt_edit        { background-image: url('../images/icon_edit.gif');        }
+a.bt_permissions { background-image: url('../images/icon_permissions.gif'); }
+a.bt_rss         { background-image: url('../images/icon_rss.gif');         }
+a.bt_pdf         { background-image: url('../images/icon_pdf.gif');         }
 
-.editable a.bt_permissions {
-	background	: url('../images/icon_permissions.gif') 0 0 no-repeat;
-	display		: block;
+.icon_text_button_set {
+	float		: right;
 }
 
 .editing a.icon_button {
