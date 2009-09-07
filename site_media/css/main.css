@@ -9,7 +9,7 @@ HUB PLUS 2009
 	width		: 620px;
 }
 
-#main #page_title {
+#page_header #page_title {
 	clear		: both;
 	font-size	: 2.6em;
 	font-weight	: normal;
@@ -293,6 +293,7 @@ li.place div.editable {
 }
 
 #intro #info ul {
+	clear		: both;
 	list-style	: none;
 	padding-bottom	: 1em;
 }

@@ -2,16 +2,20 @@
 <p>Control access to things in the {{current_class}} {{current.id}}</p>
 
 <div id="permissions_tabs" class="tabbed section yui-navset">
-  {% for obj_type, headers, slider_info  in sliders %}
+
   <ul class="tabbed_navigation yui-nav">
+    {% for obj_type, headers, slider_info  in sliders %}
     <li class="selected" >
       <a href="#{{obj_type.lower}}">
 	<span>{{obj_type}}{% if forloop.first %}{% else %}s{% endif %}</span>
       </a>
     </li>
+	{% endfor %}
   </ul>
 
+
   <div class="tabbed_content yui-content" id="permissions">
+  {% for obj_type, headers, slider_info  in sliders %}
     <div id="{{obj_type.lower}}-area">
 	<table class="permissions_slider" id="{{obj_type}}-permissions">
 	  <tbody>
@@ -41,9 +45,11 @@
 	</table>
       </div>
     </div>
-  </div>
+  {% endfor %}
+
 </div>
 
-{% endfor %}
+
+
 
   
