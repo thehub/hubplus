@@ -10,8 +10,6 @@ from django.contrib.contenttypes import generic
 import datetime
 
 
-
-
 class Location(models.Model):
     class Meta:
         db_table = u'location'
@@ -186,6 +184,8 @@ try :
         display_name = models.CharField(max_length=255)
         created = models.DateTimeField(auto_now_add=True)
 
+
+       # address = models.CharField(max_length=80)
         place = models.ForeignKey(Location)
     #if place is Hub Islington then set member of toHub Islington group if level is member
     #if level is host, set member of to Hub Islington Host Group.
