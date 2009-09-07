@@ -5,7 +5,7 @@ var initTabView = function (ele) {
 
 var permission_ready = function () {
     var all_sliders = jq('#permission_sliders');
-    jq('.permission_button').overlay({expose: {
+    jq('.bt_permissions').overlay({expose: {
 					  color: '#000000',
 					  opacity: 0.5
 				      },

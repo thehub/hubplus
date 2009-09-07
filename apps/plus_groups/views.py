@@ -81,9 +81,8 @@ def group(request, group, template_name="plus_groups/group.html"):
 
 def groups(request, template_name='plus_groups/groups.html'):
     
-
     groups = TgGroup.objects.plus_filter(request.user, level='member')
-    groups = [g for g in groups]
+    #groups = [g for g in groups]
 
     create = False
 
@@ -111,9 +110,12 @@ def join(request, group,  template_name="plus_groups/group.html"):
     group.join(request.user)
     return HttpResponseRedirect(reverse('group',args=(group.id,)))
 
-    
+
+@login_required
+@secure_resource(TgGroup, required_interfaces=['Apply','Viewer'])
 def apply(request, group_id):
-    pass
+    group.apply(request.user)
+    return HttpResponseRedirect(reverse('apply_to_group',args=(group.id)))            
     
 
 @login_required

@@ -1,43 +1,42 @@
 {% load i18n %}
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" dir="{% if LANGUAGE_BIDI %}rtl{% else %}ltr{% endif %}" xml:lang="{{ LANGUAGE_CODE }}" lang="{{ LANGUAGE_CODE }}">
- 
+
 <head>
+
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
 	<title>{% if site_name %}{{ site_name }} : {% endif %}{% if head_title %}{{head_title}}{% endif %}</title>
-	<!--[if IE]><style>
-		div { zoom: 1; } /* trigger hasLayout */
-	</style><![endif]-->
-	
+
+	<!-- STYLES -->
 	<link rel="stylesheet" href="{{ MEDIA_URL }}css/site.css"        type="text/css" media="all" />
 	<link rel="stylesheet" href="{{ MEDIA_URL }}css/header.css"      type="text/css" media="all" />
 	<link rel="stylesheet" href="{{ MEDIA_URL }}css/main.css"        type="text/css" media="all" />
 	<link rel="stylesheet" href="{{ MEDIA_URL }}css/serendipity.css" type="text/css" media="all" />
 	<link rel="stylesheet" href="{{ MEDIA_URL }}css/footer.css"      type="text/css" media="all" />
+	<link rel="stylesheet" href="{{ MEDIA_URL }}css/tabview.css"     type="text/css" media="all" />
+	<link rel="stylesheet" href="{{ MEDIA_URL }}css/overlay.css"     type="text/css" media="all" />
 	<link rel="stylesheet" href="{{ MEDIA_URL }}themes/{{PROJECT_THEME}}/css/theme.css" type="text/css" media="all" />
-	
-	<link rel="stylesheet" href="{{ MEDIA_URL }}css/tabview.css"      type="text/css" media="all" />
-	<link rel="stylesheet" href="{{ MEDIA_URL }}css/overlay.css"      type="text/css" media="all" />
+	<!--[if IE]><style>
+		div { zoom: 1; } /* trigger hasLayout */
+	</style><![endif]-->
 
+	<!-- SCRIPT: JQUERY -->
 	<script src="{{ MEDIA_URL }}js/jquery.min.js" type="text/javascript" charset="utf-8"></script>
 	<script src="{{ MEDIA_URL }}js/jq.noconflict.js" type="text/javascript" charset="utf-8"></script>
-	
-	<link rel="stylesheet" href="{{ MEDIA_URL }}css/jquery.autocomplete.css" type="text/css" media="screen"/>
-	<!-- <link rel="stylesheet" href="{{ MEDIA_URL }}css/ui.tabs.css" type="text/css" media="screen"/> -->
-	<link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}css/tabview.css" />
-	
 	<script src="{{ MEDIA_URL }}js/ui.core.js" type="text/javascript" charset="utf-8"></script>
-	<!--<script src="{{ MEDIA_URL }}js/ui.tabs.js" type="text/javascript" charset="utf-8"></script>-->
 	<script src="{{ MEDIA_URL }}js/effects.core.js" type="text/javascript" charset="utf-8"></script>
 	<script src="{{ MEDIA_URL }}js/effects.highlight.js" type="text/javascript" charset="utf-8"></script>
 	<script src="{{ MEDIA_URL }}js/jquery.bgiframe.min.js" type="text/javascript" charset="utf-8"></script>
 	<script src="{{ MEDIA_URL }}js/jquery.autocomplete.min.js" type="text/javascript" charset="utf-8"></script>
 	<script src="{{ MEDIA_URL }}js/tools.overlay-1.0.4.min.js" type="text/javascript" charset="utf-8"></script>
 	<script src="{{ MEDIA_URL }}js/json2.js" type="text/javascript" charset="utf-8"></script>
+	<script src="{{ MEDIA_URL }}js/ui.accordion.js" type="text/javascript" charset="utf-8"></script>
+	<link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}css/jquery.autocomplete.css" media="screen"/>
+	<link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}js/yui/build/logger/assets/skins/sam/logger.css" />
 	<link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}js/yui/build/editor/assets/skins/sam/editor.css" />
 	<!-- <link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}js/yui/build/fonts/fonts-min.css" /> -->
-	<link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}js/yui/build/logger/assets/skins/sam/logger.css" />
-	
+
+	<!-- SCRIPT: YUI -->
 	<script type="text/javascript" src="{{ MEDIA_URL }}js/yui/build/yahoo-dom-event/yahoo-dom-event.js"></script> 
 	<script type="text/javascript" src="{{ MEDIA_URL }}js/yui/build/element/element-min.js"></script>  
 	<script type="text/javascript" src="{{ MEDIA_URL }}js/yui/build/container/container_core-min.js"></script> 
@@ -50,97 +49,109 @@
 	<script type="text/javascript" src="{{ MEDIA_URL }}js/yui/build/selector/selector-min.js"></script> 
 	<script type="text/javascript" src="{{ MEDIA_URL }}js/yui/build/tabview/tabview-min.js"></script>
 	<script type="text/javascript" src="{{ MEDIA_URL }}js/yui/build/history/history-min.js"></script>
-	
 	<link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}css/list-edit-table.css" />
 	<script src="{{ MEDIA_URL }}js/json2.js"></script>
 	<script src="{{ MEDIA_URL }}js/jquery.confirm.js" type="text/javascript" charset="utf-8"></script>
 	<script src="{{ MEDIA_URL }}js/jquery.confirm-1.1.js" type="text/javascript" charset="utf-8"></script>
+
+	<!-- SCRIPT: SITE -->
 	<script src="{{ MEDIA_URL }}js/list-editor.js" type="text/javascript" charset="utf-8"></script>
 	<script src="{{ MEDIA_URL }}js/hubcms.js" type="text/javascript" charset="utf-8"></script>
 	<script src="{{ MEDIA_URL }}js/tab_hist.js" type="text/javascript" charset="utf-8"></script>
-<!--	<script src="{{ MEDIA_URL }}js/Jit/jit-yc.js" type="text/javascript" charset="utf-8"></script>
-	
+	<!--<script src="{{ MEDIA_URL }}js/Jit/jit-yc.js" type="text/javascript" charset="utf-8"></script>
 	<link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}css/jit.css">      
-	
 	<script src="{{ MEDIA_URL }}js/jit-example.js" type="text/javascript" charset="utf-8"></script>-->
 	<script src="{{ MEDIA_URL }}js/hubplus.js" ></script> 
-	
 	<link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}js/yui/build/slider/assets/skins/sam/slider.css" />
 	<link rel="stylesheet" href="{{ MEDIA_URL }}css/permissions.css" type="text/css" media="all" />
 	<script src="{{ MEDIA_URL }}js/yui/build/slider/slider-min.js"></script>
-	
-<!--	<script src="{{ MEDIA_URL }}js/plus_libs/html.js"></script>
+	<!--<script src="{{ MEDIA_URL }}js/plus_libs/html.js"></script>
 	<script src="{{ MEDIA_URL }}js/plus_libs/utils.js"></script> -->
-	<script src="{{ MEDIA_URL }}js/plus_permissions/views.js"></script> 
-	
+
+	<script src="{{ MEDIA_URL }}js/plus_permissions/views.js"></script> 	
 	<script src="{{ MEDIA_URL }}js/pinax_libs/comments.js"></script>
 	
-	<!-- Put your "on load" functions that fire it all off in here -->
-	<script src="{{ MEDIA_URL }}js/ready.js"></script>    
-	
-	{% if LANGUAGE_BIDI %}
-	<style type="text/css" media="screen">
-	  div.right_panel {
-			float: left; /* hotfix for sidebar */
-		}
-	</style>
-	{% endif %}
+	<!-- SCRIPT: SITE READY (Put your "on load" functions that fire it all off in here) -->
+	<script src="{{ MEDIA_URL }}js/ready.js"></script>
+
 	{% block extra_head_base %}
 	{% block extra_head %}{% endblock %}
 	{% endblock %}
 
 </head>
 
-
 <body>
-  <iframe id="yui-history-iframe" src="assets/blank.html"></iframe> 
-  <input id="yui-history-field" type="hidden" /> 
-  <div class="overlay" id="overlay"> 
-    <div id="overlay_content"></div>
-  </div>
 
-  <!-- overlayed element, which is styled with external stylesheet --> 
-    <div id='wrapper'>
-      <!-- header -->
-      {% block header %}{% endblock %}
-      <!-- main -->
-      <div id='main'>
-        {% block main %}
-	<h2>{{head_title}}</h2>
-	<p class='disabled'>{{head_title_status}} - <span class="label_time">{{head_title_status.time}}</span></p>
-	  
-	<div id='site_wide_messages'>
-          {% if site_wide_announcements %}
-          <div id="site_wide_announcements">
-            <ul>
-              {% for announcement in site_wide_announcements %}
-              <li>
-                <a href="{{ announcement.get_absolute_url }}">{{ announcement }}</a> -
-                <a href="{% url announcement_hide announcement.pk %}?next={{ request.path }}">{% trans "Hide announcement" %}</a>
-              </li>
-              {% endfor %}
-            </ul>
-          </div>
-          {% endif %}
+	<iframe id="yui-history-iframe" src="assets/blank.html"></iframe> 
+	<input id="yui-history-field" type="hidden" /> 
+	<div class="overlay" id="overlay"> 
+		<div id="overlay_content"></div>
+	</div><!-- overlayed element, which is styled with external stylesheet --> 
+
+	<!-- wrapper -->
+	<div id='wrapper'>
+
+
+		<!-- header -->
+		{% block header %}{% endblock %}
+		<!-- end header -->
+			
+		<!-- main -->
+		<div id='main'>
+			{% block main %}
+
+			<!-- site_wide_messages -->
+			<div id='site_wide_messages'>
+				{% if site_wide_announcements %}
+				<div id="site_wide_announcements">
+					<ul>
+						{% for announcement in site_wide_announcements %}
+						<li>
+							<a href="{{ announcement.get_absolute_url }}">{{ announcement }}</a> -
+							<a href="{% url announcement_hide announcement.pk %}?next={{ request.path }}">{% trans "Hide announcement" %}</a>
+						</li>
+						{% endfor %}
+					</ul>
+				</div>
+				{% endif %}
+			</div>
+			<!-- end site_wide_messages -->
+
+			<!-- page_header -->
+			<div id="page_header">
+				<h2 id="page_title">{{head_title}}</h2>
+				<p class='disabled'>{{head_title_status}} - <span class="label_time">{{head_title_status.time}}</span></p>
+			</div>
+			<!-- end page_header -->
+
+			<!-- body -->
+			<div id='body'>
+				{% block body %}{% endblock %}
+			</div>
+			<!-- end body -->
+
+			<!-- side_bar -->
+			<div id='side_bar'>
+				{% block side_bar %}{% endblock %}
+			</div>
+			<!-- end side_bar -->
+
+			{% endblock %}
+		</div>
+		<!-- end main -->
+			
+		<!-- footer -->
+		<div id='footer'>
+			{% block footer %} {% endblock %}
+		</div>
+		<!-- end footer -->
+
+		{% block extra_body_base %}{% endblock %}
+
+
 	</div>
-	
-        <div id='body'>
-          {% block body %}{% endblock %}
-        </div>
+	<!-- end wrapper -->
 
-        <div id='side_bar'>
-          {% block side_bar %}{% endblock %}
-        </div>
-          {% endblock %}
-      </div>
-      
-      <!-- footer -->
-      <div id='footer'>
-	{% block footer %} {% endblock %}
-      </div>
-    </div>
-    {% block extra_body_base %}{% endblock %}
-  </div>
 </body>
-  
+	
 </html>

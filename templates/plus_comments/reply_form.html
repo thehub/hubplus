@@ -1,3 +1,5 @@
+{% load threadedcomments %}
+
 <div class="response">
   <p>Reply to {{person_name}}:</p>
   {% get_free_threaded_comment_form as form %}
