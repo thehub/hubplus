@@ -1,3 +1,6 @@
+
+
+
 /* Layout */
 
 body {
@@ -7,7 +10,7 @@ body {
 
 /* Elements */
 
-h2 {
+#page_title {
 	color		: #5a0000;
 }
 
@@ -30,5 +33,3 @@ a {
 #header #main_navigation li a {
 	color		: #f7efef;
 }
-
-
