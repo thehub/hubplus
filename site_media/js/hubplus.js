@@ -39,7 +39,7 @@ var editing = function () {
 	var edit_event = 'click';
 	var clickToEdit = "Click To Edit";
 	var page_name = jq('#page_path_name').attr('class');
-	inplace_editor(element_id, 'field/' + object_type + '/' + object_prop + '/', {callback: function (form, val) {
+	inplace_editor(element_id, "/lib/attribute/" + object_id + '/' + object_type + '/' + object_prop + '/', {callback: function (form, val) {
 	    return [{name: 'value', value: val}];
 	    },
             object_type: object_type,
@@ -51,7 +51,7 @@ var editing = function () {
             widget_name: element_id,
             property: object_prop,
             value: jq('#' + element_id).html(),
-            loadTextURL:  'field/' + object_type + '/' + object_prop + '/?default=' + encodeURIComponent(jq(ele).html())
+            loadTextURL: '/lib/attribute/' + object_id + '/' + object_type + '/' + object_prop + '/?default=' + encodeURIComponent(jq(ele).html())
 	});
     });
 };

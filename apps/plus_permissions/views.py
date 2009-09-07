@@ -81,14 +81,17 @@ def patch_in_profiles(request):
 @json_view
 def move_sliders(request, json, current):
     """json is of the form, {interface:[agent_class, agent_id]}
+    This should be properly secured by doing everything through permissionable objects on the current resource. i.e. without getting the security context.
     """
     sec_context = current._inner.get_security_context()
     for interface, agent_tuple in json.iteritems():
         cls = ContentType.objects.get(model=agent_tuple[0].lower()).model_class()
         agent = cls.objects.get(id=agent_tuple[1])
         sec_context.move_slider(agent, interface, request.user)
-    json = {'message':'success'}
-    HttpResponse(json, mimetype='application/json')
+    json = {'message':'success',
+            'id': agent.id,
+            'classname':cls.__name__}
+    return json
 
 
 @secure_resource(obj_schema={'current':'any'})

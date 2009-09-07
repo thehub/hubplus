@@ -110,7 +110,7 @@ AgentDefaults = {'public':
                           { 'defaults' : {'Viewer':'anonymous_group',
                                           'Editor':'context_agent',
                                           'Unknown': 'context_agent'},
-                            'constraints':[]
+                            'constraints':['Viewer>=Editor', 'Viewer<$anonymous_group', 'Editor>=$context_agent', 'Editor>=EmailAddressViewer']
                             },
                       },
                  

@@ -88,7 +88,7 @@ class TgGroupViewer:
     display_name = InterfaceReadProperty
 
     group_type = InterfaceReadProperty
-    
+    address = InterfaceReadProperty    
 
     apply = InterfaceCallProperty
     leave = InterfaceCallProperty

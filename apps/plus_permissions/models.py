@@ -244,12 +244,31 @@ class SecurityContext(models.Model):
          """
          type_name = typ.__name__
          constraints = self.get_constraints(type_name)
+         interpreted_constraints = {}
+         slider_agents = self.get_slider_agents()
+         sad = dict(slider_agents)
+         for constraint in constraints:
+             arg1, arg2, op = interpret_constraint(constraint)
+             if arg1.startswith('$'):
+                 arg1 = serialize_agent(sad[arg1[1:]].obj)
+                 interpreted_constraints.setdefault(arg2, [])
+                 interpreted_constraints[arg2].append([stringify(reverse(op)), arg1])
+             elif arg2.startswith('$'):
+                 arg2 = serialize_agent(sad[arg2[1:]].obj)
+                 interpreted_constraints.setdefault(arg1, [])
+                 interpreted_constraints[arg1].append([stringify(op), arg2])
+             else:
+                 interpreted_constraints.setdefault(arg1, [])
+                 interpreted_constraints[arg1].append([stringify(op), arg2])
+                 interpreted_constraints.setdefault(arg2, [])
+                 interpreted_constraints[arg2].append([stringify(reverse(op)), arg1])
+
          options = SliderOptions[typ]['InterfaceOrder']
          if 'ManagePermissions' in options:
              if not has_access(agent=user, security_context=self, interface='SetManagePermissions'):
                  options.remove('ManagePermissions')
          interface_levels = [(interface, self.get_slider_level_json(type_name + '.' + interface)) for interface in options ]
-         return {'constraints': constraints,
+         return {'constraints': interpreted_constraints,
                  'interface_levels': interface_levels}
          
      def get_slider_level_json(self, interface):
@@ -328,6 +347,31 @@ def interpret_constraint(constraint):
     if '>' in constraint:
         arg1, arg2 = constraint.split('>')
         return (arg1.strip(), arg2.strip(), operator.gt)
+
+def serialize_agent(arg2):
+    is_agent(arg2)
+    return "$" + arg2.__class__.__name__ + "-" + str(arg2.id)
+
+def stringify(op):
+    if op == operator.ge:
+        return '>='
+    if op == operator.le:
+        return '<='
+    if op == operator.lt:
+        return '<'
+    if op == operator.gt:
+        return '>'
+
+def reverse(op):
+    if op == operator.ge:
+        return operator.le
+    if op == operator.le:
+        return operator.ge
+    if op == operator.gt:
+        return operator.lt
+    if op == operator.lt:
+        return operator.gt
+
 
 class SecurityTag(models.Model) :
     interface = models.CharField(max_length=100)
