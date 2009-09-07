@@ -3,12 +3,15 @@
 <script type="text/javascript">
 function show_reply_form(comment_id, url, person_name) {
     var comment_reply = jq('#' + comment_id);
+    {% get_free_threaded_comment_form as form %}
+
     var to_add = jq( new Array(
     '<div class="response"><p>Reply to ' + person_name + ':</p>',
     '<form method="POST" action="' + url + '">',
     '<ul>',  '{{ form.as_ul|oneline }}',
     '<li><input type="submit" value="Submit Comment" /></li>',
     '</ul>', '</form>', '</div>').join(''));
+    console.log(to_add);
     to_add.css("display", "none");
     comment_reply.after(to_add);
     to_add.slideDown(function() {
