@@ -83,14 +83,17 @@ def move_sliders(request, json, current):
     """json is of the form, {interface:[agent_class, agent_id]}
     This should be properly secured by doing everything through permissionable objects on the current resource. i.e. without getting the security context.
     """
+    type_name = request.POST['type_name']
     sec_context = current._inner.get_security_context()
+    slider_levels = {}
     for interface, agent_tuple in json.iteritems():
         cls = ContentType.objects.get(model=agent_tuple[0].lower()).model_class()
         agent = cls.objects.get(id=agent_tuple[1])
-        sec_context.move_slider(agent, interface, request.user)
-    json = {'message':'success',
-            'id': agent.id,
-            'classname':cls.__name__}
+        slider_levels[interface] = agent
+
+    sec_context.move_sliders(slider_levels, type_name, request.user)
+
+    json = {'message':'success'}
     return json
 
 
