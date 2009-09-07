@@ -6,6 +6,7 @@
 {% load uni_form %}
 {% load plus_tags %}
 {% load editable_attribute %}
+{% load threadedcommentstags %}
 
 {% block body %}
       
@@ -53,7 +54,7 @@
 	    <ul id="members_list">
 	      {% for member in members %}
 	      <li><a href="{% url profile_detail member.username %}" 
-		     class="thumb small"><img src="../../site_media/images/member_id.jpg" />
+		     class="thumb small">{% avatar user 40 %}
 		  {% if member.display_name %}{{member.display_name}}{% else %}{{member.username}}{%endif%}</a>
 	      </li>
 	      {% endfor %}
@@ -100,6 +101,8 @@
 <!--div id="section_tab_navigation" class="section"-->
   {% include "plus_groups/tabbed_subs.html" %}
 <!--/div-->  
+
+
 {% endblock %}
 
 
