@@ -61,6 +61,8 @@ class UserViewer:
     pk = InterfaceReadProperty
     username = InterfaceReadProperty
     get_profile = InterfaceCallProperty
+    get_display_name = InterfaceCallProperty
+
 
 UserInterfaces = {
     'Viewer':UserViewer

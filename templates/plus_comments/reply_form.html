@@ -1,12 +1,12 @@
 {% load threadedcomments %}
 
 <div class="response">
-  <p>Reply to {{person_name}}:</p>
-  {% get_free_threaded_comment_form as form %}
+  <p>Reply to <a href="">{{target_user.name}}</a>:</p>
   
   <form method="POST" action="{{url}}">
     <ul>
-      {{ form.as_ul | oneline }}
+      <input type="hidden" name="parent" id="parent" value="{{parent_id}}"/>
+      <li><input name="comment" value=""/></li>
       <li><input type="submit" value="Submit Comment" /></li>
     </ul>
   </form>

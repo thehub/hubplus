@@ -66,7 +66,7 @@ def group(request, group, template_name="plus_groups/group.html"):
     
 
     return render_to_response(template_name, {
-            "head_title" : "%s" % group.display_name,
+            "head_title" : "%s" % group.get_display_name(),
             "head_title_status" : dummy_status,
             "group" : TemplateSecureWrapper(group),
             "members" : members,

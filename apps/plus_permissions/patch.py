@@ -5,7 +5,7 @@ from apps.plus_permissions.models import type_interfaces_map, SliderOptions
 from apps.plus_permissions.interfaces import add_creator_interface, add_manage_permissions_interface, secure_wrap
 
 from django.db.models.signals import post_save
-from apps.plus_lib.models import add_edit_key
+from apps.plus_lib.models import add_edit_key, add_get_display_name
 
 
 # Add the create_* interfaces and sliders 
@@ -23,6 +23,7 @@ for module in types.__all__:
     security_patch(content_type, child_types)
     add_create_interfaces(content_type, child_types)
     add_edit_key(content_type)
+    add_get_display_name(content_type)
 
     type_interfaces_map[content_type.__name__]['ManagePermissions'] = add_manage_permissions_interface()
 
