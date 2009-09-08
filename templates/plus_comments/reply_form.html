@@ -1,12 +1,14 @@
-{% load threadedcomments %}
+
 
 <div class="response">
-  <p>Reply to <a href="">{{target_user.name}}</a>:</p>
+  <p>Replying to {{target_user.name}}</p>
   
   <form method="POST" action="{{url}}">
     <ul>
-      <input type="hidden" name="parent" id="parent" value="{{parent_id}}"/>
-      <li><input name="comment" value=""/></li>
+      <input type="hidden" value="{{request.user.username}}" name="name" />
+      <input type="hidden" value="{{request.user.email_address}}" name="email" />
+      <input type="hidden" value="{{parent_id}}" name="parent_id" />
+      <li> <textarea id="id_comment" name="comment" cols="40" rows="10"></textarea></li>
       <li><input type="submit" value="Submit Comment" /></li>
     </ul>
   </form>

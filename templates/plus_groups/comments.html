@@ -4,23 +4,40 @@
 <div id="comments" class="page_content">
 
     <h3>Comments on This Group:</h3>
-    {% get_free_threaded_comment_tree for group as tree %}
+    {% get_threaded_comment_tree for group as tree %}
     {% for comment in tree %}
+    <div class='one_comment'>
         <div style="margin-left: {{ comment.depth }}em;" class="comment">
-            <a href="{{ comment.website }}">{{ comment.name }}</a> said:<br/>
+            <a href="{% url profile_detail comment.user.username%}">{{ comment.user.get_display_name }}</a> said:<br/>
             {% auto_transform_markup comment %}
         </div>
-<a id="c{{ comment.id }}" href="javascript:show_reply_form('c{{ comment.id }}','{% get_free_comment_url group comment %}','{{ comment.name }}')">Reply</a>
+<a id="c{{comment.id }}" href="javascript:show_reply_form('c{{ comment.id }}','{% get_comment_url group comment %}','{{ comment.name }}')">Reply</a>
+
+    </div>
     {% endfor %}
 
     <p>Reply to Original:</p>
-    <form method="POST" action="{% get_free_comment_url group %}">
+    <form method="POST" action="{% get_comment_url group %}">
         <ul>
-            {% get_free_threaded_comment_form as form %}
-            {{ form.as_ul }}
-            <li><input type="submit" value="Submit Comment" /></li>
+	  <li>
+	    <label for="id_name">Name: {{request.user.get_display_name}}</label>
+	    <input id="id_name" type="hidden" name="name" value="{{request.user.username}}"/>
+	  </li>
+	  <li>
+	    <label for="id_email">E-mail address: {{request.user.email_address}}</label>
+	    <input id="id_email" type="hidden" name="email" value="{{request.user.email_address}}"/>
+	  </li>
+	  <li>
+	    <label for="id_comment">comment:</label>
+	    <textarea id="id_comment" name="comment" cols="40" rows="10"></textarea>
+	  </li>
+	  <li>
+	    <label for="id_markup">Markup:</label>
+	    <select id="id_markup" name="markup">
+	    </select>
+	  </li>
+	  <li><input type="submit" value="Submit Comment" /></li>
         </ul>
     </form>
 
-<p>END OF COMMENTS</p>
 </div>
