@@ -4,15 +4,14 @@ var initTabView = function (ele) {
 };
 
 var permission_ready = function () {
-    var all_sliders = jq('#permission_sliders');
     jq('.bt_permissions').overlay({expose: {
-					  color: '#000000',
-					  opacity: 0.5
-				      },
-				      effect: 'apple',
-				      onLoad: function () {
-					  load_sliders(this.getTrigger());
-				      }
+				       color: '#000000',
+				       opacity: 0.5
+				   },
+				   effect: 'apple',
+				   onLoad: function () {
+				       load_sliders(this.getTrigger());
+				   }
     });
 };
 
@@ -29,6 +28,7 @@ var load_sliders = function (perm_button) {
 
 	jq.getJSON(load_url, function(json){
 	    jq('#overlay_content').html(json.html);
+	    var all_sliders = jq('#permission_sliders');
             initTabView(all_sliders.get(0));
 	    var sliders = {};
 	    jq.each(json.sliders, function(index, slider_set){
@@ -65,6 +65,9 @@ var load_sliders = function (perm_button) {
 		var constraints = sliders[obj_class]['constraints'];
 		var interface_limits_map = {};
 		var follow_position_map = {};
+		var slider_change = {};
+		var in_motion = [];
+		var slider_limits_map = {};
 
 		slider_group.find('.slider_holder').each( function (i, ele) {
 		    var slider_holder = jq(ele);
@@ -76,6 +79,7 @@ var load_sliders = function (perm_button) {
 		    slider.animate = false;
 		    var level_agent = interface_levels[_interface.split('_')[1]];
 		    var slider_limits = {min:top, max:bottom, followers:[]};
+		    slider_limits_map[_interface.split('_')[1]] = slider_limits;
 		    var locked = 0;
 
 		    var follow_position = function (position, iface, slideEnd) {
@@ -85,15 +89,17 @@ var load_sliders = function (perm_button) {
 			if (initialising==0 && position >= agent_row.data('slider').middle) {
 			    if (!slideEnd) {
 				locked = 1;
-				console.log("set slider locked " + _interface.split('_')[1] + "when updated from " + iface + "with change");
 			    } else {
 				locked = 0;
-				console.log("set slider unlocked " + _interface.split('_')[1] + "when updated from " + iface + "with slideEnd");
 			    }
 			    slider.setValue(position);
 
+			} else {
+			    locked = 0;
+			    if (slider.getValue() != agent_row.data('slider').middle) {
+				slider.setValue(agent_row.data('slider').middle);
+			    }
 			}
-			//change interface_levels here!
 		    };
 
 		    var initialize_limits = function () {
@@ -136,7 +142,6 @@ var load_sliders = function (perm_button) {
 			var max = slider_limits.max;
 			slider.thumb.setYConstraint(min, max, 1);
 			return slider_limits;
-			// on end_slide make all changes in 1 request - keep a registry of changes, wait for all to complete (each pops from a list and push a result to a list), when list empty while loop makes request
 
 			// evaluate constraints transitively - calculate min agent (lowest) based on absolute constraints of followers and transitive followers
 
@@ -167,30 +172,34 @@ var load_sliders = function (perm_button) {
 		    var row = jq('#agent-{class}-{id}'.supplant({'class':level_agent.classname, 'id':level_agent.id}));
 		    slider.setValue(row.data('slider').middle);
 		    initialising += 1;
+
 		    slider.subscribe("slideStart", function() {
-			console.log("sliderStart");
-			return false;
+			if (jq.inArray(_interface, in_motion) == -1) {
+			   in_motion[in_motion.length] = _interface;
+			}
 		    });
+
 		    slider.subscribe("change", function(offsetFromStart) {
 			//should move dependent sliders here too
-			console.log("heer");
-
 			jq.each(slider_limits.followers, function (i, iface) {
 			    follow_position_map[iface](offsetFromStart, _interface);
 			});
 			do_colouring(offsetFromStart);
 			return false;
 		    });
+
 		    var saved = function (json, status) {
-			interface_levels[_interface.split('_')[1]] = {id:json.id, classname:json.classname};
-			jq.each(slider_limits.followers, function (i, iface) {
-				interface_limits_map[iface]();
-			    }
-			);
-			//give user feedback! console.log(response);
+			//this should be on success...deal with failure
+			jq.each(slider_change, function (iface, agent){
+			    interface_levels[iface.split('.')[1]] = {id:agent[1], classname:agent[0]};
+			    jq.each(slider_limits_map[iface.split('.')[1]].followers, function (i, intface) {
+				interface_limits_map[intface]();
+			    });
+			});
+			slider_change = {};
+			//give user feedback!
 		    };
 		    slider.subscribe("slideEnd", function () {
-			console.log("heersdf");
 			var offsetFromStart = slider.getValue();
 			if (locked === 1) {
 			    return false;
@@ -209,11 +218,13 @@ var load_sliders = function (perm_button) {
 					  });
 					//should set dependent sliders here and post their data too if changed.
 					  var iface = slider_holder.attr('id').split('-')[1].replace('_', '.');
-					  var slider_change = {};
 					  slider_change[iface] = [row.agent_class, row.agent_id];
-					  row.middle = offsetFromStart;
-					  jq.post(change_slider, {'current_id':resource_id, 'current_class':resource_class, 'json':JSON.stringify(slider_change)}, saved, 'json');
+					  in_motion.splice(in_motion.indexOf(_interface), 1);
+					  if (in_motion.length == 0) {
+					      jq.post(change_slider, {'type_name':obj_class, 'current_id':resource_id, 'current_class':resource_class, 'json':JSON.stringify(slider_change)}, saved, 'json');
+					  }
 				      } else {
+					  in_motion.splice(in_motion.indexOf(_interface), 1);
 					  initialising -= 1;
 				      }
 				  }
