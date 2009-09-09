@@ -1,3 +1,8 @@
+/*
+PLUS: THEME
+Mental Health & Psychosocial Network
+*/
+
 /* Layout */
 
 body {
@@ -6,6 +11,11 @@ body {
 
 
 /* Elements */
+
+#page_title {
+	color		: #0b439f;
+}
+
 a {
 	color		: #0b439f;
 }

@@ -1,49 +1,55 @@
 <h2>Permissions</h2>
 <p>Control access to things in the {{current_class}} {{current.id}}</p>
 
+<!-- permissions_tabs -->
 <div id="permissions_tabs" class="tabbed section yui-navset">
-  {% for obj_type, headers, slider_info  in sliders %}
-  <ul class="tabbed_navigation yui-nav">
-    <li class="selected" >
-      <a href="#{{obj_type.lower}}">
-	<span>{{obj_type}}{% if forloop.first %}{% else %}s{% endif %}</span>
-      </a>
-    </li>
-  </ul>
 
-  <div class="tabbed_content yui-content" id="permissions">
-    <div id="{{obj_type.lower}}-area">
-	<table class="permissions_slider" id="{{obj_type}}-permissions">
-	  <tbody>
-	  <tr class="headings">
-	    <th class="group_column">Group</th>
-	    {% for interface in headers %}
-	    <th class="attribute_column">{{interface}}</th>
-	    {% endfor %}
-	  </tr>
-	  {% for agent_ref, agent_class, agent_data in slider_info %}
-	  <tr id="agent-{{agent_class}}-{{agent_ref.id}}" {% if forloop.first %}class="first"{% endif %}{% if forloop.last %}class="last"{% endif %}>
-	    <td class="group_label">
-	      {{agent_ref.display_name}}
-	    </td>
-	    {% for css_class, selected, interface in agent_data %}
-	    <td class="setting {{css_class}} {{obj_type}}_{{interface}}" tabindex="-1">   <!--active inactive and limited -->
-	      {% if forloop.parentloop.first %}
-	      <div class="slider_holder" id="holder-{{obj_type}}_{{interface}}">
-		<div class="slider" id="slider-{{obj_type}}_{{interface}}"></div>
-	      </div>
-	      {% endif %}
-	    </td>  
-	    {% endfor %}
-	  </tr>
-	  {% endfor %}
-	  </tbody>
-	</table>
-      </div>
-    </div>
-  </div>
+	<ul class="tabbed_navigation yui-nav">
+		{% for obj_type, headers, slider_info	in sliders %}
+		<li class="selected" >
+			<a href="#{{obj_type.lower}}">
+				<span>{{obj_type}}{% if forloop.first %}{% else %}s{% endif %}</span>
+			</a>
+		</li>
+	{% endfor %}
+	</ul>
+
+	<div class="tabbed_content yui-content" id="permissions">
+	{% for obj_type, headers, slider_info	in sliders %}
+		<div id="{{obj_type.lower}}-area">
+			<table class="permissions_slider" id="{{obj_type}}-permissions">
+				<tbody>
+				<tr class="headings">
+					<th class="group_column">Group</th>
+					{% for interface in headers %}
+					<th class="attribute_column">{{interface}}</th>
+					{% endfor %}
+				</tr>
+				{% for agent_ref, agent_class, agent_data in slider_info %}
+				<tr id="agent-{{agent_class}}-{{agent_ref.id}}" {% if forloop.first %}class="first"{% endif %}{% if forloop.last %}class="last"{% endif %}>
+					<td class="group_label">
+						{{agent_ref.display_name}}
+					</td>
+					{% for css_class, selected, interface in agent_data %}
+					<td class="setting {{css_class}} {{obj_type}}_{{interface}}" tabindex="-1">	 <!--active inactive and limited -->
+						{% if forloop.parentloop.first %}
+						<div class="slider_holder" id="holder-{{obj_type}}_{{interface}}">
+							<div class="slider" id="slider-{{obj_type}}_{{interface}}"></div>
+						</div>
+						{% endif %}
+					</td>	
+					{% endfor %}
+				</tr>
+				{% endfor %}
+				</tbody>
+			</table>
+		</div>
+	</div>
+	{% endfor %}
+
 </div>
+<!-- end permissions_tabs -->
 
-{% endfor %}
 
-  
+
+	

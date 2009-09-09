@@ -38,7 +38,9 @@ urlpatterns = patterns('',
     (r'^plus_tags/', include('plus_tags.urls')),
 
     (r'^groups/', include('plus_groups.urls')),                                                                                                         
-  
+    (r'^plus_wiki/', include('plus_wiki.urls')),
+    (r'^plus_comments/', include('plus_comments.urls')),
+
     (r'^blog/', include('blog.urls')),
     (r'^tags/', include('tag_app.urls')),
     (r'^invitations/', include('friends_app.urls')),

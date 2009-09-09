@@ -11,9 +11,43 @@ class DisplayStatus :
 
 
 def add_edit_key(cls) :
-   def edit_key(self) :
-       return '%s-%s-' % (self.__class__.__name__,self.pk)
-   cls.edit_key = edit_key
+    def edit_key(self) :
+        return '%s-%s-' % (self.__class__.__name__,self.pk)
+    cls.edit_key = edit_key
+
+def add_get_display_name(cls) :
+    # using get_display_name rather than display name because some model classes already have attributes called 
+    # display_name and we don't want to hide it 
+    def get_display_name(self) :
+        try : 
+            self.first_name
+            self.last_name
+            if self.first_name and self.last_name :
+                return '%s %s' % (self.first_name, self.last_name)
+        except :
+            pass
+        
+        try :
+            if self.display_name :
+                return self.display_name
+        except :
+            pass
+ 
+        try :
+            if self.name :
+                return self.name
+        except :
+            pass
+        
+        try:
+            if self.group_name :
+                return self.group_name
+        except :
+            pass
+        
+        return '(class: %s, pk: %s)' % (self.__class__.__name__, self.pk)
+
+    cls.get_display_name = get_display_name
 
 
 def extract(d,key) :

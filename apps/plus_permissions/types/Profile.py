@@ -3,7 +3,7 @@
 from django.db.models.manager import *
 
 from apps.plus_permissions.models import SecurityTag
-from apps.plus_permissions.interfaces import InterfaceReadProperty, InterfaceWriteProperty
+from apps.plus_permissions.interfaces import InterfaceReadProperty, InterfaceWriteProperty, InterfaceCallProperty
 
 from apps.profiles.models import Profile
 from apps.plus_permissions.models import SetSliderOptions, SetAgentDefaults, SetPossibleTypes, SetSliderAgents
@@ -26,6 +26,7 @@ class ProfileViewer:
 
     display_name = InterfaceReadProperty
     title = InterfaceReadProperty
+    get_display_name = InterfaceCallProperty
 
 
 class ProfileEmailAddressViewer:

@@ -17,28 +17,6 @@ show all - members, hosts, groups ? use | separator consistently
 wiki page design - in html
 search results / tag filtering - do design work with Tom/Phil
 
-Fri
----
-     - hard slider limits - min or max - on initialisation (relative or absolute) 
-                                      - constraint color for hard max 
-       		 	              - relative - update hard slider max, 
-                                                 - register lower to higher. 
-						 --> on pull higher if the one we are moving is the higher - also set the low
-                                                 - if dependency can't move down, neither can the higher
-                                      - constraint color for  hard min)
-     - slider group,  view only mode
-     - read json and display user feedback
-
-     - view should go through sec context target obj
-     - user/profile - edit where? 
-     - customize permissions + apply to group
-     
-     - manage permissions slider for owner
-
-     - single slider UI
-
-     - labels and display details (visible/invisible)
-     - error messages - if save failed
 
 
 Thus - Sun
@@ -53,8 +31,36 @@ Basics of:
 - upload
 
 
-Monday 7th
----------- 
+Wiki
+----
+HP 0.9
+------
+http://sct.sphene.net/wiki/show/Start/
+http://code.google.com/p/django-wikiapp/
+
+
+- Model + Editing
+  i) content, title, name
+
+- title to name
+- Preview functionality
+
+- autocomplete wiki linking (this group first then related groups, then all groups), with create page functionality - see HubKnowledge
+- file upload to page and attachment (see hubknowledge) - image previews (cropping)  http://pypi.python.org/pypi/django-generic-images/0.15a
+http://pypi.python.org/pypi/django-attachments/0.3.1
+- comments (enable)
+- permissions control
+- editor - image inclusion - flickr plugin - autoadjusting height - yui 
+
+*http://code.google.com/p/fullhistory/*
+*http://code.google.com/p/django-versioning/*
+http://code.google.com/p/django-reversion
+
+
+http://docs.djangoproject.com/en/dev/howto/outputting-pdf/
+
+
+
 Tags *Tom*
       - Tag is a permissionable type - separate tag object from instances of objects tagged? tag(type, value) <-- tag_context(tag, tagged_for) <-- tag_item(tagged_by, generic_reference)
       - Tags get created in an agent - the tagged_for agent - need create_Tag for that agent
@@ -99,8 +105,22 @@ misc
 
 
 
-- Tom wiki + group tests - security_context and context/container
 
+Permissions
+-----------
+     - slider group,  view only mode
+     - read json and display user feedback
+
+     - view should go through sec context target obj
+     - user/profile - edit where? 
+     - customize permissions + apply to group
+     
+     - manage permissions slider for owner
+
+     - single slider UI
+
+     - labels and display details (visible/invisible)
+     - error messages - if save failed
 
 
 
@@ -213,28 +233,6 @@ http://wiki.services.openoffice.org/wiki/PyUNO_bridge + openoffice - to extract 
 http://docs.djangoproject.com/en/dev/ref/generic-views/#django-views-generic-list-detail-object-list
 http://code.google.com/p/django-pagination/
 
-Wiki
-----
-HP 0.9
-------
-http://sct.sphene.net/wiki/show/Start/
-http://code.google.com/p/django-wikiapp/
-
-
-- Page editing - wysiwyg
-- page title to page name
-- tweet - description of changes (enable tweeting)
-- Preview functionality
-- autocomplete wiki linking (this group first then related groups, then all groups), with create page functionality - see HubKnowledge
-- file upload to page and attachment (see hubknowledge) - image previews (cropping)  http://pypi.python.org/pypi/django-generic-images/0.15a
-http://pypi.python.org/pypi/django-attachments/0.3.1
-- comments (enable)
-- permissions control
-- editor - image inclusion - flickr plugin - autoadjusting height - yui 
-
-
-http://hg.piranha.org.ua/django-history/
-http://docs.djangoproject.com/en/dev/howto/outputting-pdf/
 
 Events
 ------
@@ -278,3 +276,5 @@ Financial + User data export HP 0.9
 2) Patch script for hubspace database to add the extra fields
 
 
+useful?
+http://code.djangoproject.com/wiki/AuditTrail
