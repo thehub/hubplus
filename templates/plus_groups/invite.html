@@ -1,0 +1,46 @@
+{% extends "site_base.html" %}
+
+{% load i18n %}
+{% load avatar_tags %}
+{% load app_plugins %}
+{% load uni_form %}
+
+{% block body %}
+
+  <form class="full uniForm" id="invite_non_member_form" method="post" action="{% url invite_to_group group.id %}">
+
+    <h4>{% trans "Invites" %}</h4>
+    <p>{% blocktrans %}Please enter the username or email of someone to invite to {% endblocktrans %}{{group.get_display_name}}</p>
+    <fieldset>
+      <ul>
+	<li>
+	  {{ form.plain_text.errors }}
+	  <p><label for="plain_text"><span class="required">*</span> {% trans "Username or Email" %}</label>
+	  <input  id="plain_text" name="plain_text" class="text" type="text" /></p>
+	</li>
+
+      </ul>
+    </fieldset>
+    <input class="submit button" type="submit" value="{% trans "Invite &raquo;" %}" />
+    
+  </form>
+
+        
+
+{% endblock %}
+
+
+{% block extra_body %}
+    {% load jquery_validation %}
+    {% include_validation %}
+    <script type="text/javascript">
+        $(function(){
+	    $("#physical_hub").checked(function() {
+	      $("#which_hub").class("disabled");
+	    });
+            $('#signup_form').validate('{% url signup_form_validate %}', {type: 'table', fields: ['username'], dom: $('#id_username'), event: 'change'});
+            $("#id_username").focus();
+	    
+        });
+    </script>
+{% endblock %}
