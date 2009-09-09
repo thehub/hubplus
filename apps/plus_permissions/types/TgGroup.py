@@ -95,7 +95,7 @@ class TgGroupViewer:
     get_users = InterfaceCallProperty
     get_no_members = InterfaceCallProperty
     get_admin_group = InterfaceCallProperty
-
+    get_display_name = InterfaceCallProperty
 
 class TgGroupEditor: 
     pk = InterfaceReadProperty

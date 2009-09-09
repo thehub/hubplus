@@ -3,6 +3,8 @@ var widget_map = {
                'find_out':'text_wysiwyg',
 	       'project_stage':'text_wysiwyg',
 	       'place': 'gmap'
+    },
+    'TgGroup':{'about':'text_wysiwyg',
     }
 };
 
