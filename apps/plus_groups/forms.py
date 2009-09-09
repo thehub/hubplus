@@ -7,6 +7,7 @@ from django.utils.hashcompat import sha_constructor
 from django.utils.translation import ugettext_lazy as _, ugettext
 
 from django.contrib.sites.models import Site
+from django.contrib.auth.models import User
 
 from apps.plus_lib.utils import make_name
 from apps.plus_groups.models import GROUP_TYPES, TgGroup
@@ -19,7 +20,6 @@ PERMISSION_OPTIONS = (
     (u'private', u'Private'),
 
 )
-
 
 
 class TgGroupForm(forms.Form):
@@ -40,9 +40,7 @@ class TgGroupForm(forms.Form):
         self.cleaned_data['display_name'] = name
         self.cleaned_data['group_name'] = group_name
         return group_name
-
-
-
+    
     def save(self, user, site):
         group = site.create_TgGroup(
             group_name=self.cleaned_data['group_name'],
@@ -56,3 +54,19 @@ class TgGroupForm(forms.Form):
         return group
     
 
+
+class TgGroupMemberInviteForm(forms.Form) :
+    plain_text = forms.CharField()
+    
+    def clean_plain_text(self) :
+        tt = self.cleaned_data['plain_text']
+        try :
+            user = User.objects.get(username=tt)
+        except :
+            print "%s is not a username" % tt
+            try :
+                user = User.objects.get(email_address=tt)
+            except :
+                print "%s is not an email_address" % tt
+                raise forms.ValidationError('Not recognised as either email or existing username')
+        self.cleaned_data['user'] = user

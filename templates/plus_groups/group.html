@@ -85,7 +85,9 @@
   </div>
   <ul id="actions" class="link_list">
     <li class="first"><a href="#">Message members</a></li>
-    <li><a href="#">Invite members</a></li>
+    {% if group.invite %}
+    <li><a href="{% url invite_to_group group.id %}">Invite members</a></li>
+    {% endif %}
     {% if join %}
     <li><a href="{% url join_group group.id %}">Join Group</a></li>
     {% endif %}

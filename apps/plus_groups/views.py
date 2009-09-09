@@ -21,10 +21,24 @@ from apps.plus_permissions.interfaces import PlusPermissionsNoAccessException, S
 from apps.plus_permissions.types.TgGroup import *
 from django.contrib.auth.decorators import login_required
 
-from apps.plus_groups.forms import TgGroupForm
+from apps.plus_groups.forms import TgGroupForm, TgGroupMemberInviteForm
 
 from apps.plus_permissions.api import secure_resource, site_context
 from apps.plus_permissions.default_agents import get_anon_user, get_site
+
+
+from messages.models import Message
+def message_user(sender, recipient, subject, body) :
+    m = Message(subject=subject, body=body, sender = sender, recipient=recipient)
+    m.save()
+
+
+    #parent_msg = models.ForeignKey('self', related_name='next_messages', null=True, blank=True, verbose_name=_("Parent message"))
+    #sent_at = models.DateTimeField(_("sent at"), null=True, blank=True)
+    #read_at = models.DateTimeField(_("read at"), null=True, blank=True)
+    #replied_at = models.DateTimeField(_("replied at"), null=True, blank=True)
+    #sender_deleted_at = models.DateTimeField(_("Sender deleted at"), null=True, blank=True)
+    #recipient_deleted_at = models.DateTimeField(_("Recipient deleted at"), null=True, blank=True)
 
 
 
@@ -124,7 +138,26 @@ def leave(request, group, template_name="plus_groups/group.html"):
     group.leave(request.user)
     return HttpResponseRedirect(reverse('group',args=(group.id,)))
 
+@login_required
+@secure_resource(TgGroup, required_interfaces=['Invite', 'Viewer'])
+def invite(request, group, template_name='plus_groups/invite.html'):
+    if request.POST :
+        form = TgGroupMemberInviteForm(request.POST)
+        if form.is_valid() :
+            invitee = form.cleaned_data['user']
+            message_user(request.user, invitee, 'Invitation to join %s' % group.get_display_name(), """You have been invited to join %s. <a href="">Click here to accept</a>""" % group.get_display_name())
+            message_user(request.user, request.user, "Invitation sent", """You have invited %s to join %s""" % (invitee.get_display_name(), group.get_display_name()))
+            invitee.message_set.create(message="""You have been invited to join %s. <a href="">Click here to accept</a>""")
 
+            return HttpResponseRedirect(reverse('group',args=(group.id,)))
+
+            
+    else :
+        form = TgGroupMemberInviteForm()
+    return render_to_response(template_name,{
+            'form' : form,
+            'group' : group,
+            },context_instance=RequestContext(request))
 
 
 @login_required
@@ -137,9 +170,7 @@ def create_group(request, site, template_name="plus_groups/create_group.html"):
             print form.errors
         else :
             group = form.save(request.user, site)
-            
             return HttpResponseRedirect(reverse('group', args=(group.id,)))
-
     else :
         form = TgGroupForm()
     
