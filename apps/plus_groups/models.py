@@ -184,6 +184,7 @@ try :
         display_name = models.CharField(max_length=255)
         created = models.DateTimeField(auto_now_add=True)
 
+        address = models.CharField(max_length=255, null=True)
 
        # address = models.CharField(max_length=80)
         place = models.ForeignKey(Location)
