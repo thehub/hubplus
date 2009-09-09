@@ -23,10 +23,10 @@
   {% endif %}
 </div>
 <!-- end site_wide_messages -->
-
+<form>
 <!-- page_header -->
 <div id="page_header">
-  <h2>JSLKAFJAOISFJIO {{head_title}}</h2>
+  <h2>{{head_title}}</h2>
   <p class='disabled'>{{head_title_status}} - <span class="label_time">{{head_title_status.time}}</span></p>
 </div>
 <!-- end page_header -->
@@ -36,6 +36,7 @@
   {% block body %}{% endblock %}
 </div>
 <!-- end body -->
+</form>
 
 <!-- side_bar -->
 <div id='side_bar'>

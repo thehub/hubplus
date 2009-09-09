@@ -420,8 +420,17 @@ class SecurityTag(models.Model) :
 
 
 
+
+def secure_filter(agent, objects, interface):
+    """ Don't do 1000 requests if we have 1000 objects in a list and want to know which ones we can view or search.
+    user --> agents --> security context --> security tag <-- interface
+    resources --> security_contexts --> security tags <-- interface
+    """
+    pass
+
+
 def has_access(agent, resource, interface) :
-    """Does the agent have access to this interface in this resource
+    """Does the agent have access to this interface in this resource. All the special casing below will make it hard to refactor this method and for instance make it work for a whole lot of objects
     """
     
     # make sure we've stripped resource from any SecureWrappers
@@ -456,6 +465,7 @@ def has_access(agent, resource, interface) :
     # agents held per user to allow many queries very quickly. 
     allowed_agents = set([a.obj for a in allowed_agents.all()])
     
+
     if get_anonymous_group() in allowed_agents: 
         # in other words, if this resource is matched with anyone, we don't have to test 
         #that user is in the "anyone" group
@@ -467,7 +477,7 @@ def has_access(agent, resource, interface) :
             return True
 
     if agent.__class__ == AnonymousUser :
-        # we clearly shouldn't be seeing this 
+        # we clearly shouldn't be seeing this - sure but is this a security issue - t.s.
         return False
 
     agents_held = agent.get_enclosure_set()
