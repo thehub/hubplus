@@ -310,6 +310,7 @@ TgGroup.get_enclosures = get_enclosures
 
 
 def get_enclosure_set(self) :
+    #XXX this needs to stop recursive group membership leading to continual recursion - currently this is implemented in is_member_of
     es = set([self])
     for e in self.get_enclosures() :
         if e != self :

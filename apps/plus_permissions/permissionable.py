@@ -20,10 +20,9 @@ class PermissionableManager(models.Manager):
     # if a permission_agent is passed, only get or filter items which 
     # pass a security check
     def plus_filter(self, p_user, **kwargs): 
-        return (secure_wrap(resource, p_user)  
-                for resource in super(self.__class__, self).filter(**kwargs)
-                if has_access(p_user, resource, '%s.%s'%(resource.__class__.__name__,'Viewer')))
-        
+        wrapped_resources = [secure_wrap(resource, p_user, interface_names=['Viewer'])  for resource in super(self.__class__, self).filter(**kwargs)]
+        return [resource for resource in wrapped_resources if resource._inner.__class__.__name__ + '.Viewer' in resource._interfaces]
+
     def plus_get(self, p_user, **kwargs) :
         a = super(self.__class__,self).get(**kwargs)
         return secure_wrap(a, p_user)
