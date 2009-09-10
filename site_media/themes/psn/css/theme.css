@@ -3,6 +3,7 @@ PLUS: THEME
 Mental Health & Psychosocial Network
 */
 
+
 /* Layout */
 
 body {
@@ -12,8 +13,9 @@ body {
 
 /* Elements */
 
-#page_title {
-	color		: #0b439f;
+#page_title,
+.tabbed ul.tabbed_navigation li.selected a {
+	color		: #0A446C;
 }
 
 a {
@@ -34,4 +36,19 @@ a {
 
 #header #main_navigation li a {
 	color		: #e8eef3;
+}
+
+
+/* Icons */
+
+a.bt_edit        { background-image: url('../images/icon_edit.gif');        }
+a.bt_permissions { background-image: url('../images/icon_permissions.gif'); }
+a.bt_rss         { background-image: url('../images/icon_rss.gif');         }
+a.bt_pdf         { background-image: url('../images/icon_pdf.gif');         }
+
+
+/* Tags */
+
+.tag_list a.tag:hover {
+	background	: #0A446C;
 }
