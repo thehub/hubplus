@@ -26,6 +26,8 @@ from apps.plus_groups.forms import TgGroupForm, TgGroupMemberInviteForm
 from apps.plus_permissions.api import secure_resource, site_context
 from apps.plus_permissions.default_agents import get_anon_user, get_site
 
+from apps.plus_contacts.models import WAITING_USER_SIGNUP, MemberInvite
+
 
 from messages.models import Message
 def message_user(sender, recipient, subject, body) :
@@ -145,10 +147,16 @@ def invite(request, group, template_name='plus_groups/invite.html'):
         form = TgGroupMemberInviteForm(request.POST)
         if form.is_valid() :
             invitee = form.cleaned_data['user']
-            message_user(request.user, invitee, 'Invitation to join %s' % group.get_display_name(), """You have been invited to join %s. <a href="">Click here to accept</a>""" % group.get_display_name())
-            message_user(request.user, request.user, "Invitation sent", """You have invited %s to join %s""" % (invitee.get_display_name(), group.get_display_name()))
-            invitee.message_set.create(message="""You have been invited to join %s. <a href="">Click here to accept</a>""")
+            invite = MemberInvite(invited=invitee, invited_by=request.user, group=group.get_inner(), status=WAITING_USER_SIGNUP)
+            message = """%s is inviting you to join the %s group. <a href="%s">Click here to accept</a> 
+%s
+""" % (request.user.get_display_name, group.get_display_name, invite.make_accept_url(), form.cleaned_data['special_message'])
+            invite.message = message
+            invite.save()
 
+            message_user(request.user, invitee, 'Invitation to join %s' % group.get_display_name(), message)
+            message_user(request.user, request.user, "Invitation sent", """You have invited %s to join %s""" % (invitee.get_display_name(), group.get_display_name()))
+            
             return HttpResponseRedirect(reverse('group',args=(group.id,)))
 
             

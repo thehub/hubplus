@@ -183,3 +183,20 @@ def create_notifications(sender, instance, **kwargs):
     
 if "notification" in settings.INSTALLED_APPS:
     post_save.connect(create_notifications,sender=Application)
+
+
+
+class MemberInvite(models.Model) :
+    # Actually, it's useful to have a generic invited member, 
+    invited = models.ForeignKey(User, related_name='invited_member')
+    invited_by = models.ForeignKey(User, related_name='member_is_invited_by')
+    group = models.ForeignKey(TgGroup)
+    message = models.TextField()
+    status = models.IntegerField()    
+    
+    def make_accept_url(self) :
+        url = attach_hmac("/plus_groups/%s/add_member/%s/" % (group.id, invited.username), self.invited_by)
+        return 'http://%s%s' % (site_root, url)
+
+
+
