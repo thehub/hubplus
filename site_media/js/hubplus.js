@@ -4,7 +4,7 @@ var widget_map = {
 	       'project_stage':'text_wysiwyg',
 	       'place': 'gmap'
     },
-    'TgGroup':{'about':'text_wysiwyg',
+    'TgGroup':{'description':'text_wysiwyg',
     }
 };
 

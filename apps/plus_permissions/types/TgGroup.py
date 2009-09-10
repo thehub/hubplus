@@ -83,13 +83,13 @@ TgGroup.get_admin_group = get_admin_group
 
 class TgGroupViewer: 
     pk = InterfaceReadProperty
-    about = InterfaceReadProperty
+    description = InterfaceReadProperty
     place = InterfaceReadProperty
     website = InterfaceReadProperty
     display_name = InterfaceReadProperty
 
     group_type = InterfaceReadProperty
-    address = InterfaceReadProperty    
+    address = InterfaceReadProperty
 
     apply = InterfaceCallProperty
     leave = InterfaceCallProperty
@@ -100,11 +100,10 @@ class TgGroupViewer:
 
 class TgGroupEditor: 
     pk = InterfaceReadProperty
-    about = InterfaceWriteProperty
+    description = InterfaceWriteProperty
     place = InterfaceWriteProperty
     website = InterfaceWriteProperty
     display_name = InterfaceWriteProperty
-    
 
 class TgGroupJoin:
     pk = InterfaceReadProperty
