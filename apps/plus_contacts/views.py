@@ -137,8 +137,4 @@ def site_invite(request, site, template_name='plus_contacts/invite_non_member.ht
             }, context_instance=RequestContext(request))
                               
 
-@login_required
-@secure_resource(TgGroup, required_interfaces=['Inviter','Viewer'])    
-def group_invite(request, group, template_name='plus_groups/invite.html', **kwargs):
-    pass
     

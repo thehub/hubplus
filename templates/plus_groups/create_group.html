@@ -15,14 +15,12 @@
   <fieldset>
     <ul>
       <li>
+	<label for="name"><span class="required">*</span> {% trans "Name" %}</label>
+	<input  id="name" name="name" class="text" type="text" />
 	{{form.name.errors}}
-	<p>
-	  <label for="name"><span class="required">*</span> {% trans "Name" %}</label>
-	  <input  id="name" name="name" class="text" type="text" />
-	</p>
       </li>
       <li>
-	{{form.group_type.errors}}
+
 	<label for="group_type"><span class="required">*</span> {% trans "Type" %}</label>
 	<select id="group_type" name="group_type">
 	  <option value="" readonly="readonly" selected="selected">Please select a group type...</option>
@@ -31,11 +29,13 @@
 	  <option value="project">Project</option>
 	  <option value="internal">Internal</option>
 	</select>
+	{{form.group_type.errors}}
       </li>
       <li>
-	{{form.about.errors}}
-	<label for="about"><span class="required">*</span> Description <span class="extra">what is this group about?</span></label>
-	<textarea id="about" name="about" rows="5"></textarea>
+	{{form.description.errors}}
+	<label for="descripton"><span class="required">*</span> Description <span class="extra">what is this group about?</span></label>
+	<textarea id="description" name="description" rows="5"></textarea>
+	
       </li>
       <li>
 	{{form.location.errors}}
@@ -43,15 +43,15 @@
 	<input  id="location" class="text" name="location" type="text" />
 	<br /><span style="color:red">(Use existing google maps here)</span>
       </li>
-      <li>
+      <li class="disabled">
 	<label for="about"><span class="required">*</span> What is the group about?</label>
 	<span style="color:red">(Use existing tag functionality here)</span>
       </li>
-      <li>
+      <li class="disabled">
 	<label for="skills">What are the group's skills?</label>
 	<span style="color:red">(Use existing tag functionality here)</span>
       </li>
-      <li>
+      <li class="disabled">
 	<label for="needs">What are the group's needs?</label>
 	<span style="color:red">(Use existing tag functionality here)</span>
       </li>
@@ -165,6 +165,6 @@
 
 </div>
 
-
+{{form.error}}
 
 {% endblock %}

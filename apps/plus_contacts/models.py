@@ -194,8 +194,8 @@ class MemberInvite(models.Model) :
     message = models.TextField()
     status = models.IntegerField()    
     
-    def make_accept_url(self) :
-        url = attach_hmac("/plus_groups/%s/add_member/%s/" % (group.id, invited.username), self.invited_by)
+    def make_accept_url(self, site_root) :
+        url = attach_hmac("/groups/%s/add_member/%s/" % (self.group.id, self.invited.username), self.invited_by)
         return 'http://%s%s' % (site_root, url)
 
 

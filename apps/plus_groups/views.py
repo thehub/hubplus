@@ -28,6 +28,7 @@ from apps.plus_permissions.default_agents import get_anon_user, get_site
 
 from apps.plus_contacts.models import WAITING_USER_SIGNUP, MemberInvite
 
+from apps.plus_permissions.proxy_hmac import hmac_proxy
 
 from messages.models import Message
 def message_user(sender, recipient, subject, body) :
@@ -150,7 +151,7 @@ def invite(request, group, template_name='plus_groups/invite.html'):
             invite = MemberInvite(invited=invitee, invited_by=request.user, group=group.get_inner(), status=WAITING_USER_SIGNUP)
             message = """%s is inviting you to join the %s group. <a href="%s">Click here to accept</a> 
 %s
-""" % (request.user.get_display_name, group.get_display_name, invite.make_accept_url(), form.cleaned_data['special_message'])
+""" % (request.user.get_display_name(), group.get_display_name(), invite.make_accept_url(request.get_host()), form.cleaned_data['special_message'])
             invite.message = message
             invite.save()
 
@@ -166,6 +167,14 @@ def invite(request, group, template_name='plus_groups/invite.html'):
             'form' : form,
             'group' : group,
             },context_instance=RequestContext(request))
+
+
+@hmac_proxy
+@secure_resource(TgGroup,["ManageMembers"])
+def add_member(request, group, username, **kwargs) :
+    user = get_object_or_404(User, username=username)
+    group.add_member(user)
+    return HttpResponseRedirect(reverse('group',args=(group.id)))
 
 
 @login_required
@@ -186,6 +195,7 @@ def create_group(request, site, template_name="plus_groups/create_group.html"):
             "head_title" : "Create New Group",
             "head_title_status" : "",
             "group" : form,
+            "form" : form,
 
             }, context_instance=RequestContext(request))
 
