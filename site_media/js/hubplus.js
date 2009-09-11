@@ -4,7 +4,7 @@ var widget_map = {
 	       'project_stage':'text_wysiwyg',
 	       'place': 'gmap'
     },
-    'TgGroup':{'about':'text_wysiwyg',
+    'TgGroup':{'description':'text_wysiwyg',
     }
 };
 
@@ -120,8 +120,27 @@ var setup_maps = function () {
 	create_map(jq(this), plot_point);
     });
 };
-
+var get_add_content = function (ele) {
+    jq('div.close').click(function () {
+	jq('#overlay_content').html("");
+    });
+    jq.get(ele.attr('href'), function(data, status) {
+	jq('#overlay_content').html(data);
+    });
+};
+var add_content = function () {
+    jq('.add_content').overlay({expose: {
+				   color:'#000000',
+				   opacity:0.5
+			       },
+			       effect:'apple',
+			       onLoad: function () {
+				   get_add_content(this.getTrigger());
+			       }
+    });
+};
 var profile_ready = function () {
+    add_content();
     editing();
     setup_tag_lists();
     if (jq('li.place .editable').length) {

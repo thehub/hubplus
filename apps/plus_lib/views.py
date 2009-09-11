@@ -1,9 +1,11 @@
 from django.http import HttpResponse
 from apps.plus_permissions.api import secure_resource
 from django.forms import ValidationError
-
+from apps.plus_groups.models import TgGroup
 from apps.profiles.forms import ProfileForm, HostInfoForm
 from apps.plus_groups.forms import TgGroupForm
+from django.shortcuts import render_to_response, get_object_or_404
+
 
 # Form classes which validate fields
 validation_mapping = {
@@ -21,7 +23,16 @@ def inner_objects(x) :
         return [x.user]
     # we may add more here if we find some
     return []
- 
+
+
+#@secure_resource()
+
+def add_content(request):
+    group_id = request.GET.get('group')
+    group = TgGroup.objects.plus_get(request.user, id=group_id)
+    print `group`
+    return render_to_response("plus_lib/add_content.html", {'group':group})
+
 @secure_resource(obj_schema={'object':'any'})
 def field(request, default='', **kwargs) :
     """This should be the generic "attribute" editor ... for any normal attribute, 

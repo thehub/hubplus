@@ -184,6 +184,7 @@ try :
         display_name = models.CharField(max_length=255)
         created = models.DateTimeField(auto_now_add=True)
 
+        address = models.CharField(max_length=255, null=True)
 
        # address = models.CharField(max_length=80)
         place = models.ForeignKey(Location)
@@ -194,8 +195,9 @@ try :
         path = models.CharField(max_length=120)
 
         child_groups = models.ManyToManyField('self', symmetrical=False, related_name='parent_groups')
-        
-        about = models.TextField('about', null=True, blank=True)
+       
+        #  getting rid of "about" as there's no data in it from hubspace and we're using "description"
+        #about = models.TextField('about', null=True, blank=True)
         group_type = models.CharField('type',max_length=10, choices=GROUP_TYPES)
     
         title = models.CharField(max_length=60)
@@ -309,6 +311,7 @@ TgGroup.get_enclosures = get_enclosures
 
 
 def get_enclosure_set(self) :
+    #XXX this needs to stop recursive group membership leading to continual recursion - currently this is implemented in is_member_of
     es = set([self])
     for e in self.get_enclosures() :
         if e != self :

@@ -37,21 +37,15 @@ class BadProxyUserException(Exception):
 def hmac_proxy(f) :
     def g(request, *args, **kwargs) :
         path = request.get_full_path()
-        print "in hmac_proxy decorator"
-        print "ZZZ %s" % path
         if path.find('hmac') > 0 :
-            print "zaza"
             confirmed, agent = confirm_hmac(request)
             if not confirmed :
                 print "BadProxyUserException %s, %s, %s"%(confirmed, agent, path)
                 raise BadProxyUserException("agent %s isn't confirmed by the hmac code" % request.GET['proxy'],
                                             request.GET['proxy'], path)
             else :
-                print "z"
                 request.old_user = request.user
-                print "z %s"%request.old_user
                 request.user = agent
-                print "z %s, %s"% (agent, request.user)
         return f(request, *args, **kwargs)
     return g
 

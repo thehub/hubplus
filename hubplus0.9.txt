@@ -9,7 +9,7 @@ User  *Tom*
       - message        
       - hostinfo
       - Regions
-
+      - links
 
 Jesson
 ------
@@ -79,9 +79,6 @@ Phil - application process - emails send out,
 
 Attribute Editing - Phil
 -----------------
-1. attribute editing on groups (make generic) + type attribute
-2. add edit key to all content types at patch time
-3. widget type map for group
 4. add location map
 
 Group - Resource - tag filters
