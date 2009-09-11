@@ -1,3 +1,7 @@
+Phil - should not show "invite link" if user doesn't have the invite interface
+
+Jesson - style (add new)
+
 User  *Tom*
       - image	 
       - permissions

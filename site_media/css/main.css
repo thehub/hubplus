@@ -2,6 +2,11 @@
 HUB PLUS 2009
 */
 
+/* Toms dirty nasty changes to be refactored by Jesson */
+.hidden {
+   display: none;
+}
+
 
 /* Main Generic */
 

@@ -189,3 +189,16 @@ def create_group(request, site, template_name="plus_groups/create_group.html"):
 def group_field(request, group, classname, fieldname, *args, **kwargs) :
     """ Get the value of one field from the group, so we can write an ajaxy editor """
     return one_model_field(request, p, fieldname, kwargs.get('default', ''), TgGroupForm)
+
+
+@login_required
+def autocomplete(request):
+    """filter groups to see which ones this user can add content too. Check that the user can create at least something on the groups that we autocomplete for them
+    """
+    user = request.user
+    q = request.GET['q']
+    limit = request.GET['limit']  
+    groups = TgGroup.objects.plus_filter(user, interface_names=['Viewer', 'CreateWikiPage'], required_interfaces=['CreateWikiPage'], all_or_any='ANY', display_name__istartswith=q, level__in=['host', 'member'], limit=6)
+
+    options = '\n'.join([group.display_name + '|' + str(group.id) for group in groups])
+    return HttpResponse(options)

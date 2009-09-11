@@ -11,13 +11,13 @@ var widget_map = {
 var editing = function () {
     tab_history('section_tab_navigation');
     jq('.more').click(function () {
-	var trunc = jq(this).parent().parent();
+	var trunc = jq(this).parent();
 	trunc.hide();
 	trunc.next().show();
 	return false;
     });
     jq('.less').click(function () {
-	var trunc = jq(this).parent().parent();
+	var trunc = jq(this).parent();
 	trunc.hide();
 	trunc.prev().show();
 	return false;
@@ -121,11 +121,31 @@ var setup_maps = function () {
     });
 };
 var get_add_content = function (ele) {
+    var overlay_content = jq('#overlay_content');
     jq('div.close').click(function () {
-	jq('#overlay_content').html("");
+    overlay_content.html("");
     });
     jq.get(ele.attr('href'), function(data, status) {
-	jq('#overlay_content').html(data);
+	overlay_content.html(data);
+	overlay_content.find('#change_group').click(function () {
+	    var auto_area = overlay_content.find('#auto_change_group');
+	    auto_area.show();
+	    auto_area.find('#autocomplete_group').autocomplete('/groups/autocomplete/',
+		{formatItem:function(item) {
+		     return item[0];
+		 },
+		    width: 175,
+		    matchSubset: false,
+		    selectFirst: true,
+		    max:6
+		}).result(function(event, data, formatted) {
+		    overlay_content.find('#group_display_name').html(data[0]);
+		    overlay_content.find('#group_input').val(data[1]);
+		    auto_area.hide();
+			auto_area.find('#autocomplete_group').val("");
+		});
+	    return false;
+	});
     });
 };
 var add_content = function () {

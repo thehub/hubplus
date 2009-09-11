@@ -34,7 +34,6 @@ def setup_hubs_security(group, creator):
         setup_group_security(group, group, admin_group, creator)
     elif group.level == 'host':
         setup_group_security(group, group, group, creator)
-    print `group`
     return group
 
 #@login_required
@@ -50,7 +49,13 @@ def patch_in_groups(request):
     admin_user = get_admin_user()
     for group in no_security:
         setup_hubs_security(group, admin_user)
-    return HttpResponse("patched %s hub group's security" % str(len(no_security)))
+    #this should have setup most of the host groups, but if not
+    no_security_host = [group for group in TgGroup.objects.filter(level='host') if not group.ref.all()] #e.g. hubspace superuser and hubspace api
+    for group in no_security_host:
+        create_reference(TgGroup, group)
+        setup_group_security(group, group, group, admin_user)
+
+    return HttpResponse("patched %s hub group's security" % str(len(no_security_host)))
 
 #@login_required
 def patch_in_profiles(request):
