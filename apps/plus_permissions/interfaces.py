@@ -120,8 +120,6 @@ class SecureWrapper:
         if not interface_names:
             interface_names = interface_map.keys()
         for iname in interface_names:
-            print `interface_map`
-            print `iname`
             interface = interface_map[iname]
             iface_name = self.get_inner().__class__.__name__ + '.' + iname
             #XXX we certainly shouldn't do an individual has access check for each interface but rather process them all at the same time

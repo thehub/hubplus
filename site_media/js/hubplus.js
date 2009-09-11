@@ -130,19 +130,27 @@ var get_add_content = function (ele) {
 	overlay_content.find('#change_group').click(function () {
 	    var auto_area = overlay_content.find('#auto_change_group');
 	    auto_area.show();
-	    auto_area.find('#autocomplete_group').autocomplete('/groups/autocomplete/',
-		{formatItem:function(item) {
-		     return item[0];
-		 },
-		    width: 175,
-		    matchSubset: false,
-		    selectFirst: true,
-		    max:6
-		}).result(function(event, data, formatted) {
-		    overlay_content.find('#group_display_name').html(data[0]);
-		    overlay_content.find('#group_input').val(data[1]);
-		    auto_area.hide();
-			auto_area.find('#autocomplete_group').val("");
+	    auto_area.find('#autocomplete_group').autocomplete('/groups/autocomplete/', {
+		formatItem:function(item, i, max) {
+		    return item.display_name;
+		},
+		width: 175,
+		matchSubset: false,
+		selectFirst: true,
+		max:6,
+		dataType: 'json',
+		parse: function(data) {
+		    var rows = new Array();
+		    for(var i=0; i<data.length; i++){
+			rows[i] = { data:data[i], value:data[i].id, result:data[i].display_name};
+		    }
+		    return rows;
+		}
+	    }).result(function(event, data, formatted) {
+		overlay_content.find('#group_display_name').html(data.display_name);
+		overlay_content.find('#group_input').val(data.id);
+		auto_area.hide();
+		    auto_area.find('#autocomplete_group').val("");
 		});
 	    return false;
 	});

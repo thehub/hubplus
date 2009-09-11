@@ -1,0 +1,64 @@
+{% load i18n %}
+
+<h2>{% trans "Add new" %}</h2>
+<div id="body">
+  <form class="full block">
+    <h4>{% trans "Create new content" %}<!--  in Sexy Salad Club  --><!-- <img style="margin-bottom: 5px;" src="images/dropdown.gif" /> --><!-- <a href="add_content2.html" style="font-size: .6em; line-height: 1em;">Change group/Hub</a> --></h4>
+    <!--<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>-->
+    <fieldset>
+      <ul>
+	<li>
+	  <label for="title"><span class="required">*</span>{% trans "Title" %}</label>
+	  <input  id="title" class="text" type="text" />
+	</li>
+      </ul>
+      <label><span class="required">*</span>{% trans "Add this to" %}</label>
+      <ul class="checkboxes">
+	<li>
+	  <div class="label_extended">
+	    <label><span id="group_display_name">{{group.display_name}}</span> – <a id="change_group" href="#">{% trans "Change group/Hub" %}</a></label>
+            <input name="group" value="{{group.id}}" id="group_input" type="hidden"  />
+	  </div> 
+	</li>
+	<li id="auto_change_group" class="hidden">
+	  <div class="label_extended">
+	    <label for="autocomplete">Choose group or Hub:</label>
+	    <input id="autocomplete_group" name="autocomplete" class="text" type="text" />
+	  </div>
+	</li>	
+      </ul>
+      <ul>
+	<li>
+	  <label><span class="required">*</span>{% trans "Content" %} </label>
+	  <ul class="checkboxes">
+	    <li>
+	      <input  id="a" name="permissions_set" class="radio" type="radio" checked="checked" />
+	      <label for="a">Page <span class="extra">{% trans "Create new wiki page" %}</span></label>
+	    </li>
+	    <li>
+	      <input  id="b" name="permissions_set" class="radio" type="radio" />
+	      <div class="label_extended">
+		
+		<label for="b">{% trans "File" %} <span class="extra">{% trans "Upload a file" %}</span></label>
+		<!--<input  id="b" class="file" type="file" />-->
+	      </div>
+	    </li>
+	    <li>
+	      <input  id="c" name="permissions_set" class="radio" type="radio" />
+	      <label for="c">{% trans "News" %}  <span class="extra">{% trans "Create a new posting" %}</span></label>
+	      
+	    </li>
+	    <li>
+	      <input  id="d" name="permissions_set" class="radio" type="radio" />
+	      <label for="d">{% trans "Events" %}  <span class="extra">{% trans "Create a new event" %}</span></label>
+	    </li>
+	  </ul>
+	</li>
+      </ul>
+      
+    </fieldset>
+    <input class="submit button" type="Submit" value="{% trans 'Create' %}" />
+  </form>
+  
+</div>
+
