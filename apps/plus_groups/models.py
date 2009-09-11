@@ -174,6 +174,7 @@ try :
         
         class Meta:
             db_table = u'tg_group'
+            ordering = ['display_name']
             
         #the reverse lookups "group_instance.users" does not seem to work - probably would need to modify ReverseManyRelatedObjectsDescriptor in django.db.models.fields.related to configure the create_many_related_manager differently
         users = models.ManyToManyField(User, through="User_Group") #through="User_Group" stops the add and remove functionality unnecessarily. Above we patch it back in. 
@@ -186,7 +187,6 @@ try :
 
         address = models.CharField(max_length=255, null=True)
 
-       # address = models.CharField(max_length=80)
         place = models.ForeignKey(Location)
     #if place is Hub Islington then set member of toHub Islington group if level is member
     #if level is host, set member of to Hub Islington Host Group.
@@ -198,7 +198,8 @@ try :
        
         #  getting rid of "about" as there's no data in it from hubspace and we're using "description"
         #about = models.TextField('about', null=True, blank=True)
-        group_type = models.CharField('type',max_length=10, choices=GROUP_TYPES)
+
+        group_type = models.CharField('type', max_length=10, choices=GROUP_TYPES)
     
         title = models.CharField(max_length=60)
         description = models.TextField()

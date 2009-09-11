@@ -17,7 +17,7 @@ class GenericTag(models.Model) :
 
 
 def tag_autocomplete(tagged_for, tagged, tag_type, tag_value, limit):
-    tags = get_tags(tag_type=tag_type, partial_tag_value=tag_value)
+    tags = get_tags(tag_type=tag_type, partial_tag_value=tag_value) # XXX ensure results are unique by keyword
     return [tag.keyword for tag in tags[0:10]]
 
 def get_tagged_resources(tag_type=None, tag_value=None, tagger=None):

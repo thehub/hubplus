@@ -5,6 +5,8 @@ from django.contrib.auth.models import UserManager, User
 
 from apps.plus_lib.models import extract
 from apps.plus_permissions.interfaces import secure_wrap
+from apps.plus_permissions.decorators import check_interfaces
+from apps.plus_permissions.exceptions import PlusPermissionsNoAccessException
 
 class MissingSecurityContextException(Exception): 
     def __init__(self, cls, security_context) :
@@ -13,15 +15,41 @@ class MissingSecurityContextException(Exception):
         self.msg = 'Missing %s when creating a %s' % (context,cls)
 
 
-
-from apps.plus_permissions.models import has_access
-
 class PermissionableManager(models.Manager):
     # if a permission_agent is passed, only get or filter items which 
     # pass a security check
-    def plus_filter(self, p_user, **kwargs): 
-        wrapped_resources = [secure_wrap(resource, p_user, interface_names=['Viewer'])  for resource in super(self.__class__, self).filter(**kwargs)]
-        return [resource for resource in wrapped_resources if resource._inner.__class__.__name__ + '.Viewer' in resource._interfaces]
+    def plus_filter(self, p_user, interface_names=None, required_interfaces=None, all_or_any='ALL', limit=None, **kwargs):
+        """XXX this should itself be evalutated "lazily" e.g. when indexed in the same way as the filter statement which it uses.
+        """
+        if not interface_names:
+            interface_names = ['Viewer']
+        resources = super(self.__class__, self).filter(**kwargs)
+        
+        if limit:
+            high_index = min(limit*2, resources.count())
+            secured = self.secure_results_set(resources[0:high_index], p_user, interface_names=interface_names, required_interfaces=required_interfaces, all_or_any=all_or_any)
+            while len(secured) < limit and high_index < resources.count():
+                offset = high_index
+                high_index = high_index * float(limit) / len(secured)
+                high_index = min(high_index, resources.count())
+                secured += self.secure_results_set(resources[offset:high_index]) 
+            return secured
+        else: 
+            return self.secure_results_set(resources, p_user, interface_names=interface_names, required_interfaces=required_interfaces, all_or_any=all_or_any)
+
+    def secure_results_set(self, resources, p_user, interface_names=None, required_interfaces=None, all_or_any='ALL'):
+        wrapped_resources = []
+        for resource in resources:
+            wrapped = secure_wrap(resource, p_user, interface_names=interface_names)
+            if required_interfaces:
+                try:
+                    check_interfaces(wrapped, resource.__class__, required_interfaces=required_interfaces, all_or_any=all_or_any)
+                except PlusPermissionsNoAccessException:
+                    continue
+            wrapped_resources.append(wrapped)
+            
+        return wrapped_resources
+
 
     def plus_get(self, p_user, **kwargs) :
         a = super(self.__class__,self).get(**kwargs)

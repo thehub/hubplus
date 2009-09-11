@@ -24,13 +24,16 @@ def inner_objects(x) :
     # we may add more here if we find some
     return []
 
+    
+
+def add_content_object(request):
+    pass
 
 #@secure_resource()
 
-def add_content(request):
+def add_content_form(request):
     group_id = request.GET.get('group')
     group = TgGroup.objects.plus_get(request.user, id=group_id)
-    print `group`
     return render_to_response("plus_lib/add_content.html", {'group':group})
 
 @secure_resource(obj_schema={'object':'any'})

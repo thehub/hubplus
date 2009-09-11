@@ -443,7 +443,8 @@ def has_access(agent, resource, interface) :
  
     # we're always interested in the security_context of this resource
 
-    context = resource.get_security_context()    
+    context = resource.get_security_context()
+
 
     # which agents have access?
 
