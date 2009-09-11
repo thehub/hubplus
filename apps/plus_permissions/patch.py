@@ -18,13 +18,12 @@ def add_create_interfaces(content_type, child_types):
 
 for module in types.__all__:
     print "patching %s"% module
-    content_type =  globals()[module].content_type
-    child_types  =  globals()[module].child_types
+    content_type = globals()[module].content_type
+    child_types = globals()[module].child_types
     security_patch(content_type, child_types)
     add_create_interfaces(content_type, child_types)
     add_edit_key(content_type)
     add_get_display_name(content_type)
-
     type_interfaces_map[content_type.__name__]['ManagePermissions'] = add_manage_permissions_interface()
 
 
