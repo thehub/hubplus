@@ -16,6 +16,7 @@ from django.core.urlresolvers import reverse
 
 from microblogging.models import Following
 from apps.plus_lib.models import DisplayStatus, add_edit_key
+from apps.plus_lib.parse_json import json_view
 from apps.plus_permissions.models import SecurityTag
 from apps.plus_permissions.interfaces import PlusPermissionsNoAccessException, SecureWrapper, secure_wrap, TemplateSecureWrapper
 from apps.plus_permissions.types.TgGroup import *
@@ -192,7 +193,8 @@ def group_field(request, group, classname, fieldname, *args, **kwargs) :
 
 
 @login_required
-def autocomplete(request):
+@json_view
+def autocomplete(request, j=None):
     """filter groups to see which ones this user can add content too. Check that the user can create at least something on the groups that we autocomplete for them
     """
     user = request.user
@@ -200,5 +202,5 @@ def autocomplete(request):
     limit = request.GET['limit']  
     groups = TgGroup.objects.plus_filter(user, interface_names=['Viewer', 'CreateWikiPage'], required_interfaces=['CreateWikiPage'], all_or_any='ANY', display_name__istartswith=q, level__in=['host', 'member'], limit=6)
 
-    options = '\n'.join([group.display_name + '|' + str(group.id) for group in groups])
-    return HttpResponse(options)
+    options = [{'display_name':group.display_name, 'id':str(group.id)} for group in groups]
+    return options
