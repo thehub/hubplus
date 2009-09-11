@@ -30,21 +30,9 @@ from apps.plus_contacts.models import WAITING_USER_SIGNUP, MemberInvite
 
 from apps.plus_permissions.proxy_hmac import hmac_proxy
 
-from messages.models import Message
-def message_user(sender, recipient, subject, body) :
-    m = Message(subject=subject, body=body, sender = sender, recipient=recipient)
-    m.save()
+from apps.plus_lib.utils import message_user
 
-
-    #parent_msg = models.ForeignKey('self', related_name='next_messages', null=True, blank=True, verbose_name=_("Parent message"))
-    #sent_at = models.DateTimeField(_("sent at"), null=True, blank=True)
-    #read_at = models.DateTimeField(_("read at"), null=True, blank=True)
-    #replied_at = models.DateTimeField(_("replied at"), null=True, blank=True)
-    #sender_deleted_at = models.DateTimeField(_("Sender deleted at"), null=True, blank=True)
-    #recipient_deleted_at = models.DateTimeField(_("Recipient deleted at"), null=True, blank=True)
-
-
-
+ 
 @secure_resource(TgGroup)
 def group(request, group, template_name="plus_groups/group.html"):
 
