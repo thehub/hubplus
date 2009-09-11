@@ -4,6 +4,9 @@
 {% load timezone_filters %}
 
 {% block body %} 
+    {% include "messages/submenu.html" %}
+
+ 
     <h1>{% trans "Deleted Messages" %}</h1>
     
     <table class="messages">
