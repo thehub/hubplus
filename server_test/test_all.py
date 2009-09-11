@@ -17,7 +17,7 @@ class TestSites(unittest.TestCase) :
             print site, url
             b.go(url)
             self.assertEquals(b.get_code(),200)
-            b.showforms()
+            #b.showforms()
 
 
 if __name__ == '__main__' :
