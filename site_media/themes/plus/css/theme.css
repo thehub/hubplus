@@ -13,6 +13,7 @@ body {
 
 /* Elements */
 
+h2,
 #page_title,
 .tabbed ul.tabbed_navigation li.selected a {
 	color		: #5a0000;
@@ -50,5 +51,5 @@ a.bt_pdf         { background-image: url('../images/icon_pdf.gif');         }
 /* Tags */
 
 .tag_list a.tag:hover {
-	background	: #0A446C;
+	background	: #5a0000;
 }

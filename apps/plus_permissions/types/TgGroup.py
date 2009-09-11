@@ -1,5 +1,5 @@
 from apps.plus_permissions.interfaces import InterfaceReadProperty, InterfaceWriteProperty, InterfaceCallProperty
-from apps.plus_permissions.models import SetSliderOptions, SetAgentDefaults, SetPossibleTypes, SetSliderAgents
+from apps.plus_permissions.models import SetSliderOptions, SliderOptions, SetAgentDefaults, SetPossibleTypes, SetSliderAgents, PossibleTypes, get_interface_map
 from apps.plus_groups.models import TgGroup
 from apps.plus_permissions.OurPost import OurPost
 from apps.plus_contacts.models import Application, Contact
@@ -125,27 +125,26 @@ class TgGroupManageMembers:
 
 from apps.plus_permissions.models import add_type_to_interface_map
 
-TgGroupInterfaces = {'Viewer': TgGroupViewer,
-                     'Editor': TgGroupEditor,
-                     'Invite': TgGroupInviteMember,
-                     'ManageMembers': TgGroupManageMembers,
-                     'Join': TgGroupJoin}
-
-
-add_type_to_interface_map(TgGroup, TgGroupInterfaces)
+if not get_interface_map(TgGroup):
+    TgGroupInterfaces = {'Viewer': TgGroupViewer,
+                         'Editor': TgGroupEditor,
+                         'Invite': TgGroupInviteMember,
+                         'ManageMembers': TgGroupManageMembers,
+                         'Join': TgGroupJoin}
+    add_type_to_interface_map(TgGroup, TgGroupInterfaces)
 
 
 # use InterfaceOrder to draw the slider and constraints, these are used in rendering the sliders and in validating the results
 # these exist on a per type basis and are globals for their type.
 # they don't need to be stored in the db
-SliderOptions = {'InterfaceOrder':['Viewer', 'Editor', 'Invite', 'Join', 'ManageMembers']}
-SetSliderOptions(TgGroup, SliderOptions) 
+if not SliderOptions.get(TgGroup, False):
+    SetSliderOptions(TgGroup, {'InterfaceOrder':['Viewer', 'Editor', 'Invite', 'Join', 'ManageMembers']})
 
 
 # ChildTypes are used to determine what types of objects can be created in this security context (and acquire security context from this). These are used when creating an explicit security context for an object of this type. 
-
-child_types = [OurPost, Site, Application, Contact, Profile, WikiPage]
-SetPossibleTypes(TgGroup, child_types)
+if TgGroup not in PossibleTypes:
+    child_types = [OurPost, Site, Application, Contact, Profile, WikiPage]
+    SetPossibleTypes(TgGroup, child_types)
 
 
 
