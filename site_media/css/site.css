@@ -42,10 +42,19 @@ body {
 	width		: 900px;
 }
 
+#overlay {
+	font-size	: 1.2em;
+	text-align	: left;
+}
+
 #main {
 	overflow 	: hidden;
 	padding		: 10px 0 0;
 	margin-bottom	: 10px;
+}
+
+#page_header {
+	width		: 620px;
 }
 
 #body {
