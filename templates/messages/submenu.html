@@ -1,0 +1,8 @@
+{% load i18n %}
+
+<ul>
+  <li><a href="{% url messages_compose %} ">{% trans "Compose" %}</a></li>
+  <li><a href="{% url messages_inbox %} ">{% trans "Inbox" %} ({{ messages_inbox_count }})</a></li>
+  <li><a href="{% url messages_outbox %} ">{% trans "Sent" %}</a></li>
+  <li><a href="{% url messages_trash %}">{% trans "Trash" %}</a></li>
+</ul>
