@@ -146,7 +146,8 @@ def invite(request, group, template_name='plus_groups/invite.html'):
         form = TgGroupMemberInviteForm(request.POST)
         if form.is_valid() :
             invitee = form.cleaned_data['user']
-            message_user(request.user, invitee, 'Invitation to join %s' % group.get_display_name(), """You have been invited to join %s. <a href="">Click here to accept</a>""" % group.get_display_name())
+            message_user(request.user, invitee, 'Invitation to join %s' % group.get_display_name(), """You have been invited to join %s. <a href="">Click here to a
+ccept</a>""" % group.get_display_name())
             message_user(request.user, request.user, "Invitation sent", """You have invited %s to join %s""" % (invitee.get_display_name(), group.get_display_name()))
             invitee.message_set.create(message="""You have been invited to join %s. <a href="">Click here to accept</a>""")
 
@@ -193,6 +194,44 @@ def group_field(request, group, classname, fieldname, *args, **kwargs) :
 
 
 @login_required
+@secure_resource(obj_schema={'group':[TgGroup]})
+def add_content_object(request, group):
+    type_string = request.POST['create_iface'].split('Create')[1]
+    create = getattr(group, "create_" + type_string)
+    title = request.POST['title']
+    name = title.replace(' ', '_')
+
+    #ensure name is unique for group
+    #if it is not -- what? a) raise error to user
+    obj = create(request.user, title=title, name=name)
+    
+    return HttpResponseRedirect(reverse('edit_' + type_string, args=(group.id)))
+   
+ 
+def possible_create_interfaces():
+    """return tuples of form, interface string, label, subtext
+    """
+    return [["CreateWikiPage", _("Page"), _("Create new wiki page")], 
+            ["CreateUpload", _("File"), _("Upload a file")],
+            ["CreateNews", _("News"), _("Create a new posting")],
+            ["CreateEvent", _("Events"), _("Create a new event")]]
+
+
+@login_required
+@secure_resource(TgGroup)
+def add_content_form(request, group):
+    possible_interfaces = possible_create_interfaces()
+    _interfaces = [g.split('.')[1] for g in group._interfaces]
+    for iface in possible_interfaces:
+        if iface[0] in _interfaces:
+            iface.append(True)
+        else:
+            iface.append(False)
+
+    return render_to_response("plus_groups/add_content.html", {'group':group, 'possible_interfaces': possible_interfaces})
+
+
+
 @json_view
 def autocomplete(request, j=None):
     """filter groups to see which ones this user can add content too. Check that the user can create at least something on the groups that we autocomplete for them
@@ -202,5 +241,6 @@ def autocomplete(request, j=None):
     limit = request.GET['limit']  
     groups = TgGroup.objects.plus_filter(user, interface_names=['Viewer', 'CreateWikiPage'], required_interfaces=['CreateWikiPage'], all_or_any='ANY', display_name__istartswith=q, level__in=['host', 'member'], limit=6)
 
-    options = [{'display_name':group.display_name, 'id':str(group.id)} for group in groups]
+    options = [{'display_name':group.display_name, 'id':str(group.id), 'interfaces':[iface.split('.')[1] for iface in group._interfaces]} for group in groups]
     return options
+

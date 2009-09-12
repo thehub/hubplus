@@ -7,7 +7,7 @@ class WikiPage(models.Model):
     title = models.CharField(max_length=100)
     license = models.CharField(max_length=100)
     content = models.TextField(blank=True)  # html field
-    links_to = models.ManyToManyField(GenericReference)
+    links_to = models.ManyToManyField(GenericReference, related_name="back_links")
 
 class Contributions(models.Model):
     wikipage = models.ForeignKey(WikiPage, related_name='contributions')

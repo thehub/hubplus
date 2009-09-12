@@ -178,6 +178,14 @@ AgentDefaults = {'public':
                            'constraints':
                                ['Viewer>=Editor', 'Invite>=ManageMembers', 'Join>=ManageMembers', 'ManageMembers<=$anonymous']
                            },
+                      'WikiPage':
+                          {'defaults':
+                               {'Viewer':'anonymous_group',
+                                'Editor':'context_agent',
+                                'Delete':'context_admin',
+                                'Unknown':'context_agent'},
+                           'constraints': ['Viewer>=Editor', 'Editor<$anonymous_group']
+                           },
                       'OurPost':
                           { 'defaults' : {'Viewer':'all_members_group',
                                           'Editor':'creator',

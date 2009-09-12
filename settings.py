@@ -152,23 +152,19 @@ INSTALLED_APPS = (
     'microblogging',
     'locations',
     'uni_form',
-    
     # internal (for now)
     'about',
     'plus_lib',
     'plus_permissions',
     'plus_messages',
-
     'analytics',
-    
     'plus_tags',
     'profiles',
     'plus_groups',
     'plus_links',
     'plus_contacts',
-  
     'plus_wiki',
-
+    'plus_user',
     'staticfiles',
     'account',
     'tribes',

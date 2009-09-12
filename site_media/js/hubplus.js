@@ -4,8 +4,7 @@ var widget_map = {
 	       'project_stage':'text_wysiwyg',
 	       'place': 'gmap'
     },
-    'TgGroup':{'about':'text_wysiwyg',
-    }
+    'TgGroup':{'about':'text_wysiwyg'}
 };
 
 var editing = function () {
@@ -149,6 +148,13 @@ var get_add_content = function (ele) {
 	    }).result(function(event, data, formatted) {
 		overlay_content.find('#group_display_name').html(data.display_name);
 		overlay_content.find('#group_input').val(data.id);
+		overlay_content.find('#choose_type li').each(function (i, ele) {
+		    if (data.interfaces.indexOf(ele.id) == -1) {
+			jq(ele).attr('disabled', 'disabled').css('display', 'none');
+		    } else {
+			jq(ele).removeAttr('disabled').css('display', 'block');
+		    }
+		});
 		auto_area.hide();
 		    auto_area.find('#autocomplete_group').val("");
 		});
