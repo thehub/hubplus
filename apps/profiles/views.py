@@ -12,8 +12,7 @@ from django.utils import simplejson
 from friends.forms import InviteFriendForm
 from friends.models import FriendshipInvitation, Friendship
 
-from microblogging.models import Following
-
+from microblogging.models import Tweet, TweetInstance, Following
 from profiles.models import Profile, HostInfo
 from profiles.forms import ProfileForm, HostInfoForm
 
@@ -30,6 +29,8 @@ from apps.plus_tags.models import  tag_add, tag_delete, get_tags, tag_autocomple
 from django.contrib.contenttypes.models import ContentType
 from django.db.models import Q
 
+from itertools import chain
+from django.template import defaultfilters
 
 # need 
 add_edit_key(User)
@@ -65,14 +66,13 @@ def profiles(request, template_name="profiles/profiles.html"):
         'search_terms' : search_terms
     }, context_instance=RequestContext(request))
 
+
 def profile(request, username, template_name="profiles/profile.html"):
     other_user = get_object_or_404(User, username=username)
     other_user.save()
     
     p = other_user.get_profile()
     p.save()
-
-
 
     if request.user.is_authenticated():
 
@@ -145,13 +145,21 @@ def profile(request, username, template_name="profiles/profile.html"):
     profile = other_user.get_profile()
     user = request.user
 
+
     if not user.is_authenticated():
         user = get_anon_user()
 
-    profile = secure_wrap(profile, user)
+    context_tweets = TweetInstance.objects.tweets_for(other_user).order_by("-sent") # tweets for and by other user
+    user_type = ContentType.objects.get_for_model(other_user)
+    other_user_tweets = Tweet.objects.filter(sender_type=user_type, sender_id=other_user.id).order_by("-sent") # other_user
+    if other_user_tweets :
+        latest_status = other_user_tweets[0]
+        dummy_status = DisplayStatus(
+            defaultfilters.safe( defaultfilters.urlize(latest_status.html())),
+                                 defaultfilters.timesince(latest_status.sent) )
+    else : 
+        dummy_status = DisplayStatus('No status', '')
 
-    dummy_status = DisplayStatus("Dummy Status"," about 3 hours ago")
-    
     profile = TemplateSecureWrapper(secure_wrap(profile, user))
 
     return render_to_response(template_name, {
@@ -171,6 +179,8 @@ def profile(request, username, template_name="profiles/profile.html"):
             "skills" : skills,
             "needs" : needs,
             "interests" : interests,
+            "context_tweets" : context_tweets,
+            "other_user_tweets" : other_user_tweets,
             }, context_instance=RequestContext(request))
 
 

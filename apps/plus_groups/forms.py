@@ -18,7 +18,6 @@ PERMISSION_OPTIONS = (
     (u'open', u'Open'),
     (u'invite', u'Invite'),
     (u'private', u'Private'),
-
 )
 
 
@@ -26,7 +25,7 @@ class TgGroupForm(forms.Form):
     
     name = forms.CharField()
     group_type = forms.ChoiceField(choices=GROUP_TYPES)
-    about = forms.CharField()
+    description = forms.CharField()
     address = forms.CharField(required=False)
     location = forms.CharField(required=False)
     permissions_set = forms.ChoiceField(choices=PERMISSION_OPTIONS)
@@ -48,7 +47,7 @@ class TgGroupForm(forms.Form):
             group_type = self.cleaned_data['group_type'],
             level = 'member',
             user = user,
-            about = self.cleaned_data['about'],
+            description = self.cleaned_data['description'],
             )
         group.save()
         return group
@@ -57,6 +56,7 @@ class TgGroupForm(forms.Form):
 
 class TgGroupMemberInviteForm(forms.Form) :
     plain_text = forms.CharField()
+    special_message = forms.CharField()
     
     def clean_plain_text(self) :
         tt = self.cleaned_data['plain_text']

@@ -37,7 +37,7 @@ def setup_group_security(group, context_agent, context_admin, creator):
 
 # override object managers, filter, get, get_or_create
 def get_or_create(group_name=None, display_name=None, place=None, level=None, user=None, 
-                  group_type='interest', about='') :
+                  group_type='interest', description='') :
     """get or create a group
     """
     # note : we can't use get_or_create for TgGroup, because the created date clause won't match on a different day
@@ -54,7 +54,7 @@ def get_or_create(group_name=None, display_name=None, place=None, level=None, us
         created = False
     else :
         created = True
-        group = TgGroup(group_name=group_name, display_name=display_name, level=level, place=place)
+        group = TgGroup(group_name=group_name, display_name=display_name, level=level, place=place, description=description)
         group.save()
 
         if level == 'member':
@@ -63,7 +63,8 @@ def get_or_create(group_name=None, display_name=None, place=None, level=None, us
                 display_name=display_name + " Hosts", 
                 level='host',
                 place=place,
-                user=user
+                user=user, 
+                description="Admin Group for %s" % display_name, 
                 )
             setup_group_security(group, group, admin_group, user)
         elif level == 'host':
@@ -83,13 +84,13 @@ TgGroup.get_admin_group = get_admin_group
 
 class TgGroupViewer: 
     pk = InterfaceReadProperty
-    about = InterfaceReadProperty
+    description = InterfaceReadProperty
     place = InterfaceReadProperty
     website = InterfaceReadProperty
     display_name = InterfaceReadProperty
 
     group_type = InterfaceReadProperty
-    address = InterfaceReadProperty    
+    address = InterfaceReadProperty
 
     apply = InterfaceCallProperty
     leave = InterfaceCallProperty
@@ -100,11 +101,10 @@ class TgGroupViewer:
 
 class TgGroupEditor: 
     pk = InterfaceReadProperty
-    about = InterfaceWriteProperty
+    description = InterfaceWriteProperty
     place = InterfaceWriteProperty
     website = InterfaceWriteProperty
     display_name = InterfaceWriteProperty
-    
 
 class TgGroupJoin:
     pk = InterfaceReadProperty

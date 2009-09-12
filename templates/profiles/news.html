@@ -1,3 +1,7 @@
+{% load i18n %}
+{% load microblogging_tags %}
+
 <div id="news">
-  List of news posts by Andrew
+  <p>News from {{other_user.get_display_name}}</p>
+  {% tweet_listing other_user_tweets 1 0 %}
 </div>

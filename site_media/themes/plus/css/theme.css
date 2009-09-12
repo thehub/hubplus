@@ -1,4 +1,7 @@
-
+/*
+PLUS: THEME
+Hub World
+*/
 
 
 /* Layout */
@@ -10,7 +13,9 @@ body {
 
 /* Elements */
 
-#page_title {
+h2,
+#page_title,
+.tabbed ul.tabbed_navigation li.selected a {
 	color		: #5a0000;
 }
 
@@ -32,4 +37,19 @@ a {
 
 #header #main_navigation li a {
 	color		: #f7efef;
+}
+
+
+/* Icons */
+
+a.bt_edit        { background-image: url('../images/icon_edit.gif');        }
+a.bt_permissions { background-image: url('../images/icon_permissions.gif'); }
+a.bt_rss         { background-image: url('../images/icon_rss.gif');         }
+a.bt_pdf         { background-image: url('../images/icon_pdf.gif');         }
+
+
+/* Tags */
+
+.tag_list a.tag:hover {
+	background	: #5a0000;
 }

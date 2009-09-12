@@ -27,22 +27,13 @@ from apps.plus_groups.forms import TgGroupForm, TgGroupMemberInviteForm
 from apps.plus_permissions.api import secure_resource, site_context
 from apps.plus_permissions.default_agents import get_anon_user, get_site
 
+from apps.plus_contacts.models import WAITING_USER_SIGNUP, MemberInvite
 
-from messages.models import Message
-def message_user(sender, recipient, subject, body) :
-    m = Message(subject=subject, body=body, sender = sender, recipient=recipient)
-    m.save()
+from apps.plus_permissions.proxy_hmac import hmac_proxy
 
+from apps.plus_lib.utils import message_user
 
-    #parent_msg = models.ForeignKey('self', related_name='next_messages', null=True, blank=True, verbose_name=_("Parent message"))
-    #sent_at = models.DateTimeField(_("sent at"), null=True, blank=True)
-    #read_at = models.DateTimeField(_("read at"), null=True, blank=True)
-    #replied_at = models.DateTimeField(_("replied at"), null=True, blank=True)
-    #sender_deleted_at = models.DateTimeField(_("Sender deleted at"), null=True, blank=True)
-    #recipient_deleted_at = models.DateTimeField(_("Recipient deleted at"), null=True, blank=True)
-
-
-
+ 
 @secure_resource(TgGroup)
 def group(request, group, template_name="plus_groups/group.html"):
 
@@ -146,11 +137,16 @@ def invite(request, group, template_name='plus_groups/invite.html'):
         form = TgGroupMemberInviteForm(request.POST)
         if form.is_valid() :
             invitee = form.cleaned_data['user']
-            message_user(request.user, invitee, 'Invitation to join %s' % group.get_display_name(), """You have been invited to join %s. <a href="">Click here to a
-ccept</a>""" % group.get_display_name())
-            message_user(request.user, request.user, "Invitation sent", """You have invited %s to join %s""" % (invitee.get_display_name(), group.get_display_name()))
-            invitee.message_set.create(message="""You have been invited to join %s. <a href="">Click here to accept</a>""")
+            invite = MemberInvite(invited=invitee, invited_by=request.user, group=group.get_inner(), status=WAITING_USER_SIGNUP)
+            message = """%s is inviting you to join the %s group. <a href="%s">Click here to accept</a> 
+%s
+""" % (request.user.get_display_name(), group.get_display_name(), invite.make_accept_url(request.get_host()), form.cleaned_data['special_message'])
+            invite.message = message
+            invite.save()
 
+            message_user(request.user, invitee, 'Invitation to join %s' % group.get_display_name(), message)
+            message_user(request.user, request.user, "Invitation sent", """You have invited %s to join %s""" % (invitee.get_display_name(), group.get_display_name()))
+            
             return HttpResponseRedirect(reverse('group',args=(group.id,)))
 
             
@@ -160,6 +156,14 @@ ccept</a>""" % group.get_display_name())
             'form' : form,
             'group' : group,
             },context_instance=RequestContext(request))
+
+
+@hmac_proxy
+@secure_resource(TgGroup,["ManageMembers"])
+def add_member(request, group, username, **kwargs) :
+    user = get_object_or_404(User, username=username)
+    group.add_member(user)
+    return HttpResponseRedirect(reverse('group',args=(group.id)))
 
 
 @login_required
@@ -180,6 +184,7 @@ def create_group(request, site, template_name="plus_groups/create_group.html"):
             "head_title" : "Create New Group",
             "head_title_status" : "",
             "group" : form,
+            "form" : form,
 
             }, context_instance=RequestContext(request))
 

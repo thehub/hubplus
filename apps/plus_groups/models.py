@@ -185,8 +185,8 @@ try :
         display_name = models.CharField(max_length=255)
         created = models.DateTimeField(auto_now_add=True)
 
+        address = models.CharField(max_length=255, null=True)
 
-       # address = models.CharField(max_length=80)
         place = models.ForeignKey(Location)
     #if place is Hub Islington then set member of toHub Islington group if level is member
     #if level is host, set member of to Hub Islington Host Group.
@@ -195,8 +195,10 @@ try :
         path = models.CharField(max_length=120)
 
         child_groups = models.ManyToManyField('self', symmetrical=False, related_name='parent_groups')
-        
-        about = models.TextField('about', null=True, blank=True)
+       
+        #  getting rid of "about" as there's no data in it from hubspace and we're using "description"
+        #about = models.TextField('about', null=True, blank=True)
+
         group_type = models.CharField('type', max_length=10, choices=GROUP_TYPES)
     
         title = models.CharField(max_length=60)

@@ -16,7 +16,15 @@
 	<li>
 	  {{ form.plain_text.errors }}
 	  <p><label for="plain_text"><span class="required">*</span> {% trans "Username or Email" %}</label>
-	  <input  id="plain_text" name="plain_text" class="text" type="text" /></p>
+	    <input  id="plain_text" name="plain_text" class="text" type="text" />
+	  </p>
+	</li>
+	<li>
+	  <p>
+	    <label for="special_message">{% trans "Add a special invite message to the user" %}</label>
+	  </p>
+	  <textarea id="special_message" name="special_message">
+	  </textarea>
 	</li>
 
       </ul>
