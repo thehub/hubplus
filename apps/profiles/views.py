@@ -152,13 +152,14 @@ def profile(request, username, template_name="profiles/profile.html"):
     context_tweets = TweetInstance.objects.tweets_for(other_user).order_by("-sent") # tweets for and by other user
     user_type = ContentType.objects.get_for_model(other_user)
     other_user_tweets = Tweet.objects.filter(sender_type=user_type, sender_id=other_user.id).order_by("-sent") # other_user
-    latest_status = other_user_tweets[0]
-
-    profile = secure_wrap(profile, user)
-    dummy_status = DisplayStatus(
-        defaultfilters.safe( defaultfilters.urlize(latest_status.html())), 
+    if other_user_tweets :
+        latest_status = other_user_tweets[0]
+        dummy_status = DisplayStatus(
+            defaultfilters.safe( defaultfilters.urlize(latest_status.html())),
                                  defaultfilters.timesince(latest_status.sent) )
-    
+    else : 
+        dummy_status = DisplayStatus('No status', '')
+
     profile = TemplateSecureWrapper(secure_wrap(profile, user))
 
     return render_to_response(template_name, {

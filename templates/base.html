@@ -126,23 +126,6 @@
 			<div id="page_header">
 			  <h2 id="page_title">{{head_title}}</h2>
 			  <p>{{head_title_status}} - <span class="label_time">{{head_title_status.time}}</span></p>
-			  
-			  <div id="status_input_form">
-			    <form method="POST" action="{% url tweets_you_follow %}">
-			      <p>{% trans "What are you doing?" %}</p>
-			      {{ status_form.as_p }}
-			      {% if twitter_authorized %}
-			      <h2>{% trans "You have authorized a twitter account." %}</h2>
-			      <input name="pub2twitter" type="checkbox" id="pub2twitter" value="yes" />
-			      <label for="pub2twitter">{% trans "Publish to Twitter?" %}</label>
-			      {% endif %}
-			      
-			      <p>
-				<span id="chars_left"></span> {% trans "chars left." %}
-				<input type="submit" value="{% trans "post" %}"/>
-			      </p>
-			    </form>
-			  </div>
 			</div>
 			<!-- end page_header -->
 
