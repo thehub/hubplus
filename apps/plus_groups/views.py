@@ -32,6 +32,7 @@ from apps.plus_contacts.models import WAITING_USER_SIGNUP, MemberInvite
 from apps.plus_permissions.proxy_hmac import hmac_proxy
 
 from apps.plus_lib.utils import message_user
+from django.contrib.contenttypes.models import ContentType
 
  
 @secure_resource(TgGroup)
@@ -197,6 +198,7 @@ def group_field(request, group, classname, fieldname, *args, **kwargs) :
     """ Get the value of one field from the group, so we can write an ajaxy editor """
     return one_model_field(request, p, fieldname, kwargs.get('default', ''), TgGroupForm)
 
+from django.utils.encoding import iri_to_uri
 
 @login_required
 @secure_resource(obj_schema={'group':[TgGroup]})
@@ -204,13 +206,20 @@ def add_content_object(request, group):
     type_string = request.POST['create_iface'].split('Create')[1]
     create = getattr(group, "create_" + type_string)
     title = request.POST['title']
-    name = title.replace(' ', '_')
 
-    #ensure name is unique for group
-    #if it is not -- what? a) raise error to user
-    obj = create(request.user, title=title, name=name)
-    
-    return HttpResponseRedirect(reverse('edit_' + type_string, args=(group.id)))
+    name = title.lower().replace(' ', '_')
+
+    #ensure name is unique for group and type
+    cls = ContentType.objects.get(model=type_string.lower()).model_class()
+    try:
+        cls.objects.get(name=name, in_agent=group)
+        #XXX if it is not raise error to user
+        raise AttributeError
+    except cls.DoesNotExist:
+        obj = create(request.user, title=title, name=name, in_agent=group.get_ref())
+
+    #redirect to the edit page
+    return HttpResponseRedirect(reverse('edit_' + type_string, args=[group.id, obj.name])) #kwargs={'resource_id':group.id, 'page_name':iri_to_uri(obj.name)}))
    
  
 def possible_create_interfaces():
