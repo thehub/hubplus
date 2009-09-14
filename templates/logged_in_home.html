@@ -1,18 +1,13 @@
 {% extends "site_base.html" %}
 
 {% load i18n %}
-
 {% load microblogging_tags %}
-
 
 {% block head_title %}{% trans "Home" %}{% endblock %}
 
 {% block tab_id %}id="home_tab"{% endblock %}
 
 {% block body %}
-
-
-
 <div id="status" class="block">
   <h3>What's up?</h3>
   
@@ -30,12 +25,7 @@
       <input type="submit" value="{% trans "post" %}">
     </p>
   </form>
-  
-  <form action="">
-    <input name="search_term" type="text" />
-    <input type="submit" value="Share" />
-  </form>
-  
+
 </div>
 
 <div id="updates_feed" class="block">

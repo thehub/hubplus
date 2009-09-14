@@ -25,20 +25,46 @@ from forms import HubPlusApplicationForm
 
 from emailconfirmation.models import EmailAddress, EmailConfirmation
 
-association_model = models.get_model('django_openid', 'Association')
-if association_model is not None:
-    from django_openid.models import UserOpenidAssociation
+from apps.microblogging.forms import TweetForm
+from apps.microblogging.views import TweetInstance
+from microblogging.utils import twitter_account_for_user, twitter_verify_credentials
 
 
-def home(request):
-    if request.user.is_authenticated():
-        from apps.microblogging.views import get_tweets_for
-        tweets = get_tweets_for(request.user)
-        return render_to_response('logged_in_home.html', {
-                "tweets" : tweets,
-                }, context_instance=RequestContext(request))
-    else :
+def home(request, success_url=None):
+    """
+    Let's base homepage on the microblog personal now.
+    """
+    if not request.user.is_authenticated():
         return render_to_response('homepage.html', {}, context_instance=RequestContext(request))
+
+    twitter_account = twitter_account_for_user(request.user)
+    template_name = "logged_in_home.html"
+    form_class = TweetForm
+
+    if request.method == "POST":
+        form = form_class(request.user, request.POST)
+        if form.is_valid():
+            text = form.cleaned_data['text']
+            form.save()
+            if request.POST.get("pub2twitter", False):
+                twitter_account.PostUpdate(text)
+            if success_url is None:
+                success_url = reverse('home')
+            return HttpResponseRedirect(success_url)
+        reply = None
+    else:
+        reply = request.GET.get("reply", None)
+        form = form_class()
+        if reply:
+            form.fields['text'].initial = u"@%s " % reply
+    tweets = TweetInstance.objects.tweets_for(request.user).order_by("-sent")
+    return render_to_response(template_name, {
+        "form": form,
+        "reply": reply,
+        "tweets": tweets,
+        "twitter_authorized": twitter_verify_credentials(twitter_account),
+    }, context_instance=RequestContext(request))
+
 
 
 def login(request, form_class=LoginForm,

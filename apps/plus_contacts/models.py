@@ -76,15 +76,18 @@ class Contact(models.Model):
         return u
 
 
-    def send_email(self, title, message, sponsor, site_root, id):
+    def send_link_email(self, title, message, sponsor, site_root, id):
         url = attach_hmac("/signup/%s/" % id, sponsor)
         url = 'http://%s%s' % (site_root, url)
 
         message = message + """
 
 Please visit the following link to confirm your account : %s""" % url
-        
+        import ipdb
+        ipdb.set_trace()
+
         try :
+
             send_mail(title, message, settings.CONTACT_EMAIL,
                   [self.email_address], fail_silently=False)
             print "Email sent to %s" % self.email_address
@@ -100,13 +103,13 @@ Please visit the following link to confirm your account : %s""" % url
 Dear %s %s
 We are delighted to confirm you have been accepted as a member of Hub+
 """ % (self.first_name, self.last_name)
-        return self.send_email("Confirmation of account on Hub+", message, sponsor, site_root, application_id)
+        return self.send_link_email("Confirmation of account on Hub+", message, sponsor, site_root, application_id)
 
     def invite_mail(self, sponsor, site_root, application_id) :
         message = """
 Dear %s %s,
 %s has invited you to become a member of Hub+ ... MORE TEXT HERE""" % (self.first_name, self.last_name, sponsor.display_name)
-        return self.send_email("Invite to join Hub+", message, sponsor, site_root, application_id)
+        return self.send_link_email("Invite to join Hub+", message, sponsor, site_root, application_id)
 
 
 
