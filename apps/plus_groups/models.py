@@ -7,15 +7,15 @@ from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes import generic
 
 
+from apps.plus_contacts.status_codes import WAITING_USER_SIGNUP
+ 
 import datetime
-
 
 class Location(models.Model):
     class Meta:
         db_table = u'location'
 
     name = models.CharField(unique=True, max_length=200)
-
 
 
 #patch django orm's "create_many_related_manager"
@@ -151,12 +151,19 @@ def create_many_related_manager(superclass, through=False):
                 [self._pk_val])
             transaction.commit_unless_managed()
 
+
+
+            
+
+
     return ManyRelatedManager
 
 django.db.models.fields.related.create_many_related_manager = create_many_related_manager
 
 
+
 try :
+
 
 # This is the list of group types we currently know about
 
@@ -209,11 +216,16 @@ try :
 
 
         def add_member(self, user_or_group):
+            
             if isinstance(user_or_group, User) and not self.users.filter(id=user_or_group.id):
                 self.users.add(user_or_group)
+                from apps.microblogging.models import Following, send_tweet # avoid circularity
+                Following.objects.follow(self, user_or_group)
+                send_tweet(user_or_group,"%s joined the group %s" % (user_or_group.get_display_name(), self.get_display_name()))
 
             if isinstance(user_or_group, self.__class__) and not self.child_groups.filter(id=user_or_group.id):
                 self.child_groups.add(user_or_group)
+
 
         def join(self, user):
             self.add_member(user)
@@ -230,9 +242,31 @@ try :
         def remove_member(self, user_or_group):
             if isinstance(user_or_group, User) and self.users.filter(id=user_or_group.id):
                 self.users.remove(user_or_group)
+                from apps.microblogging.models import Following, send_tweet # avoid circularity      
+                Following.objects.follow(self, user_or_group)
+                send_tweet(user_or_group,"%s left the group %s" % (user_or_group.get_display_name(), self.get_display_name(\
+)))
+
 
             if isinstance(user_or_group, self.__class__) and self.child_groups.filter(id=user_or_group.id):
                 self.child_groups.remove(user_or_group)
+
+
+        def invite_member(self, invited, special_message, invited_by, url_root ) : 
+            invite = MemberInvite(invited=invited, invited_by=invited_by, 
+                                  group=self, status=WAITING_USER_SIGNUP)
+            message = """%s is inviting you to join the %s group. <a href="%s">Click here to accept</a>
+%s
+""" % (invited_by.get_display_name(), group.get_display_name(), url_root, special_message)
+            invite.message = message
+            invite.save()
+
+            from apps.plus_lib.utils import message_user 
+
+            message_user(invited_by, invited, 'Invitation to join %s' % group.get_display_name(), message)
+            message_user(invited_by, invited_by, "Invitation sent", """You have invited %s to join %s""" % 
+                         (invited.get_display_name(), group.get_display_name()))
+
         
         def get_users(self):
             return self.users.all()
@@ -336,5 +370,19 @@ def get_permission_agent_name(self) :
 # Now GenericReferences replace "Agents" to make a many-to-many relationship with agents such as 
 # Users and TgGroups
 
+
+
+# Move MemberInvite (to group) here
+class MemberInvite(models.Model) :
+    # Actually, it's useful to have a generic invited member,                                                                
+    invited = models.ForeignKey(User, related_name='invited_member')
+    invited_by = models.ForeignKey(User, related_name='member_is_invited_by')
+    group = models.ForeignKey(TgGroup)
+    message = models.TextField()
+    status = models.IntegerField()
+
+    def make_accept_url(self, site_root) :
+        url = attach_hmac("/groups/%s/add_member/%s/" % (self.group.id, self.invited.username), self.invited_by)
+        return 'http://%s%s' % (site_root, url)
 
 

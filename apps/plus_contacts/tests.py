@@ -7,10 +7,10 @@ from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes import generic
 
 from django.contrib.auth.models import *
-from apps.plus_groups.models import *
+from apps.plus_groups.models import TgGroup
 
 from models import Contact, Application
-from models import PENDING, WAITING_USER_SIGNUP
+from status_codes import PENDING, WAITING_USER_SIGNUP
 
 
 from apps.plus_permissions.default_agents import get_site, get_admin_user, get_all_members_group, get_anonymous_group

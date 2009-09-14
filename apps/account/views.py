@@ -32,7 +32,11 @@ if association_model is not None:
 
 def home(request):
     if request.user.is_authenticated():
-        return render_to_response('logged_in_home.html', {}, context_instance=RequestContext(request))
+        from apps.microblogging.views import get_tweets_for
+        tweets = get_tweets_for(request.user)
+        return render_to_response('logged_in_home.html', {
+                "tweets" : tweets,
+                }, context_instance=RequestContext(request))
     else :
         return render_to_response('homepage.html', {}, context_instance=RequestContext(request))
 
