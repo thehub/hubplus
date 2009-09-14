@@ -3,7 +3,53 @@
 {% load i18n %}
 {% load avatar_tags %}
 {% load app_plugins %}
+{% load plus_tags %}
 {% load uni_form %}
-
-
-
+{% block edit_header %}
+    <a id="parent" href="{% url group page.in_agent.obj.id %}">{{page.in_agent.obj.display_name}}</a>
+    <input id="page_title" name="title" class="text" type="text" value="{{page.title}}" />
+{% endblock %}
+{% block body %}      
+    <div id="main_content" class="block wiki_edit">
+      
+      <ul class="icon_text_button_set">
+	<!--<li><a class="icon_text_button bt_edit" href="#">Edit page</a></li>-->
+	<li><a class="icon_text_button bt_permissions" href="#">Permissions</a></li>
+      </ul>
+      
+      <div id="content" class="yui-skin-sam">
+	<textarea name="content" rows="30">{{page.content}}</textarea>
+      </div>
+      
+      <ul>
+	<li>
+	  <dl>
+	    {% plus_tag '* Tags' 'tag' page user %}
+	  </dl>
+	</li>
+	<li>
+	  
+	  <label for="license">License <span class="extra">('©2009', 'GPL')</span></label>
+	  <input name="license" id="license" class="text" type="text" value="{{page.license}}" />
+	</li>
+	{% ifequal page.stub False %}
+	<li class="changes_set">	  
+	  <label for="changes">What's changed? <span class="extra">describe what you've just changed</span></label>
+	  <textarea id="changes" class="text" type="" value=""></textarea>
+	</li>
+	{% endifequal %}
+	
+      </ul>
+      
+      {% if page.stub %}
+         <input class="submit button"   type="submit" value="Preview"/>      
+	 <input class="button" id="edit_submit" type="submit" value="Create"/>
+	 or <a href="{% url deletestub_WikiPage page.in_agent.obj.id page.name  %}">Go back</a>
+      {% else %}
+         <input class="submit button" type="submit" value="Preview"/>
+	 <input class="button" id="edit_submit" type="submit" value="Save"/>
+	 or <a href="{% url view_WikiPage page.in_agent.obj.id page.name  %}">Cancel</a>
+      {% endif %}
+            
+    </div>
+{% endblock %}

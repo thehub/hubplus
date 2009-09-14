@@ -10,7 +10,7 @@ from django.utils.encoding import smart_str
 from django.db import transaction
 from django.utils import simplejson
 
-from apps.plus_groups.models import TgGroup
+from apps.plus_groups.models import TgGroup, name_from_title
 from django.core.urlresolvers import reverse
 
 
@@ -33,6 +33,8 @@ from apps.plus_permissions.proxy_hmac import hmac_proxy
 
 from apps.plus_lib.utils import message_user
 from django.contrib.contenttypes.models import ContentType
+
+
 
  
 @secure_resource(TgGroup)
@@ -186,7 +188,6 @@ def create_group(request, site, template_name="plus_groups/create_group.html"):
             "head_title_status" : "",
             "group" : form,
             "form" : form,
-
             }, context_instance=RequestContext(request))
 
 
@@ -206,20 +207,18 @@ def add_content_object(request, group):
     type_string = request.POST['create_iface'].split('Create')[1]
     create = getattr(group, "create_" + type_string)
     title = request.POST['title']
-
-    name = title.lower().replace(' ', '_')
-
+    name = name_from_title(title)
     #ensure name is unique for group and type
     cls = ContentType.objects.get(model=type_string.lower()).model_class()
     try:
-        cls.objects.get(name=name, in_agent=group)
+        obj = cls.objects.get(name=name, in_agent=group.get_ref(), stub=True)
         #XXX if it is not raise error to user
-        raise AttributeError
     except cls.DoesNotExist:
-        obj = create(request.user, title=title, name=name, in_agent=group.get_ref())
+        obj = create(request.user, title=title, name=name, in_agent=group.get_ref(), stub=True)
+        obj.save()
 
     #redirect to the edit page
-    return HttpResponseRedirect(reverse('edit_' + type_string, args=[group.id, obj.name])) #kwargs={'resource_id':group.id, 'page_name':iri_to_uri(obj.name)}))
+    return HttpResponseRedirect(reverse('edit_' + type_string, args=[group.id, obj.name]))
    
  
 def possible_create_interfaces():

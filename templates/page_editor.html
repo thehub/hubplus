@@ -23,13 +23,11 @@
   {% endif %}
 </div>
 <!-- end site_wide_messages -->
-<form>
-<!-- page_header -->
+<form action="{{form_action}}" method="POST" id="page_edit_form" class="full">
+
 <div id="page_header">
-  <h2>{{head_title}}</h2>
-  <p class='disabled'>{{head_title_status}} - <span class="label_time">{{head_title_status.time}}</span></p>
+  {% block edit_header %}{% endblock %}
 </div>
-<!-- end page_header -->
 
 <!-- body -->
 <div id='body'>

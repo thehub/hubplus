@@ -4,8 +4,7 @@ var widget_map = {
 	       'project_stage':'text_wysiwyg',
 	       'place': 'gmap'
     },
-    'TgGroup':{'description':'text_wysiwyg',
-    }
+    'TgGroup':{'description':'text_wysiwyg'}
 };
 
 var editing = function () {
@@ -57,14 +56,13 @@ var editing = function () {
 	});
     });
 };
+
 var tag_list = function (ele) {
     var manager = jq(ele);
 
     var tag_type = manager.find('.tag_type').val();
     var tagged_id = manager.find('.tagged_id').val();
     var tagged_class = manager.find('.tagged_class').val();
-
-    //console.log(tag_type+","+target_id+","+target_class);
 
     var append_tag = function (data) {
 	if (data.added === false) {
@@ -92,7 +90,8 @@ var tag_list = function (ele) {
 					   );
 
     manager.find('.add_tag').click(function () {
-	jq.post('/plus_tags/add_tag/', jq(this).parent().serializeArray(), append_tag, "json");
+	var args = jq(this).parent().find(':input').serializeArray();
+	jq.post(manager.find('.add_tag_form').attr('id'), args, append_tag, "json");
 	return false;
     });
     var delete_tags = '#'+ manager.attr('id') + ' .delete_tag';
@@ -176,6 +175,7 @@ var add_content = function () {
 };
 var profile_ready = function () {
     add_content();
+    wiki_edit();
     editing();
     setup_tag_lists();
     if (jq('li.place .editable').length) {

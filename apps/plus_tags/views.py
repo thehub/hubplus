@@ -46,6 +46,7 @@ def autocomplete_tag(request, tag_type, tagged=None, tagged_for=None):
     q = request.GET['q']
     limit = request.GET['limit']
     options = tag_autocomplete(tagged_for, tagged, tag_type, q, limit)
+    options = [op['keyword'] for op in options]
     options = '\n'.join(options)
     return HttpResponse(options)
 

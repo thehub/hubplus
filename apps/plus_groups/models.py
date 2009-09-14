@@ -18,6 +18,10 @@ class Location(models.Model):
 
 
 
+def name_from_title(title):
+    return title.lower().replace(' ', '_').replace('/', '').strip()
+
+
 #patch django orm's "create_many_related_manager"
 from django.db.models.fields.related import *
 import django.db.models.fields.related

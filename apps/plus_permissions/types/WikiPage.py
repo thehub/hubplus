@@ -32,13 +32,17 @@ class WikiPageViewer:
     name = InterfaceReadProperty
     title = InterfaceReadProperty
     content = InterfaceReadProperty
-    licence = InterfaceReadProperty
+    license = InterfaceReadProperty
     links_to = InterfaceReadProperty
+    in_agent = InterfaceReadProperty
+    stub = InterfaceReadProperty
 
-class WikiPageEditor: 
-    title = InterfaceWriteProperty 
+class WikiPageEditor:
+    name_from_title = InterfaceCallProperty
+    title = InterfaceWriteProperty
     content = InterfaceWriteProperty
-    licence = InterfaceWriteProperty
+    license = InterfaceWriteProperty
+    stub = InterfaceWriteProperty
 
 class WikiPageDelete:
     delete = InterfaceCallProperty
