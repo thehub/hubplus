@@ -1,6 +1,26 @@
 <h2>Permissions</h2>
 <p>Control access to things in the {{current_class}} {{current.id}}</p>
 
+<form>
+	<fieldset>
+		<ul class="checkboxes">
+			<li>
+				<input  id="group" name="permissions_set" class="radio" type="radio" checked="checked" />
+				<div class="label_extended">
+					<label for="group">Use group permission <span class="extra">Currently set to Public</span></label>
+				</div>
+			</li>
+			<li>
+				<input  id="custom" name="permissions_set" class="radio" type="radio" />
+				<div class="label_extended">
+					<label for="custom">Custom settings <span class="extra">Choose you're own permissions</span></label>
+				</div>
+			</li>
+		</ul>
+	</fieldset>
+</form>
+
+
 <!-- permissions_tabs -->
 <div id="permissions_tabs" class="tabbed section yui-navset">
 

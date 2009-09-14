@@ -41,6 +41,7 @@ a {
 
 /* Icons */
 
+a.bt_add         { background-image: url('../images/icon_add.gif');         }
 a.bt_edit        { background-image: url('../images/icon_edit.gif');        }
 a.bt_permissions { background-image: url('../images/icon_permissions.gif'); }
 a.bt_rss         { background-image: url('../images/icon_rss.gif');         }

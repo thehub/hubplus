@@ -140,10 +140,6 @@ span.label_time {
 	padding-bottom	: 0;
 }
 
-#parent {
-
-}
-
 
 /* Content Extra */
 
@@ -446,6 +442,27 @@ form label span.required {
 	line-height	: 0em;
 }
 
+form ul {
+	list-style	: none;
+	overflow	: hidden;
+	padding-bottom	: 10px;
+}
+
+form ul ul {
+	padding-bottom	: 0;
+}
+
+form ul li {
+	overflow	: hidden;
+	padding-bottom	: 3px;
+}
+
+form label .extra {
+	color		: #888888;
+	font-size	: 0.8181em;
+	display		: block;
+}
+
 input.text,
 textarea {
 	background	: #fff url('../images/input_bg.gif') 0 0 repeat-x;
@@ -467,20 +484,7 @@ form.full fieldset {
 	padding		: 0 0 10px;
 }
 
-form.full ul {
-	list-style	: none;
-	overflow	: hidden;
-	padding-bottom	: 10px;
-}
 
-form.full ul ul {
-	padding-bottom	: 0;
-}
-
-form.full ul li {
-	overflow	: hidden;
-	padding-bottom	: 3px;
-}
 
 form.full label,
 form.full .label_extended {
@@ -503,12 +507,6 @@ form.full .label_extended label {
 
 form.full .label_extended input.text {
 	width		: 200px;
-}
-
-form.full label .extra {
-	color		: #888888;
-	font-size	: 0.8181em;
-	display		: block;
 }
 
 form.full input.text,
@@ -570,20 +568,20 @@ form.full .custom_labels .label_extended input.text {
 
 /* Forms: Checkbox/Radio Button Labelling */
 
-form.full fieldset .checkboxes .label_extended {
+form fieldset .checkboxes .label_extended {
 	float		: left;
 	padding-right	: 0;
 	text-align	: left;
 	width		: 240px;
 }
 
-form.full fieldset .checkboxes .label_extended label {
+form fieldset .checkboxes .label_extended label {
 	text-align	: left;
 	padding-right	: 0;
 	width		: 240px;
 }
 
-form.full fieldset .checkboxes select {
+form fieldset .checkboxes select {
 	width		: 240px;
 }
 
