@@ -13,8 +13,11 @@ from django.utils import simplejson
 from apps.plus_groups.models import TgGroup, name_from_title
 from django.core.urlresolvers import reverse
 
+from django.template import defaultfilters
 
-from microblogging.models import Following
+
+from microblogging.models import Tweet, TweetInstance, Following
+
 from apps.plus_lib.models import DisplayStatus, add_edit_key
 from apps.plus_lib.parse_json import json_view
 from apps.plus_permissions.models import SecurityTag
@@ -27,11 +30,8 @@ from apps.plus_groups.forms import TgGroupForm, TgGroupMemberInviteForm
 from apps.plus_permissions.api import secure_resource, site_context
 from apps.plus_permissions.default_agents import get_anon_user, get_site
 
-from apps.plus_contacts.models import WAITING_USER_SIGNUP, MemberInvite
-
 from apps.plus_permissions.proxy_hmac import hmac_proxy
 
-from apps.plus_lib.utils import message_user
 from django.contrib.contenttypes.models import ContentType
 
 
@@ -56,9 +56,16 @@ def group(request, group, template_name="plus_groups/group.html"):
     join = False
     apply = False
     leave = False
+    invite = False
+
     if user.is_authenticated():
         if user.is_direct_member_of(group.get_inner()):
             leave = True
+            try :
+                group.invite_member
+                invite = True
+            except Exception, e :# user doesn't have invite permission
+                pass
         else :
             try :
                 group.join 
@@ -71,8 +78,17 @@ def group(request, group, template_name="plus_groups/group.html"):
                     apply = True
             except Exception, e : # user doesn't have apply permission
                 pass
+
         
-    
+
+    tweets = TweetInstance.objects.tweets_for(group).order_by("-sent") 
+    if tweets :
+        latest_status = tweets[0]
+        dummy_status = DisplayStatus(
+            defaultfilters.safe( defaultfilters.urlize(latest_status.html())),
+                                 defaultfilters.timesince(latest_status.sent) )
+    else :
+        dummy_status = DisplayStatus('No status', '')
 
     return render_to_response(template_name, {
             "head_title" : "%s" % group.get_display_name(),
@@ -83,8 +99,10 @@ def group(request, group, template_name="plus_groups/group.html"):
             "leave": leave,
             "join" : join, 
             "apply" : apply, 
+            "invite" : invite, 
             "hosts": hosts,
             "host_count": host_count,
+            "tweets" : tweets,
             }, context_instance=RequestContext(request))
 
 
@@ -139,17 +157,8 @@ def invite(request, group, template_name='plus_groups/invite.html'):
     if request.POST :
         form = TgGroupMemberInviteForm(request.POST)
         if form.is_valid() :
-            invitee = form.cleaned_data['user']
-            invite = MemberInvite(invited=invitee, invited_by=request.user, group=group.get_inner(), status=WAITING_USER_SIGNUP)
-            message = """%s is inviting you to join the %s group. <a href="%s">Click here to accept</a> 
-%s
-""" % (request.user.get_display_name(), group.get_display_name(), invite.make_accept_url(request.get_host()), form.cleaned_data['special_message'])
-            invite.message = message
-            invite.save()
-
-            message_user(request.user, invitee, 'Invitation to join %s' % group.get_display_name(), message)
-            message_user(request.user, request.user, "Invitation sent", """You have invited %s to join %s""" % (invitee.get_display_name(), group.get_display_name()))
-            
+            invited = form.cleaned_data['user']
+            group.invite_member(invited, form.cleaned_data['special_message'], request.user, request.get_host())
             return HttpResponseRedirect(reverse('group',args=(group.id,)))
 
             

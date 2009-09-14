@@ -12,8 +12,8 @@ from django.core.mail import send_mail
 
 from django.conf import settings
 
+from apps.plus_contacts.status_codes import PENDING, WAITING_USER_SIGNUP
 from apps.plus_lib.models import extract 
-
 from apps.plus_permissions.default_agents import get_site, get_all_members_group
 
 from apps.plus_permissions.types.User import create_user
@@ -76,15 +76,18 @@ class Contact(models.Model):
         return u
 
 
-    def send_email(self, title, message, sponsor, site_root, id):
+    def send_link_email(self, title, message, sponsor, site_root, id):
         url = attach_hmac("/signup/%s/" % id, sponsor)
         url = 'http://%s%s' % (site_root, url)
 
         message = message + """
 
 Please visit the following link to confirm your account : %s""" % url
-        
+        import ipdb
+        ipdb.set_trace()
+
         try :
+
             send_mail(title, message, settings.CONTACT_EMAIL,
                   [self.email_address], fail_silently=False)
             print "Email sent to %s" % self.email_address
@@ -100,13 +103,13 @@ Please visit the following link to confirm your account : %s""" % url
 Dear %s %s
 We are delighted to confirm you have been accepted as a member of Hub+
 """ % (self.first_name, self.last_name)
-        return self.send_email("Confirmation of account on Hub+", message, sponsor, site_root, application_id)
+        return self.send_link_email("Confirmation of account on Hub+", message, sponsor, site_root, application_id)
 
     def invite_mail(self, sponsor, site_root, application_id) :
         message = """
 Dear %s %s,
 %s has invited you to become a member of Hub+ ... MORE TEXT HERE""" % (self.first_name, self.last_name, sponsor.display_name)
-        return self.send_email("Invite to join Hub+", message, sponsor, site_root, application_id)
+        return self.send_link_email("Invite to join Hub+", message, sponsor, site_root, application_id)
 
 
 
@@ -118,13 +121,6 @@ Dear %s %s,
             application.group=group
         return self.invite_mail(sponsor, site_root, application.id)
         
-        
-
-PENDING = 0
-WAITING_USER_SIGNUP = 1
-
-
-
 class Application(models.Model) :
     applicant_content_type = models.ForeignKey(ContentType,related_name='applicant_type')
     applicant_object_id = models.PositiveIntegerField()
@@ -184,19 +180,6 @@ def create_notifications(sender, instance, **kwargs):
 if "notification" in settings.INSTALLED_APPS:
     post_save.connect(create_notifications,sender=Application)
 
-
-
-class MemberInvite(models.Model) :
-    # Actually, it's useful to have a generic invited member, 
-    invited = models.ForeignKey(User, related_name='invited_member')
-    invited_by = models.ForeignKey(User, related_name='member_is_invited_by')
-    group = models.ForeignKey(TgGroup)
-    message = models.TextField()
-    status = models.IntegerField()    
-    
-    def make_accept_url(self, site_root) :
-        url = attach_hmac("/groups/%s/add_member/%s/" % (self.group.id, self.invited.username), self.invited_by)
-        return 'http://%s%s' % (site_root, url)
 
 
 

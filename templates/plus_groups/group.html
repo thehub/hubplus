@@ -11,28 +11,33 @@
 {% block body %}
       
 <div id="intro" class="block">
-<div id="info" class="block_column">
-  <h3>{% trans "About" %}</h3>
+  <div id="info" class="block_column">
 
-  <ul>
-    <li>
-      {% editable "Type" group 'group_type' 'Type of Group' %}
-    </li>
-    <li>
-      {% editable "Description" group 'description' 'Description of the group' %}
-    </li>  
-  </ul>
-    <li>
-      {% editable "Address" group 'address' 'Address' %}
-    </li>
-  </ul>
-  <h3 class='disabled'>{% trans "Links" %}</h3>
-  <ul class='disabled'>
-    <li><dl><dt>Website:</dt><dd><a href="#">www.sexysaladclub.com</a></dd></dl></li>
-    <li><dl><dt>Flickr:</dt><dd><a href="#">www.flickr.com/ssc</a></dd></dl></li>
-  </ul>
+    <ul class="icon_text_button_set">
+      <li><a href="#overlay" class="icon_text_button bt_permissions" rel="#overlay" id="{{group.edit_key}}permissionedit">Permissions</a></li>
+    </ul>
+
+    <h3>{% trans "About" %}</h3>
+    
+    <ul>
+      <li>
+	{% editable "Type" group 'group_type' 'Type of Group' %}
+      </li>
+      <li>
+	{% editable "Description" group 'description' 'Description of the group' %}
+      </li>  
+    
+      <li>
+	{% editable "Address" group 'address' 'Address' %}
+      </li>
+    </ul>
+    <h3 class='disabled'>{% trans "Links" %}</h3>
+    <ul class='disabled'>
+      <li><dl><dt>Website:</dt><dd><a href="#">www.sexysaladclub.com</a></dd></dl></li>
+      <li><dl><dt>Flickr:</dt><dd><a href="#">www.flickr.com/ssc</a></dd></dl></li>
+    </ul>
     <h3 class='disabled'>Skills and Needs</h3>
-
+    
     <ul class='disabled'>
       <li>
 	<dl>
@@ -77,32 +82,32 @@
       </dl>
     </li>
     </ul>
-</div>
-
-<div id="extra" class="block_column">
-  <div id="page_image" class="image group">
-    <img id="group_image" src="/site_media/group_images/default_interest_group.jpg" />
   </div>
-  <ul id="actions" class="link_list">
-    <li class="first"><a href="#">Message members</a></li>
-    {% if group.invite %}
-    <li><a href="{% url invite_to_group group.id %}">Invite members</a></li>
-    {% endif %}
-    {% if join %}
-    <li><a href="{% url join_group group.id %}">Join Group</a></li>
-    {% endif %}
-    {% if apply %}
-    <li><a href="{% url apply_group group.id %}/">Apply to Group</a></li>
-    {% endif %}
-    {% if leave %}
-    <li><a href="{% url leave_group group.id %}">Leave Group</a></li>
-    {% endif %}
-    <li class="disabled last"><a href="#">Follow group ?</a></li>
-  </ul>
-</div>
+
+  <div id="extra" class="block_column">
+    <div id="page_image" class="image group">
+      <img id="group_image" src="/site_media/group_images/default_interest_group.jpg" />
+    </div>
+    <ul id="actions" class="link_list">
+      <li class="first"><a href="#">Message members</a></li>
+      {% if invite %}
+      <li><a href="{% url invite_to_group group.id %}">Invite members</a></li>
+      {% endif %}
+      {% if join %}
+      <li><a href="{% url join_group group.id %}">Join Group</a></li>
+      {% endif %}
+      {% if apply %}
+      <li><a href="{% url apply_group group.id %}/">Apply to Group</a></li>
+      {% endif %}
+      {% if leave %}
+      <li><a href="{% url leave_group group.id %}">Leave Group</a></li>
+      {% endif %}
+      <li class="disabled last"><a href="#">Follow group ?</a></li>
+    </ul>
+  </div>
 </div>
 <!--div id="section_tab_navigation" class="section"-->
-  {% include "plus_groups/tabbed_subs.html" %}
+{% include "plus_groups/tabbed_subs.html" %}
 <!--/div-->  
 
 

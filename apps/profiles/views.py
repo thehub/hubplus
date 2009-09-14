@@ -13,6 +13,8 @@ from friends.forms import InviteFriendForm
 from friends.models import FriendshipInvitation, Friendship
 
 from microblogging.models import Tweet, TweetInstance, Following
+from microblogging.views import get_tweets_for
+
 from profiles.models import Profile, HostInfo
 from profiles.forms import ProfileForm, HostInfoForm
 
@@ -32,11 +34,10 @@ from django.db.models import Q
 from itertools import chain
 from django.template import defaultfilters
 
-# need 
-add_edit_key(User)
-add_edit_key(Profile)
-
-add_edit_key(HostInfo)
+# edit keys should now be patched by plus_permissions/patch
+#add_edit_key(User)
+#add_edit_key(Profile)
+#add_edit_key(HostInfo)
 
 #from gravatar.templatetags.gravatar import gravatar as avatar
 
@@ -149,7 +150,6 @@ def profile(request, username, template_name="profiles/profile.html"):
     if not user.is_authenticated():
         user = get_anon_user()
 
-    context_tweets = TweetInstance.objects.tweets_for(other_user).order_by("-sent") # tweets for and by other user
     user_type = ContentType.objects.get_for_model(other_user)
     other_user_tweets = Tweet.objects.filter(sender_type=user_type, sender_id=other_user.id).order_by("-sent") # other_user
     if other_user_tweets :
@@ -179,7 +179,6 @@ def profile(request, username, template_name="profiles/profile.html"):
             "skills" : skills,
             "needs" : needs,
             "interests" : interests,
-            "context_tweets" : context_tweets,
             "other_user_tweets" : other_user_tweets,
             }, context_instance=RequestContext(request))
 

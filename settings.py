@@ -188,7 +188,7 @@ NOTIFICATION_LANGUAGE_MODULE = 'account.Account'
 EMAIL_CONFIRMATION_DAYS = 2
 EMAIL_DEBUG = DEBUG
 
-CONTACT_EMAIL = "techteam@the-hub.net"
+CONTACT_EMAIL = "world.tech.plus@the-hub.net"
 
 SITE_NAME = "Hub+"
 LOGIN_URL = "/account/login"
