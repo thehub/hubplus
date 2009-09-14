@@ -177,7 +177,7 @@ public_defaults = {'TgGroup':
                              'Unknown': 'context_agent'
                              },                           
                         'constraints':
-                            ['Viewer>=Editor', 'Invite>=ManageMembers', 'Join>=ManageMembers', 'ManageMembers<=$anonymous']
+                            ['Viewer>=Editor', 'Invite>=ManageMembers', 'Join>=ManageMembers', 'ManageMembers<=$anonymous_group']
                         },
                    'WikiPage':
                        {'defaults':
