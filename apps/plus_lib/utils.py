@@ -1,3 +1,27 @@
+from django import forms
+import html5lib
+from html5lib import sanitizer, serializer, treebuilders, treewalkers
+
+
+class HTMLField(forms.CharField):
+    def __init__(self, *args, **kwargs):
+        super(HTMLField, self).__init__(*args, **kwargs)
+
+    def clean(self, value):
+        chars = super(HTMLField, self).clean(value)
+        #chars = chars.encode('utf-8') # should really find out where we have decoded input to unicode and do it there instead
+        p = html5lib.HTMLParser(tokenizer=sanitizer.HTMLSanitizer, tree=treebuilders.getTreeBuilder("dom")) # could use Beautiful Soup here instead
+        s = serializer.htmlserializer.HTMLSerializer(omit_optional_tags=False)
+        dom_tree = p.parseFragment(chars) #encoding="utf-8")  - unicode input seems to work fine
+        
+        walker = treewalkers.getTreeWalker("dom")
+        stream = walker(dom_tree)
+        gen = s.serialize(stream)
+        out = ""
+        for i in gen:
+            out += i
+        return out
+
 
 def i_debug(f):
     def g(*args, **kwargs):

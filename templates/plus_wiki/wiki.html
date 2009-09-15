@@ -52,55 +52,5 @@
 {% endblock %}
 
 {% block side_bar %}
-<div id="extra" class="block accordion">
-  <h3 class="first">Tags</h3>
-  <div class="first">
-    <ol class="tag_list">
-      <li><a href="#" class="tag pop7">activism</a></li>
-      <li><a href="#" class="tag pop8">architecture</a></li>
-      <li><a href="#" class="tag pop6">better</a></li>
-      <li><a href="#" class="tag pop3">big</a></li>
-      <li><a href="#" class="tag pop5">climatechange</a></li>
-      
-      <li><a href="#" class="tag pop2">clothing</a></li>
-    </ol>
-  </div>
-  <h3>Contributors</h3>
-  <div>
-    contributers here
-  </div>
-  <h3>My Tags</h3>
-  
-  <div>
-    my tags here
-  </div>
-  <h3>Backlinks</h3>
-  <div>
-    page list
-  </div>
-  <h3 class="last">History</h3>
-  <div class="last">
-    
-    history here
-  </div>
-</div>
-
-<div id="actions_list" class="block">
-  <ul id="actions" class="link_list">
-    <li class="first"><a href="#">Follow this page</a></li>
-    <li class="last"><a href="#">Recommend</a></li>
-  </ul>
-  
-</div>
-
-<div id="feature_search" class="site_block">
-  <h3>Search</h3>
-  <form>
-    <input name="search_term" type="text" class="text" /> <input class="button" type="submit" value="Search" /><br />
-    <input name="current_area" type="checkbox" checked="checked" /> This group only<br />
-    
-  </form>
-</div>
-
-
+{% include "plus_wiki/sidebar.html" %}
 {% endblock %}

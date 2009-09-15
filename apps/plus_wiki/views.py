@@ -17,7 +17,7 @@ from django.template import RequestContext
 from apps.plus_groups.models import TgGroup
 from apps.plus_permissions.api import secure_resource, TemplateSecureWrapper
 from apps.plus_wiki.models import WikiPage
-
+from apps.plus_wiki.forms import EditWikiForm
 
 
 @login_required
@@ -36,26 +36,29 @@ def edit_wiki(request, group, page_name, template_name="plus_wiki/create_wiki.ht
 @login_required
 @secure_resource(TgGroup)
 def create_wiki_page(request, group, page_name, template_name="plus_wiki/create_wiki.html"):
+    """creates OR saves WikiPages
+    """
+    form = EditWikiForm(request.POST)
     try:
         obj = WikiPage.objects.plus_get(request.user, name=page_name, in_agent=group.get_ref())
     except:
         raise Http404
 
-    title = request.POST.get('title', None)
-    if title:
-        obj.title = title
+    if form.is_valid():
+        obj.title = form.cleaned_data['title']
         obj.name_from_title()
-    content = request.POST.get('content', None)
-    if content:
-        obj.content = content
-    license = request.POST.get('license', None)
-    if license:
-        obj.license = license
+        obj.content = form.cleaned_data['content']
+        obj.license = form.cleaned_data['license']
+        obj.stub = False
+        obj.save()
+        return HttpResponseRedirect(reverse('view_WikiPage', args=[group.id, obj.name]))
 
-    obj.stub = False
-    obj.save()
-    return HttpResponseRedirect(reverse('view_WikiPage', args=[group.id, obj.name]))
-
+    return render_to_response(template_name, 
+                              {'page':TemplateSecureWrapper(obj),
+                               'data':form.data,
+                               'errors': form.errors,
+                               'form_action':reverse("create_WikiPage", args=[obj.in_agent.obj.id, obj.name])}, 
+                              context_instance=RequestContext(request))
 
 @login_required
 @secure_resource(TgGroup)

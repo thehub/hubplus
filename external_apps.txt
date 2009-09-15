@@ -1,0 +1,51 @@
+# Get all requirements formerly known as "external_libs" explicitly
+-r libs.txt
+
+# Already released apps
+django-ajax-validation
+django-announcements
+django-avatar
+django-dbtemplates
+django-microblogging
+
+django-notification
+django-pagination
+django-robots
+django-messages
+django-threadedcomments
+django-extensions
+django-uni-form
+django-timezones
+django-page-cms
+django-bookmarks
+django-email-confirmation
+django-gravatar
+django-mailer
+django-friends
+django-locations
+django-oembed
+django-swaps
+django-wikiapp==0.1.2
+django-flag
+django-debug-toolbar
+django-db-log
+
+# packages we create for release::
+http://django-tagging.googlecode.com/svn/trunk/
+http://django-voting.googlecode.com/svn/trunk/
+http://django-mptt.googlecode.com/svn/trunk/
+
+http://django-photologue.googlecode.com/files/photologue-2.1.zip
+
+-e git://github.com/brosner/django-openid.git#egg=django-openid
+-e git://github.com/ericflo/django-sorting.git#egg=django-sorting
+-e svn+http://django-app-plugins.googlecode.com/svn/trunk#egg=django-app-plugins
+
+# hubplus dependency packages
+
+# django-versioning
+http://fullhistory.googlecode.com/svn/trunk/
+-e git://github.com/toastdriven/django-haystack.git#egg=django-haystack
+
+
+

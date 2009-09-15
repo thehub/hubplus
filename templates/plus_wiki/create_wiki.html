@@ -7,10 +7,11 @@
 {% load uni_form %}
 {% block edit_header %}
     <a id="parent" href="{% url group page.in_agent.obj.id %}">{{page.in_agent.obj.display_name}}</a>
-    <input id="page_title" name="title" class="text" type="text" value="{{page.title}}" />
+    <input id="page_title" name="title" class="text" type="text" value="{% if data.title %}{{data.title}}{% else %}{{page.title}}{% endif %}" />
+    {% if errors.title %}<span class="error">{{errors.title}}<span>{% endif %}
 {% endblock %}
 {% block body %}      
-    <div id="main_content" class="block wiki_edit">
+    <div id="main_title" class="block wiki_edit">
       
       <ul class="icon_text_button_set">
 	<!--<li><a class="icon_text_button bt_edit" href="#">Edit page</a></li>-->
@@ -18,26 +19,31 @@
       </ul>
       
       <div id="content" class="yui-skin-sam">
-	<textarea name="content" rows="30">{{page.content}}</textarea>
+	<textarea name="content" rows="30">{% if data.content %}{{data.content}}{% else %}{{page.content}}{% endif %}</textarea>
+	{% if errors.content %}<span class="error">{{errors.content}}<span>{% endif %}
       </div>
       
       <ul>
 	<li>
 	  <dl>
-	    {% plus_tag '* Tags' 'tag' page user %}
+            {% if page.stub %}
+	       {% plus_tag '* Tags' 'tag' page user %}
+            {% endif %}
 	  </dl>
 	</li>
 	<li>
-	  
 	  <label for="license">License <span class="extra">('©2009', 'GPL')</span></label>
-	  <input name="license" id="license" class="text" type="text" value="{{page.license}}" />
+	  <input name="license" id="license" class="text" type="text" value="{% if data.license %}{{data.license}}{% else %}{{page.license}}{% endif %}" />
+	  {% if errors.license %}<span class="error">{{errors.license}}<span>{% endif %}
 	</li>
-	{% ifequal page.stub False %}
+	{% if page.stub %}
+	{% else %}
 	<li class="changes_set">	  
 	  <label for="changes">What's changed? <span class="extra">describe what you've just changed</span></label>
-	  <textarea id="changes" class="text" type="" value=""></textarea>
+	  <textarea id="changes" class="text" type="" value="">{% if data.changes %}{{data.changes}}{% else %}{{page.changes}}{% endif %}</textarea>
+	  {% if errors.changes %}<span class="error">{{errors.changes}}<span>{% endif %}
 	</li>
-	{% endifequal %}
+	{% endif %}
 	
       </ul>
       
@@ -50,6 +56,12 @@
 	 <input class="button" id="edit_submit" type="submit" value="Save"/>
 	 or <a href="{% url view_WikiPage page.in_agent.obj.id page.name  %}">Cancel</a>
       {% endif %}
-            
     </div>
-{% endblock %}
+ {% endblock %}
+   
+ {% block side_bar %}
+    {% if page.stub %}
+    {% else %}
+       {% include "plus_wiki/sidebar.html" %}
+    {% endif %}
+ {% endblock %}
