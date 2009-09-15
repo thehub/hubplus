@@ -1,0 +1,374 @@
+<html xmlns="http://www.w3.org/1999/xhtml" dir="ltr" xml:lang="en" lang="en">
+<head>
+
+	<meta http-equiv="content-type" content="text/html; charset=utf-8">
+	<title>Hub+ : Explore</title>
+
+	<!-- STYLES -->
+	<link rel="stylesheet" href="../../site_media/css/site.css" type="text/css" media="all" />
+	<link rel="stylesheet" href="../../site_media/css/header.css" type="text/css" media="all" />
+	<link rel="stylesheet" href="../../site_media/css/main.css" type="text/css" media="all" />
+	<link rel="stylesheet" href="../../site_media/css/serendipity.css" type="text/css" media="all" />
+	<link rel="stylesheet" href="../../site_media/css/footer.css" type="text/css" media="all" />
+	<link rel="stylesheet" href="../../site_media/themes/plus/css/theme.css" type="text/css" media="all" />
+	<link rel="stylesheet" href="../../site_media/css/tabview.css" type="text/css" media="all" />
+	<link rel="stylesheet" href="../../site_media/css/overlay.css" type="text/css" media="all" />
+	<!--[if IE]><style>
+		div { zoom: 1; } /* trigger hasLayout */
+	</style><![endif]-->
+
+	<!-- FRAMEWORK: JQUERY -->
+	<link rel="stylesheet" href="../../site_media/css/jquery.autocomplete.css" type="text/css" media="screen" />
+
+	<script src="../../site_media/js/jquery.min.js" type="text/javascript" charset="utf-8"></script>
+	<script src="../../site_media/js/jq.noconflict.js" type="text/javascript" charset="utf-8"></script>
+	<script src="../../site_media/js/ui.core.js" type="text/javascript" charset="utf-8"></script>
+	<script src="../../site_media/js/effects.core.js" type="text/javascript" charset="utf-8"></script>
+	<script src="../../site_media/js/effects.highlight.js" type="text/javascript" charset="utf-8"></script>
+	<script src="../../site_media/js/jquery.bgiframe.min.js" type="text/javascript" charset="utf-8"></script>
+	<script src="../../site_media/js/jquery.autocomplete.min.js" type="text/javascript" charset="utf-8"></script>
+	<script src="../../site_media/js/tools.overlay-1.0.4.min.js" type="text/javascript" charset="utf-8"></script>
+	<script src="../../site_media/js/jquery.confirm.js" type="text/javascript" charset="utf-8"></script>
+	<script src="../../site_media/js/jquery.confirm-1.1.js" type="text/javascript" charset="utf-8"></script>
+	<script src="../../site_media/js/ui.accordion.js" type="text/javascript" charset="utf-8"></script>
+
+	<script type="text/javascript">
+		jq(document).ready(function(){
+			jq(".accordion").accordion({ autoHeight: false });
+		});
+	</script>
+
+	<!-- FRAMEWORK: YUI -->
+	<link rel="stylesheet" type="text/css" href="../../site_media/js/yui/build/editor/assets/skins/sam/editor.css" /><!-- <link rel="stylesheet" type="text/css" href="../../site_media/js/yui/build/fonts/fonts-min.css" /> -->
+	<link rel="stylesheet" type="text/css" href="../../site_media/js/yui/build/logger/assets/skins/sam/logger.css" />
+	<script type="text/javascript" src="../../site_media/js/yui/build/yahoo-dom-event/yahoo-dom-event.js"></script>
+	<script type="text/javascript" src="../../site_media/js/yui/build/element/element-min.js"></script>
+	<script type="text/javascript" src="../../site_media/js/yui/build/container/container_core-min.js"></script>
+	<script type="text/javascript" src="../../site_media/js/yui/build/menu/menu-min.js"></script>
+	<script type="text/javascript" src="../../site_media/js/yui/build/button/button-min.js"></script>
+	<script type="text/javascript" src="../../site_media/js/yui/build/editor/editor-min.js"></script>
+	<script type="text/javascript" src="../../site_media/js/yui/build/animation/animation-min.js"></script>
+	<script type="text/javascript" src="../../site_media/js/yui/build/logger/logger-min.js"></script>
+	<script type="text/javascript" src="../../site_media/js/yui/build/dragdrop/dragdrop-min.js"></script>
+	<script type="text/javascript" src="../../site_media/js/yui/build/selector/selector-min.js"></script>
+	<script type="text/javascript" src="../../site_media/js/yui/build/tabview/tabview-min.js"></script>
+	<script type="text/javascript" src="../../site_media/js/yui/build/history/history-min.js"></script>
+	<link rel="stylesheet" type="text/css" href="../../site_media/css/list-edit-table.css" />
+
+	<!-- SITE -->
+	<script src="../../site_media/js/list-editor.js" type="text/javascript" charset="utf-8"></script>
+	<script src="../../site_media/js/hubcms.js" type="text/javascript" charset="utf-8"></script>
+	<script src="../../site_media/js/tab_hist.js" type="text/javascript" charset="utf-8"></script>
+	<script src="../../site_media/js/Jit/jit-yc.js" type="text/javascript" charset="utf-8"></script>
+	<link rel="stylesheet" type="text/css" href="../../site_media/css/jit.css" />
+	<script src="../../site_media/js/jit-example.js" type="text/javascript" charset="utf-8"></script>
+	<script src="../../site_media/js/hubplus.js" type="text/javascript"></script>
+	<link rel="stylesheet" type="text/css" href="../../site_media/js/yui/build/slider/assets/skins/sam/slider.css" />
+	<link rel="stylesheet" href="../../site_media/css/permissions.css" type="text/css" media="all" />
+	<script src="../../site_media/js/yui/build/slider/slider-min.js" type="text/javascript"></script>
+	<script src="../../site_media/js/plus_libs/html.js" type="text/javascript"></script>
+	<script src="../../site_media/js/plus_libs/utils.js" type="text/javascript"></script>
+	<script src="../../site_media/js/json2.js" type="text/javascript"></script>
+	<script src="../../site_media/js/plus_permissions/models.js" type="text/javascript"></script>
+	<script src="../../site_media/js/plus_permissions/views.js" type="text/javascript"></script><!-- Put your "on load" functions that fire it all off in here -->
+	<script src="../../site_media/js/ready.js" type="text/javascript"></script>
+	<script type="text/javascript" src="../../site_media/pinax/js/topics.js"></script>
+
+</head>
+<body>
+
+	<iframe id="yui-history-iframe" src="assets/blank.html"></iframe>
+	<form>
+		<input id="yui-history-field" type="hidden" />
+	</form>
+	<div class="overlay" id="overlay">
+		<div id="overlay_content"></div>
+	</div><!-- overlayed element, which is styled with external stylesheet -->
+
+	<div id='wrapper'>
+
+		<!-- header -->
+		<div id="header">
+			<h1><a href="index.html">Hub+</a></h1>
+			<ul id='account_navigation'>
+				<li><a href="/account/apply/">Apply to join</a></li>
+				<li><span>or</span></li>
+				<li class='last'><a href="/login/">Login</a></li>
+			</ul>
+			<ul id='main_navigation'>
+				<li class="first"><a href="/">Home</a></li>
+				<li class="disabled"><a href='#'>Explore</a></li>
+				<li><a href='/profiles/'>Members</a></li>
+				<li><a href='/groups/'>Groups</a></li>
+				<li class="disabled"><a href='#'>Regions</a></li>
+				<li class="last disabled"><a href='#'>Events</a></li>
+			</ul>
+		</div>
+		<!-- end header -->
+
+		<!-- main -->
+		<div id='main'>
+
+			<!-- page_header -->
+			<div id="page_header">
+				<h2 id="page_title">Explore</h2>
+			</div>
+			<!-- end page_header -->
+
+			<!-- body -->
+			<div id='body'>
+
+				<div id="search" class="block">
+
+					<div id="current">
+						<ul class="tag_list large">
+							<li><span class="tag">green</span><a href="explore.html" class="delete_tag">-</a></li>
+							<li><span class="tag">fairtrade</span><a href="explore_tagged.html" class="delete_tag">-</a></li>
+						</ul>
+					</div>
+
+					<div id="filter">
+						<div id="filter_tags">
+							<h3>Refine by tag</h3>
+	
+							<!--ol class="tag_list">
+								<li><a href="#" class="tag">activism</a><a href="#" class="add_tag">+</a></li>
+								<li><a href="#" class="tag">architecture</a><a href="#" class="add_tag">+</a></li>
+								<li><a href="#" class="tag">better</a><a href="#" class="add_tag">+</a></li>
+								<li><a href="#" class="tag">big</a><a href="#" class="add_tag">+</a></li>
+								<li><a href="#" class="tag">climatechange</a><a href="#" class="add_tag">+</a></li>
+								<li><a href="#" class="tag">clothing</a><a href="#" class="add_tag">+</a></li>
+								<li><a href="#" class="tag">design</a><a href="#" class="add_tag">+</a></li>
+								<li><a href="#" class="tag">dip</a><a href="#" class="add_tag">+</a></li>
+								<li><a href="#" class="tag">developement</a><a href="#" class="add_tag">+</a></li>
+								<li><a href="#" class="tag">energy</a><a href="#" class="add_tag">+</a></li>
+								
+								<li><a href="#" class="tag">environment</a><a href="#" class="add_tag">+</a></li> 
+								<li><a href="#" class="tag">fairtrade</a><a href="#" class="add_tag">+</a></li>
+								<li><a href="#" class="tag">gender</a><a href="#" class="add_tag">+</a></li>
+								<li><a href="#" class="tag">green</a><a href="#" class="add_tag">+</a></li>
+								<li><a href="#" class="tag">hub</a><a href="#" class="add_tag">+</a></li>
+								<li><a href="#" class="tag">innovation</a><a href="#" class="add_tag">+</a></li>
+								<li><a href="#" class="tag">living</a><a href="#" class="add_tag">+</a></li>
+								<li><a href="#" class="tag">product</a><a href="#" class="add_tag">+</a></li>
+								<li><a href="#" class="tag">reference</a><a href="#" class="add_tag">+</a></li> 
+								<li><a href="#" class="tag">salad</a><a href="#" class="add_tag">+</a></li>
+								<li><a href="#" class="tag">org</a><a href="#" class="add_tag">+</a></li>
+								
+								<li><a href="#" class="tag">science</a><a href="#" class="add_tag">+</a></li>
+								<li><a href="#" class="tag">shopping</a><a href="#" class="add_tag">+</a></li>
+								<li><a href="#" class="tag">sustainability</a><a href="#" class="add_tag">+</a></li>
+								<li><a href="#" class="tag">web</a><a href="#" class="add_tag">+</a></li>
+							</ol-->
+		
+							<!--ol class="tag_list">
+								<li><a href="#" class="tag pop7">activism</a><a href="#" class="add_tag">+</a></li>
+								<li><a href="#" class="tag pop8">architecture</a><a href="#" class="add_tag">+</a></li>
+								<li><a href="#" class="tag pop6">better</a><a href="#" class="add_tag">+</a></li>
+								<li><a href="#" class="tag pop3">big</a><a href="#" class="add_tag">+</a></li>
+								<li><a href="#" class="tag pop5">climatechange</a><a href="#" class="add_tag">+</a></li>
+								<li><a href="#" class="tag pop2">clothing</a><a href="#" class="add_tag">+</a></li>
+								<li><a href="#" class="tag pop8">design</a><a href="#" class="add_tag">+</a></li>
+								<li><a href="#" class="tag pop8">dip</a><a href="#" class="add_tag">+</a></li>
+								<li><a href="#" class="tag pop7">developement</a><a href="#" class="add_tag">+</a></li>
+								<li><a href="#" class="tag pop3">energy</a><a href="#" class="add_tag">+</a></li>
+								
+								<li><a href="#" class="tag pop6">environment</a><a href="#" class="add_tag">+</a></li> 
+								<li><a href="#" class="tag pop8">fairtrade</a><a href="#" class="add_tag">+</a></li>
+								<li><a href="#" class="tag pop1">gender</a><a href="#" class="add_tag">+</a></li>
+								<li><a href="#" class="tag pop8">green</a><a href="#" class="add_tag">+</a></li>
+								<li><a href="#" class="tag pop7">hub</a><a href="#" class="add_tag">+</a></li>
+								<li><a href="#" class="tag pop4">innovation</a><a href="#" class="add_tag">+</a></li>
+								<li><a href="#" class="tag pop2">living</a><a href="#" class="add_tag">+</a></li>
+								<li><a href="#" class="tag pop6">product</a><a href="#" class="add_tag">+</a></li>
+								<li><a href="#" class="tag pop8">reference</a><a href="#" class="add_tag">+</a></li> 
+								<li><a href="#" class="tag pop5">salad</a><a href="#" class="add_tag">+</a></li>
+								<li><a href="#" class="tag pop5">org</a><a href="#" class="add_tag">+</a></li>
+								
+								<li><a href="#" class="tag pop8">science</a><a href="#" class="add_tag">+</a></li>
+								<li><a href="#" class="tag pop2">shopping</a><a href="#" class="add_tag">+</a></li>
+								<li><a href="#" class="tag pop6">sustainability</a><a href="#" class="add_tag">+</a></li>
+								<li><a href="#" class="tag pop1">web</a><a href="#" class="add_tag">+</a></li>
+							</ol-->
+		
+							<ol class="tag_list">
+		
+								<li><span class="tag pop8">design</span><a href="#" class="add_tag">+</a></li>
+								<li><span class="tag pop8">reference</span><a href="#" class="add_tag">+</a></li> 
+								<li><span class="tag pop7">hub</span><a href="#" class="add_tag">+</a></li>
+								<li><span class="tag pop6">product</span><a href="#" class="add_tag">+</a></li>
+								<li><span class="tag pop5">salad</span><a href="#" class="add_tag">+</a></li>
+								<li><span class="tag pop2">living</span><a href="#" class="add_tag">+</a></li>
+								<li><span class="tag pop2">shopping</span><a href="#" class="add_tag">+</a></li>						
+							</ol>
+		
+							<!--ol class="tag_list">
+		
+								<li><a href="#" class="tag pop8">fairtrade (21)</a><a href="#" class="add_tag">+</a></li>
+								<li><a href="#" class="tag pop8">green (19)</a><a href="#" class="add_tag">+</a></li>
+								<li><a href="#" class="tag pop8">design (16)</a><a href="#" class="add_tag">+</a></li>
+								<li><a href="#" class="tag pop8">reference (16)</a><a href="#" class="add_tag">+</a></li> 
+								<li><a href="#" class="tag pop8">dip (16)</a><a href="#" class="add_tag">+</a></li>
+								<li><a href="#" class="tag pop8">architecture (16)</a><a href="#" class="add_tag">+</a></li>
+								<li><a href="#" class="tag pop7">developement (15)</a><a href="#" class="add_tag">+</a></li>
+								<li><a href="#" class="tag pop7">hub (14)</a><a href="#" class="add_tag">+</a></li>
+								<li><a href="#" class="tag pop6">environment (12)</a><a href="#" class="add_tag">+</a></li> 
+								<li><a href="#" class="tag pop6">sustainability (11)</a><a href="#" class="add_tag">+</a></li>
+								<li><a href="#" class="tag pop6">product (10)</a><a href="#" class="add_tag">+</a></li>
+								<li><a href="#" class="tag pop5">salad (5)</a><a href="#" class="add_tag">+</a></li>
+								<li><a href="#" class="tag pop3">energy (3)</a><a href="#" class="add_tag">+</a></li>
+								<li><a href="#" class="tag pop2">living (2)</a><a href="#" class="add_tag">+</a></li>
+								<li><a href="#" class="tag pop2">shopping (1)</a><a href="#" class="add_tag">+</a></li>						
+							</ol-->
+
+						</div>
+						<div id="search_inside">
+							<h3>Refine by keyword</h3>
+							<form>
+								<input name="search_term" type="text" class="text" /> <input class="button" type="submit" value="Search" />
+							</form>
+						</div>
+	
+					</div>
+
+				</div>
+				<!-- section_tab_navigation -->
+				<div id="section_tab_navigation" class="tabbed section yui-navset">
+					<ul class="tabbed_navigation yui-nav">
+						<li class="selected"><a href="#results_all"><span>All <span class="count">(57)</span></span></a></li>
+						<li><a href="#results_members">Members <span class="count">(19)</span></a></li>
+						<li><a href="#results_groups">Groups <span class="count">(23)</span></a></li>
+						<li><a href="#results_hubs">Hubs <span class="count">(4)</span></a></li>
+						<li><a href="#results_resources">Resources <span class="count">(3)</span></a></li>
+					</ul>
+					
+					<ul class="display_options">
+						<li class="sort">
+							<label>Sort by:</label>
+							<select size="1" name="state">
+								<option value="relevance">Relevance</option>
+								<option value="latest">Most recent</option>
+								<option value="view">Most views</option>
+								<option value="az">A-Z</option>
+							</select>
+						</li>
+					</ul>
+
+					<div class="tabbed_content yui-content">
+
+						<!-- results_all -->
+						<div id="results_all">
+							<ul id="results_list_all" class="content_list results">
+								<li class="first">
+									<div class="thumb medium"><img src="../../site_media/images/temp/image.png" /></div>
+									<dl>
+										<dt>Name</dt>
+										<dd><a href="#">Sarah Lloyd-hughes</a></dd>
+										<dt>Organisation:</dt>
+										<dd>The Hub</dd>
+										<dt>Hub:</dt>
+										<dd><a href="#">Islington</a></dd>
+										<dt>Interests:</dt>
+										<dd>
+											<ul class="tag_list">
+												<li><a href="#" class="tag">activism</a></li>
+												<li><a href="#" class="tag">architecture</a></li>
+												<li><a href="#" class="tag">better</a></li>
+												<li><a href="#" class="tag">big</a></li>
+												<li><a href="#" class="tag">climatechange</a></li>
+												<li><a href="#" class="tag">clothing</a></li>
+											</ul>
+										</dd>
+									</dl>
+								</li>
+								<li>
+									<div class="thumb medium"><img src="../../site_media/images/resource.jpg" /></div>
+									<dl>
+										<dt>Name:</dt>
+										<dd><a href="#">5 Crucial Elements for Great Spaces</a></dd>
+										<dt>Description:</dt>
+										<dd>What can you do with an outdated fireplace? Rip it out, patch the walls with drywall, redesign the surround, the mantel and the hearth?</dd>
+									</dl>
+								</li>
+								<li>
+									<div class="thumb medium"><img src="../../site_media/images/hub.jpg" /></div>
+									<dl>
+										<dt>Name:</dt>
+										<dd><a href="#">The Hub Islington</a></dd>
+										<dt>Location:</dt>
+										<dd>London</dd>
+										<dt>Description:</dt>
+										<dd>Hub Islington is where it all began! This flagship Hub located in a converted warehouse offers flexible time-based membership for spaces to work and meet. They include all you need to run a project or a business; wireless internet connection and access to meeting and event spaces, printers, scanners, phones, fax, physical and virtual storage space and admin support according to your tariff. Membership also includes access to a community of like-minded professionals as well as learning and social events and a light business support service.</dd>
+										<dt>Members:</dt>
+										<dd>338 members</dd>
+									</dl>
+								</li>
+								<li class="last">
+									<div class="thumb medium"><img src="../../site_media/images/temp/salad.jpg" /></div>
+									<dl>
+										<dt>Name</dt>
+										<dd><a href="#">Sexy salad club</a></dd>
+										<dt>Type:</dt>
+										<dd>Interest Group</dd>
+										<dt>Description:</dt>
+										<dd>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent sollicitudin velit quis quam rutrum sodales. Etiam at risus elit, eget porttitor odio. Vivamus pretium ultricies ultrices. Donec in lectus gravida ante porta dignissim at id nibh. Vivamus pharetra dolor at tortor gravida vestibulum. In condimentum ante a justo porttitor tincidunt.</dd>
+										<dt>Members:</dt>
+										<dd>74 members</dd>
+									</dl>
+								</li>
+							</ul>
+							<div class="pagination">
+								<span class="disabled prev">‹‹ Previous</span>
+								<span class="current page">1</span>
+								<a class="page" href="?page=2">2</a>
+								<a class="page" href="?page=3">3</a>
+								<a class="next" href="?page=2">Next ››</a>
+							</div>
+						</div>
+						<!-- end results_all -->
+
+					</div>
+				</div>
+				<!-- end section_tab_navigation -->
+
+			</div>
+			<!-- end body -->
+
+			<!-- side_bar -->
+			<div id='side_bar'>
+
+				<div id="feature_search" class="site_block">
+					<h3>New search</h3>
+					<form>
+						<input name="search_term" type="text" class="text" /> <input class="button" type="submit" value="Search" /><br />
+					</form>
+				</div>
+
+				<div id="feature_add" class="site_block">
+					<a href="#" class="bt_add icon_text_button">Add...</a>
+				</div>
+
+			</div>
+			<!-- end side_bar -->
+
+		</div>
+		<!-- end main -->
+
+		<!-- footer -->
+		<div id='footer'>
+			<p id='copyright'>© 2009 Hub World Ltd</p>
+			<ul id='extra_navigation'>
+				<li class='first'><a href="/about/">About</a></li>
+				<li><a href='/about/terms/'>Terms of Service</a></li>
+				<li class='last'><a href="/about/privacy/">Privacy Policy</a></li>
+			</ul>
+		</div>
+		<!-- end footer -->
+
+	</div>
+	<!-- end wrapper -->
+	
+	<!-- script src="../../site_media/base.js" type="text/javascript"></script -->
+
+</body>
+</html>

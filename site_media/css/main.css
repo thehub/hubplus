@@ -2,13 +2,12 @@
 HUB PLUS 2009
 */
 
-/* Toms dirty nasty changes to be refactored by Jesson */
-.hidden {
-   display: none;
-}
-
 
 /* Main Generic */
+
+#page_header {
+	width		: 620px;
+}
 
 h2,
 #page_title {
@@ -39,14 +38,12 @@ span.label_time {
 	color		: #FF0000;
 }
 
-.permission_button {
-	text-align	:right;
-	margin-bottom	:1.5em;
-	cursor		:pointer;
-}
-
 .untruncated {
 	display		: none;
+}
+
+.hidden {
+   display: none;
 }
 
 
@@ -87,6 +84,7 @@ span.label_time {
 .content_list,
 .link_list {
 	border-bottom	: 1px solid #ddd;
+	clear		: both;
 	list-style	: none;
 	overflow	: hidden;
 }
@@ -94,51 +92,96 @@ span.label_time {
 .content_list li,
 .link_list li {
 	border-top	: 1px solid #ddd;
-	padding		: 5px 0;
+	padding		: 10px 0;
 	overflow	: hidden;
 }
 
-.content_list li .preview {
+.content_list li li,
+.link_list li li {
+	border		: 0;
+	padding		: 0;
+}
+
+.content_list li .Description {
 	margin-left	: 50px;
 	padding		: 5px 0 0;
 }
 
-.content_list li .preview p {
+.content_list li .Description p {
 	padding-bottom	: 0;
 }
 
 
-/* Accordions */
+/* Explore */
 
-.accordion h3 {
-	border-top	: 1px solid #ddd;
-	background	: url('../images/icon_arrow_dn.gif') 100% 5px no-repeat;
-	-moz-background-clip:border;
-	-moz-background-inline-policy:continuous;
-	-moz-background-origin:padding;
-	outline-color:-moz-use-text-color;
-	outline-style:none;
-	outline-width:medium;
-	padding		: 5px 0 5px !important;
+#search #current {
+	margin-bottom	: 10px;
+	padding			: 4px 0 10px;
+	border-bottom	: 1px solid #ddd;
 }
 
-.accordion h3.first {
-	border		: 0;
-	padding-top	: 0;
+#search #filter_tags {
+	margin-bottom	: 10px;
 }
 
-.accordion h3:hover,
-.accordion h3.ui-state-active {
-	background-position	: 100% -95px;
+.display_options {
+	border-bottom	: 1px solid #ddd;
+	list-style	: none;
+	padding		: 5px 0;
+	overflow	: hidden;
+	text-align	: right;
+	width		: 100%;
 }
 
-.accordion div {
-	padding-bottom	: 10px;
+.display_options li {
+	float		: right;
+	margin-left	: 20px;
 }
 
-.accordion div.last {
-	padding-bottom	: 0;
+.results {
+	margin-bottom	: 10px;
 }
+
+.results li {
+	position	: relative;
+	min-height	: 100px;
+}
+
+.results li li {
+	min-height	: 0;
+}
+
+.results .thumb {
+	position	: absolute;
+	left		: 0;
+	top			: 10px;	
+}
+
+.results h3,
+.results dl {
+	padding-left: 102px;
+	width		: 518px;
+}
+
+.results dl {
+	color		: #777;
+}
+
+.results dt,
+.results dd {
+	float		: left;
+	width		: 300px;
+}
+
+.results dt {
+	clear		: both;
+	width		: 100px;
+}
+
+
+
+
+
 
 
 /* Content Extra */
@@ -189,7 +232,7 @@ span.label_time {
 	font-size	: 1.6em;
 	line-height	: 1em;
 	list-style	: none;
-	margin		: 0 0 1em;
+	/*margin		: 0 0 1em;*/
 	overflow	: hidden;
 	padding		: 0;
 }
@@ -214,7 +257,22 @@ span.label_time {
 }
 
 .tabbed ul.tabbed_navigation li.selected a {
-	color		: #5a0000;	
+	color		: #5a0000;
+}
+
+.tabbed ul.tabbed_navigation li a .count {
+	color		: #999;
+	font-size	: 0.625em;
+	line-height	: 1em;
+	vertical-align	: top; 
+}
+
+.tabbed ul.tabbed_navigation li.selected a .count {
+	color		: #777;
+}
+
+.tabbed .tabbed_content .content_list li.first {
+	border-top	: 0;
 }
 
 
@@ -364,6 +422,8 @@ li.place div.editable {
 }
 
 
+
+
 /* Tags */
 
 .tag_list {
@@ -373,12 +433,14 @@ li.place div.editable {
 }
 
 .tag_list li {
+	background	: #fff;
 	float		: left;
 	margin		: 0 3px 3px 0;
 }
 
-.tag_list a.tag,
-.tag_list a.delete_tag {
+.tag_list .tag,
+.tag_list .delete_tag,
+.tag_list .add_tag {
 	background	: #f5f5f5 url('../images/tag_bg.gif') 0 0 repeat-x;
 	border		: 1px solid #bbb;
 	border-color: #ddd #bbb #bbb #ddd;
@@ -387,8 +449,9 @@ li.place div.editable {
 	padding		: 3px 3px 4px;
 }
 
-.tag_list a.delete_tag {
-	background	: #eee url('../images/button_bg.gif') 0 0 repeat-x;
+.tag_list a.delete_tag,
+.tag_list a.add_tag {
+	background	: #e8e8e8 url('../images/button_bg.gif') 0 0 repeat-x;
 	border-left	: 0;
 	color		: #000;
 	font-family	: verdana;
@@ -396,7 +459,13 @@ li.place div.editable {
 	width		: 1.0em;
 }
 
-.tag_list a.tag:hover {
+.tag_list a.delete_tag:hover,
+.tag_list a.add_tag:hover {
+	background	: #ccc;
+	border-color: #aaa #999 #aaa #999;
+}
+
+.tag_list .tag:hover {
 	background	: #5a0000;
 	border-color: #500000 #300000 #300000 #500000;
 	color		: #eee;
@@ -413,9 +482,21 @@ li.place div.editable {
 .tag_list .pop2 { opacity: 0.4; filter: alpha(opacity=40);  }
 .tag_list .pop1 { opacity: 0.3; filter: alpha(opacity=30);  }
 
-.tag_list a.delete_tag:hover {
+.tag_list a.delete_tag:hover
+.tag_list a.add_tag:hover {
 	background	: #ccc;
 	border-color: #aaa #999 #aaa #999;
+}
+
+.tag_list.large li {
+	margin		: 0 5px 5px 0;
+}
+
+.tag_list.large .tag,
+.tag_list.large a.delete_tag,
+.tag_list.large a.add_tag {
+	font-size	: 1.3em;
+	padding		: 5px 5px 6px;
 }
 
 
@@ -471,6 +552,12 @@ textarea {
 	padding		: 3px 3px;
 }
 
+input.text.large {
+	font-size	: 1.3em;
+	margin-bottom	: 5px;
+	padding		: 1px 5px 2px;
+}
+
 form input.checkbox,
 form input.radio {
 	float		: left;
@@ -484,7 +571,20 @@ form.full fieldset {
 	padding		: 0 0 10px;
 }
 
+form.full ul {
+	list-style	: none;
+	overflow	: hidden;
+	padding-bottom	: 10px;
+}
 
+form.full ul ul {
+	padding-bottom	: 0;
+}
+
+form.full ul li {
+	overflow	: hidden;
+	padding-bottom	: 3px;
+}
 
 form.full label,
 form.full .label_extended {
@@ -589,12 +689,18 @@ form fieldset .checkboxes select {
 /* Form Buttons */
 
 .button {
-	background	: #e2e2e2 url('../images/button_bg.gif') 0 0 repeat-x;
+	background	: #e8e8e8 url('../images/button_bg.gif') 0 0 repeat-x;
 	border		: 1px solid #bbb;
 	border-color: #bbb #999 #999 #bbb;
 	cursor		: pointer;
 	padding		: 3px 5px 3px;	
 	text-transform	: uppercase;
+}
+
+.button.large {
+	font-size	: 1.2em;
+	margin-bottom	: 5px;
+	padding		: 3px 5px 2px;
 }
 
 .button::-moz-focus-inner {
@@ -609,6 +715,12 @@ form fieldset .checkboxes select {
 
 
 /* Form: Permissions Label */
+
+.permission_button {
+	text-align	:right;
+	margin-bottom	:1.5em;
+	cursor		:pointer;
+}
 
 form .label_permissions {
 	background	: url('../images/icon_permissions.gif') 100% 0 no-repeat;
@@ -636,7 +748,6 @@ form .label_permissions {
 	display: none;
 }
 
-
 .icon_text_button_set {
 	list-style	: none;
 	float		: right;
@@ -647,8 +758,8 @@ form .label_permissions {
 	overflow	: hidden;
 }
 
-a.icon_button,
-a.icon_text_button {
+.icon_button,
+.icon_text_button {
 	background-repeat	: no-repeat;
 	color		: #222;
 	float		: left;
@@ -660,7 +771,7 @@ a.icon_text_button {
 	text-transform	: uppercase;
 }
 
-a.icon_button {
+.icon_button {
 	float		: right;
 	height		: 16px;
 	margin-left	: 3px;
@@ -669,22 +780,29 @@ a.icon_button {
 	width		: 16px;
 }
 
-
-a.icon_button:hover,
-a.icon_text_button:hover {
+.icon_button:hover,
+.icon_text_button:hover {
 	background-position	: 0 -100px;
 }
 
-a.bt_edit        { background-image: url('../images/icon_edit.gif');        }
-a.bt_permissions { background-image: url('../images/icon_permissions.gif'); }
-a.bt_rss         { background-image: url('../images/icon_rss.gif');         }
-a.bt_pdf         { background-image: url('../images/icon_pdf.gif');         }
+.icon_text_button.bt_add {
+	font-size	: 1.4em;
+	margin		: 0;
+	padding		: 0 0 0 22px;
+	text-transform	: none;
+}
+
+.bt_add         { background-image: url('../images/icon_add.gif');         }
+.bt_edit        { background-image: url('../images/icon_edit.gif');        }
+.bt_permissions { background-image: url('../images/icon_permissions.gif'); }
+.bt_rss         { background-image: url('../images/icon_rss.gif');         }
+.bt_pdf         { background-image: url('../images/icon_pdf.gif');         }
 
 .icon_text_button_set {
 	float		: right;
 }
 
-.editing a.icon_button {
+.editing .icon_button {
 	display		: block;
 }
 
@@ -702,6 +820,45 @@ a.bt_pdf         { background-image: url('../images/icon_pdf.gif');         }
 	margin-right	: 3px;
 }
 
+
+/* Accordions */
+
+.accordion h3 {
+	border-top	: 1px solid #ddd;
+	background	: url('../images/icon_arrow_dn.gif') 100% 5px no-repeat;
+	-moz-background-clip:border;
+	-moz-background-inline-policy:continuous;
+	-moz-background-origin:padding;
+	outline-color:-moz-use-text-color;
+	outline-style:none;
+	outline-width:medium;
+	padding		: 5px 0 5px !important;
+}
+
+.accordion h3.first {
+	border		: 0;
+	padding-top	: 0;
+}
+
+.accordion h3:hover,
+.accordion h3.ui-state-active {
+	background-position	: 100% -95px;
+}
+
+.accordion div {
+	padding-bottom	: 10px;
+}
+
+.accordion div.last {
+	padding-bottom	: 0;
+}
+
+
+/* Side Blocks: Search */
+
+#feature_search form {
+	margin-bottom	: 20px;
+}
 
 
 /* Side Blocks: Members Online */
