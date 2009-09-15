@@ -1,0 +1,304 @@
+/* Forms */
+
+form h4 {
+	clear		: both;
+	font-weight	: normal;
+	font-size	: 1.5em;
+	padding-bottom	: 9px;
+}
+
+form p {
+	color		: #888888;
+}
+
+form fieldset {
+	border		: none;
+}
+
+form label span.required {
+	color		: #5a0000;
+	font-size	: 1.2em;
+	line-height	: 0em;
+}
+
+form ul {
+	list-style	: none;
+	overflow	: hidden;
+	padding-bottom	: 10px;
+}
+
+form ul ul {
+	padding-bottom	: 0;
+}
+
+form ul li {
+	overflow	: hidden;
+	padding-bottom	: 3px;
+}
+
+form label .extra {
+	color		: #888888;
+	font-size	: 0.8181em;
+	display		: block;
+}
+
+input.text,
+textarea {
+	background	: #fff url('../images/input_bg.gif') 0 0 repeat-x;
+	border		: 1px solid #999;
+	border-color: #777 #bbb #ddd #aaa;
+	padding		: 3px 3px;
+}
+
+input.text.large {
+	font-size	: 1.3em;
+	margin-bottom	: 5px;
+	padding		: 1px 5px 2px;
+}
+
+form input.checkbox,
+form input.radio {
+	float		: left;
+	margin		: 2px 5px 0 0;
+}
+
+
+/* Forms: Full Size */
+
+form.full fieldset {
+	padding		: 0 0 10px;
+}
+
+form.full label,
+form.full .label_extended {
+	display		: block;
+	float		: left;
+	font-size	: 1.1em;
+	text-align	: right;
+	padding		: 0 10px 0 30px;
+	width		: 200px;
+}
+
+form.full .label_extended {
+	padding-left: 0;
+}
+
+form.full .label_extended label {
+	font-size	: 1em;
+	padding-left: 0;
+}
+
+form.full .label_extended input.text {
+	width		: 200px;
+}
+
+form.full input.text,
+form.full textarea {
+	width		: 250px;
+}
+
+form.full select {
+	width		: 260px;
+}
+
+form.full input.submit {
+	margin-left	: 240px;
+}
+
+form.full ul ul {
+	float: left;
+}
+
+form.full ul ul li {
+	width		: 260px;
+}
+
+form.full ul ul li label {
+	padding-right	: .2em;
+	text-align	: left;
+}
+
+form.full ul ul li label {
+	font-size	: 1.1em;
+	padding-left: 0;
+	width		: auto;
+}
+
+
+/* Forms: Custom Labels */
+
+form.full .custom_labels label {
+	text-align	: left;
+}
+
+form.full .custom_labels label .extra {
+	display		: inline;
+}
+
+form.full .custom_labels .input_extended label {
+	padding-left: 0;
+	width		: 248px
+}
+
+form.full .custom_labels .label_extended {
+	padding-left: 30px;
+}
+
+form.full .custom_labels .label_extended input.text {
+	width		: 190px;
+}
+
+
+/* Forms: Checkbox/Radio Button Labelling */
+
+form fieldset .checkboxes .label_extended {
+	float		: left;
+	padding-right	: 0;
+	text-align	: left;
+	width		: 240px;
+}
+
+form fieldset .checkboxes .label_extended label {
+	text-align	: left;
+	padding-right	: 0;
+	width		: 240px;
+}
+
+form fieldset .checkboxes select {
+	width		: 240px;
+}
+
+
+/* Form: Buttons */
+
+.button {
+	background	: #e8e8e8 url('../images/button_bg.gif') 0 0 repeat-x;
+	border		: 1px solid #bbb;
+	border-color: #bbb #999 #999 #bbb;
+	cursor		: pointer;
+	padding		: 3px 5px 3px;	
+	text-transform	: uppercase;
+}
+
+.button.large {
+	font-size	: 1.2em;
+	margin-bottom	: 5px;
+	padding		: 3px 5px 2px;
+}
+
+.button::-moz-focus-inner {
+	border		: none;
+	padding		: 0;
+}
+
+.button:hover {
+	background	: #ccc;
+	border-color: #aaa #999 #aaa #999;
+}
+
+
+/* Form: Permissions Label */
+
+.permission_button {
+	text-align	:right;
+	margin-bottom	:1.5em;
+	cursor		:pointer;
+}
+
+form .label_permissions {
+	background	: url('../images/icon_permissions.gif') 100% 0 no-repeat;
+	padding-right	: 17px;
+}
+
+
+/* Edit in Place */
+
+.editable_set {
+	border		: 1px solid transparent;
+	border-width: 1px 0;
+}
+
+.editable_set dt,
+.editable_set dd {
+	padding		: 1px 0;
+}
+
+.editable_set:hover {
+	border-color: #DDD;
+}
+
+.editable_set .bt_edit {
+	display: none;
+}
+
+.icon_text_button_set {
+	list-style	: none;
+	float		: right;
+}
+
+.icon_text_button_set li {
+	display		: inline;
+	overflow	: hidden;
+}
+
+.icon_button,
+.icon_text_button {
+	background-repeat	: no-repeat;
+	color		: #222;
+	float		: left;
+	font-size	: .9em;
+	min-height	: 16px;
+	margin		: 1px 0 0 15px;
+	padding		: 0 0 0 20px;
+	overflow	: hidden;
+	text-transform	: uppercase;
+}
+
+.icon_button {
+	float		: right;
+	height		: 16px;
+	margin-left	: 3px;
+	padding		: 0;
+	text-indent	: -2000px;
+	width		: 16px;
+}
+
+.icon_button:hover,
+.icon_text_button:hover {
+	background-position	: 0 -100px;
+}
+
+.icon_text_button.bt_add {
+	font-size	: 1.4em;
+	margin		: 0;
+	padding		: 0 0 0 22px;
+	text-transform	: none;
+}
+
+.bt_add         { background-image: url('../images/icon_add.gif');         }
+.bt_edit        { background-image: url('../images/icon_edit.gif');        }
+.bt_permissions { background-image: url('../images/icon_permissions.gif'); }
+.bt_rss         { background-image: url('../images/icon_rss.gif');         }
+.bt_pdf         { background-image: url('../images/icon_pdf.gif');         }
+
+.icon_text_button_set {
+	float		: right;
+}
+
+.editing .icon_button {
+	display		: block;
+}
+
+.tag_manager form,
+.editable_set form {
+	margin		: 3px 0;
+}
+
+.editable_set input.text {
+	margin-bottom	: 3px;
+	width		: 240px;
+}
+
+.editable_set .buttons .button {
+	margin-right	: 3px;
+}
