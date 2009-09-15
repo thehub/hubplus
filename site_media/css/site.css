@@ -1,12 +1,14 @@
+/*
+HUB PLUS 2009
+*/
+
+
 /* Reset */
 
 * {
 	margin		: 0;
 	padding		: 0;
 }
-
-
-/* Elements */
 
 a {
 	text-decoration	: none;
@@ -77,19 +79,15 @@ body {
 
 .site_block {
 	background	: #fff url('../images/block_header_right.gif') 0 0 repeat-x;
-	border-top	: 0;
-	padding-top	: 22px;
-}
-
-.disabled {
-	opacity:.4;
+	padding		: 22px 0 25px;
 }
 
 #yui-history-iframe {
-	height		:1px; /* avoid scrollbars */
-	left		:0;
-	position	:absolute;
-	top			:0;
-	width		:1px;	
-	visibility	:hidden;
+	height		: 1px; /* avoid scrollbars */
+	left		: 0;
+	position	: absolute;
+	top			: 0;
+	width		: 1px;	
+	visibility	: hidden;
 }
+
