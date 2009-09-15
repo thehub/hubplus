@@ -9,12 +9,12 @@
   </ul>
   <span class="error_message"></span>
   <!-- This should only show if has permission add tags on the tagged_for agent -->
-  <form method='post' class="add_tag_form" action='/plus_tags/add_tag/' >
+  <div class="add_tag_form" id="{% url add_generic_tag %}" > 
     <input name="tagged_class" class="tagged_class" value="{{tagged_class}}" type="hidden" />
     <input name="tagged_id" class="tagged_id" value="{{tagged_id}}" type="hidden" />
     <input name="tag_type" class="tag_type" value="{{tag_type}}" type="hidden" />
     <input name="tag_value" class="tag_value text" />
     <input class="button add_tag" type="submit" value="Add" />
-  </form>
+  </div> 
 
 </dd>

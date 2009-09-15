@@ -1,0 +1,56 @@
+{% extends "site_base.html" %}
+{% load i18n %}
+{% load plus_tags %}
+
+{% block page_header %}
+<a id="parent" href="{% url group page.in_agent.obj.id %}">{{page.in_agent.obj.display_name}}</a>
+<h2 id="page_title">{{page.title}}</h2>
+{% endblock %}
+
+{% block body %}
+<div id="main_content" class="block">
+
+  <ul class="icon_text_button_set">
+    <li><a class="icon_text_button bt_edit" href="{% url edit_WikiPage page.in_agent.obj.id page.name %}">Edit page</a></li>
+    <li><a class="icon_text_button bt_permissions" href="#">Permissions</a></li>
+  </ul>
+  
+  <div id="content">
+     {% autoescape off %}{{page.content}}{% endautoescape %}
+  </div>
+  
+  <div id="content_extra">	
+    <ul class="icon_text_button_set">
+      <li><a class="icon_text_button bt_rss" href="#">RSS feed</a></li>
+      <li><a class="icon_text_button bt_pdf" href="#">Download PDF</a></li>
+    </ul>
+    <ul id="meta">
+      
+      <li>Created by <a href="#">Phil Jones</a> and last edited by <a href="#">Jesson Yip</a> 3 days ago. </li>
+      <li>Licensed under <a href="#">{{page.license}}</a>.</li>	
+    </ul>
+  </div>
+  
+</div>
+<div id="section_tab_navigation" class="tabbed section yui-navset">
+  <ul class="tabbed_navigation yui-nav">
+    <li class="selected"><a href="#comments"><span>Comments (23)</span></a></li>
+    <li><a href="#attachments"><span>Attachments (2)</span></a></li>
+    
+  </ul>
+  <div class="tabbed_content yui-content">
+    <div id="comments">
+      Comments go here
+    </div>
+    <div id="attachments">
+      Attachments go here
+    </div>
+  </div>
+</div>
+
+
+{% endblock %}
+
+{% block side_bar %}
+{% include "plus_wiki/sidebar.html" %}
+{% endblock %}

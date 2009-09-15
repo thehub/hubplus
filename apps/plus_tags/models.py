@@ -18,7 +18,8 @@ class GenericTag(models.Model) :
 
 def tag_autocomplete(tagged_for, tagged, tag_type, tag_value, limit):
     tags = get_tags(tag_type=tag_type, partial_tag_value=tag_value) # XXX ensure results are unique by keyword
-    return [tag.keyword for tag in tags[0:10]]
+    keywords = tags.values('keyword').distinct()
+    return keywords[0:10]
 
 def get_tagged_resources(tag_type=None, tag_value=None, tagger=None):
     return [tag.subject for tag in get_tags(tag_type=tag_type, tag_value=tag_value, tagger=tagger)]
@@ -49,7 +50,7 @@ def tag_add(tagged, tag_type, tag_value, tagger):
     if existing_tag:
        return (existing_tag[0], False)
 
-    new_tag = GenericTag(keyword = tag_value,
+    new_tag = GenericTag(keyword = tag_value.lower(),
                          tag_type = tag_type,
                          agent = tagger,
                          subject = tagged)

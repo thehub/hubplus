@@ -33,22 +33,32 @@
 	<script src="{{ MEDIA_URL }}js/json2.js" type="text/javascript" charset="utf-8"></script>
 	<link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}js/yui2/build/editor/assets/skins/sam/editor.css" />
 	<!-- <link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}js/yui2/build/fonts/fonts-min.css" /> -->
-	<link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}js/yui2/build/logger/assets/skins/sam/logger.css" />
-	
+	<link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}js/yui2/build/logger/assets/skins/sam/logger.css" />	
+	<link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/2.7.0/build/menu/assets/skins/sam/menu.css" />
+	<link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/2.7.0/build/button/assets/skins/sam/button.css" />
+	<link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/2.7.0/build/container/assets/skins/sam/container.css" />
+	<link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/2.7.0/build/autocomplete/assets/skins/sam/autocomplete.css" />
+
 	<script type="text/javascript" src="{{ MEDIA_URL }}js/yui2/build/yahoo-dom-event/yahoo-dom-event.js"></script> 
 	<script type="text/javascript" src="{{ MEDIA_URL }}js/yui2/build/element/element-min.js"></script>  
-	<script type="text/javascript" src="{{ MEDIA_URL }}js/yui2/build/container/container_core-min.js"></script> 
+<!--	<script type="text/javascript" src="{{ MEDIA_URL }}js/yui2/build/container/container_core-min.js"></script> -->
+	<script type="text/javascript" src="http://yui.yahooapis.com/2.7.0/build/container/container-min.js"></script>
 	<script type="text/javascript" src="{{ MEDIA_URL }}js/yui2/build/menu/menu-min.js"></script> 
 	<script type="text/javascript" src="{{ MEDIA_URL }}js/yui2/build/button/button-min.js"></script> 
 	<script type="text/javascript" src="{{ MEDIA_URL }}js/yui2/build/editor/editor-min.js"></script> 
 	<script type="text/javascript" src="{{ MEDIA_URL }}js/yui2/build/animation/animation-min.js"></script> 
 	<script type="text/javascript" src="{{ MEDIA_URL }}js/yui2/build/logger/logger-min.js"></script> 
+<!-- <script type="text/javascript">
+YAHOO.widget.Logger.enableBrowserConsole()
+</script> -->
 	<script type="text/javascript" src="{{ MEDIA_URL }}js/yui2/build/dragdrop/dragdrop-min.js"></script>
 	<script type="text/javascript" src="{{ MEDIA_URL }}js/yui2/build/selector/selector-min.js"></script> 
 	<script type="text/javascript" src="{{ MEDIA_URL }}js/yui2/build/tabview/tabview-min.js"></script>
 	<script type="text/javascript" src="{{ MEDIA_URL }}js/yui2/build/history/history-min.js"></script>
-	
-
+	<script type="text/javascript" src="{{ MEDIA_URL }}js/yui2/build/datasource/datasource-min.js"></script>
+        <script type="text/javascript" src="http://yui.yahooapis.com/2.7.0/build/connection/connection-min.js"></script>
+	<script type="text/javascript" src="{{ MEDIA_URL }}js/yui2/build/autocomplete/autocomplete-min.js"></script>
+	<script type="text/javascript" src="{{ MEDIA_URL }}js/editor.js"></script>
 	<script src="{{ MEDIA_URL }}js/ui.accordion.js" type="text/javascript" charset="utf-8"></script>
 	<link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}css/jquery.autocomplete.css" media="screen"/>
 
@@ -69,8 +79,8 @@
 	
 	<link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}js/yui2/build/slider/assets/skins/sam/slider.css" />
 	<link rel="stylesheet" href="{{ MEDIA_URL }}css/permissions.css" type="text/css" media="all" />
+	<link rel="stylesheet" href="{{ MEDIA_URL }}css/flickr.css" type="text/css" media="all" />
 	<script src="{{ MEDIA_URL }}js/yui2/build/slider/slider-min.js"></script>
-	
 <!--	<script src="{{ MEDIA_URL }}js/plus_libs/html.js"></script>
 	<script src="{{ MEDIA_URL }}js/plus_libs/utils.js"></script> -->
 
@@ -83,7 +93,6 @@
 	{% block extra_head_base %}
 	{% block extra_head %}{% endblock %}
 	{% endblock %}
-
 </head>
 
 <body>
@@ -125,8 +134,10 @@
 
 			<!-- page_header -->
 			<div id="page_header">
+                          {% block page_header %}
 			  <h2 id="page_title">{{head_title}}</h2>
 			  <p>{{head_title_status}} - <span class="label_time">{{head_title_status.time}}</span></p>
+			  {% endblock %}
 			</div>
 			<!-- end page_header -->
  
