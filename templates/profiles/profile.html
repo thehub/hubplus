@@ -84,7 +84,7 @@
 
 {% block side_bar %}
 
-<div id="feature_search" class="block">
+<div id="feature_search" class="site_block">
     <h3>Search</h3>
     <form>
       <input name="search_term" type="text" class="text" /> <input class="button" type="submit" value="Search" /><br />
@@ -92,7 +92,7 @@
     </form>
 </div>
 
-<div id="feature_explore" class="block">
+<div id="feature_explore" class="site_block">
   <h3>Explore members</h3>
   <ol class="tag_list">
 	<li><a href="#" class="tag pop7">activism</a></li>
@@ -125,15 +125,7 @@
   </ol>
 </div>
 
-<div id="feature_my_hub" class="block">
-	<h3>My Hub</h3>
-	<div class="thumb medium"><img src="../../site_media/images/group.jpg" /></div>
-	<p><a href="#">Hub Kings Cross</a> is having a bit of a spring clean.</p>
-	<ul class="links">
-		<li class="first"><a href="#">Hub page</a></li>
-		<li class="last" ><a href="#">Book space</a></li>
-	</ul>
-</div>
+{% include "my_hub.html" %}
 
 {% endblock %}
 
