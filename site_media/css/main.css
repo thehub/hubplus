@@ -64,7 +64,8 @@ p {
 }
 
 .disabled {
-	opacity		: .4;
+	display		: none;
+	/*opacity		: .4;*/
 }
 
 
