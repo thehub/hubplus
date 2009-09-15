@@ -150,7 +150,6 @@ def profile(request, username, template_name="profiles/profile.html"):
     if not user.is_authenticated():
         user = get_anon_user()
 
-    context_tweets = get_tweets_for(other_user)
     user_type = ContentType.objects.get_for_model(other_user)
     other_user_tweets = Tweet.objects.filter(sender_type=user_type, sender_id=other_user.id).order_by("-sent") # other_user
     if other_user_tweets :
@@ -180,7 +179,6 @@ def profile(request, username, template_name="profiles/profile.html"):
             "skills" : skills,
             "needs" : needs,
             "interests" : interests,
-            "context_tweets" : context_tweets,
             "other_user_tweets" : other_user_tweets,
             }, context_instance=RequestContext(request))
 
