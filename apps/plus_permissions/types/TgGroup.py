@@ -15,7 +15,7 @@ content_type = TgGroup
 
 from apps.plus_permissions.default_agents import get_or_create_root_location, get_anonymous_group, get_all_members_group, get_creator_agent
 
-def setup_group_security(group, context_agent, context_admin, creator):
+def setup_group_security(group, context_agent, context_admin, creator, permission_prototype):
     group.to_security_context()
     sec_context = group.get_security_context() 
     sec_context.set_context_agent(context_agent.get_ref())
@@ -25,10 +25,11 @@ def setup_group_security(group, context_agent, context_admin, creator):
     group.add_member(context_admin)
 
     group.save()
-    group.get_security_context().set_up()
+    group.get_security_context().set_up(permission_prototype)
     
     ref = group.get_ref()
     ref.creator = creator
+    ref.permission_prototype = permission_prototype
     ref.save()
 
     if group.id != get_all_members_group().id :
@@ -38,7 +39,7 @@ def setup_group_security(group, context_agent, context_admin, creator):
 
 # override object managers, filter, get, get_or_create
 def get_or_create(group_name=None, display_name=None, place=None, level=None, user=None, 
-                  group_type='interest', description='') :
+                  group_type='interest', description='', permission_prototype='public') :
     """get or create a group
     """
     # note : we can't use get_or_create for TgGroup, because the created date clause won't match on a different day
@@ -48,6 +49,7 @@ def get_or_create(group_name=None, display_name=None, place=None, level=None, us
         raise TypeError("We must have a user to create a group, since otherwise it will be inaccessible")
     if not place:
         place = get_or_create_root_location()
+
 
     xs = TgGroup.objects.filter(group_name=group_name)
     if len(xs) > 0 :
@@ -67,9 +69,10 @@ def get_or_create(group_name=None, display_name=None, place=None, level=None, us
                 user=user, 
                 description="Admin Group for %s" % display_name, 
                 )
-            setup_group_security(group, group, admin_group, user)
+
+            setup_group_security(group, group, admin_group, user, permission_prototype)
         elif level == 'host':
-            setup_group_security(group, group, group, user)
+            setup_group_security(group, group, group, user, 'private')
 
     return group, created
 

@@ -1,4 +1,3 @@
-Phil - should not show "invite link" if user doesn't have the invite interface
 
 Jesson - style (add new)
 
@@ -123,6 +122,17 @@ Permissions
      - labels and display details (visible/invisible)
      - error messages - if save failed
 
+
+Permissions added by Phil after conversation on 15 September
+  Users and Profiles.
+     - Profile acquire their SecurityContext from Users
+     - We don't *customize* Profile security, in the sense of creating a specific Profile SecurityContext, we just edit the User
+     
+  Further Changes
+     - put a "broad type" (permission_prototype) on security agents which can be used to store the "public" / "private" / "invited" et. distintion
+
+     - restrict tabs showing sliders, according to ManagePermissions interface
+     - labels on the sliders ... (use the _ functions )
 
 
 Monday

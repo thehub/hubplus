@@ -220,6 +220,7 @@ try :
         body = models.TextField()
         rights = models.TextField()
 
+        active = models.BooleanField()
 
         def add_member(self, user_or_group):
             
@@ -252,6 +253,8 @@ try :
                 Following.objects.follow(self, user_or_group)
                 send_tweet(user_or_group,"%s left the group %s" % (user_or_group.get_display_name(), self.get_display_name(\
 )))
+                Following.objects.unfollow(self, user_or_group)
+ 
 
 
             if isinstance(user_or_group, self.__class__) and self.child_groups.filter(id=user_or_group.id):
@@ -261,17 +264,19 @@ try :
         def invite_member(self, invited, special_message, invited_by, url_root ) : 
             invite = MemberInvite(invited=invited, invited_by=invited_by, 
                                   group=self, status=WAITING_USER_SIGNUP)
+            invite_url = invite.make_accept_url(url_root)
             message = """%s is inviting you to join the %s group. <a href="%s">Click here to accept</a>
 %s
-""" % (invited_by.get_display_name(), group.get_display_name(), url_root, special_message)
+""" % (invited_by.get_display_name(), self.get_display_name(), invite_url, special_message)
+
             invite.message = message
             invite.save()
 
             from apps.plus_lib.utils import message_user 
 
-            message_user(invited_by, invited, 'Invitation to join %s' % group.get_display_name(), message)
+            message_user(invited_by, invited, 'Invitation to join %s' % self.get_display_name(), message)
             message_user(invited_by, invited_by, "Invitation sent", """You have invited %s to join %s""" % 
-                         (invited.get_display_name(), group.get_display_name()))
+                         (invited.get_display_name(), self.get_display_name()))
 
         
         def get_users(self):

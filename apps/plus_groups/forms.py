@@ -41,6 +41,7 @@ class TgGroupForm(forms.Form):
         return group_name
     
     def save(self, user, site):
+
         group = site.create_TgGroup(
             group_name=self.cleaned_data['group_name'],
             display_name=self.cleaned_data['display_name'],
@@ -48,6 +49,7 @@ class TgGroupForm(forms.Form):
             level = 'member',
             user = user,
             description = self.cleaned_data['description'],
+            permission_prototype = self.cleaned_data['permissions_set'],
             )
         group.save()
         return group
