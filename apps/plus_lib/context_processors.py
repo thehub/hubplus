@@ -11,6 +11,7 @@ def configs(context):
             'COPYRIGHT_HOLDER' : settings.COPYRIGHT_HOLDER,
             'PROJECT_THEME': settings.PROJECT_THEME,
             'WELCOME_PAGE' : 'clients/%s/welcome.html' % settings.PROJECT_THEME,
+            'site_name' : settings.PROJECT_NAME,
             }
     except Exception, e :
         import ipdb
