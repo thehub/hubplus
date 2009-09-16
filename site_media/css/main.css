@@ -65,7 +65,6 @@ p {
 
 .disabled {
 	display		: none;
-	/*opacity		: .4;*/
 }
 
 
@@ -124,12 +123,12 @@ p {
 	padding		: 0;
 }
 
-.content_list li .Description {
+.content_list li .description {
 	margin-left	: 50px;
 	padding		: 5px 0 0;
 }
 
-.content_list li .Description p {
+.content_list li .description p {
 	padding-bottom	: 0;
 }
 
@@ -217,7 +216,7 @@ p {
 	font-size	: 1.6em;
 	line-height	: 1em;
 	list-style	: none;
-	margin		: 0 0 1em;
+	margin		: 0 0 10px;
 	overflow	: hidden;
 	padding		: 0;
 }
@@ -258,11 +257,10 @@ p {
 
 .tabbed .tabbed_content .content_list {
 	border-width: 0;
-	margin-top	: -1em;
+	margin-top	: -10px;
 }
 
 .tabbed .tabbed_content .content_list.results {
-	border-width: 1px;
 	margin-top	: 0;
 }
 
@@ -304,18 +302,14 @@ p {
 
 #search #current {
 	margin-bottom	: 10px;
-	padding			: 4px 0 10px;
+	padding-bottom	: 10px;
 	border-bottom	: 1px solid #ddd;
-}
-
-#search #filter_tags {
-	margin-bottom	: 10px;
 }
 
 .display_options {
 	border-bottom	: 1px solid #ddd;
 	list-style	: none;
-	padding		: 5px 0;
+	padding		: 0 0 10px;
 	overflow	: hidden;
 	text-align	: right;
 	width		: 100%;
@@ -566,6 +560,13 @@ li.place div.editable {
 
 #feature_members_online .member_thumb {
 	width		: 35px;
+}
+
+
+/* Side Blocks: Add */
+
+#feature_add {
+	margin-bottom	: 10px;
 }
 
 
