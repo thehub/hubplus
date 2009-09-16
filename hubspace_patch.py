@@ -80,3 +80,9 @@ CREATE TABLE "tg_group_child_groups" (
 """
 
 patch_hubspace(patch4)
+
+patch5 = """
+ALTER TABLE "tg_group" ADD COLUMN "active" boolean default True NOT NULL;
+"""
+
+patch_hubspace(patch5)
