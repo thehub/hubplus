@@ -8,6 +8,7 @@
 	<link rel="stylesheet" href="../../site_media/css/site.css" type="text/css" media="all" />
 	<link rel="stylesheet" href="../../site_media/css/header.css" type="text/css" media="all" />
 	<link rel="stylesheet" href="../../site_media/css/main.css" type="text/css" media="all" />
+	<link rel="stylesheet" href="../../site_media/css/forms.css" type="text/css" media="all" />
 	<link rel="stylesheet" href="../../site_media/css/serendipity.css" type="text/css" media="all" />
 	<link rel="stylesheet" href="../../site_media/css/footer.css" type="text/css" media="all" />
 	<link rel="stylesheet" href="../../site_media/themes/plus/css/theme.css" type="text/css" media="all" />
@@ -121,78 +122,20 @@
 				<div id="search" class="block">
 
 					<div id="current">
-						<form>
-							<input name="search_term" type="text" class="text large" value="organic" /> <input class="button large" type="submit" value="Search" />
+						<h3>Search</h3>
+						<form class="large">
+							<input name="search_term" type="text" class="text" value="organic" /> <input class="button" type="submit" value="Search" />
 						</form>
 						<ul class="tag_list large">
 							<li><span class="tag">fairtrade</span><a href="explore_searched.html" class="delete_tag">-</a></li>
 						</ul>
+						<a href="#" class="bt_advance">More options</a>
 					</div>
 
 					<div id="filter">
 						<div id="filter_tags">
 							<h3>Refine by tag</h3>
-							<!--ol class="tag_list">
-								<li><a href="#" class="tag">activism</a><a href="#" class="add_tag">+</a></li>
-								<li><a href="#" class="tag">architecture</a><a href="#" class="add_tag">+</a></li>
-								<li><a href="#" class="tag">better</a><a href="#" class="add_tag">+</a></li>
-								<li><a href="#" class="tag">big</a><a href="#" class="add_tag">+</a></li>
-								<li><a href="#" class="tag">climatechange</a><a href="#" class="add_tag">+</a></li>
-								<li><a href="#" class="tag">clothing</a><a href="#" class="add_tag">+</a></li>
-								<li><a href="#" class="tag">design</a><a href="#" class="add_tag">+</a></li>
-								<li><a href="#" class="tag">dip</a><a href="#" class="add_tag">+</a></li>
-								<li><a href="#" class="tag">developement</a><a href="#" class="add_tag">+</a></li>
-								<li><a href="#" class="tag">energy</a><a href="#" class="add_tag">+</a></li>
-								
-								<li><a href="#" class="tag">environment</a><a href="#" class="add_tag">+</a></li> 
-								<li><a href="#" class="tag">fairtrade</a><a href="#" class="add_tag">+</a></li>
-								<li><a href="#" class="tag">gender</a><a href="#" class="add_tag">+</a></li>
-								<li><a href="#" class="tag">green</a><a href="#" class="add_tag">+</a></li>
-								<li><a href="#" class="tag">hub</a><a href="#" class="add_tag">+</a></li>
-								<li><a href="#" class="tag">innovation</a><a href="#" class="add_tag">+</a></li>
-								<li><a href="#" class="tag">living</a><a href="#" class="add_tag">+</a></li>
-								<li><a href="#" class="tag">product</a><a href="#" class="add_tag">+</a></li>
-								<li><a href="#" class="tag">reference</a><a href="#" class="add_tag">+</a></li> 
-								<li><a href="#" class="tag">salad</a><a href="#" class="add_tag">+</a></li>
-								<li><a href="#" class="tag">org</a><a href="#" class="add_tag">+</a></li>
-								
-								<li><a href="#" class="tag">science</a><a href="#" class="add_tag">+</a></li>
-								<li><a href="#" class="tag">shopping</a><a href="#" class="add_tag">+</a></li>
-								<li><a href="#" class="tag">sustainability</a><a href="#" class="add_tag">+</a></li>
-								<li><a href="#" class="tag">web</a><a href="#" class="add_tag">+</a></li>
-							</ol-->
-		
-							<!--ol class="tag_list">
-								<li><a href="#" class="tag pop7">activism</a><a href="#" class="add_tag">+</a></li>
-								<li><a href="#" class="tag pop8">architecture</a><a href="#" class="add_tag">+</a></li>
-								<li><a href="#" class="tag pop6">better</a><a href="#" class="add_tag">+</a></li>
-								<li><a href="#" class="tag pop3">big</a><a href="#" class="add_tag">+</a></li>
-								<li><a href="#" class="tag pop5">climatechange</a><a href="#" class="add_tag">+</a></li>
-								<li><a href="#" class="tag pop2">clothing</a><a href="#" class="add_tag">+</a></li>
-								<li><a href="#" class="tag pop8">design</a><a href="#" class="add_tag">+</a></li>
-								<li><a href="#" class="tag pop8">dip</a><a href="#" class="add_tag">+</a></li>
-								<li><a href="#" class="tag pop7">developement</a><a href="#" class="add_tag">+</a></li>
-								<li><a href="#" class="tag pop3">energy</a><a href="#" class="add_tag">+</a></li>
-								
-								<li><a href="#" class="tag pop6">environment</a><a href="#" class="add_tag">+</a></li> 
-								<li><a href="#" class="tag pop8">fairtrade</a><a href="#" class="add_tag">+</a></li>
-								<li><a href="#" class="tag pop1">gender</a><a href="#" class="add_tag">+</a></li>
-								<li><a href="#" class="tag pop8">green</a><a href="#" class="add_tag">+</a></li>
-								<li><a href="#" class="tag pop7">hub</a><a href="#" class="add_tag">+</a></li>
-								<li><a href="#" class="tag pop4">innovation</a><a href="#" class="add_tag">+</a></li>
-								<li><a href="#" class="tag pop2">living</a><a href="#" class="add_tag">+</a></li>
-								<li><a href="#" class="tag pop6">product</a><a href="#" class="add_tag">+</a></li>
-								<li><a href="#" class="tag pop8">reference</a><a href="#" class="add_tag">+</a></li> 
-								<li><a href="#" class="tag pop5">salad</a><a href="#" class="add_tag">+</a></li>
-								<li><a href="#" class="tag pop5">org</a><a href="#" class="add_tag">+</a></li>
-								
-								<li><a href="#" class="tag pop8">science</a><a href="#" class="add_tag">+</a></li>
-								<li><a href="#" class="tag pop2">shopping</a><a href="#" class="add_tag">+</a></li>
-								<li><a href="#" class="tag pop6">sustainability</a><a href="#" class="add_tag">+</a></li>
-								<li><a href="#" class="tag pop1">web</a><a href="#" class="add_tag">+</a></li>
-							</ol-->
-		
-							<ol class="tag_list">
+							<!--<ol class="tag_list">
 								<li><span class="tag pop8">green</span><a href="#" class="add_tag">+</a></li>
 								<li><span class="tag pop8">design</span><a href="#" class="add_tag">+</a></li>
 								<li><span class="tag pop6">developement</span><a href="#" class="add_tag">+</a></li>
@@ -203,34 +146,19 @@
 								<li><span class="tag pop3">energy</span><a href="#" class="add_tag">+</a></li>
 								<li><span class="tag pop2">living</span><a href="#" class="add_tag">+</a></li>
 								<li><span class="tag pop1">shopping</span><a href="#" class="add_tag">+</a></li>						
+							</ol>-->
+							<ol class="tag_list">
+								<li><span class="tag pop8">green (12)</span><a href="#" class="add_tag">+</a></li>
+								<li><span class="tag pop8">design (11)</span><a href="#" class="add_tag">+</a></li>
+								<li><span class="tag pop6">developement (9)</span><a href="#" class="add_tag">+</a></li>
+								<li><span class="tag pop5">environment (9)</span><a href="#" class="add_tag">+</a></li> 
+								<li><span class="tag pop4">sustainability (6)</span><a href="#" class="add_tag">+</a></li>
+								<li><span class="tag pop4">product (4)</span><a href="#" class="add_tag">+</a></li>
+								<li><span class="tag pop3">salad (2)</span><a href="#" class="add_tag">+</a></li>
+								<li><span class="tag pop3">energy (2)</span><a href="#" class="add_tag">+</a></li>
+								<li><span class="tag pop2">living (2)</span><a href="#" class="add_tag">+</a></li>
+								<li><span class="tag pop1">shopping (1)</span><a href="#" class="add_tag">+</a></li>						
 							</ol>
-		
-							<!--ol class="tag_list">
-		
-								<li><a href="#" class="tag pop8">fairtrade (21)</a><a href="#" class="add_tag">+</a></li>
-								<li><a href="#" class="tag pop8">green (19)</a><a href="#" class="add_tag">+</a></li>
-								<li><a href="#" class="tag pop8">design (16)</a><a href="#" class="add_tag">+</a></li>
-								<li><a href="#" class="tag pop8">reference (16)</a><a href="#" class="add_tag">+</a></li> 
-								<li><a href="#" class="tag pop8">dip (16)</a><a href="#" class="add_tag">+</a></li>
-								<li><a href="#" class="tag pop8">architecture (16)</a><a href="#" class="add_tag">+</a></li>
-								<li><a href="#" class="tag pop7">developement (15)</a><a href="#" class="add_tag">+</a></li>
-								<li><a href="#" class="tag pop7">hub (14)</a><a href="#" class="add_tag">+</a></li>
-								<li><a href="#" class="tag pop6">environment (12)</a><a href="#" class="add_tag">+</a></li> 
-								<li><a href="#" class="tag pop6">sustainability (11)</a><a href="#" class="add_tag">+</a></li>
-								<li><a href="#" class="tag pop6">product (10)</a><a href="#" class="add_tag">+</a></li>
-								<li><a href="#" class="tag pop5">salad (5)</a><a href="#" class="add_tag">+</a></li>
-								<li><a href="#" class="tag pop3">energy (3)</a><a href="#" class="add_tag">+</a></li>
-								<li><a href="#" class="tag pop2">living (2)</a><a href="#" class="add_tag">+</a></li>
-								<li><a href="#" class="tag pop2">shopping (1)</a><a href="#" class="add_tag">+</a></li>						
-							</ol-->
-
-
-						</div>
-						<div id="search_inside">
-							<h3>Refine by keyword</h3>
-							<form>
-								<input name="search_term" type="text" class="text" /> <input class="button" type="submit" value="Search" />
-							</form>
 						</div>
 					</div>
 				
@@ -346,6 +274,7 @@
 					<form>
 						<input name="search_term" type="text" class="text" /> <input class="button" type="submit" value="Search" /><br />
 					</form>
+					<a href="#" class="bt_advance">More options</a>
 				</div>
 
 				<div id="feature_add" class="site_block">
