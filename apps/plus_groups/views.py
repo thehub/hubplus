@@ -244,13 +244,15 @@ def possible_create_interfaces():
 def add_content_form(request, group):
     possible_interfaces = possible_create_interfaces()
     _interfaces = [g.split('.')[1] for g in group._interfaces]
+    can_add = 0
     for iface in possible_interfaces:
         if iface[0] in _interfaces:
             iface.append(True)
+            can_add += 1
         else:
             iface.append(False)
 
-    return render_to_response("plus_groups/add_content.html", {'group':group, 'possible_interfaces': possible_interfaces})
+    return render_to_response("plus_groups/add_content.html", {'group':group, 'possible_interfaces': possible_interfaces, 'can_add':can_add})
 
 
 

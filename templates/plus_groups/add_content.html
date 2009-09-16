@@ -14,25 +14,25 @@
       </ul>
       <label><span class="required">*</span>{% trans "Add this to" %}</label>
       <ul class="checkboxes">
-	<li>
+	<li {% if can_add %}{% else %}class="hidden"{% endif %}>
 	  <div class="label_extended">
-	    <label><span id="group_display_name">{{group.display_name}}</span> – <a id="change_group" href="#">{% trans "Change group/Hub" %}</a></label>
+	    <label><span id="group_display_name">{{group.display_name}}</span><a id="change_group" href="#">  – {% trans "Change group/Hub" %}</a></label>
             <input name="group" value="{{group.id}}" id="group_input" type="hidden"  />
 	  </div> 
 	</li>
-	<li id="auto_change_group" class="hidden">
+	<li id="auto_change_group" {% if can_add %}class="hidden"{% endif %}>
 	  <div class="label_extended">
 	    <label for="autocomplete">{% trans "Choose group or Hub:" %}</label>
 	    <input id="autocomplete_group"  class="text" type="text" />
 	  </div>
 	</li>	
       </ul>
-      <ul>
+      <ul {% if can_add %}{% else %}class="hidden"{% endif %}>
 	<li>
-	  <label><span class="required">*</span>{% trans "Content" %} </label>
+	  <label><span class="required">*</span>{% trans "Type of content" %} </label>
 	  <ul id="choose_type" class="checkboxes">
 	    {% for create_interface, label, sub_title, active in possible_interfaces %}
-	    <li id="{{create_interface}}" {% if active %}{% else %}class="hidden" disabled="disabled"{% endif %}>
+	    <li id="{{create_interface}}" {% if active %}{% else %}class="cannot_add" disabled="disabled"{% endif %}>
 	      <input  id="a" name="create_iface" class="radio" value="{{create_interface}}" type="radio" {% if forloop.first %}checked="checked"{% endif %} />
 	      <label for="a">{{label}}<span class="extra">{{sub_title}}</span></label>
 	    </li>
@@ -42,7 +42,7 @@
       </ul>
       
     </fieldset>
-    <input class="submit button" type="Submit" value="{% trans 'Create' %}" />
+    <input id="create_content" {% if can_add %}{% else %}disabled="disabled"{% endif %} class="{% if can_add %}{% else %}hidden {% endif %}submit button" type="Submit" value="{% trans 'Create' %}" />
   </form>
   
 </div>

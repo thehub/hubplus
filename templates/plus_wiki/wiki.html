@@ -1,3 +1,4 @@
+
 {% extends "site_base.html" %}
 {% load i18n %}
 {% load plus_tags %}
@@ -14,7 +15,6 @@
     <li><a class="icon_text_button bt_edit" href="{% url edit_WikiPage page.in_agent.obj.id page.name %}">Edit page</a></li>
     <li><a class="icon_text_button bt_permissions" href="#">Permissions</a></li>
   </ul>
-  
   <div id="content">
      {% autoescape off %}{{page.content}}{% endautoescape %}
   </div>
