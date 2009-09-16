@@ -72,13 +72,18 @@ class SecurityContext(models.Model):
      def get_target(self):
          return self.target.all()[0].obj
          
-     def set_up(self,**kwargs):
+     def set_up(self, permission_prototype='public', **kwargs):
          """XXX set from maps and create security tags
          """
          
          # setting up security_tags
-         my_type = self.get_target().__class__         
-         agent_defaults = AgentDefaults[self.context_agent.obj.__class__]['public']
+         target = self.get_target()
+         
+         my_type = target.__class__
+
+         target.permission_prototype = permission_prototype
+
+         agent_defaults = AgentDefaults[self.context_agent.obj.__class__][permission_prototype]
 
          slider_agents = SliderAgents[self.context_agent.obj.__class__](self)
 
@@ -136,7 +141,7 @@ class SecurityContext(models.Model):
          return tag
      
      def get_constraints(self, type_name):
-         return AgentDefaults[self.context_agent.obj.__class__]['public'][type_name]['constraints']          
+         return AgentDefaults[self.context_agent.obj.__class__][self.get_target().permission_prototype][type_name]['constraints']          
 
      def get_tags(self) :
          return SecurityTag.objects.filter(security_context=self)
@@ -297,7 +302,6 @@ class SecurityContext(models.Model):
 
               
 
-
 class GenericReference(models.Model):
     class Meta:
         unique_together = (("content_type", "object_id"),)
@@ -312,6 +316,10 @@ class GenericReference(models.Model):
 
     creator = models.ForeignKey(User, related_name='created_objects', null=True)
     
+    # at the moment, the permission_prototype will hold what family or broad class of permissions this falls 
+    # into ... for example, groups are public, private, invite etc.
+    # If there are only these, we can add a choice to this field, but I'm not 100% certain yet.
+    permission_prototype = models.CharField(max_length=10, null=True)
 
 def ref(agent) :
     # if we're sent ordinary agent (group etc.) get the ref, if we've already got a ref, just return it
@@ -453,7 +461,7 @@ def has_access(agent, resource, interface) :
         typ = resource.__class__
         interface_name = interface.split('.')[1]
         if interface_name in get_interface_map(typ.__name__):
-            agent_defaults = AgentDefaults[context.context_agent.obj.__class__]['public']
+            agent_defaults = AgentDefaults[context.context_agent.obj.__class__][context.get_target().permission_prototype]
             slider_agents = SliderAgents[context.context_agent.obj.__class__](context)
             sad = dict(slider_agents)
             context.setup_tag_from_defaults(typ, interface_name, interface, sad, agent_defaults)

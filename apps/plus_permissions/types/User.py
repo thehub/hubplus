@@ -14,7 +14,7 @@ import datetime
 
 from apps.plus_groups.models import User
 
-def create_user(user_name, email_address, password='dummy') :
+def create_user(user_name, email_address, password='dummy', permission_prototype='public') :
     """create a User
     """
 
@@ -28,14 +28,14 @@ def create_user(user_name, email_address, password='dummy') :
         user.user_name = user_name
         user.save()
         
-        setup_user_security(user)
+        setup_user_security(user, permission_prototype)
 
         user.create_Profile(user,user=user)
 
     return user
 
 
-def setup_user_security(user):
+def setup_user_security(user, permission_prototype):
     user.to_security_context()
     sec_context = user.get_security_context()
                     
@@ -43,10 +43,11 @@ def setup_user_security(user):
     sec_context.set_context_admin(get_all_members_group().get_admin_group().get_ref())
     sec_context.save()
         
-    sec_context.set_up()
+    sec_context.set_up(permission_prototype)
 
     ref = user.get_ref()
     ref.creator = user
+    ref.permission_prototype = permission_prototype
     ref.save()
 
 
