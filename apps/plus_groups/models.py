@@ -8,7 +8,7 @@ from django.contrib.contenttypes import generic
 
 
 from apps.plus_contacts.status_codes import WAITING_USER_SIGNUP
-from apps.plus_permissions.proxy_hmach import attach_hmac 
+from apps.plus_permissions.proxy_hmac import attach_hmac 
 
 import datetime
 
