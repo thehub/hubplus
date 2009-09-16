@@ -83,6 +83,8 @@ class Contact(models.Model):
         message = message + """
 
 Please visit the following link to confirm your account : %s""" % url
+        import ipdb
+        ipdb.set_trace()
 
         try :
 
