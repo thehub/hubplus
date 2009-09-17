@@ -33,7 +33,7 @@ urlpatterns = patterns('',
     (r'^openid/(.*)', PinaxConsumer()),
     (r'^bbauth/', include('bbauth.urls')),
     (r'^authsub/', include('authsub.urls')),
-    (r'^profiles/', include('profiles.urls')),
+    (r'^members/', include('profiles.urls')),
     
     (r'^plus_tags/', include('plus_tags.urls')),
 
