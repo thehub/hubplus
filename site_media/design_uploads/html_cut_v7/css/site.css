@@ -1,0 +1,67 @@
+/*
+HUB PLUS 2009
+*/
+
+
+
+/* Reset */
+
+* {
+	margin		: 0;
+	padding		: 0;
+}
+
+/* Elements */
+
+a img {
+	border		: 0;
+}
+
+img {
+	vertical-align	: bottom;
+}
+
+
+/* Layout */
+
+body {
+	font		: 62.5%/1.8em arial, verdana, sans-serif;
+	text-align	: center;
+}
+
+#wrapper {
+	font-size	: 1.2em;
+	height		: 408px;
+	margin		: 0 auto 0;
+	position	: relative;
+	text-align	: left;
+	width		: 900px;
+}
+
+#main {
+	background	: #EEE;
+	overflow 	: hidden;
+	padding		: 10px 10px 0;
+	margin-bottom	: 10px;
+}
+
+#main_column {
+	float		: left;
+	margin-right: 10px;
+	width		: 620px;
+}
+
+#right_column {
+	float		: left;
+	width		: 250px;
+}
+
+#right_column div.block,
+#main_column div.block {
+	background	: #FFF;
+	border		: 1px solid #000;
+	margin-bottom	: 10px;
+	padding		: 10px;
+}
+
+
