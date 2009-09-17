@@ -25,7 +25,7 @@ from apps.plus_permissions.interfaces import PlusPermissionsNoAccessException, S
 from apps.plus_permissions.types.TgGroup import *
 from django.contrib.auth.decorators import login_required
 
-from apps.plus_groups.forms import TgGroupForm, TgGroupMemberInviteForm
+from apps.plus_groups.forms import TgGroupForm, TgGroupMemberInviteForm, AddContentForm
 
 from apps.plus_permissions.api import secure_resource, site_context
 from apps.plus_permissions.default_agents import get_anon_user, get_site
