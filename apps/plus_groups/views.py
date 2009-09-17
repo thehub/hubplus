@@ -45,7 +45,6 @@ def group(request, group, template_name="plus_groups/group.html"):
         user = get_anon_user()
         request.user = user 
 
-    dummy_status = DisplayStatus("Group's Status"," about 3 hours ago")
     
     members = group.get_users()[:10]
     member_count = group.get_no_members()
@@ -65,6 +64,12 @@ def group(request, group, template_name="plus_groups/group.html"):
                 group.invite_member
                 invite = True
             except Exception, e :# user doesn't have invite permission
+                pass
+
+            try :
+                group.comment
+                comment = True
+            except Exception, e: # user doesn't have comment permission
                 pass
         else :
             try :
@@ -106,11 +111,13 @@ def group(request, group, template_name="plus_groups/group.html"):
             }, context_instance=RequestContext(request))
 
 
-def groups(request, template_name='plus_groups/groups.html'):
-    
-    groups = TgGroup.objects.plus_filter(request.user, level='member')
-    #groups = [g for g in groups]
+def groups(request, type='hub', template_name='plus_groups/groups.html'):
+    if type == 'hub' :
+        return groups_list(request, TgGroup.objects.plus_hub_filter(request.user, level='member'), template_name)
+    else :
+        return groups_list(request, TgGroup.objects.plus_virtual_filter(request.user, level='member'), template_name)
 
+def groups_list(request, groups, template_name) :
     create = False
 
     if request.user.is_authenticated():
