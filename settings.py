@@ -251,6 +251,12 @@ WIKI_REQUIRES_LOGIN = True
 # following URL: https://developer.yahoo.com/wsregapp/
 # YAHOO_MAPS_API_KEY = ''
 
+# See if we can over-ride the default GRAVATAR
+
+AVATAR_GRAVATAR_BACKUP = False
+AVATAR_DEFAULT_URL = "/site_media/images/member.jpg"
+
+
 # local_settings.py can be used to override environment-specific settings
 # like database and email that differ between development and production.
 
