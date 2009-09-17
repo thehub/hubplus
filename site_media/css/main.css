@@ -119,7 +119,7 @@ p {
 .content_list li,
 .link_list li {
 	border-bottom	: 1px solid #ddd;
-	padding		: 7px 0 8px;
+	padding		: 8px 0 9px;
 	overflow	: hidden;
 }
 
@@ -136,6 +136,10 @@ p {
 
 .content_list li .description p {
 	padding-bottom	: 0;
+}
+
+.content_list li .thumb {
+	margin		: -3px 10px -3px 0;
 }
 
 

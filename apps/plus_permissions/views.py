@@ -18,6 +18,7 @@ from apps.plus_groups.models import TgGroup
 from apps.plus_lib.parse_json import json_view
 from django.contrib.auth.models import User
 from apps.plus_permissions.api import secure_resource, TemplateSecureWrapper
+from apps.plus_permissions.models import GenericReference
 from django.template import loader, Context, RequestContext
 
 ##############Hubspace Patching######################################
@@ -44,7 +45,6 @@ def patch_in_groups(request):
     1. setup a security context for each group passing in context_agent, context_admin and creator
     2. set 'hosts' as a members of the members group, ignore 'directors' groups (they are deprecated - bring on host anarchy!)
     """
-
     no_security = [group for group in TgGroup.objects.filter(level='member').exclude(place__name='hubplus') if not group.ref.all()]
     admin_user = get_admin_user()
     for group in no_security:
@@ -56,6 +56,14 @@ def patch_in_groups(request):
         setup_group_security(group, group, group, admin_user)
 
     return HttpResponse("patched %s hub group's security" % str(len(no_security_host)))
+
+def patch_in_permission_prototype(request):
+    for gr in GenericReference.objects.all():
+        if not gr.permission_prototype and isinstance(gr.obj, TgGroup):
+            gr.permission_prototype = 'public' 
+            gr.save()
+    return HttpResponse("patched permission prototype")
+
 
 #@login_required
 def patch_in_profiles(request):

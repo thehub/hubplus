@@ -1,5 +1,9 @@
 {% load i18n %}
 
 	<div id="feature_add" class="site_block">
+	    {% if group.id %}
 	    <a href="{% url add_content resource_id=group.id %}" class="add_content bt_add icon_text_button" rel="#overlay">Add...</a>
+	    {% else %}
+	    <a href="{% url add_content resource_id=0 %}" class="add_content bt_add icon_text_button" rel="#overlay">Add...</a>
+	    {% endif %}
 	</div>
