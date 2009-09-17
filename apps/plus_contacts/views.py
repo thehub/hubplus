@@ -126,9 +126,7 @@ def site_invite(request, site, template_name='plus_contacts/invite_non_member.ht
             return render_to_response('plus_contacts/dummy_email.html',
                                           {'url':url, 'message':msg},                                      
                                           context_instance=RequestContext(request))
-        else :
-            import ipdb
-            ipdb.set_trace()
+
     else :
         form = InviteForm()
         
