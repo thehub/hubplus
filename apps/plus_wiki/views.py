@@ -45,13 +45,24 @@ def create_wiki_page(request, group, page_name, template_name="plus_wiki/create_
         raise Http404
 
     if form.is_valid():
-        obj.title = form.cleaned_data['title']
-        obj.name_from_title()
-        obj.content = form.cleaned_data['content']
-        obj.license = form.cleaned_data['license']
-        obj.stub = False
-        obj.save()
-        return HttpResponseRedirect(reverse('view_WikiPage', args=[group.id, obj.name]))
+        title = form.cleaned_data['title']
+        content = form.cleaned_data['content']
+        license = form.cleaned_data['license']
+        if request.POST.get('preview', None):
+            return render_to_response(template_name, 
+                                      {'page':TemplateSecureWrapper(obj),
+                                       'data':form.data,
+                                       'preview_content': content,
+                                       'form_action':reverse("create_WikiPage", args=[obj.in_agent.obj.id, obj.name])}, 
+                                      context_instance=RequestContext(request))
+        else:
+            obj.title = title
+            obj.name_from_title()
+            obj.content = content
+            obj.license = license
+            obj.stub = False
+            obj.save()
+            return HttpResponseRedirect(reverse('view_WikiPage', args=[group.id, obj.name]))
 
     return render_to_response(template_name, 
                               {'page':TemplateSecureWrapper(obj),

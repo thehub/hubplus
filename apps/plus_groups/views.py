@@ -24,7 +24,7 @@ from apps.plus_permissions.interfaces import PlusPermissionsNoAccessException, S
 from apps.plus_permissions.types.TgGroup import *
 from django.contrib.auth.decorators import login_required
 
-from apps.plus_groups.forms import TgGroupForm, TgGroupMemberInviteForm
+from apps.plus_groups.forms import TgGroupForm, TgGroupMemberInviteForm, AddContentForm
 
 from apps.plus_permissions.api import secure_resource, site_context
 from apps.plus_permissions.default_agents import get_anon_user, get_site
@@ -257,13 +257,15 @@ def possible_create_interfaces():
 def add_content_form(request, group):
     possible_interfaces = possible_create_interfaces()
     _interfaces = [g.split('.')[1] for g in group._interfaces]
+    can_add = 0
     for iface in possible_interfaces:
         if iface[0] in _interfaces:
             iface.append(True)
+            can_add += 1
         else:
             iface.append(False)
 
-    return render_to_response("plus_groups/add_content.html", {'group':group, 'possible_interfaces': possible_interfaces})
+    return render_to_response("plus_groups/add_content.html", {'group':group, 'possible_interfaces': possible_interfaces, 'can_add':can_add})
 
 
 
