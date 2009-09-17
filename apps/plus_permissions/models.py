@@ -81,7 +81,7 @@ class SecurityContext(models.Model):
          
          my_type = target.__class__
 
-         context_agent.permission_prototype = permission_prototype
+         self.context_agent.permission_prototype = permission_prototype
 
          agent_defaults = AgentDefaults[self.context_agent.obj.__class__][permission_prototype]
 

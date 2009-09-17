@@ -8,13 +8,18 @@ def get_resource(cls, resource_id):
     if cls.__name__ == 'User':
         resource = cls.objects.get(username=resource_id)
     else:
-        resource=cls.objects.get(pk=resource_id)
+        try:
+            resource=cls.objects.get(pk=resource_id)
+        except cls.DoesNotExist:
+            resource = None
     return resource
 
 def secure(request, cls, resource_id, required_interfaces=None, with_interfaces=None, all_or_any='ALL'):
     """all_or_any refers to whether the object must have 'ALL' or 'ANY' 
     """
     resource = get_resource(cls, resource_id)
+    if not resource:
+        return None
     sec_resource = secure_wrap(resource, request.user, interface_names=with_interfaces)
     if required_interfaces:
         check_interfaces(sec_resource, cls, required_interfaces, all_or_any)
