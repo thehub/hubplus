@@ -1,6 +1,0 @@
-[submodule "site_media/js/yui3"]
-	path = site_media/js/yui3
-	url = git://github.com/yui/yui3.git
-[submodule "site_media/js/yui2"]
-	path = site_media/js/yui2
-	url = git://github.com/yui/yui2.git
