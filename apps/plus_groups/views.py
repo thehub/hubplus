@@ -15,7 +15,6 @@ from django.core.urlresolvers import reverse
 
 from django.template import defaultfilters
 
-
 from microblogging.models import Tweet, TweetInstance, Following
 
 from apps.plus_lib.models import DisplayStatus, add_edit_key
@@ -69,7 +68,10 @@ def group(request, group, template_name="plus_groups/group.html"):
                 group.comment
                 comment = True
             except Exception, e: # user doesn't have comment permission
-                pass
+                print "Test for comment access failed"
+                print e
+                import ipdb
+                ipdb.set_trace()
         else :
             try :
                 group.join 

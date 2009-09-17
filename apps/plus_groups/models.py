@@ -301,6 +301,14 @@ try :
             return self.display_name
 
 
+        def comment(self, comment, commentor) :
+            """ XXX Dummy function. Let's us use permission system to test whether a user has comment 
+            permission on a group. What needs to be done, I guess, is to make a comment a dependent type on
+            TgGroup and then we'd end up with a create_Comment method on TgGroup which would wrap the call to the 
+            comment library."""
+            pass
+            
+
         def get_extras(self) :
             # if there are extras for this class, return them
             return self.groupextras

@@ -119,13 +119,17 @@ class TgGroupJoin:
 class TgGroupInviteMember:
     pk = InterfaceReadProperty
     invite_member = InterfaceCallProperty
-    
+
+class TgGroupComment:
+    pk = InterfaceReadProperty
+    comment = InterfaceCallProperty
 
 class TgGroupManageMembers:
     pk = InterfaceReadProperty
     add_member = InterfaceCallProperty
     accept_member = InterfaceCallProperty
     remove_member = InterfaceCallProperty
+
 
 
 
@@ -136,7 +140,8 @@ if not get_interface_map(TgGroup):
                          'Editor': TgGroupEditor,
                          'Invite': TgGroupInviteMember,
                          'ManageMembers': TgGroupManageMembers,
-                         'Join': TgGroupJoin}
+                         'Join': TgGroupJoin,
+                         'Comment':TgGroupComment}
     add_type_to_interface_map(TgGroup, TgGroupInterfaces)
 
 
