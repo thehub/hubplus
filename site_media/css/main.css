@@ -70,7 +70,7 @@ p {
 }
 
 .disabled {
-	display		: none;
+	display		: none !important;
 }
 
 
@@ -119,7 +119,7 @@ p {
 .content_list li,
 .link_list li {
 	border-bottom	: 1px solid #ddd;
-	padding		: 9px 0 10px;
+	padding		: 7px 0 8px;
 	overflow	: hidden;
 }
 
