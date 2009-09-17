@@ -192,7 +192,7 @@ CONTACT_EMAIL = "world.tech.plus@the-hub.net"
 
 SITE_NAME = "Hub+"
 LOGIN_URL = "/account/login"
-LOGIN_REDIRECT_URLNAME = "what_next"
+LOGIN_REDIRECT_URLNAME = "home"
 
 INTERNAL_IPS = (
     '127.0.0.1',
