@@ -328,17 +328,17 @@ def apply(request, form_class=HubPlusApplicationForm,
         template_name="account/apply_form.html"):
 
     user = request.user
+    if user.__class__ == AnonymousUser :
+        user = get_anon_user()
+        
+    hubs = TgGroup.objects.filter(level='member').exclude(place__name='HubPlus')
 
-    hubs = TgGroup.objects.filter(level='hub')
     if request.method == "POST":
         form = form_class(request.POST)
-        print form
         if form.is_valid():
-            if user.__class__ == AnonymousUser :
-                user = get_anon_user()
             contact, application = form.save(user)
             return render_to_response('plus_contacts/application_thanks.html',{
-            'group' : form.cleaned_data['group'],
+                    'group' : form.cleaned_data['group'],
             },context_instance=RequestContext(request))
 
         else :
