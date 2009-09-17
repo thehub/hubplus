@@ -111,7 +111,7 @@ def group(request, group, template_name="plus_groups/group.html"):
             }, context_instance=RequestContext(request))
 
 
-def groups(request, type='hub', template_name='plus_groups/groups.html'):
+def groups(request, type='other', template_name='plus_groups/groups.html'):
     if type == 'hub' :
         return groups_list(request, TgGroup.objects.plus_hub_filter(request.user, level='member'), template_name)
     else :
