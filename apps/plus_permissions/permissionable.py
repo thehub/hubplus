@@ -67,6 +67,16 @@ class PermissionableManager(models.Manager):
 class UserPermissionableManager(UserManager, PermissionableManager) :
     pass
 
+class TgGroupPermissionableManager(PermissionableManager) :
+
+    def plus_hub_filter(self, p_user, **kwargs) :
+        # bloody django templating language ... why does it work with comprehensions but not generator expressions?
+        # XXX needs to be fixed when we work out our lazy filter
+        return [group for group in self.plus_filter(p_user, **kwargs) if group.get_inner().place.name != 'HubPlus']
+
+    def plus_virtual_filter(self, p_user, **kwargs) :
+        kwargs['place__name']='HubPlus' # adding another criteria to query
+        return self.plus_filter(p_user, **kwargs)
 
 
 
@@ -244,9 +254,11 @@ def security_patch(content_type, type_list):
     for typ in type_list:
         add_create_method(content_type, typ)
         
-
+    
     if content_type == User:
-         content_type.add_to_class('objects',UserPermissionableManager())
+        content_type.add_to_class('objects',UserPermissionableManager())
+    elif content_type.__name__ == 'TgGroup':
+        content_type.add_to_class('objects',TgGroupPermissionableManager())
     else :
          content_type.add_to_class('objects',PermissionableManager())
 

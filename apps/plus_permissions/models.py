@@ -81,7 +81,7 @@ class SecurityContext(models.Model):
          
          my_type = target.__class__
 
-         target.permission_prototype = permission_prototype
+         context_agent.permission_prototype = permission_prototype
 
          agent_defaults = AgentDefaults[self.context_agent.obj.__class__][permission_prototype]
 
@@ -141,8 +141,8 @@ class SecurityContext(models.Model):
          return tag
      
      def get_constraints(self, type_name):
-         return AgentDefaults[self.context_agent.obj.__class__][self.get_target().permission_prototype][type_name]['constraints']          
-
+         return AgentDefaults[self.context_agent.obj.__class__][self.context_agent.permission_prototype][type_name]['constraints']          
+         
      def get_tags(self) :
          return SecurityTag.objects.filter(security_context=self)
 
@@ -461,7 +461,8 @@ def has_access(agent, resource, interface) :
         typ = resource.__class__
         interface_name = interface.split('.')[1]
         if interface_name in get_interface_map(typ.__name__):
-            agent_defaults = AgentDefaults[context.context_agent.obj.__class__][context.get_target().permission_prototype]
+
+            agent_defaults = AgentDefaults[context.context_agent.obj.__class__][context.context_agent.permission_prototype]
             slider_agents = SliderAgents[context.context_agent.obj.__class__](context)
             sad = dict(slider_agents)
             context.setup_tag_from_defaults(typ, interface_name, interface, sad, agent_defaults)

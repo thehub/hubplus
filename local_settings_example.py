@@ -9,6 +9,7 @@ SESSION_COOKIE_DOMAIN = None # ".the-hub.net"
 HUBSPACE_COMPATIBLE = True
 ROOT_URLCONF = 'hubplus.urls'
 
+PROJECT_NAME="Hub+"
 PROJECT_THEME='plus'
 COPYRIGHT_HOLDER='HubWorld'
 

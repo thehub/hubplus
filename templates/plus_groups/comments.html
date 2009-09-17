@@ -1,8 +1,9 @@
 {% load threadedcommentstags %}
+{% load i18n %}
 
 
 <div id="comments" class="page_content">
-
+  
     <h3>Comments on This Group:</h3>
     {% get_threaded_comment_tree for group as tree %}
     {% for comment in tree %}
@@ -16,6 +17,7 @@
     </div>
     {% endfor %}
 
+    {% if comment %}
     <p>Reply to Original:</p>
     <form method="POST" action="{% get_comment_url group %}">
         <ul>
@@ -31,13 +33,12 @@
 	    <label for="id_comment">comment:</label>
 	    <textarea id="id_comment" name="comment" cols="40" rows="10"></textarea>
 	  </li>
-	  <li>
-	    <label for="id_markup">Markup:</label>
-	    <select id="id_markup" name="markup">
-	    </select>
-	  </li>
+
 	  <li><input type="submit" value="Submit Comment" /></li>
         </ul>
     </form>
+    {% else %}
+        {% trans "Log-in to comment here" %} 
+    {% endif %}
 
 </div>

@@ -8,7 +8,8 @@ from django.contrib.contenttypes import generic
 
 
 from apps.plus_contacts.status_codes import WAITING_USER_SIGNUP
- 
+from apps.plus_permissions.proxy_hmac import attach_hmac 
+
 import datetime
 
 class Location(models.Model):
@@ -299,6 +300,14 @@ try :
         def get_permission_agent_name(self) : 
             return self.display_name
 
+
+        def comment(self, comment, commentor) :
+            """ XXX Dummy function. Let's us use permission system to test whether a user has comment 
+            permission on a group. What needs to be done, I guess, is to make a comment a dependent type on
+            TgGroup and then we'd end up with a create_Comment method on TgGroup which would wrap the call to the 
+            comment library."""
+            pass
+            
 
         def get_extras(self) :
             # if there are extras for this class, return them
