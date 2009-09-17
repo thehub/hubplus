@@ -68,12 +68,15 @@ class UserPermissionableManager(UserManager, PermissionableManager) :
     pass
 
 class TgGroupPermissionableManager(PermissionableManager) :
+
     def plus_hub_filter(self, p_user, **kwargs) :
-        return self.plus_filter(self, p_user, **kwargs).exclude(place__name='HubPlus', **kwargs) 
+        # bloody django templating language ... why does it work with comprehensions but not generator expressions?
+        # XXX needs to be fixed when we work out our lazy filter
+        return [group for group in self.plus_filter(p_user, **kwargs) if group.get_inner().place.name != 'HubPlus']
 
     def plus_virtual_filter(self, p_user, **kwargs) :
         kwargs['place__name']='HubPlus' # adding another criteria to query
-        return self.plus_filter(self, p_user, **kwargs)
+        return self.plus_filter(p_user, **kwargs)
 
 
 
