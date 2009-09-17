@@ -59,6 +59,8 @@ def home(request, success_url=None):
             form.fields['text'].initial = u"@%s " % reply
     tweets = TweetInstance.objects.tweets_for(request.user).order_by("-sent")
     return render_to_response(template_name, {
+        "head_title" : "Home",
+        "head_title_status" : '',
         "form": form,
         "reply": reply,
         "tweets": tweets,
@@ -74,10 +76,7 @@ def login(request, form_class=LoginForm,
     if success_url is None:
         success_url = get_default_redirect(request)
 
-
-
     if request.method == "POST" and not url_required:
-
 
         form = form_class(request.POST)
         if form.login(request):
