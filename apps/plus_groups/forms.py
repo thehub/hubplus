@@ -11,6 +11,7 @@ from django.contrib.auth.models import User
 
 from apps.plus_lib.utils import make_name
 from apps.plus_groups.models import GROUP_TYPES, TgGroup
+from apps.plus_lib.utils import HTMLField
 
 
 PERMISSION_OPTIONS = (
@@ -83,3 +84,8 @@ class TgGroupMemberInviteForm(forms.Form) :
                 print "%s is not an email_address" % tt
                 raise forms.ValidationError('Not recognised as either email or existing username')
         self.cleaned_data['user'] = user
+
+class TgGroupMessageMemberForm(forms.Form) :
+    message_header = forms.CharField()
+    message_body = forms.CharField()
+  

@@ -245,6 +245,10 @@ try :
         def leave(self, user):
             return self.remove_member(user)
 
+        def message_members(self, sender, message_header, message_body) :
+            for member in self.get_users() :
+                message_user(sender, member, message_header, message_body)
+
         def is_group(self) : return True
 
         def remove_member(self, user_or_group):

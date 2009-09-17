@@ -10,17 +10,14 @@
 {% block body %}
 <div id="status" class="block">
   
-  <form method="POST" action="{% url tweets_you_follow %}">
+  <form method="POST" action="{% url home %}">
     <p>{% trans "What are you doing?" %}</p>
-    {{ form.as_p }}
-    {% if twitter_authorized %}
-    <h2>{% trans "You have authorized a twitter account." %}</h2>
-    <input name="pub2twitter" type="checkbox" id="pub2twitter" value="yes" />
-    <label for="pub2twitter">{% trans "Publish to Twitter?" %}</label>
-    {% endif %}
-    
+
     <p>
-      <span id="chars_left"></span> {% trans "chars left." %}
+      <textarea id="new_tweet" name="text" cols="50" rows="2"></textarea>
+    </p>
+
+    <p>
       <input type="submit" value="{% trans "post" %}">
     </p>
   </form>
