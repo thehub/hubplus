@@ -19,7 +19,18 @@ PERMISSION_OPTIONS = (
     (u'invite', u'Invite'),
     (u'private', u'Private'),
 )
+CREATE_INTERFACES = (
+    (u"CreateWikiPage"),
+    (u"CreateUpload"), 
+    (u"CreateNews"),
+    (u"CreateEvent")
+)
 
+class AddContentForm(forms.Form):
+    title = forms.CharField(max_length=100)
+    group = forms.IntegerField()
+    create_iface = forms.ChoiceField(choices=CREATE_INTERFACES)
+    
 
 class TgGroupForm(forms.Form):
     
