@@ -13,6 +13,7 @@ body {
 
 /* Elements */
 
+h2,
 #page_title,
 .tabbed ul.tabbed_navigation li.selected a {
 	color		: #0A446C;
