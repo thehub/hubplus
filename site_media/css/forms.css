@@ -50,6 +50,7 @@ textarea {
 	padding		: 3px 3px;
 }
 
+.large input.text,
 input.text.large {
 	font-size	: 1.3em;
 	margin-bottom	: 5px;
@@ -180,6 +181,7 @@ form fieldset .checkboxes select {
 	text-transform	: uppercase;
 }
 
+.large .button,
 .button.large {
 	font-size	: 1.2em;
 	margin-bottom	: 5px;
