@@ -11,7 +11,8 @@ urlpatterns = patterns('',
                        url(r'^(?P<resource_id>[\w\._-]+)/join/$', 'plus_groups.views.join', name='join_group'),
                        url(r'^(?P<resource_id>[\w\._-]+)/apply/$', 'plus_groups.views.apply', name='apply_group'),
                        url(r'^(?P<resource_id>[\w\._-]+)/leave/$', 'plus_groups.views.leave', name='leave_group'),
-                       url(r'^(?P<resource_id>[\w\._-]+)/invite/$', 'plus_groups.views.invite', name='invite_to_group'),    
+                       url(r'^(?P<resource_id>[\w\._-]+)/invite/$', 'plus_groups.views.invite', name='invite_to_group'),
                        url(r'^$', 'plus_groups.views.groups', name='groups'),
+
                        )
 
