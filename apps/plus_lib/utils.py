@@ -64,3 +64,18 @@ def overlay(d, d2) :
         else :
             nd[k] = d2[k]
     return nd
+
+from django.conf import settings
+# Not clever, but keeps a bit of fiddly logic out of the way of everyone else while we decide 
+# the right way to handle it
+def hub_name() :
+    if settings.PROJECT_THEME=='psn' :
+        return 'Region'
+    else :
+        return 'Hub'
+
+def hub_name_plural() :
+    if settings.PROJECT_THEME=='psn' :
+        return 'Regions'
+    else :
+        return 'Plural'

@@ -34,8 +34,6 @@ from apps.plus_permissions.proxy_hmac import hmac_proxy
 
 from django.contrib.contenttypes.models import ContentType
 
-
-
  
 @secure_resource(TgGroup)
 def group(request, group, template_name="plus_groups/group.html"):
@@ -56,6 +54,7 @@ def group(request, group, template_name="plus_groups/group.html"):
     apply = False
     leave = False
     invite = False
+    comment = False
 
     if user.is_authenticated():
         if user.is_direct_member_of(group.get_inner()):
@@ -105,33 +104,38 @@ def group(request, group, template_name="plus_groups/group.html"):
             "join" : join, 
             "apply" : apply, 
             "invite" : invite, 
+            "comment" : comment, 
             "hosts": hosts,
             "host_count": host_count,
             "tweets" : tweets,
             }, context_instance=RequestContext(request))
 
-
-def groups(request, type='other', template_name='plus_groups/groups.html'):
+from apps.plus_lib.utils import hub_name_plural
+@site_context
+def groups(request, site, type='other', template_name='plus_groups/groups.html'):
     if type == 'hub' :
-        return groups_list(request, TgGroup.objects.plus_hub_filter(request.user, level='member'), template_name)
+        return groups_list(request, site, 
+                           TgGroup.objects.plus_hub_filter(request.user, level='member'), 
+                           template_name, hub_name_plural(), '')
     else :
-        return groups_list(request, TgGroup.objects.plus_virtual_filter(request.user, level='member'), template_name)
+        return groups_list(request, site, 
+                           TgGroup.objects.plus_virtual_filter(request.user, level='member'),
+                           template_name, 'Groups', 'What a lot of groups')
 
-def groups_list(request, groups, template_name) :
+def groups_list(request, site, groups, template_name, head_title='', head_title_status='') :
+
     create = False
-
-    if request.user.is_authenticated():
-        site = get_site(request.user)
+    if request.user.is_authenticated() :
         try :
             site.create_TgGroup 
             create = True
         except Exception, e:
-            print "AAA",e
+            print "User can't create a group",e
+    
 
-    print groups
     return render_to_response(template_name, {
-            "head_title" : "Groups",
-            "head_title_status" : "What a lot of groups",
+            "head_title" : head_title,
+            "head_title_status" : head_title_status,
             "groups" : groups,
             "create" : create,
 

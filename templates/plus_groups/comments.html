@@ -1,4 +1,5 @@
 {% load threadedcommentstags %}
+{% load i18n %}
 
 
 <div id="comments" class="page_content">
@@ -16,6 +17,7 @@
     </div>
     {% endfor %}
 
+    {% if comment %}
     <p>Reply to Original:</p>
     <form method="POST" action="{% get_comment_url group %}">
         <ul>
@@ -35,5 +37,8 @@
 	  <li><input type="submit" value="Submit Comment" /></li>
         </ul>
     </form>
+    {% else %}
+        {% trans "Log-in to comment here" %} 
+    {% endif %}
 
 </div>
