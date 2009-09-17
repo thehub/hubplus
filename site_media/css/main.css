@@ -24,6 +24,12 @@ HUB PLUS 2009
 /* Side Blocks: My Hub */
 
 
+/* Tom's evil section */
+.cannot_add {
+    display: none;
+}
+
+
 /* Main Generic */
 
 h2,
