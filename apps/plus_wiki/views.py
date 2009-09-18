@@ -101,8 +101,6 @@ def view_wiki_page(request, group, page_name, template_name="plus_wiki/wiki.html
     version = Version.objects.get_for_date(obj._inner, datetime.now())
     contributors = get_contributors(request.user, obj)
     contributors = [TemplateSecureWrapper(contributor) for contributor in contributors]
-    import ipdb
-    ipdb.set_trace()
     return render_to_response(template_name, {'page':TemplateSecureWrapper(obj), 'version':version, 'contributors':contributors}, context_instance=RequestContext(request))
 
 @login_required

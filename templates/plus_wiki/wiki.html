@@ -24,7 +24,7 @@
       <li><a class="icon_text_button bt_pdf" href="#">Download PDF</a></li>
     </ul>
     <ul id="meta">      
-      <li>Created by <a href="#">{{page.created_by}}</a> at {{page.creation_time|time}} on {{page.creation_time|date}} and last edited by <a href="#">{{version.revision.user}}</a> {{version.revision.date_created|timesince}} ago. </li>
+      <li>Created by <a href="{% url profile_detail page.created_by.username %}">{{page.created_by}}</a> at {{page.creation_time|time}} on {{page.creation_time|date}} and last edited by <a href="{% url profile_detail version.revision.user.username %}">{{version.revision.user}}</a> {{version.revision.date_created|timesince}} ago. </li>
       <li>Licensed under <a href="#">{{page.license}}</a>.</li>	
     </ul>
   </div>
