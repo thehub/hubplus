@@ -14,7 +14,7 @@ class Link(models.Model) :
     service = models.ForeignKey(Service,null=True)
     url = models.URLField(max_length=200)
     text = models.CharField(max_length=100)
-    target_content_type = models.ForeignKey(ContentType,related_name='link_owning_resource')
+    target_content_type = models.ForeignKey(ContentType,null=True,related_name='link_owning_resource')
     target_object_id = models.PositiveIntegerField()
     target = generic.GenericForeignKey('target_content_type', 'target_object_id')
 
@@ -22,6 +22,10 @@ class Link(models.Model) :
 def get_links_for(target) :
     target_type = ContentType.objects.get_for_model(target)
     return Link.objects.filter(target_object_id=target.id, target_content_type=target_type)
+
+
+
+
 
 
 class ListItem(models.Model):

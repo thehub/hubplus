@@ -30,32 +30,7 @@
         </fieldset>
     </form>
     
-    {% if not openid %}
-        <p>{% trans "Or sign in with your OpenID" %}:</p>
-        {# @@@ why isn't this just does as a form object ? #}
-        <form class="login uniForm" action="/openid/register/" method="POST">
-            <fieldset class="inlineLabels">
-                {% if url_required %}
-                    <div class="ctrlHolder error">
-                        <p class="errorField">
-                            <strong>This field is required.</strong>
-                        </p>
-                        <label for="id_username">* OpenID Identifier</label>
-                        <input class="openid" type="text" name="openid_url" />
-                    </div>
-                {% else %}
-                    <div class="ctrlHolder">
-                        <label for="id_username">* OpenID Identifier</label>
-                        <input class="openid" type="text" name="openid_url" />
-                    </div>
-                {% endif %}
-                <div class="form_block">
-                    <input type="submit" value="{% trans "Log in &raquo;" %}" />
-                </div>
-            </fieldset>
-        </form>
-    {% endif %}
- 
+  
    <p>{% blocktrans %}
 If you have any trouble logging in to your account, contact us at 
 <a href="mailto:''></a>.

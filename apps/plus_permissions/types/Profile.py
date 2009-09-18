@@ -7,12 +7,12 @@ from apps.plus_permissions.interfaces import InterfaceReadProperty, InterfaceWri
 
 from apps.profiles.models import Profile
 from apps.plus_permissions.models import SetSliderOptions, SetAgentDefaults, SetPossibleTypes, SetSliderAgents
-
+from apps.plus_links.models import Link
 
 # Here's the wrapping we have to put around it.                                                                                                              
 
 content_type = Profile
-child_types = []
+child_types = [Link]
 SetPossibleTypes(Profile, child_types)
 
 class ProfileViewer: 

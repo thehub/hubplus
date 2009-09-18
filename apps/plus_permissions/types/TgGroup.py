@@ -6,6 +6,7 @@ from apps.plus_contacts.models import Application, Contact
 from apps.plus_wiki.models import WikiPage
 from apps.profiles.models import Profile
 from apps.plus_permissions.site import Site
+from apps.plus_links.models import Link
 from django.db.models.signals import post_save
 import datetime
 from copy import deepcopy
@@ -157,7 +158,7 @@ if not SliderOptions.get(TgGroup, False):
 
 # ChildTypes are used to determine what types of objects can be created in this security context (and acquire security context from this). These are used when creating an explicit security context for an object of this type. 
 if TgGroup not in PossibleTypes:
-    child_types = [OurPost, Site, Application, Contact, Profile, WikiPage]
+    child_types = [OurPost, Site, Application, Contact, Profile, WikiPage, Link]
     SetPossibleTypes(TgGroup, child_types)
 
 
@@ -230,6 +231,13 @@ public_defaults = {'TgGroup':
                          'Unknown': 'context_agent'
                          },               
                         'constraints':[]
+                        },
+                   'Link':
+                       {'defaults' : 
+                          { 'Viewer': 'anonymous_group',
+                            'Manager': 'context_agent' 
+                          },
+                          'constraints':[]
                         },
                    'Profile':
                        {'defaults': 
