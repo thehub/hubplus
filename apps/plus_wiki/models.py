@@ -18,12 +18,18 @@ class WikiPage(models.Model):
     content = models.TextField(blank=True)  # html field
     links_to = models.ManyToManyField(GenericReference, related_name="back_links")
     in_agent = models.ForeignKey(GenericReference, related_name="wiki_pages")
+    created_by = models.ForeignKey(User, related_name="created_wiki_pages", null=True) #stubs shouldn't be created by anyone or owned by anyone (imo) - t.s.
+    creation_time = models.DateTimeField(auto_now_add=True)
 
-class Contributions(models.Model):
-    wikipage = models.ForeignKey(WikiPage, related_name='contributions')
-    user = models.ForeignKey(User, related_name='contributions')
-    what_changed = models.TextField(blank=True)
-    # time_saved = ForeignKey
-    # delta
 
-#redirects 
+import reversion
+try:
+    reversion.register(WikiPage)
+except reversion.revisions.RegistrationError:
+    pass
+
+class VersionDelta(models.Model):
+    revision = models.ForeignKey("reversion.Revision") 
+    delta = models.TextField(blank=True)  # delta to the previous version for the purposes of feeds
+
+#redirects model

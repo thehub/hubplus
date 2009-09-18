@@ -9,7 +9,8 @@
       <ul>
 	<li>
 	  <label for="title"><span class="required">*</span>{% trans "Title" %}</label>
-	  <input name="title" id="title" class="text" type="text" />
+	  <input name="title" id="title" class="text" type="text" value="{{form.data.title}}" />
+	  {% if form.errors.title %}<span class="error">{{form.errors.title}}<span>{% endif %}
 	</li>
       </ul>
       <label><span class="required">*</span>{% trans "Add this to" %}</label>

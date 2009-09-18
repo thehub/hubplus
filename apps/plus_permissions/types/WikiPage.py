@@ -36,6 +36,8 @@ class WikiPageViewer:
     links_to = InterfaceReadProperty
     in_agent = InterfaceReadProperty
     stub = InterfaceReadProperty
+    created_by = InterfaceReadProperty
+    creation_time = InterfaceReadProperty
 
 class WikiPageEditor:
     name_from_title = InterfaceCallProperty
@@ -44,6 +46,9 @@ class WikiPageEditor:
     license = InterfaceWriteProperty
     stub = InterfaceWriteProperty
 
+class WikiPageCreator:
+    created_by = InterfaceWriteProperty
+
 class WikiPageDelete:
     delete = InterfaceCallProperty
 
@@ -51,7 +56,8 @@ class WikiPageDelete:
 if not get_interface_map(WikiPage):
     WikiPageInterfaces = {'Viewer':WikiPageViewer,
                           'Editor':WikiPageEditor,
-                          'Delete':WikiPageDelete}
+                          'Delete':WikiPageDelete,
+                          'Creator':WikiPageCreator}
 
     add_type_to_interface_map(content_type, WikiPageInterfaces)
 

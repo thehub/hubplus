@@ -53,9 +53,9 @@
 	</dl>
       </li>
     </ul>
-    <h3>Members</h3>
+    <h3>{% trans "Members" %}</h3>
     <ul>
-      <li><dl><dt>Members:</dt><dd>
+      <li><dl><dt>{% trans "Members" %}:</dt><dd>
 	    <ul id="members_list">
 	      {% for member in members %}
 	      <li><a href="{% url profile_detail member.username %}" 

@@ -59,7 +59,7 @@ def patch_in_groups(request):
 
 def patch_in_permission_prototype(request):
     for gr in GenericReference.objects.all():
-        if not gr.permission_prototype and isinstance(gr.obj, TgGroup):
+        if not gr.permission_prototype and (isinstance(gr.obj, TgGroup) or isinstance(gr.obj, User)):
             gr.permission_prototype = 'public' 
             gr.save()
     return HttpResponse("patched permission prototype")

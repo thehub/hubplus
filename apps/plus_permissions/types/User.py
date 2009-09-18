@@ -63,6 +63,7 @@ class UserViewer:
     username = InterfaceReadProperty
     get_profile = InterfaceCallProperty
     get_display_name = InterfaceCallProperty
+    display_name = InterfaceReadProperty 
 
 
 UserInterfaces = {
