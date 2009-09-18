@@ -126,7 +126,7 @@ def groups(request, site, type='other', template_name='plus_groups/groups.html')
     else :
         return groups_list(request, site, 
                            TgGroup.objects.plus_virtual_filter(request.user, level='member'),
-                           template_name, 'Groups', 'What a lot of groups')
+                           template_name, 'Groups', '')
 
 def groups_list(request, site, groups, template_name, head_title='', head_title_status='') :
 
