@@ -221,27 +221,28 @@ def group_field(request, group, classname, fieldname, *args, **kwargs) :
     """ Get the value of one field from the group, so we can write an ajaxy editor """
     return one_model_field(request, p, fieldname, kwargs.get('default', ''), TgGroupForm)
 
-from django.utils.encoding import iri_to_uri
 
 @login_required
 @secure_resource(obj_schema={'group':[TgGroup]})
 def add_content_object(request, group):
-    type_string = request.POST['create_iface'].split('Create')[1]
-    create = getattr(group, "create_" + type_string)
-    title = request.POST['title']
-    name = name_from_title(title)
-    #ensure name is unique for group and type
-    cls = ContentType.objects.get(model=type_string.lower()).model_class()
-    try:
-        obj = cls.objects.get(name=name, in_agent=group.get_ref(), stub=True)
-        #XXX if it is not raise error to user
-    except cls.DoesNotExist:
+    form = AddContentForm(request.POST)
+    if form.is_valid():
+        title = form.cleaned_data['title']
+        type_string = form.cleaned_data['type_string']
+        create = getattr(group, "create_" + type_string)
+        title = form.cleaned_data['title']
+        name = form.cleaned_data['name']
         obj = create(request.user, title=title, name=name, in_agent=group.get_ref(), stub=True)
         obj.save()
 
-    #redirect to the edit page
-    return HttpResponseRedirect(reverse('edit_' + type_string, args=[group.id, obj.name]))
-   
+        #can't do a normal redirect via ajax call, so tell the js to redirect for us
+        return HttpResponse('redirect:' + reverse('edit_' + type_string, args=[group.id, obj.name]))
+        
+        #redirect to the edit page
+        #return HttpResponseRedirect(reverse('edit_' + type_string, args=[group.id, obj.name]))
+    
+    return add_content_form(request, group.id, form)
+
  
 def possible_create_interfaces():
     """return tuples of form, interface string, label, subtext
@@ -254,7 +255,7 @@ def possible_create_interfaces():
 
 @login_required
 @secure_resource(TgGroup)
-def add_content_form(request, group):
+def add_content_form(request, group, form=None):
     possible_interfaces = possible_create_interfaces()
     if group:
         _interfaces = [g.split('.')[1] for g in group._interfaces]
@@ -267,8 +268,7 @@ def add_content_form(request, group):
             can_add += 1
         else:
             iface.append(False)
-            
-    return render_to_response("plus_groups/add_content.html", {'group':group, 'possible_interfaces': possible_interfaces, 'can_add':can_add})
+    return render_to_response("plus_groups/add_content.html", {'group':group, 'possible_interfaces': possible_interfaces, 'can_add':can_add, 'form':form})
 
 
 

@@ -1,3 +1,13 @@
+History/diffing/contributions/changelog
+---------------------------------------
+We may want to use diff-match-patch in the future but it doesn't work for structured documents only plaintext - great for real time though!
+
+http://code.google.com/p/django-reversion - feature complete api for managing revisions - stores to serialized format
+http://code.google.com/p/django-versioning/ -- use this for diffing and storing diffs between versions - (for feeds)
+
+
+
+
 
 Jesson - style (add new)
 
@@ -21,46 +31,26 @@ wiki page design - in html
 search results / tag filtering - do design work with Tom/Phil
 
 
-
-Thus - Sun
-----------
-- html5lib sanitize - htmlField + beautiful soup  ++ use mark_safe instead of turning autoescaping off
-- create content page form
-
-Basics of:
-- wiki
+Phil please (tom's wishlist):
+- add comments to wiki
 - apply wiki naming to group name.	
-- fulltext search
-- upload
+- do as much as possible of the outstanding permissions work below
+- begin work on uploads - happy to help, particularly around the image previews etc
 
 
 Wiki
 ----
 HP 0.9
 ------
-http://sct.sphene.net/wiki/show/Start/
-http://code.google.com/p/django-wikiapp/
-
-
-- Model + Editing
-  i) content, title, name
-
-- title to name
-- Preview functionality
-
 - autocomplete wiki linking (this group first then related groups, then all groups), with create page functionality - see HubKnowledge
 - file upload to page and attachment (see hubknowledge) - image previews (cropping)  http://pypi.python.org/pypi/django-generic-images/0.15a
 http://pypi.python.org/pypi/django-attachments/0.3.1
 - comments (enable)
 - permissions control
-- editor - image inclusion - flickr plugin - autoadjusting height - yui 
-
-*http://code.google.com/p/fullhistory/*
-*http://code.google.com/p/django-versioning/*
-http://code.google.com/p/django-reversion
-
+- editor - image inclusion
 
 http://docs.djangoproject.com/en/dev/howto/outputting-pdf/
+rss
 
 
 
@@ -127,13 +117,16 @@ Permissions added by Phil after conversation on 15 September
   Users and Profiles.
      - Profile acquire their SecurityContext from Users
      - We don't *customize* Profile security, in the sense of creating a specific Profile SecurityContext, we just edit the User
-     
-  Further Changes
-     - put a "broad type" (permission_prototype) on security agents which can be used to store the "public" / "private" / "invited" et. distintion
+     	
 
+  Further Changes
+     - we need to distinguish whether its possible to "customized permmisions" (add new security context for this object) -- one child (child types - single or multiple)
+     - uncustomised view 
+     - put a "broad type" (permission_prototype) on security agents which can be used to store the "public" / "private" / "invited" et. distintion
      - restrict tabs showing sliders, according to ManagePermissions interface
      - labels on the sliders ... (use the _ functions )
 
+     - permissions system - should itself using secure - access security context through its target
 
 Monday
 --------
@@ -286,6 +279,3 @@ Financial + User data export HP 0.9
 1) Move GroupExtra fields back into TgGroups
 2) Patch script for hubspace database to add the extra fields
 
-
-useful?
-http://code.djangoproject.com/wiki/AuditTrail
