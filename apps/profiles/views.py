@@ -64,7 +64,8 @@ def profiles(request, template_name="profiles/profiles.html"):
     return render_to_response(template_name, {
         'users':users,
         'order' : order,
-        'search_terms' : search_terms
+        'search_terms' : search_terms,
+		'head_title' : 'Members'
     }, context_instance=RequestContext(request))
 
 

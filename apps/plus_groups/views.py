@@ -24,7 +24,7 @@ from apps.plus_permissions.interfaces import PlusPermissionsNoAccessException, S
 from apps.plus_permissions.types.TgGroup import *
 from django.contrib.auth.decorators import login_required
 
-from apps.plus_groups.forms import TgGroupForm, TgGroupMemberInviteForm, AddContentForm
+from apps.plus_groups.forms import TgGroupForm, TgGroupMemberInviteForm, AddContentForm, TgGroupMessageMemberForm
 
 from apps.plus_permissions.api import secure_resource, site_context
 from apps.plus_permissions.default_agents import get_anon_user, get_site
@@ -54,6 +54,7 @@ def group(request, group, template_name="plus_groups/group.html"):
     leave = False
     invite = False
     comment = False
+    message = False
 
     if user.is_authenticated():
         if user.is_direct_member_of(group.get_inner()):
@@ -68,10 +69,7 @@ def group(request, group, template_name="plus_groups/group.html"):
                 group.comment
                 comment = True
             except Exception, e: # user doesn't have comment permission
-                print "Test for comment access failed"
-                print e
-                import ipdb
-                ipdb.set_trace()
+                pass
         else :
             try :
                 group.join 
@@ -85,6 +83,11 @@ def group(request, group, template_name="plus_groups/group.html"):
             except Exception, e : # user doesn't have apply permission
                 pass
 
+        try :
+            group.message
+            message = True
+        except :
+            pass
         
 
     tweets = TweetInstance.objects.tweets_for(group).order_by("-sent") 
@@ -107,6 +110,7 @@ def group(request, group, template_name="plus_groups/group.html"):
             "apply" : apply, 
             "invite" : invite, 
             "comment" : comment, 
+            "message" : message, 
             "hosts": hosts,
             "host_count": host_count,
             "tweets" : tweets,
@@ -189,6 +193,22 @@ def add_member(request, group, username, **kwargs) :
     user = get_object_or_404(User, username=username)
     group.add_member(user)
     return HttpResponseRedirect(reverse('group',args=(group.id)))
+
+@login_required
+@secure_resource(TgGroup, required_interfaces=['Message','Viewer'])
+def message_members(request, group, **kwargs) :
+    template_name = "plus_groups/message_members.html"
+    if request.POST :
+        form = TgGroupMessageMemberForm(request.POST)
+        if form.is_valid() :
+            group.message_members(request.user, message_header, message_body)
+            request.user.message_set.create(message=_("You have successfully messaged everyone in %s"))
+            return HttpResponseRedirect(reverse('group',args=(group.id)))
+    else :
+        form = TgGroupMessageMemberForm()
+    return render_to_response(template_name, 
+                              {'form' : form,
+                               'group': group }, context_instance=RequestContext(request))
 
 
 @login_required

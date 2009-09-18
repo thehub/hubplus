@@ -110,6 +110,8 @@ class TgGroupEditor:
     place = InterfaceWriteProperty
     website = InterfaceWriteProperty
     display_name = InterfaceWriteProperty
+    
+    message_members = InterfaceCallProperty
 
 class TgGroupJoin:
     pk = InterfaceReadProperty
@@ -123,6 +125,8 @@ class TgGroupInviteMember:
 class TgGroupComment:
     pk = InterfaceReadProperty
     comment = InterfaceCallProperty
+
+
 
 class TgGroupManageMembers:
     pk = InterfaceReadProperty
