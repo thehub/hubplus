@@ -14,13 +14,14 @@ class Link(models.Model) :
     service = models.ForeignKey(Service,null=True)
     url = models.URLField(max_length=200)
     text = models.CharField(max_length=100)
-    owner_content_type = models.ForeignKey(ContentType,related_name='link_owning_resource')
-    owner_object_id = models.PositiveIntegerField()
-    owner = generic.GenericForeignKey('owner_content_type', 'owner_object_id')
+    target_content_type = models.ForeignKey(ContentType,related_name='link_owning_resource')
+    target_object_id = models.PositiveIntegerField()
+    target = generic.GenericForeignKey('target_content_type', 'target_object_id')
 
     
-def get_links_for(owner) :
-    return (x for x in Link.objects.filter(owner_object_id=owner.id) if x.owner == owner)
+def get_links_for(target) :
+    target_type = ContentType.objects.get_for_model(target)
+    return Link.objects.filter(target_object_id=target.id, target_content_type=target_type)
 
 
 class ListItem(models.Model):
