@@ -1,5 +1,8 @@
+{% load avatar_tags %}
+{% load i18n %}
+
 <div id="extra" class="block accordion">
-  <h3 class="first">Tags</h3>
+  <h3 class="first">{% trans "Tags" %}</h3>
   <div class="first">
     <ol class="tag_list">
       <li><a href="#" class="tag pop7">activism</a></li>
@@ -11,20 +14,32 @@
       <li><a href="#" class="tag pop2">clothing</a></li>
     </ol>
   </div>
-  <h3>Contributors</h3>
+  <h3>{% trans "Contributors" %}</h3>
   <div>
-    contributers here
+    <ul>
+      <li>
+	<ul id="members_list">
+	  {% for contributor in contributors %}
+	  <li><a href="{% url profile_detail contributor.username %}" 
+		 class="thumb small">{% avatar contributor.obj 40 %}
+	      {% if contributor.display_name %}{{contributor.display_name}}{% else %}{{contributor.username}}{%endif%}</a>
+	  </li>
+	  {% endfor %}
+	</ul>
+	<!--<a href="#" class='disabled'>Show all ({{member_count}})</a>-->
+      </li>
+    </ul>
   </div>
-  <h3>My Tags</h3>
+  <h3>{% trans "My Tags" %}</h3>
   
   <div>
     my tags here
   </div>
-  <h3>Backlinks</h3>
+  <h3>{% trans "Backlinks" %}</h3>
   <div>
     page list
   </div>
-  <h3 class="last">History</h3>
+  <h3 class="last">{% trans "History" %}</h3>
   <div class="last">
     
     history here
@@ -33,14 +48,14 @@
 
 <div id="actions_list" class="block">
   <ul id="actions" class="link_list">
-    <li class="first"><a href="#">Follow this page</a></li>
-    <li class="last"><a href="#">Recommend</a></li>
+    <li class="first"><a href="#">{% trans "Follow this page" %}</a></li>
+    <li class="last"><a href="#">{% trans "Recommend" %}</a></li>
   </ul>
   
 </div>
 
 <div id="feature_search" class="site_block">
-  <h3>Search</h3>
+  <h3>{% trans "Search" %}</h3>
   <form>
     <input name="search_term" type="text" class="text" /> <input class="button" type="submit" value="Search" /><br />
     <input name="current_area" type="checkbox" checked="checked" /> This group only<br />

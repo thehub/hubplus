@@ -18,13 +18,15 @@ class MissingSecurityContextException(Exception):
 class PermissionableManager(models.Manager):
     # if a permission_agent is passed, only get or filter items which 
     # pass a security check
-    def plus_filter(self, p_user, interface_names=None, required_interfaces=None, all_or_any='ALL', limit=None, **kwargs):
+    def plus_filter(self, p_user, interface_names=None, required_interfaces=None, all_or_any='ALL', limit=None, distinct=None, **kwargs):
         """XXX this should itself be evalutated "lazily" e.g. when indexed in the same way as the filter statement which it uses.
-        """
+        """            
         if not interface_names:
             interface_names = ['Viewer']
         resources = super(self.__class__, self).filter(**kwargs)
-        
+        if distinct:
+            resources = resources.distinct()
+
         if limit:
             high_index = min(limit*2, resources.count())
             secured = self.secure_results_set(resources[0:high_index], p_user, interface_names=interface_names, required_interfaces=required_interfaces, all_or_any=all_or_any)

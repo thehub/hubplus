@@ -43,9 +43,9 @@
 	{% if page.stub %}
 	{% else %}
 	<li class="changes_set">	  
-	  <label for="changes">What's changed? <span class="extra">describe what you've just changed</span></label>
-	  <textarea id="changes" class="text" type="" value="">{% if data.changes %}{{data.changes}}{% else %}{{page.changes}}{% endif %}</textarea>
-	  {% if errors.changes %}<span class="error">{{errors.changes}}<span>{% endif %}
+	  <label for="what_changed">What's changed? <span class="extra">describe what you've just changed</span></label>
+	  <textarea id="what_changed" name="what_changed" class="text">{{data.what_changed}}</textarea>
+	  {% if errors.what_changed %}<span class="error">{{errors.what_changed}}<span>{% endif %}
 	</li>
 	{% endif %}
 	

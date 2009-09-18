@@ -5,4 +5,5 @@ class EditWikiForm(forms.Form):
     title = forms.CharField(max_length=100)
     license = forms.CharField(max_length=100, required=False)
     content = HTMLField()
-    changes = forms.CharField(required=False)
+    what_changed = forms.CharField(required=False)
+

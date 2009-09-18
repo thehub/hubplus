@@ -109,8 +109,7 @@ class TgGroupEditor:
     description = InterfaceWriteProperty
     place = InterfaceWriteProperty
     website = InterfaceWriteProperty
-    display_name = InterfaceWriteProperty
-    
+    display_name = InterfaceWriteProperty    
     message_members = InterfaceCallProperty
 
 class TgGroupJoin:
@@ -196,6 +195,7 @@ public_defaults = {'TgGroup':
                        {'defaults':
                             {'Viewer':'anonymous_group',
                              'Editor':'context_agent',
+                             'Creator':'creator',
                              'Delete':'context_admin',
                              'Unknown':'context_agent'},
                         'constraints': ['Viewer>=Editor', 'Editor<$anonymous_group']
