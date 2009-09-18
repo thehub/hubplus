@@ -39,11 +39,15 @@ HUB PLUS 2009
 	background: url('../images/slider_bar.gif') no-repeat 50% 0;
 	vertical-align: top;
 }
+
 .setting.limited_up {
+
 }
+
 .setting.limited_down {
 
 }
+
 .setting.active {
 	background-position	: 50% -200px;
 }
@@ -62,16 +66,15 @@ td.group_label {
 }
 
 .slider_holder {
-	position:relative;
+	position	:relative;
 }
 
 .slider {
-	cursor: pointer;
-	position: absolute;
-	background: url('../images/slider_handle.gif') no-repeat;
-	height:13px;
-	width:17px;
-	left:50%;
-	margin-left:-9px;
-	left:50%;
+	background	: url('../images/slider_handle.gif') no-repeat;
+	cursor		: pointer;
+	height		:13px;
+	left		:50%;
+	position	: absolute;
+	margin-left	:-9px;
+	width		:17px;
 }

@@ -10,9 +10,10 @@
 	<link rel="stylesheet" href="../../site_media/css/main.css" type="text/css" media="all" />
 	<link rel="stylesheet" href="../../site_media/css/serendipity.css" type="text/css" media="all" />
 	<link rel="stylesheet" href="../../site_media/css/footer.css" type="text/css" media="all" />
-	<link rel="stylesheet" href="../../site_media/themes/plus/css/theme.css" type="text/css" media="all" />
+	<link rel="stylesheet" href="../../site_media/css/forms.css" type="text/css" media="all" />
 	<link rel="stylesheet" href="../../site_media/css/tabview.css" type="text/css" media="all" />
 	<link rel="stylesheet" href="../../site_media/css/overlay.css" type="text/css" media="all" />
+	<link rel="stylesheet" href="../../site_media/themes/plus/css/theme.css" type="text/css" media="all" />
 	<!--[if IE]><style>
 		div { zoom: 1; } /* trigger hasLayout */
 	</style><![endif]-->
@@ -34,7 +35,7 @@
 
 	<script type="text/javascript">
 		jq(document).ready(function(){
-			jq("#extra").accordion({ autoHeight: false });
+			jq(".accordion").accordion({ autoHeight: false });
 		});
 	</script>
 
@@ -88,6 +89,7 @@
 	<div id='wrapper'>
 
 		<!-- header -->
+		
 		<div id="header">
 			<h1><a href="index.html">Hub+</a></h1>
 			<ul id='account_navigation'>
@@ -119,11 +121,12 @@
 			<!-- body -->
 			<div id='body'>
 
+
 				<!-- main_content -->
 				<div id="main_content" class="block">
 
 					<ul class="icon_text_button_set">
-						<li><a class="icon_text_button bt_edit" href="wiki_page7_edit.html">Edit page</a></li>
+						<li><a class="icon_text_button bt_edit" href="wiki_page_edit.html">Edit page</a></li>
 						<li><a class="icon_text_button bt_permissions" href="#">Permissions</a></li>
 					</ul>
 
@@ -157,6 +160,7 @@
 					<ul class="tabbed_navigation yui-nav">
 						<li class="selected"><a href="#comments"><span>Comments (23)</span></a></li>
 						<li><a href="#attachments"><span>Attachments (2)</span></a></li>
+						<li><a href="#history"><span>History</span></a></li>
 					</ul>
 					<div class="tabbed_content yui-content">
 						<div id="comments">
@@ -164,6 +168,54 @@
 						</div>
 						<div id="attachments">
 							Attachments go here
+						</div>
+						<div id="history">
+
+							<form">
+								<table>
+	
+									<tr class="head">
+										<th class="history_compare"><input type="submit" class="button" value="Compare" /></th>
+										<th class="history_change" ></th>
+										<th class="history_actions"></th>
+									</tr>
+
+									<tr>
+										<td>
+											<input type="radio" class="radio" name="first" checked="checked" />
+											<input type="radio" class="radio" name="second" />
+										</td>
+										<td>
+											<h4><a href="#">Spelling and grammar corrections</a></h4> <span>by <a href="#">Jesson Yip</a></span>
+											<span class="label_time">22/08/09</span>
+										</td>
+										<td>
+											<div class="actions"><a href="#">View</a> | <a href="#">Changes</a> | <a href="#">Make current</a></div>
+										</td>
+									</tr>
+
+									<tr>
+										<td>
+											<input type="radio" class="radio" name="first" />
+											<input type="radio" class="radio" name="second" checked="checked" />
+										</td>
+										<td>
+											<h4><a href="#">New para</a></h4> <span>by <a href="#">Jesson Yip</a></span>
+											<span class="label_time">22/08/09</span>
+										</td>
+										<td>
+											<div class="actions"><a href="#">View</a> | <a href="#">Changes</a> | <a href="#">Make current</a></div>
+										</td>
+									</tr>
+
+									<tr class="foot">
+										<td><input type="submit" class="button" value="Compare" /></td>
+										<td></td>
+										<td></td>
+									</tr>
+
+								</table>
+							</form>
 						</div>
 					</div>
 				</div>
@@ -195,13 +247,9 @@
 					<div>
 						my tags here
 					</div>
-					<h3>Backlinks</h3>
-					<div>
-						page list
-					</div>
-					<h3 class="last">History</h3>
+					<h3 class="last">Backlinks</h3>
 					<div class="last">
-						history here
+						page list
 					</div>
 				</div>
 
