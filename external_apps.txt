@@ -29,6 +29,7 @@ django-wikiapp==0.1.2
 django-flag
 django-debug-toolbar
 django-db-log
+django-reversion
 
 # packages we create for release::
 http://django-tagging.googlecode.com/svn/trunk/
