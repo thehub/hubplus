@@ -74,7 +74,6 @@ Tags *Tom*
 Phil - application process - emails send out, 
      - create group form
      - host info security setup
-     - separate Hubs from groups by Location/Subclassing
      - groups page loading time - wtf is going on server side
      - links + contact details (e.g. host contact address). Some names might be required e.g. enquiries address for Hubs.
      - ordering of lists, members, hosts (group page) and groups (profile page) 

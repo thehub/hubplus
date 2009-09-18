@@ -23,7 +23,7 @@
       <li>
 	{% editable "Type" group 'group_type' 'Type of Group' %}
       </li>
-      <li>
+      <li class="yui-skin-sam">
 	{% editable "Description" group 'description' 'Description of the group' %}
       </li>  
     
@@ -89,7 +89,9 @@
       <img id="group_image" src="/site_media/group_images/default_interest_group.jpg" />
     </div>
     <ul id="actions" class="link_list">
-      <li class="first"><a href="#">Message members</a></li>
+      {% if group.message_members %}
+      <li class="first"><a href="{% url message_members group.id %}">Message members</a></li>
+      {% endif %}
       {% if invite %}
       <li><a href="{% url invite_to_group group.id %}">Invite members</a></li>
       {% endif %}
