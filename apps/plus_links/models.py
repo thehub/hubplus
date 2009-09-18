@@ -15,7 +15,7 @@ class Link(models.Model) :
     url = models.URLField(max_length=200)
     text = models.CharField(max_length=100)
     target_content_type = models.ForeignKey(ContentType,null=True,related_name='link_owning_resource')
-    target_object_id = models.PositiveIntegerField()
+    target_object_id = models.PositiveIntegerField(null=True)
     target = generic.GenericForeignKey('target_content_type', 'target_object_id')
 
     
