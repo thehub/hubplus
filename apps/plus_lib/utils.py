@@ -36,6 +36,7 @@ def i_debug(f):
 
 def make_name(s):
     """Turn the argument into a name suitable for a URL """
+    s=s.strip()
     s=s.replace(' ','_')
     s=s.lower()
     if isinstance(s,str):
