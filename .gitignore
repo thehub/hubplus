@@ -8,3 +8,6 @@ local_settings.py
 
 # Probably will be removed but for the moment, we don't want all the avatars going into the repo
 site_media/avatars
+
+# PSN data
+mhpss_export
