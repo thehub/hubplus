@@ -5,6 +5,7 @@
 
 {% load uni_form %}
 {% load plus_tags %}
+{% load plus_links %}
 {% load editable_attribute %}
 {% load threadedcommentstags %}
 
@@ -31,7 +32,8 @@
 	{% editable "Address" group 'address' 'Address' %}
       </li>
     </ul>
-    <h3 class='disabled'>{% trans "Links" %}</h3>
+    <h3'>{% trans "Links" %}</h3>
+    {% plus_links resource_class resource_id %}
     <ul class='disabled'>
       <li><dl><dt>Website:</dt><dd><a href="#">www.sexysaladclub.com</a></dd></dl></li>
       <li><dl><dt>Flickr:</dt><dd><a href="#">www.flickr.com/ssc</a></dd></dl></li>

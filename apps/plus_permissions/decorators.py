@@ -52,7 +52,6 @@ def secure_resource(cls=None, with_interfaces=None, required_interfaces=None, ob
             return g
         elif obj_schema:
             def g(request, *args, **kwargs):
-
                 if request.POST:
                     data = request.POST.copy() 
                 elif request.GET:

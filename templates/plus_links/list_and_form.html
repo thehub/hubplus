@@ -1,0 +1,21 @@
+
+<div class='external_links'>
+  <ul class="list_of_links">
+    {% for l in list %}
+    <li><a href="{{l.url}}">{{l.text}}</a></li>
+    {% endfor %}
+  </ul>
+  
+  <form target="{% url add_link %}" class="link_form">
+    <input name="target_class" class="target_class" value="{{resource_class}}" type="hidden" />
+    <input name="target_id" class="target_id" value="{{resource_id}}" type="hidden" />
+	
+    <label for="text"/>
+    <input name="text" id="text" class="link_text" value="{{text}}" />
+    <label for="url"/>
+    <input name="url" id="url" class="url url" />
+    <input type="submit" value='add' class='submit_link' />
+    
+  </form>
+  
+</div>
