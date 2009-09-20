@@ -12,9 +12,9 @@ function links(ele) {
 	    jq.post( manager.find('.link_form').attr('target'), args, append_link);
 	    return false;
 	});
-    var append_link = function() {
+    var append_link = function(new_link) {
 	console.log('back');
-	manager.find('.list_of_links').append('<li><a href="'+'SOMEWHERE'+'">'+'MY LINK'+'</a></li>');
+	manager.find('.list_of_links').append(new_link);
     }
 }
 

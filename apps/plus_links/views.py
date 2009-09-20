@@ -15,18 +15,11 @@ def add_link(request, target):
     if request.POST :
         form = LinkForm(request.POST)
         if form.is_valid() :
+            link = target.create_Link(request.user, target=target, 
+                                      text = form.cleaned_data['text'],
+                                      url = form.cleaned_data['url'],
+                                      service=form.cleaned_data['service'])
 
-            try :
-                link = target.create_Link(request.user, target=target, 
-                              text = form.cleaned_data['text'],
-                              url = form.cleaned_data['url'],
-                              service=form.cleaned_data['service'])
-                print "AAA"
-                print link
-            except Exception, e :
-                import ipdb
-                print e
-                ipdb.set_trace()
             return render_to_response('plus_links/one_link.html',{'text':link.text, 'url':link.url})
         else :
             import ipdb
