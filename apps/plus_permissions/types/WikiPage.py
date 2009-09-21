@@ -52,12 +52,16 @@ class WikiPageCreator:
 class WikiPageDelete:
     delete = InterfaceCallProperty
 
+class WikiPageCommentor: 
+    comment = InterfaceCallProperty
+
 
 if not get_interface_map(WikiPage):
     WikiPageInterfaces = {'Viewer':WikiPageViewer,
                           'Editor':WikiPageEditor,
                           'Delete':WikiPageDelete,
-                          'Creator':WikiPageCreator}
+                          'Creator':WikiPageCreator,
+                          "Commentor":WikiPageCommentor}
 
     add_type_to_interface_map(content_type, WikiPageInterfaces)
 

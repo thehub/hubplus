@@ -21,6 +21,10 @@ class WikiPage(models.Model):
     created_by = models.ForeignKey(User, related_name="created_wiki_pages", null=True) #stubs shouldn't be created by anyone or owned by anyone (imo) - t.s.
     creation_time = models.DateTimeField(auto_now_add=True)
 
+    def comment(self) :
+        """ XXX will refactor creating a comment on the wiki into this function, at the moment, 
+        at the moment, used for permission testing"""
+        pass
 
 import reversion
 try:

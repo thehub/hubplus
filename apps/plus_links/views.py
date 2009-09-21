@@ -23,8 +23,7 @@ def add_link(request, target):
 
             return render_to_response('plus_links/one_link.html',{'text':link.text, 'url':link.url})
         else :
-            import ipdb
-            ipdb.set_trace()
+            print form.errors
             return render_to_response('plus_links/error.html',{'errors':form.errors})
 
             
