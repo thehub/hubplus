@@ -14,8 +14,8 @@ function links(ele) {
 	});
     var append_link = function(new_link) {
 	console.log('back');
-	manager.find('.list_of_links').append(new_link);
-	manager.find('.link_form").toggle();
+	manager.find(".list_of_links").append(new_link);
+	manager.find(".link_form").toggle();
     }
 
     manager.find(".link_form").toggle();
