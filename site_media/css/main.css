@@ -552,11 +552,25 @@ li.place div.editable {
 }
 
 
+/* Content */
+
+#content,
+#preview_content {
+	clear		: both;
+	margin-bottom	: 25px;
+}
+
+#preview_content {
+	border-bottom	: 1px solid #ddd;
+	padding-bottom	: 20px;
+}
+
+
 /* Content Extra */
 
 #content_extra {
 	border-top	: 1px solid #ddd;
-	padding		: 5px 0 1.5em;
+	padding		: 5px 0 10px;
 }
 
 #meta {
