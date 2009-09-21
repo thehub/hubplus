@@ -7,20 +7,16 @@ function links(ele) {
 
     manager.find(".submit_link").click(function(e) {
 	    var args = manager.find(':input').serializeArray();
-	    console.log('args');
-	    console.log(args);
 	    jq.post( manager.find('.link_form').attr('target'), args, append_link);
 	    return false;
 	});
     var append_link = function(new_link) {
-	console.log('back');
 	manager.find(".list_of_links").append(new_link);
 	manager.find(".link_form").toggle();
     }
 
     manager.find(".link_form").toggle();
     manager.find(".show_link_form").click(function() { 
-	    console.log('click');
 	    manager.find(".link_form").toggle();
 	});
 	
