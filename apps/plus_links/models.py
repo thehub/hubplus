@@ -19,9 +19,12 @@ class Link(models.Model) :
     target = generic.GenericForeignKey('target_content_type', 'target_object_id')
 
     
+def get_links_for_type_and_id(type, id) :
+    return Link.objects.filter(target_object_id=id, target_content_type=type)
+
 def get_links_for(target) :
     target_type = ContentType.objects.get_for_model(target)
-    return Link.objects.filter(target_object_id=target.id, target_content_type=target_type)
+    return get_links_for_type_and_id(target_type, target.id)
 
 
 

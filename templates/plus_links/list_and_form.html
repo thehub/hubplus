@@ -1,14 +1,14 @@
 
 <div class='external_links'>
   <ul class="list_of_links">
-    {% for l in list %}
-    <li><a href="{{l.url}}">{{l.text}}</a></li>
+    {% for l in links %}
+    <dl><dt>{{l.text}}:</dt><dd><a href="{{l.url}}">{{l.url}}</a></dd></dl>
     {% endfor %}
   </ul>
   
   <form target="{% url add_link %}" class="link_form">
-    <input name="target_class" class="target_class" value="{{resource_class}}" type="hidden" />
-    <input name="target_id" class="target_id" value="{{resource_id}}" type="hidden" />
+    <input name="target_class" class="target_class" value="{{target_class_name}}" type="hidden" />
+    <input name="target_id" class="target_id" value="{{target_id}}" type="hidden" />
 	
     <label for="text"/>
     <input name="text" id="text" class="link_text" value="{{text}}" />

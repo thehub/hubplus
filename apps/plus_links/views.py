@@ -14,6 +14,7 @@ from apps.plus_permissions.api import secure_resource
 def add_link(request, target):
     if request.POST :
         form = LinkForm(request.POST)
+
         if form.is_valid() :
             link = target.create_Link(request.user, target=target, 
                                       text = form.cleaned_data['text'],
