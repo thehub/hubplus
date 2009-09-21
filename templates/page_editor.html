@@ -8,7 +8,7 @@
 {% block main %}
 
 <!-- site_wide_messages -->
-<div id='site_wide_messages'>
+<div id="site_wide_messages">
   {% if site_wide_announcements %}
   <div id="site_wide_announcements">
     <ul>
@@ -23,21 +23,21 @@
   {% endif %}
 </div>
 <!-- end site_wide_messages -->
-<form action="{{form_action}}" method="POST" id="page_edit_form" class="full">
+<form action="{{form_action}}" method="POST" id="page_edit_form" class="page">
 
 <div id="page_header">
   {% block edit_header %}{% endblock %}
 </div>
 
 <!-- body -->
-<div id='body'>
+<div id="body" class="editing">
   {% block body %}{% endblock %}
 </div>
 <!-- end body -->
 </form>
 
 <!-- side_bar -->
-<div id='side_bar'>
+<div id="side_bar">
   {% block side_bar %}{% endblock %}
 </div>
 <!-- end side_bar -->
