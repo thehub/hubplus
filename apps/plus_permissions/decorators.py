@@ -52,7 +52,6 @@ def secure_resource(cls=None, with_interfaces=None, required_interfaces=None, ob
             return g
         elif obj_schema:
             def g(request, *args, **kwargs):
-
                 if request.POST:
                     data = request.POST.copy() 
                 elif request.GET:
@@ -64,6 +63,7 @@ def secure_resource(cls=None, with_interfaces=None, required_interfaces=None, ob
                         cls = obj_types[0]
                     elif obj_types == 'any' or isinstance(obj_types, list):
                         classname = data.get(obj_key + '_class', None)
+                        
                         if classname:
                             cls = ContentType.objects.get(model=classname.lower()).model_class()
                             if isinstance(obj_types, list):

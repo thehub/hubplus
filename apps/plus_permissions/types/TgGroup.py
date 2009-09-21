@@ -235,7 +235,8 @@ public_defaults = {'TgGroup':
                    'Link':
                        {'defaults' : 
                           { 'Viewer': 'anonymous_group',
-                            'Manager': 'context_agent' 
+                            'Manager': 'context_agent',
+                            'Unknown': 'context_agent',
                           },
                           'constraints':[]
                         },

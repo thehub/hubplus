@@ -72,6 +72,8 @@ urlpatterns = patterns('',
     (r'^notices/', include('notification.urls')),
 
     (r'^lib/', include('plus_lib.urls')),
+    (r'^links/', include('plus_links.urls')),
+
 
     url(r'^hubs/$', 'plus_groups.views.groups',{'type':'hub'},name='hubs'),
     url(r'^regions/$', 'plus_groups.views.groups',{'type':'hub'},name='regions'),
