@@ -95,8 +95,7 @@ def group(request, group, template_name="plus_groups/group.html"):
             add_link = True
         except Exception, e :
             print e
-            import ipdb
-            ipdb.set_trace()
+
             pass
 
     tweets = TweetInstance.objects.tweets_for(group).order_by("-sent") 
