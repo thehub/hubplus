@@ -9,7 +9,6 @@ def plus_links(target_class, target_id) :
 
     links = get_links_for_type_and_id(target_class, target_id)
     
-    print links
     return {
         'links' : links,
         'target_class' : target_class,

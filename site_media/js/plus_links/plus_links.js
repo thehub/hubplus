@@ -15,7 +15,15 @@ function links(ele) {
     var append_link = function(new_link) {
 	console.log('back');
 	manager.find('.list_of_links').append(new_link);
+	manager.find('.link_form").toggle();
     }
+
+    manager.find(".link_form").toggle();
+    manager.find(".show_link_form").click(function() { 
+	    console.log('click');
+	    manager.find(".link_form").toggle();
+	});
+	
 }
 
 

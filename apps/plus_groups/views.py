@@ -55,6 +55,7 @@ def group(request, group, template_name="plus_groups/group.html"):
     invite = False
     comment = False
     message = False
+    add_link = False
 
     if user.is_authenticated():
         if user.is_direct_member_of(group.get_inner()):
@@ -89,6 +90,14 @@ def group(request, group, template_name="plus_groups/group.html"):
         except :
             pass
         
+        try :
+            group.create_Link
+            add_link = True
+        except Exception, e :
+            print e
+            import ipdb
+            ipdb.set_trace()
+            pass
 
     tweets = TweetInstance.objects.tweets_for(group).order_by("-sent") 
     if tweets :
@@ -112,7 +121,8 @@ def group(request, group, template_name="plus_groups/group.html"):
             "apply" : apply, 
             "invite" : invite, 
             "comment" : comment, 
-            "message" : message, 
+            "message" : message,
+            "add_link" : add_link,
             "hosts": hosts,
             "host_count": host_count,
             "tweets" : tweets,
