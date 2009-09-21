@@ -25,6 +25,8 @@ for g in groups:
         description = 'About this group'
 
     group_name = make_name(g['groupname'])
+    if len(group_name)>30 :
+        group_name = group_name[30]
     display_name = g['groupname']
     psn_id = g['uid']
 
@@ -34,14 +36,14 @@ for g in groups:
     print description
     print keywords
 
-    #group = site.create_TgGroup(
-    #    group_name = g['groupname'],
-    #    display_name = g['groupname'],
-    #   group_type = 'interest' ,
-    #    level = 'member',
-    #    user = admin,
-    #    description = self.cleaned_data['description'],
-    #    permission_prototype = self.cleaned_data['permissions_set'],
-    #    )
-    # group.psn_id = g['uid']
-    #group.save()
+    group = site.create_TgGroup(
+        group_name = group_name,
+        display_name = display_name,
+        group_type = 'interest' ,
+        level = 'member',
+        user = admin,
+        description = description,
+        permission_prototype = permission_prototype,
+        )
+    group.get_inner().psn_id = psn_id
+    group.save()
