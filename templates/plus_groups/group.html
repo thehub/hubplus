@@ -24,7 +24,9 @@
 	{% editable "Type" group 'group_type' 'Type of Group' %}
       </li>
       <li class="yui-skin-sam">
+	{% autoescape off %}
 	{% editable "Description" group 'description' 'Description of the group' %}
+	{% endautoescape %}
       </li>  
     
       <li>
