@@ -6,8 +6,8 @@
 
 {% block head_title %}{% trans "Login" %}{% endblock %}
 
+{% block page_title %}{% trans "Login" %}{% endblock %}
 {% block body %}
-    <h1>{% trans "Log In" %}</h1>
     
     {% if user.is_authenticated %}
         <p><span class="warning">{% trans "Note" %}</span>: {% blocktrans %}you are already logged in as {{ user }}.{% endblocktrans %}</p>
@@ -33,9 +33,9 @@
   
    <p>{% blocktrans %}
 If you have any trouble logging in to your account, contact us at 
-<a href="mailto:''></a>.
-{% endblocktrans %}
-</p>
+     {% endblocktrans %}
+     <a href="mailto:{{EMAIL_ADDRESS}}">{{EMAIL_ADDRESS}}</a>.
+   </p>
 
 {% endblock %}
 

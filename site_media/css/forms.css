@@ -33,7 +33,7 @@ form ul ul {
 
 form ul li {
 	overflow	: hidden;
-	padding-bottom	: 3px;
+	margin-bottom	: 3px;
 }
 
 form label .extra {
@@ -61,6 +61,38 @@ form input.checkbox,
 form input.radio {
 	float		: left;
 	margin		: 2px 5px 0 0;
+}
+
+
+/* Forms: Page */
+
+form.page input#page_title {
+	width		: 612px;
+}
+
+form.page #content {
+	margin-top	: 0px;
+	margin-bottom	: 20px;
+}
+
+form.page #content_extra {
+	border		: 0;
+}
+
+form.page #content_extra dl {
+	clear		: both;
+	overflow	: hidden;
+}
+
+form.page #content_extra dt {
+	float		: left;
+	width		: 20%;
+	margin-right: 10px;
+}
+
+form.page #content_extra dd {
+	float		: left;
+	width		: 75%;
 }
 
 
@@ -236,6 +268,7 @@ form .label_permissions {
 .icon_text_button_set {
 	list-style	: none;
 	float		: right;
+	padding-bottom	: 10px;
 }
 
 .icon_text_button_set li {
@@ -282,10 +315,6 @@ form .label_permissions {
 .bt_permissions { background-image: url('../images/icon_permissions.gif'); }
 .bt_rss         { background-image: url('../images/icon_rss.gif');         }
 .bt_pdf         { background-image: url('../images/icon_pdf.gif');         }
-
-.icon_text_button_set {
-	float		: right;
-}
 
 .editing .icon_button {
 	display		: block;
