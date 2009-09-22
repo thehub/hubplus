@@ -1,17 +1,14 @@
 {% load avatar_tags %}
+{% load plus_tags %}
 {% load i18n %}
 
 <div id="extra" class="block accordion">
   <h3 class="first">{% trans "Tags" %}</h3>
   <div class="first">
     <ol class="tag_list">
-      <li><a href="#" class="tag pop7">activism</a></li>
-      <li><a href="#" class="tag pop8">architecture</a></li>
-      <li><a href="#" class="tag pop6">better</a></li>
-      <li><a href="#" class="tag pop3">big</a></li>
-      <li><a href="#" class="tag pop5">climatechange</a></li>
-      
-      <li><a href="#" class="tag pop2">clothing</a></li>
+      {% for tag in tags %}
+      <li><a href="#" class="tag pop7">{{tag.keyword}}</a></li>
+      {% endfor %}
     </ol>
   </div>
   <h3>{% trans "Contributors" %}</h3>
@@ -33,7 +30,7 @@
   <h3>{% trans "My Tags" %}</h3>
   
   <div>
-    my tags here
+    {% plus_tag 'Tags' 'tag' page user %}
   </div>
 <!--  <h3>{% trans "Backlinks" %}</h3>
   <div>

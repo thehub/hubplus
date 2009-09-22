@@ -53,7 +53,8 @@ def edit_wiki(request, group, page_name, template_name="plus_wiki/create_wiki.ht
     return render_to_response(template_name, 
                               {'page':TemplateSecureWrapper(secure_page),
                                'form_action':reverse("create_WikiPage", args=[secure_page.in_agent.obj.id, secure_page.name]),
-                               'contributors':contributors}, 
+                               'contributors':contributors,
+                               'tags':get_tags(request.user, secure_page)}, 
                               context_instance=RequestContext(request))
 
 @revision.create_on_success
@@ -89,7 +90,7 @@ def create_wiki_page(request, group, page_name, template_name="plus_wiki/create_
             revision.user = request.user
             diff = htmldiffer(AttrDict({'title':title, 'content':content, 'license': license}, obj))
             diff = json.dumps(diff)
-            #this diff needs to only include things in the proximity of an insertion or deletion
+            #XXX this diff needs to only include things in the proximity of an insertion or deletion
             revision.add_meta(VersionDelta, delta=diff)
             obj.title = title
             obj.name_from_title()
@@ -112,6 +113,14 @@ def get_contributors(user, obj):
     """
     content_type = ContentType.objects.get(model=obj._inner.__class__.__name__.lower())
     return User.objects.plus_filter(user, revision__version__object_id__exact=str(obj.id), revision__version__content_type=content_type, distinct=True)
+
+
+from apps.plus_tags.models import get_tags_for_object 
+
+def get_tags(user, obj):
+    """Get all the tags on this object
+    """
+    return get_tags_for_object(obj._inner, user)
 
 from apps.plus_permissions.api import TemplateSecureWrapper
 
@@ -138,7 +147,8 @@ def view_wiki_page(request, group, page_name, template_name="plus_wiki/wiki.html
             'version':version, 
             'contributors':contributors,
             'can_comment':can_comment,
-            'version_list':version_list}, context_instance=RequestContext(request))
+            'version_list':version_list,
+            'tags':get_tags(request.user, obj)}, context_instance=RequestContext(request))
 
 
 
