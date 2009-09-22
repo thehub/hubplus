@@ -29,6 +29,13 @@ HUB PLUS 2009
     display: none;
 }
 
+ins { background-color: #aaffaa; text-decoration: none;}
+del { background-color: #ff8888; text-decoration: none;}
+.insert { background-color: #aaffaa }
+.delete { background-color: #ff8888 }
+.tagInsert { background-color: #aaffaa; display:block;}
+.tagDelete { background-color: #ff8888; display:block;}
+
 
 /* Main Generic */
 
