@@ -19,7 +19,7 @@ LinkInterfaces = {'Viewer': LinkViewer,  'Manager' : LinkManager  }
 add_type_to_interface_map(Link, LinkInterfaces)
 
 
-SliderOptions = {'InterfaceOrder':['LinkViewer']}
+SliderOptions = {'InterfaceOrder':['Viewer']}
 SetSliderOptions(Link, SliderOptions)
 
 child_types = []

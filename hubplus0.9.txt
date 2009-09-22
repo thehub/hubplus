@@ -1,18 +1,4 @@
-History/diffing/contributions/changelog
----------------------------------------
-We may want to use diff-match-patch in the future but it doesn't work for structured documents only plaintext - great for real time though!
-
-http://code.google.com/p/django-reversion - feature complete api for managing revisions - stores to serialized format
-http://code.google.com/p/django-versioning/ -- use this for diffing and storing diffs between versions - (for feeds)
-
-
-
-
-
-Jesson - style (add new)
-
 User  *Tom*
-      - image	 
       - permissions
       - tags page
 
@@ -24,17 +10,10 @@ User  *Tom*
       - Regions
       - links
 
-Jesson
-------
-show all - members, hosts, groups ? use | separator consistently
-wiki page design - in html
-search results / tag filtering - do design work with Tom/Phil
 
 
 Phil please (tom's wishlist):
-- add comments to wiki
 - apply wiki naming to group name.	
-- do as much as possible of the outstanding permissions work below
 - begin work on uploads - happy to help, particularly around the image previews etc
 
 
