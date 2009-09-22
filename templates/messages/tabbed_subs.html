@@ -1,3 +1,4 @@
+{% load i18n %} 
 
 <div id="section_tab_navigation" class="tabbed section yui-navset">
 
@@ -9,7 +10,7 @@
   </ul>
 
   <div class="tabbed_content yui-content">
-	{% include "messages/inbox.html" %}
+	{% include "messages/inbox_listing.html" %}
 	{% include "messages/outbox.html" %}
 	{% include "messages/trash.html" %}
 	{% include "messages/compose.html" %}

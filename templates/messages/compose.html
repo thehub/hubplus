@@ -1,46 +1,13 @@
-{% extends "messages/base.html" %} 
-
 {% load i18n %} 
 {% load uni_form %}
 
-{% block body %} 
-    {% include "messages/submenu.html" %}
-
- 
-    <h1>{% trans "Compose Message"%}</h1>
-    
+<div id="compose">
     <form action="" method="post" class="uniForm">
         <fieldset class="inlineLabels">
             {{ form|as_uni_form }}
             <div class="form_block">
-                <input type="submit" value="{% trans "Send" %} &raquo;"/>
+                <input type="submit" value="{% trans 'Send' %}"/>
             </div>
     </form>
-{% endblock %}
+</div>
 
-{% block extra_body %}
-    {{ block.super }}
-    <script type="text/javascript" src="{{ MEDIA_URL }}jquery.bgiframe.js"></script>
-    <script type="text/javascript" src="{{ MEDIA_URL }}jquery.dimensions.js"></script>
-    <script type="text/javascript" src="{{ MEDIA_URL }}jquery.ajaxQueue.js"></script>
-    <script type="text/javascript" src="{{ MEDIA_URL }}jquery.autocomplete.js"></script>
-    <script type="text/javascript">
-        $().ready(function() {
-            $("#id_recipient").autocomplete("{% url profile_username_autocomplete %}", {
-                formatItem: function(data, i, n, value) {
-                    values = value.split(",,");
-                    return values[0] + values[1] + "<br />" + values[2];
-                },
-                formatResult: function(data, value) {
-                    return value.split(",,")[1];
-                },
-                // TODO: improve highlighting to only affect username.
-                highlight: false,
-            });
-            $("#id_recipient").result(function() {
-                $("#id_subject").focus();
-            });
-            $("#id_recipient").focus()
-        });
-    </script>
-{% endblock %}

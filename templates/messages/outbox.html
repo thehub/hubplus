@@ -1,15 +1,15 @@
-{% extends "messages/base.html" %} 
-
-{% load i18n %} 
+{% load i18n %}
 {% load timezone_filters %}
 
-{% block body %} 
-    {% include "messages/submenu.html" %}
-    <h1>{% trans "Sent Messages" %}</h1>
-    
+<div id="sent">
     <table class="messages">
         <thead>
-            <tr><th>{% trans "Recipient" %}</th><th>{% trans "Subject" %}</th><th>{% trans "Sent" %}</th><th>{% trans "Action" %}</th></tr>
+            <tr>
+				<th class="contact">{% trans "To" %}</th>
+				<th class="subject">{% trans "Subject" %}</th>
+				<th class="date"   >{% trans "Date" %}</th>
+				<th class="action" >{% trans "Action" %}</th>
+            </tr>
         </thead>
         <tbody>
             {% for message in message_list %} 
@@ -24,4 +24,4 @@
             {% endfor %}
         </tbody>
     </table>
-{% endblock %}
+</div>
