@@ -111,14 +111,17 @@ AgentDefaults = {'public':
                                []
                            },
                       'Profile':
-                          { 'defaults' : {'Viewer':'anonymous_group',
+                          { 'defaults' : {'Viewer':'all_members_group',
                                           'Editor':'context_agent',
                                           'Unknown': 'context_agent'},
                             'constraints':['Viewer>=Editor', 'Viewer<$anonymous_group', 'Editor>=$context_agent', 'Editor>=EmailAddressViewer']
                             },
+                      'Link': 
+                          {'defaults': {'Viewer':'all_members_group',
+                                        'Manager':'context_agent'},
+                           'constraints':['Viewer>=Editor', 'Editor>=$context_agent']
+                           },
                       },
-                 
-
                  'private':
                      {'User':
                           {'defaults': {
