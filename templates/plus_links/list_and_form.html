@@ -2,8 +2,8 @@
 <div class='external_links'>
   <ul class="list_of_links">
     {% for l in links %}
-    <dl><dt>{{l.text}}:</dt><dd><a href="{{l.url}}">{{l.url}}</a> 
-	<a class="delete_link" href="">X</a>
+    <dl id='links{{l.id}}'><dt>{{l.text}}:</dt><dd><a href="{{l.url}}">{{l.url}}</a> 
+	<a class="remove_link"  href="{% url remove_link l.id %}">X</a>
     </dd></dl>
     {% endfor %}
   </ul>

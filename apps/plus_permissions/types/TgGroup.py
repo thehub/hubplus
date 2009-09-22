@@ -198,6 +198,7 @@ public_defaults = {'TgGroup':
                              'Editor':'context_agent',
                              'Creator':'creator',
                              'Delete':'context_admin',
+                             'Commentor':'context_agent',
                              'Unknown':'context_agent'},
                         'constraints': ['Viewer>=Editor', 'Editor<$anonymous_group']
                         },

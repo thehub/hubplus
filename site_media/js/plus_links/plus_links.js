@@ -14,11 +14,24 @@ function links(ele) {
 	manager.find(".list_of_links").append(new_link);
 	manager.find(".link_form").toggle();
     }
+ 
+    manager.find(".remove_link").click(function(e)  {
+            alert(this);
+	    //jq.get( manager.find('.remove_link').attr('href'), {'resource_id':}, remove_link);
+	    return false;
+	});
+
+    var remove_link= function(id) {
+	//manager.find("#links"+id).
+    }
+
 
     manager.find(".link_form").toggle();
     manager.find(".show_link_form").click(function() { 
 	    manager.find(".link_form").toggle();
 	});
+
+
 	
 }
 
