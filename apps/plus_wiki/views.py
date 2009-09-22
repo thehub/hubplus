@@ -1,7 +1,7 @@
 from django.conf import settings
 
 from django.shortcuts import render_to_response, get_object_or_404
-from django.http import HttpResponseRedirect, HttpResponseForbidden, Http404
+from django.http import HttpResponseRedirect, HttpResponseForbidden, Http404, HttpResponse
 from django.db.models import Q
 from django.contrib.auth import authenticate
 from django.contrib.auth import login as auth_login
@@ -19,9 +19,28 @@ from apps.plus_groups.models import TgGroup
 from apps.plus_permissions.api import secure_resource, TemplateSecureWrapper
 from apps.plus_wiki.models import WikiPage, VersionDelta
 from apps.plus_wiki.forms import EditWikiForm
+from apps.plus_lib.parse_json import json_view
+from apps.plus_lib.utils import AttrDict
 from reversion import revision
 from reversion.models import Version
 from datetime import datetime
+import simplejson as json
+
+# HTMLDIFF
+# --------
+#http://codespeak.net/lxml/lxmlhtml.html#html-diff
+from lxml.html.diff import htmldiff  # doesn't take not of changes in markup
+
+#html_annotate -- nice for seeing who wrote what in a document
+
+#from apps.plus_lib.htmldiff import htmldiff # this approach could be much better (bickings script) but I couldn't get it quite right. And I actually think it would take a lot of work to do this well.
+
+def htmldiffer(ver_1, ver_2):
+    content = htmldiff(ver_2.content, ver_1.content)
+    license = htmldiff(ver_2.license, ver_1.license)
+    title = htmldiff(ver_2.title, ver_1.title)
+    return {'content': content, 'license':license, 'title':title}
+
 
 @login_required
 @secure_resource(TgGroup)
@@ -61,11 +80,17 @@ def create_wiki_page(request, group, page_name, template_name="plus_wiki/create_
                                        'form_action':reverse("create_WikiPage", args=[obj.in_agent.obj.id, obj.name])}, 
                                       context_instance=RequestContext(request))
         else:
-            revision.user = request.user
-            revision.comment = form.cleaned_data['what_changed']
-            revision.add_meta(VersionDelta, delta="change")
             if obj.stub: # we should change the "created_by" on the genericreference/permissions system to "owner"
                 obj.created_by = request.user
+                revision.comment = 'Original'
+            else:
+                revision.comment = form.cleaned_data['what_changed']
+
+            revision.user = request.user
+            diff = htmldiffer(AttrDict({'title':title, 'content':content, 'license': license}, obj))
+            diff = json.dumps(diff)
+            #this diff needs to only include things in the proximity of an insertion or deletion
+            revision.add_meta(VersionDelta, delta=diff)
             obj.title = title
             obj.name_from_title()
             obj.content = content
@@ -90,7 +115,7 @@ def get_contributors(user, obj):
 
 from apps.plus_permissions.api import TemplateSecureWrapper
 
-@login_required
+
 @secure_resource(TgGroup)
 def view_wiki_page(request, group, page_name, template_name="plus_wiki/wiki.html"):
     try:
@@ -101,7 +126,46 @@ def view_wiki_page(request, group, page_name, template_name="plus_wiki/wiki.html
     version = Version.objects.get_for_date(obj._inner, datetime.now())
     contributors = get_contributors(request.user, obj)
     contributors = [TemplateSecureWrapper(contributor) for contributor in contributors]
-    return render_to_response(template_name, {'page':TemplateSecureWrapper(obj), 'version':version, 'contributors':contributors}, context_instance=RequestContext(request))
+    return render_to_response(template_name, {'page':TemplateSecureWrapper(obj), 'version':version, 'version_list':version_list, 'contributors':contributors}, context_instance=RequestContext(request))
+
+
+@login_required
+@json_view
+@secure_resource(TgGroup)
+def view_version(request, group, page_name):
+    ver_id = int(request.GET['ver_id'])
+    ver = Version.objects.get(id=ver_id)
+    obj = ver.get_object_version().object
+    return {'title':obj.title, 'content':obj.content, 'license':obj.license}
+
+from django.template.defaultfilters import date, time
+
+@login_required
+@revision.create_on_success
+@secure_resource(TgGroup, required_interfaces=['Editor'])
+def revert_wiki_page(request, group, page_name):
+    try:
+        obj = WikiPage.objects.plus_get(request.user, name=page_name, in_agent=group.get_ref())
+    except WikiPage.DoesNotExist:
+        raise Http404
+    ver_id = int(request.GET['ver_id'])
+    ver = Version.objects.get(id=ver_id)
+    ver.revert()
+
+    revision.user = request.user
+    revision.add_meta(VersionDelta, delta="change")
+    revision.comment = 'Reverted to version by %s written on %s at %s' %(ver.revision.user.display_name, date(ver.revision.date_created), time(ver.revision.date_created))
+
+    return HttpResponseRedirect(reverse('view_WikiPage', args=[group.id, obj.name]))
+
+
+@login_required
+@secure_resource(TgGroup)
+@json_view
+def compare_versions(request, group, page_name):
+    ver_1 = Version.objects.get(id=int(request.GET['ver_1'])).object_version.object
+    ver_2 = Version.objects.get(id=int(request.GET['ver_2'])).object_version.object
+    return htmldiffer(ver_1, ver_2)
 
 @login_required
 @secure_resource(TgGroup)

@@ -19,22 +19,22 @@
   </div>
   
   <div id="content_extra">	
-    <ul class="icon_text_button_set">
+<!--    <ul class="icon_text_button_set">
       <li><a class="icon_text_button bt_rss" href="#">RSS feed</a></li>
       <li><a class="icon_text_button bt_pdf" href="#">Download PDF</a></li>
-    </ul>
+    </ul> -->
     <ul id="meta">      
-      <li>Created by <a href="{% url profile_detail page.created_by.username %}">{{page.created_by}}</a> at {{page.creation_time|time}} on {{page.creation_time|date}} and last edited by <a href="{% url profile_detail version.revision.user.username %}">{{version.revision.user}}</a> {{version.revision.date_created|timesince}} ago. </li>
-      <li>Licensed under <a href="#">{{page.license}}</a>.</li>	
+      <li>{% trans "Created by" %}<a href="{% url profile_detail page.created_by.username %}">{{page.created_by}}</a> {% trans "at" %} {{page.creation_time|time}} {% trans "on" %} {{page.creation_time|date}} {% trans "and last edited by" %} <a href="{% url profile_detail version.revision.user.username %}">{{version.revision.user}}</a> {{version.revision.date_created|timesince}} {% trans "ago"}. </li>
+      <li>{% trans "Licensed under" %} <a href="#">{{page.license}}</a>.</li>	
     </ul>
   </div>
   
 </div>
 <div id="section_tab_navigation" class="tabbed section yui-navset">
   <ul class="tabbed_navigation yui-nav">
-    <li class="selected"><a href="#comments"><span>Comments (23)</span></a></li>
-    <li><a href="#attachments"><span>Attachments (2)</span></a></li>
-    
+    <li class="selected"><a href="#comments"><span>{% trans "Comments" %} (23)</span></a></li>
+    <li><a href="#attachments"><span>{% trans "Attachments" %} (2)</span></a></li>
+    <li><a href="#history"><span>{% trans "History" %} ({{version_list.count}} {% trans "revisions" %})</span></a></li>    
   </ul>
   <div class="tabbed_content yui-content">
     <div id="comments">
@@ -42,6 +42,43 @@
     </div>
     <div id="attachments">
       Attachments go here
+    </div>
+    <div id="history">
+      <form id="page_id-{{page.id}}" action="{% url compareversions_WikiPage page.in_agent.obj.id page.name %}">
+	<table>
+	  <tr class="head">
+	    <th class="history_compare"><input type="submit" class="button compare" value="Compare" /></th>
+	    <th class="history_change" ></th>
+	    <th class="history_actions"></th>
+	  </tr>
+	  {% for ver in version_list.reverse %}
+	  <tr id="version_id-{{ver.id}}" class="version_entry">
+	    <td>
+	      <input type="radio" class="radio first" name="first" {% if forloop.first %}checked="checked"{% endif %} />
+	      <input type="radio" class="radio second" name="second" {% ifequal forloop.counter 2 %}checked="checked"{% endifequal %} />
+	    </td>
+	    <td>
+	      <h4>{{ver.revision.comment}}</h4> <span>{% trans "by" %} <a href="{% url profile_detail user.user_name %}">{{ver.revision.user.display_name}}</a></span>
+	      <span class="label_time">{% trans "on" %} {{ ver.revision.date_created|date }} {% trans "at" %} {{ver.revision.date_created|time}}</span>
+	    </td>
+	    <td>
+	      <div class="actions"><a class="view_old" href="{% url viewversion_WikiPage page.in_agent.obj.id page.name  %}">{% trans "View" %}</a> <!--| <a href="#">{% trans "Changes" %}</a>--> | <a href="{% url revert_WikiPage page.in_agent.obj.id page.name %}?ver_id={{ver.id}}">{% trans "Make current" %}</a></div>
+	    </td>  
+	  </tr>
+	  {% endfor %}
+	  <tr class="foot">
+	    <td><input type="submit" class="button compare" value="Compare" /></td>
+	    <td></td>
+	    <td></td>
+	  </tr>
+	</table>
+      </form>
+      <div id="history_data" >
+	<h2 id="ver_title"></h2>
+	<div id="ver_content">
+	</div>
+        <div>{% trans "Licensed under" %}<a href="#" id="ver_license"></a>.</div>	
+      </div>
     </div>
   </div>
 </div>
