@@ -436,6 +436,11 @@ th {
 	float		: left;	
 }
 
+#message_viewer #parent {
+	display		: block;
+	padding-bottom	: 10px;
+}
+
 
 /* Wiki: History */
 
