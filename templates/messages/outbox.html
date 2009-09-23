@@ -12,7 +12,7 @@
             </tr>
         </thead>
         <tbody>
-            {% for message in message_list %} 
+            {% for message in outbox %} 
                 <tr>
                     <td>{{ message.recipient }}</td>
                     <td>

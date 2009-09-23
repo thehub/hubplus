@@ -12,7 +12,7 @@
             </tr>
         </thead>
         <tbody>
-            {% for message in message_list %} 
+            {% for message in trash %} 
                 <tr>
                     <td>{% ifequal message.sender user %}Me{% else %}{{ message.sender }}{% endifequal %}</td>
                     <td> 
