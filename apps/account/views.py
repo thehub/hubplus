@@ -35,10 +35,10 @@ def home(request, success_url=None):
     Let's base homepage on the microblog personal now.
     """
     if not request.user.is_authenticated():
-        return render_to_response('homepage.html', {}, context_instance=RequestContext(request))
+        return render_to_response('home/home.html', {}, context_instance=RequestContext(request))
 
     twitter_account = twitter_account_for_user(request.user)
-    template_name = "logged_in_home.html"
+    template_name = "home/home_logged_in.html"
     form_class = TweetForm
 
     if request.method == "POST":
