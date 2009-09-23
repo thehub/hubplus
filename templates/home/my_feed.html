@@ -1,8 +1,7 @@
 {% load i18n %}
+{% load microblogging_tags %}
 
-
-
-<div id="news">
-    {% tweet_listing tweets 1 0 %}
-
+<div id="my_feed">
+	<!--div id="feed_customise_link"><a href="#">Customise my feed</a></div-->
+	{% tweet_listing tweets 1 0 %}
 </div>

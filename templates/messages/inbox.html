@@ -1,56 +1,30 @@
-{% extends "site_base.html" %}
-
-{% load i18n %} 
+{% load i18n %}
 {% load timezone_filters %}
-{% load uni_form %}
 
-{% block page_title %}{% trans "Messages" %}{% endblock %}
-
-{% block body %}
-
-<div id="section_tab_navigation" class="tabbed section yui-navset">
-
-  <ul class="tabbed_navigation yui-nav">
-    <li class="selected"><a href="#inbox"><span>{% trans "Inbox" %} ({{ messages_inbox_count }})</span></a></li>
-    <li><a href="#sent"><span>{% trans "Sent" %}</span></a></li>
-    <li><a href="#trash"><span>{% trans "Trash" %}</span></a></li>
-    <li><a href="#compose"><span>{% trans "Compose" %}</span></a></li>
-  </ul>
-
-  <div class="tabbed_content yui-content">
-	{% include "messages/inbox_listing.html" %}
-	{% include "messages/outbox.html" %}
-	{% include "messages/trash.html" %}
-	{% include "messages/compose.html" %}
-  </div>
-
+<div id="inbox">
+    <table class="messages">
+        <thead>
+            <tr>
+				<th class="contact">{% trans "From" %}</th>
+				<th class="subject">{% trans "Subject" %}</th>
+				<th class="date"   >{% trans "Date" %}</th>
+				<th class="action" >{% trans "Action" %}</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for message in inbox %} 
+                <tr>
+                    <td>{{ message.sender }}</td>
+                    <td>
+                        {% if message.new %}<strong>{% endif %}
+                        {% if message.replied %}<em>{% endif %}
+                        <a href="{{ message.get_absolute_url }}">{% if message.subject.strip %}{{ message.subject }}{% else %}(none){% endif %}</a>
+                        {% if message.replied %}</em>{% endif %}
+                        {% if message.new %}</strong>{% endif %}</td>
+                    <td>{{ message.sent_at|localtime:account.timezone|date:_("DATETIME_FORMAT") }}</td>
+                    <td><a href="{% url messages_delete message.id %}">{% trans "delete" %}</a></td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
 </div>
-
-{% endblock %}
-
-{% block extra_body %}
-    {{ block.super }}
-    <script type="text/javascript" src="{{ MEDIA_URL }}jquery.bgiframe.js"></script>
-    <script type="text/javascript" src="{{ MEDIA_URL }}jquery.dimensions.js"></script>
-    <script type="text/javascript" src="{{ MEDIA_URL }}jquery.ajaxQueue.js"></script>
-    <script type="text/javascript" src="{{ MEDIA_URL }}jquery.autocomplete.js"></script>
-    <script type="text/javascript">
-        $().ready(function() {
-            $("#id_recipient").autocomplete("{% url profile_username_autocomplete %}", {
-                formatItem: function(data, i, n, value) {
-                    values = value.split(",,");
-                    return values[0] + values[1] + "<br />" + values[2];
-                },
-                formatResult: function(data, value) {
-                    return value.split(",,")[1];
-                },
-                // TODO: improve highlighting to only affect username.
-                highlight: false,
-            });
-            $("#id_recipient").result(function() {
-                $("#id_subject").focus();
-            });
-            $("#id_recipient").focus()
-        });
-    </script>
-{% endblock %}
