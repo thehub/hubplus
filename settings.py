@@ -11,10 +11,10 @@ PROJECT_ROOT = os.path.abspath(os.path.dirname(__file__))
 PINAX_THEME = 'default'
 
 DEBUG = True
-TEMPLATE_DEBUG = DEBUG
+TEMPLATE_DEBUG = True # DEBUG
 
 # tells Pinax to serve media through django.views.static.serve.
-SERVE_MEDIA = DEBUG
+SERVE_MEDIA = True # DEBUG
 
 ADMINS = (
      ('phil jones', 'phil.jones@the-hub.net'),
