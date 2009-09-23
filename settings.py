@@ -160,7 +160,6 @@ INSTALLED_APPS = (
     'about',
     'plus_lib',
     'plus_permissions',
-    'plus_messages',
     'analytics',
     'plus_tags',
     'profiles',

@@ -20,6 +20,7 @@ except ImproperlyConfigured:
     notification = None
 
 
+
 def inbox(request, template_name='messages/inbox.html'):
     """
     Displays a list of received messages for the current user.
@@ -79,7 +80,7 @@ def compose(request, recipient=None, form_class=ComposeForm,
             request.user.message_set.create(
                 message=_(u"Message successfully sent."))
             if success_url is None:
-                success_url = reverse('messages_inbox')
+                success_url = reverse('messages_all')
             return HttpResponseRedirect(success_url)
     else:
         form = form_class()
@@ -107,7 +108,7 @@ def reply(request, message_id, form_class=ComposeForm,
             request.user.message_set.create(
                 message=_(u"Message successfully sent."))
             if success_url is None:
-                success_url = reverse('messages_inbox')
+                success_url = reverse('messages_all')
             return HttpResponseRedirect(success_url)
     else:
         form = form_class({
@@ -140,7 +141,7 @@ def delete(request, message_id, success_url=None):
     message = get_object_or_404(Message, id=message_id)
     deleted = False
     if success_url is None:
-        success_url = reverse('messages_inbox')
+        success_url = reverse('messages_all')
     if request.GET.has_key('next'):
         success_url = request.GET['next']
     if message.sender == user:
@@ -167,7 +168,7 @@ def undelete(request, message_id, success_url=None):
     message = get_object_or_404(Message, id=message_id)
     undeleted = False
     if success_url is None:
-        success_url = reverse('messages_inbox')
+        success_url = reverse('messages_all')
     if request.GET.has_key('next'):
         success_url = request.GET['next']
     if message.sender == user:
@@ -210,15 +211,7 @@ view = login_required(view)
 def in_out_trash_comp(request, recipient=None, form_class=ComposeForm,
         template_name='messages/messages.html', success_url=None):
     """
-    Displays and handles the ``form_class`` form to compose new messages.
-    Required Arguments: None
-    Optional Arguments:
-        ``recipient``: username of a `django.contrib.auth` User, who should
-                       receive the message, optionally multiple usernames
-                       could be separated by a '+'
-        ``form_class``: the form-class to use
-        ``template_name``: the template to use
-        ``success_url``: where to redirect after successfull submission
+    combines inbox, outbox, trash and compose
     """
     if request.method == "POST":
         sender = request.user
@@ -228,7 +221,7 @@ def in_out_trash_comp(request, recipient=None, form_class=ComposeForm,
             request.user.message_set.create(
                 message=_(u"Message successfully sent."))
             if success_url is None:
-                success_url = reverse('messages_inbox')
+                success_url = reverse('messages_all')
             return HttpResponseRedirect(success_url)
     else:
         form = form_class()

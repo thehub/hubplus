@@ -33,7 +33,7 @@
     
     <ul id="actions" class="link_list">
       <li class="first"><a href="/tweets/toggle_follow/{{other_user.username}}/">Follow {{other_user.get_profile.name}}</a></li>
-      <li class="last"><a href="/plus_messages/compose/{{other_user.username}}/">Message {{other_user.get_profile.name}}</a></li>
+      <li class="last"><a href="{% url messages_all_to other_user.username %}">Message {{other_user.get_profile.name}}</a></li>
     </ul> 
   </div>
   
