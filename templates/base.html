@@ -4,8 +4,8 @@
 
 <head>
 
-        <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
-	<title>{% if site_name %}{{ site_name }} : {% endif %}{% if head_title %}{{head_title}}{% endif %}</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+	<title>{% if site_name %}{{ site_name }}{% endif %}{% if head_title %} : {{head_title}}{% endif %}</title>
 
 	<!-- STYLES -->
 	<link rel="stylesheet" href="{{ MEDIA_URL }}css/site.css"        type="text/css" media="all" />
@@ -48,15 +48,15 @@
 	<script type="text/javascript" src="{{ MEDIA_URL }}js/yui2/build/editor/editor-min.js"></script> 
 	<script type="text/javascript" src="{{ MEDIA_URL }}js/yui2/build/animation/animation-min.js"></script> 
 	<script type="text/javascript" src="{{ MEDIA_URL }}js/yui2/build/logger/logger-min.js"></script> 
-<!-- <script type="text/javascript">
-YAHOO.widget.Logger.enableBrowserConsole()
-</script> -->
+	<!-- <script type="text/javascript">
+	YAHOO.widget.Logger.enableBrowserConsole()
+	</script> -->
 	<script type="text/javascript" src="{{ MEDIA_URL }}js/yui2/build/dragdrop/dragdrop-min.js"></script>
 	<script type="text/javascript" src="{{ MEDIA_URL }}js/yui2/build/selector/selector-min.js"></script> 
 	<script type="text/javascript" src="{{ MEDIA_URL }}js/yui2/build/tabview/tabview-min.js"></script>
 	<script type="text/javascript" src="{{ MEDIA_URL }}js/yui2/build/history/history-min.js"></script>
 	<script type="text/javascript" src="{{ MEDIA_URL }}js/yui2/build/datasource/datasource-min.js"></script>
-        <script type="text/javascript" src="http://yui.yahooapis.com/2.7.0/build/connection/connection-min.js"></script>
+    <script type="text/javascript" src="http://yui.yahooapis.com/2.7.0/build/connection/connection-min.js"></script>
 	<script type="text/javascript" src="{{ MEDIA_URL }}js/yui2/build/autocomplete/autocomplete-min.js"></script>
 	<script type="text/javascript" src="{{ MEDIA_URL }}js/editor.js"></script>
 	<script src="{{ MEDIA_URL }}js/ui.accordion.js" type="text/javascript" charset="utf-8"></script>
@@ -81,13 +81,11 @@ YAHOO.widget.Logger.enableBrowserConsole()
 	<link rel="stylesheet" href="{{ MEDIA_URL }}css/permissions.css" type="text/css" media="all" />
 	<link rel="stylesheet" href="{{ MEDIA_URL }}css/flickr.css" type="text/css" media="all" />
 	<script src="{{ MEDIA_URL }}js/yui2/build/slider/slider-min.js"></script>
-<!--	<script src="{{ MEDIA_URL }}js/plus_libs/html.js"></script>
+	<!--<script src="{{ MEDIA_URL }}js/plus_libs/html.js"></script>
 	<script src="{{ MEDIA_URL }}js/plus_libs/utils.js"></script> -->
 
 	<script src="{{ MEDIA_URL }}js/plus_permissions/views.js"></script> 	
 	<script src="{{ MEDIA_URL }}js/pinax_libs/comments.js"></script>
-	
-	
 	<script src="{{ MEDIA_URL }}js/plus_links/plus_links.js"></script>
 	<!-- SCRIPT: SITE READY (Put your "on load" functions that fire it all off in here) -->
 	<script src="{{ MEDIA_URL }}js/ready.js"></script>
@@ -99,7 +97,7 @@ YAHOO.widget.Logger.enableBrowserConsole()
 
 <body>
 
-	<iframe id="yui-history-iframe" src="assets/blank.html"></iframe> 
+	<iframe id="yui-history-iframe" src="/site_media/js/yui2/build/history/assets/blank.html"></iframe> 
 	<input id="yui-history-field" type="hidden" /> 
 	<div class="overlay" id="overlay"> 
 		<div id="overlay_content"></div>
@@ -136,8 +134,8 @@ YAHOO.widget.Logger.enableBrowserConsole()
 
 			<!-- page_header -->
 			<div id="page_header">
-              {% block page_header %}
-			  <h2 id="page_title">{{head_title}}</h2>
+			  {% block page_header %}
+			        <h2 id="page_title">{% block page_title %}{{head_title}}{% endblock %}</h2>
 			  {% if head_title_status %}
 				  <p>{{head_title_status}} - <span class="label_time">{{head_title_status.time}}</span></p>
 				{% endif %}

@@ -27,25 +27,37 @@
 	{% if errors.content %}<span class="error">{{errors.content}}<span>{% endif %}
       </div>
       
-      <ul>
+      <ul id="content_extra">
 	<li>
 	  <dl>
             {% if page.stub %}
-	       {% plus_tag '* Tags' 'tag' page user %}
+	       {% plus_tag 'Tags' 'tag' page user %}
             {% endif %}
 	  </dl>
 	</li>
 	<li>
-	  <label for="license">License <span class="extra">('©2009', 'GPL')</span></label>
-	  <input name="license" id="license" class="text" type="text" value="{% if data.license %}{{data.license}}{% else %}{{page.license}}{% endif %}" />
-	  {% if errors.license %}<span class="error">{{errors.license}}<span>{% endif %}
+	  <dl>
+		  <dt>
+			  <label for="license">License <span class="extra">('©2009', 'GPL')</span></label>
+		  </dt>
+		  <dd>
+			  <input name="license" id="license" class="text" type="text" value="{% if data.license %}{{data.license}}{% else %}{{page.license}}{% endif %}" />
+			  {% if errors.license %}<span class="error">{{errors.license}}<span>{% endif %}
+		  </dd>
+	  </dl>
 	</li>
 	{% if page.stub %}
 	{% else %}
-	<li class="changes_set">	  
-	  <label for="what_changed">What's changed? <span class="extra">describe what you've just changed</span></label>
-	  <textarea id="what_changed" name="what_changed" class="text">{{data.what_changed}}</textarea>
-	  {% if errors.what_changed %}<span class="error">{{errors.what_changed}}<span>{% endif %}
+	<li class="changes_set">	
+	  <dl>
+		  <dt>
+			  <label for="what_changed">What's changed? <span class="extra">describe what you've just changed</span></label>
+		  </dt>
+		  <dd>
+			  <textarea id="what_changed" name="what_changed" class="text">{{data.what_changed}}</textarea>
+			  {% if errors.what_changed %}<span class="error">{{errors.what_changed}}<span>{% endif %}
+		  </dd>
+	  </dl>
 	</li>
 	{% endif %}
 	
