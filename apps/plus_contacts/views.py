@@ -52,9 +52,8 @@ def accept_application(request,id) :
 
         # here, this user already exists, now we're going to allow to become member of group,
         # if we have the right permissions
-        if application.requests_group() :
-            # we're asking for a group
- 
+        if application.has_group_request() :
+            # we're asking for a group 
             try :
                 application.group.accept_member(application.get_user())
 
