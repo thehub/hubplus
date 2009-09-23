@@ -8,7 +8,7 @@
 
 {% block body %}
 
-<div id="section_tab_navigation" class="tabbed section">
+<div id="message_viewer" class="tabbed section">
 
 	<ul class="tabbed_navigation">
 		<li class="selected"><a href="{% url messages_inbox %}"><span>{% trans "Inbox" %} ({{ messages_inbox_count }})</span></a></li>
@@ -17,27 +17,28 @@
 		<li><a href="{% url messages_inbox %}#tabview=compose"><span>{% trans "Compose" %}</span></a></li>
 	</ul>
 
+	<a id="parent" href="#">{% trans "Back to inbox" %}</a>
+
+	<dl class="message_headers">
+		<dt>{% trans "Sender" %}:</dt>
+		<dd><a href="{% url profile_detail message.sender %}">{{ message.sender }}</a></dd>
+		<dt>{% trans "Subject" %}:</dt>
+		<dd><strong>{{ message.subject }}</strong></dd>
+		<dt>{% trans "Date" %}:</dt>
+		<dd>{{ message.sent_at|localtime:account.timezone|date:_("DATETIME_FORMAT")}}</dd>
+		<dt>{% trans "Recipient" %}:</dt>
+		<dd>{{ message.recipient }}</dd>
+	</dl>
+
+	<p>{% oembed %}{{ message.body|linebreaksbr }}{% endoembed %}</p>
+
+	{% ifequal message.recipient user %}
+		<p><a href="{% url messages_reply message.id %}">{% trans "Reply" %}</a></p>
+	{% endifequal %}
+
+	<p><a href="{% url messages_delete message.id %}">{% trans "Delete" %}</a></p>
+
 </div>
 
-<a href="#">{% trans "Back to inbox" %}</a>
-
-<dl class="message_headers">
-	<dt>{% trans "Sender" %}:</dt>
-	<dd><a href="{% url profile_detail message.sender %}">{{ message.sender }}</a></dd>
-	<dt>{% trans "Subject" %}:</dt>
-	<dd><strong>{{ message.subject }}</strong></dd>
-	<dt>{% trans "Date" %}:</dt>
-	<dd>{{ message.sent_at|localtime:account.timezone|date:_("DATETIME_FORMAT")}}</dd>
-	<dt>{% trans "Recipient" %}:</dt>
-	<dd>{{ message.recipient }}</dd>
-</dl>
-
-<p>{% oembed %}{{ message.body|linebreaksbr }}{% endoembed %}</p>
-
-{% ifequal message.recipient user %}
-	<p><a href="{% url messages_reply message.id %}">{% trans "Reply" %}</a></p>
-{% endifequal %}
-
-<p><a href="{% url messages_delete message.id %}">{% trans "Delete" %}</a></p>
 
 {% endblock %}
