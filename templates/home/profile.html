@@ -1,0 +1,133 @@
+ 
+{% extends "site_base.html" %}
+
+{% load i18n %}
+{% load avatar_tags %}
+{% load app_plugins %}
+{% load uni_form %}
+{% load plus_tags %}
+{% load editable_attribute %}
+{% block body %}
+
+<div id="intro" class="block">
+
+  <div id="extra" class="block_column">
+
+    <div id='permission_sliders'></div>
+
+    <div id='messages'>
+      {% if messages %}
+      <ul>
+	{% for message in messages %}
+	<li>{{ message }}</li>
+	{% endfor %}
+      </ul>
+      {% endif %}
+    </div>
+
+    
+    <div id="page_image" class="image member">{% avatar other_user 180 %}</div>
+    {% if is_me %}
+    <a href="{% url avatar_change %}" id="avatar_replace">(replace)</a>
+    {% endif %}
+    
+    <ul id="actions" class="link_list">
+      <li class="first"><a href="/tweets/toggle_follow/{{other_user.username}}/">Follow {{other_user.get_profile.name}}</a></li>
+      <li class="last"><a href="/plus_messages/compose/{{other_user.username}}/">Message {{other_user.get_profile.name}}</a></li>
+    </ul> 
+  </div>
+  
+  <div id="info" class="block_column">
+    <ul class="icon_text_button_set">
+      <li><a href="#overlay" class="icon_text_button bt_permissions" rel="#overlay" id="{{profile.edit_key}}permissionedit">Permissions</a></li>
+    </ul>
+    <ul>
+      <li>
+	<dl>
+	  {% plus_tag 'Interests' 'interests'  profile  profile.user %}
+	</dl>
+      </li>  
+      <li>
+	<dl class="disabled"><dt >{% trans "Region" %} : </dt>
+	  <dd>
+	    <a href="hub.html" class='editable_temp_off' id='{{profile.edit_key}}hub'>{{profile.get_hub}}</a>
+	</dd></dl>
+      </li>
+      <li>
+	<dl>
+	  <dt>{% trans "Groups" %} :</dt>
+	  <dd>
+	    {% for g in other_user.get_enclosures %}
+	      <a href="/groups/{{g.pk}}/">{{g.get_permission_agent_name}}</a>{% if forloop.last %}{% else %},{% endif %}
+	    {% endfor %}
+	  </dd>
+	</dl>
+      </li>
+      <br />
+      <li>
+	   {% editable "Organisation" profile 'organisation' 'Your organisation' %}
+      </li>
+      <li>
+	   {% editable "Role" profile 'role' 'Your role' %}
+      </li>
+      <br />
+      <li class="place">
+	   {% editable "Location" profile 'place' 'Your Location' %}
+      </li>	
+    </ul>
+  </div>
+</div>
+{% include "profiles/tabbed_subs.html" %}
+
+{% endblock %}
+
+
+{% block side_bar %}
+
+<div id="feature_search" class="site_block">
+    <h3>Search</h3>
+    <form>
+      <input name="search_term" type="text" class="text" /> <input class="button" type="submit" value="Search" /><br />
+      <input name="current_area" type="checkbox" checked="checked" /> Members only<br />      
+    </form>
+</div>
+
+<div id="feature_explore" class="site_block">
+  <h3>Explore members</h3>
+  <ol class="tag_list">
+	<li><a href="#" class="tag pop7">activism</a></li>
+	<li><a href="#" class="tag pop8">architecture</a></li>
+	<li><a href="#" class="tag pop6">better</a></li>
+	<li><a href="#" class="tag pop3">big</a></li>
+	<li><a href="#" class="tag pop5">climatechange</a></li>
+	<li><a href="#" class="tag pop2">clothing</a></li>
+	<li><a href="#" class="tag pop8">design</a></li>
+	<li><a href="#" class="tag pop8">dip</a></li>
+	<li><a href="#" class="tag pop7">developement</a></li>
+	<li><a href="#" class="tag pop3">energy</a></li>
+
+	<li><a href="#" class="tag pop6">environment</a></li> 
+	<li><a href="#" class="tag pop8">fairtrade</a></li>
+	<li><a href="#" class="tag pop1">gender</a></li>
+	<li><a href="#" class="tag pop8">green</a></li>
+	<li><a href="#" class="tag pop7">hub</a></li>
+	<li><a href="#" class="tag pop4">innovation</a></li>
+	<li><a href="#" class="tag pop2">living</a></li>
+	<li><a href="#" class="tag pop6">product</a></li>
+	<li><a href="#" class="tag pop8">reference</a></li> 
+	<li><a href="#" class="tag pop5">salad</a></li>
+	<li><a href="#" class="tag pop5">org</a></li>
+
+	<li><a href="#" class="tag pop8">science</a></li>
+	<li><a href="#" class="tag pop2">shopping</a></li>
+	<li><a href="#" class="tag pop6">sustainability</a></li>
+	<li><a href="#" class="tag pop1">web</a></li>
+  </ol>
+</div>
+
+{% include "add.html" %}
+
+{% include "my_hub.html" %}
+
+{% endblock %}
+
