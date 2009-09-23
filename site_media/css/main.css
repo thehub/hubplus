@@ -395,6 +395,47 @@ th {
 	width		: 100px;
 }
 
+/* Messages */
+
+.messages {
+	width		: 100%;
+}
+
+.messages th {
+	font-weight	: bold;
+	text-transform	: uppercase;
+}
+
+.messages th.contact { width: 20%; }
+.messages th.subject { width: 40%; }
+.messages th.date    { width: 30%; }
+.messages th.action  { width: 10%; }
+
+.messages tr {
+	border-bottom	: 1px solid #ddd;
+}
+
+.messages tr td {
+	padding		: 3px 0;
+}
+
+.message_headers {
+	border-bottom	: 1px solid #ddd;
+	margin-bottom	: 10px;
+	overflow	: hidden;
+	padding-bottom	: 10px;
+}
+
+.message_headers dt {
+	clear		: both;
+	float		: left;
+	width		: 20%;
+}
+
+.message_headers dd {
+	float		: left;	
+}
+
 
 /* Wiki: History */
 

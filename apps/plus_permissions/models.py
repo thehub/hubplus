@@ -93,18 +93,19 @@ class SecurityContext(models.Model):
          for typ in types:
              for interface_name in get_interface_map(typ.__name__):
                  interface_str = '%s.%s' %(typ.__name__, interface_name)
-                 self.setup_tag_from_defaults(typ, interface_name, interface_str, sad, agent_defaults)
+                 self.setup_tag_from_defaults(interface_str, sad, agent_defaults)
 
          tag = self.create_security_tag(interface='SetPermissionManager')
          tag.save()
          tag.add_agents([self.context_admin])
  
-     def setup_tag_from_defaults(self, typ, interface_name, interface_str, sad, agent_defaults):
+     def setup_tag_from_defaults(self, interface_str, sad, agent_defaults):
+         typ, interface_name = interface_str.split('.')
          self.create_security_tag(interface_str)
          try:
-             selected_agent = sad[agent_defaults[typ.__name__]['defaults'][interface_name]]
+             selected_agent = sad[agent_defaults[typ]['defaults'][interface_name]]
          except KeyError:
-             selected_agent = sad[agent_defaults[typ.__name__]['defaults']['Unknown']]
+             selected_agent = sad[agent_defaults[typ]['defaults']['Unknown']]
          self.move_slider(selected_agent, interface_str, skip_validation=True, no_user=True)
 
 
@@ -281,8 +282,15 @@ class SecurityContext(models.Model):
          return {'classname':level.__class__.__name__, 'id':level.id}
 
      def get_slider_level(self, interface):
-         tag = SecurityTag.objects.get(interface=interface, security_context=self)
          slider_agents = SliderAgents[self.context_agent.obj.__class__](self)
+         try:
+             tag = SecurityTag.objects.get(interface=interface, security_context=self)
+         except SecurityTag.DoesNotExist:
+             agent_defaults = AgentDefaults[self.context_agent.obj.__class__][self.context_agent.permission_prototype]
+             sad = dict(slider_agents)
+             self.setup_tag_from_defaults(interface, sad, agent_defaults)
+             tag = SecurityTag.objects.get(interface=interface, security_context=self)
+
          slider_agents.reverse()
          for label, agent in slider_agents:
              if agent not in tag.agents.all():
@@ -465,7 +473,7 @@ def has_access(agent, resource, interface) :
             agent_defaults = AgentDefaults[context.context_agent.obj.__class__][context.context_agent.permission_prototype]
             slider_agents = SliderAgents[context.context_agent.obj.__class__](context)
             sad = dict(slider_agents)
-            context.setup_tag_from_defaults(typ, interface_name, interface, sad, agent_defaults)
+            context.setup_tag_from_defaults(interface, sad, agent_defaults)
 
     allowed_agents = SecurityTag.objects.get(interface=interface,
                                              security_context=context).agents

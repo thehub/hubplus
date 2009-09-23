@@ -25,7 +25,7 @@ def get_tagged_resources(tag_type=None, tag_value=None, tagger=None):
     return [tag.subject for tag in get_tags(tag_type=tag_type, tag_value=tag_value, tagger=tagger)]
 
 def get_tags_for_object(tagged, user):
-    tags = get_tags(tagged=tagged) 
+    tags = get_tags(tagged=tagged)
     keywords = tags.values('keyword').distinct() #also need to do a group_by keyword / count tags for a keyword to determine prominence of the tag
     return keywords[0:10]
 

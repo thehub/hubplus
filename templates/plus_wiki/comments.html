@@ -4,7 +4,6 @@
 
 <div id="comments" class="page_content">
   
-    <h3>{% trans "Comments on This Page"%}:</h3>
     {% get_threaded_comment_tree for page as tree %}
     {% for comment in tree %}
     <div class='one_comment'>
@@ -18,23 +17,25 @@
     {% endfor %}
 
     {% if can_comment %}
-    <p>Reply to Original:</p>
+    <h3>Comment on page</h3>
+	<div class="thumb small">
+		<img src="http://pinaxdev.the-hub.net:1955/site_media/images/member.jpg"/>
+	</div>
     <form method="POST" action="{% get_comment_url page %}">
         <ul>
 	  <li>
-	    <label for="id_name">Name: {{request.user.get_display_name}}</label>
+	    <!--label for="id_name">Name: {{request.user.get_display_name}}</label-->
 	    <input id="id_name" type="hidden" name="name" value="{{request.user.username}}"/>
 	  </li>
 	  <li>
-	    <label for="id_email">E-mail address: {{request.user.email_address}}</label>
+	    <!--label for="id_email">E-mail address: {{request.user.email_address}}</label-->
 	    <input id="id_email" type="hidden" name="email" value="{{request.user.email_address}}"/>
 	  </li>
 	  <li>
-	    <label for="id_comment">comment:</label>
 	    <textarea id="id_comment" name="comment" cols="40" rows="10"></textarea>
 	  </li>
 
-	  <li><input type="submit" value="Submit Comment" /></li>
+	  <li><input class="button" type="submit" value="Post comment" /></li>
         </ul>
     </form>
     {% else %}

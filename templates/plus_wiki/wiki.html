@@ -46,11 +46,13 @@
     <div id="history">
       <form id="page_id-{{page.id}}" action="{% url compareversions_WikiPage page.in_agent.obj.id page.name %}">
 	<table>
+	  {% if comparable %}
 	  <tr class="head">
 	    <th class="history_compare"><input type="submit" class="button compare" value="Compare" /></th>
 	    <th class="history_change" ></th>
 	    <th class="history_actions"></th>
 	  </tr>
+	  {% endif %}
 	  {% for ver in version_list.reverse %}
 	  <tr id="version_id-{{ver.id}}" class="version_entry">
 	    <td>
@@ -66,11 +68,13 @@
 	    </td>  
 	  </tr>
 	  {% endfor %}
+	  {% if comparable %}
 	  <tr class="foot">
 	    <td><input type="submit" class="button compare" value="Compare" /></td>
 	    <td></td>
 	    <td></td>
 	  </tr>
+	  {% endif %}
 	</table>
       </form>
       <div id="history_data" >

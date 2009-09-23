@@ -88,7 +88,7 @@ def create_wiki_page(request, group, page_name, template_name="plus_wiki/create_
                 revision.comment = form.cleaned_data['what_changed']
 
             revision.user = request.user
-            diff = htmldiffer(AttrDict({'title':title, 'content':content, 'license': license}, obj))
+            diff = htmldiffer(AttrDict({'title':title, 'content':content, 'license': license}), obj)
             diff = json.dumps(diff)
             #XXX this diff needs to only include things in the proximity of an insertion or deletion
             revision.add_meta(VersionDelta, delta=diff)
@@ -148,7 +148,8 @@ def view_wiki_page(request, group, page_name, template_name="plus_wiki/wiki.html
             'contributors':contributors,
             'can_comment':can_comment,
             'version_list':version_list,
-            'tags':get_tags(request.user, obj)}, context_instance=RequestContext(request))
+            'tags':get_tags(request.user, obj),
+            'comparable':version_list.count()>1}, context_instance=RequestContext(request))
 
 
 
