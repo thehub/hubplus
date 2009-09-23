@@ -270,9 +270,15 @@ try :
             invite = MemberInvite(invited=invited, invited_by=invited_by, 
                                   group=self, status=WAITING_USER_SIGNUP)
             invite_url = invite.make_accept_url(url_root)
-            message = """%s is inviting you to join the %s group. <a href="%s">Click here to accept</a>
-%s
-""" % (invited_by.get_display_name(), self.get_display_name(), invite_url, special_message)
+            if special_message :
+                message = """<p>%s</p>""" % special_message
+            else :
+                message = """
+<p>%s is inviting you to join the %s group.</p>
+""" % (invited_by.get_display_name(), self.get_display_name())
+            message = message + """
+<p><a href="%s">Click here to accept</a>
+""" % invite_url
 
             invite.message = message
             invite.save()
