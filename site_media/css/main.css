@@ -333,6 +333,27 @@ th {
 }
 
 
+/* Home */
+
+#status {
+	overflow: hidden;
+}
+
+#status form,
+#status form textarea,
+#status form .buttons {
+	float: left;
+}
+
+#status form textarea {
+	margin-bottom	: 3px;
+}
+
+#status form .buttons {
+	clear: both;
+}
+
+
 /* Explore, Search & Results */
 
 #search #current {
