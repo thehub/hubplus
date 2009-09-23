@@ -24,14 +24,18 @@
 				<label for="name">Name</label>
 				<!-- <input  id="name" class="text" type="text" /> -->
 				{{display_name}}
+				
 			</li>
 			<li>
 				<label for="username"><span class="required">*</span> Username</label>
 				<input  id="username" name="username" class="text" type="text" />
+				{{form.username.errors}}
+
 			</li>
 			<li>
 				<label for="password1"><span class="required">*</span> Password</label>
 				<input  id="password1" name="password1" class="text" type="password" />
+				{{form.password1.errors}}
 			</li>
 			<li>
 				<label for="password2"><span class="required">*</span> Re-enter password</label>

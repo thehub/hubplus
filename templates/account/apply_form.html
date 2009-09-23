@@ -102,6 +102,7 @@
 {% block extra_body %}
     {% load jquery_validation %}
     {% include_validation %}
+    <!-- XXX move into .js file -->
     <script type="text/javascript">
         jq(function(){
 	    jq("#physical_hub").click(function() {
@@ -112,5 +113,6 @@
             jq("#id_username").focus();
 	    
         });
+	jq("#which-hub").hide();
     </script>
 {% endblock %}
