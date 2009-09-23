@@ -203,7 +203,7 @@ def invite(request, group, template_name='plus_groups/invite.html'):
 def add_member(request, group, username, **kwargs) :
     user = get_object_or_404(User, username=username)
     group.add_member(user)
-    return HttpResponseRedirect(reverse('group',args=(group.id)))
+    return HttpResponseRedirect(reverse('group',args=(group.id,)))
 
 @login_required
 @secure_resource(TgGroup, required_interfaces=['Message','Viewer'])
