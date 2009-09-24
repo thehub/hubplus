@@ -11,13 +11,22 @@
 <div id="message_viewer" class="tabbed section">
 
 	<ul class="tabbed_navigation">
-		<li class="selected"><a href="{% url messages_inbox %}"><span>{% trans "Inbox" %} ({{ messages_inbox_count }})</span></a></li>
-		<li><a href="{% url messages_inbox %}#tabview=sent"><span>{% trans "Sent" %}</span></a></li>
-		<li><a href="{% url messages_inbox %}#tabview=trash"><span>{% trans "Trash" %}</span></a></li>
-		<li><a href="{% url messages_inbox %}#tabview=compose"><span>{% trans "Compose" %}</span></a></li>
+		{% ifequal message.recipient user %}
+		<li class="selected"><a href="{% url messages_all %}"><span>{% trans "Inbox" %} ({{ messages_inbox_count }})</span></a></li>
+		<li><a href="{% url messages_all %}#tabview=sent"><span>{% trans "Sent" %}</span></a></li>
+		{% else %}
+		<li><a href="{% url messages_all %}"><span>{% trans "Inbox" %} ({{ messages_inbox_count }})</span></a></li>
+		<li class="selected"><a href="{% url messages_all %}#tabview=sent"><span>{% trans "Sent" %}</span></a></li>
+		{% endifequal %}
+		<li><a href="{% url messages_all %}#tabview=trash"><span>{% trans "Trash" %}</span></a></li>
+		<li><a href="{% url messages_all %}#tabview=compose"><span>{% trans "Compose" %}</span></a></li>
 	</ul>
 
-	<a id="parent" href="{% url messages_inbox %}">{% trans "Back to inbox" %}</a>
+	{% ifequal message.recipient user %}
+	<a id="parent" href="{% url messages_all %}">{% trans "Back to Inbox" %}</a>
+	{% else %}
+	<a id="parent" href="{% url messages_all %}#tabview=sent">{% trans "Back to Sent" %}</a>
+	{% endifequal %}
 
 	<dl class="message_headers">
 		<dt>{% trans "From" %}:</dt>
