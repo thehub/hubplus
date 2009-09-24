@@ -1,0 +1,86 @@
+{% extends "site_base.html" %}
+
+{% load i18n %}
+{% load avatar_tags %}
+{% load app_plugins %}
+{% load uni_form %}
+{% load plus_tags %}
+{% load editable_attribute %}
+
+
+{% block body %}
+          
+<div id="permission_sliders"></div>
+
+<h2>Share a file</h2>
+	  
+<div id="site_wide_messages"></div>
+	  
+<div id="body">
+  <form class="full block" enctype="multipart/form-data" method="POST">
+    <h4>Upload resource</h4>
+    <p>Fill in the form below to upload a new resource.</p>
+
+    <fieldset>
+      <ul>
+	<li>
+	  <label for="title"><span class="required">*</span> Title</label>
+	  <input  id="title" name="title" class="text" type="text" value="{{form.data.title}}" />
+	  {{form.title.errors}}
+	</li>
+	<li>
+	  <label for="description"><span class="required">*</span> Description</label>
+	  <textarea id="description" name="description" rows="3" maxlength="20">{{form.data.description}}</textarea>
+	  {{form.description.errors}}
+	</li>
+	<li>
+	  <label for="author"><span class="required">*</span> Author</label>
+	  <input  id="author" name="author" class="text" type="text" value='{{form.data.author}}'/>
+	  {{form.author.errors}}
+	</li>
+	<li>
+	  <label for="tags"><span class="required">*</span> Tags</label>
+	  <!-- <input  id="tags" class="text" type="text" /> -->
+	  <span style="color:red">(Use existing tag functionality profiles here)</span>
+	</li>
+      </ul>
+      <ul>
+	<li>
+	  <label for="resource"><span class="required">*</span> Select resource</label>
+	  <input  id="resource" name="resource" class="file" type="file" />
+	</li>
+      </ul>
+      <ul>
+	<li>
+	  <label for="license">License <span class="extra">('©2009', 'GPL')</span></label>
+	  <input  id="license" name="license" class="text" type="text" />
+	  {{form.license.errors}}
+	</li>
+      </ul>
+      <ul>
+	<li>
+	  <label><span class="required">*</span> <span class="label_permissions">Permissions</span></label>
+	  <ul class="checkboxes">
+	    <li>
+	      <input  id="group" name="permissions_set" class="radio" type="radio" checked="checked" />
+	      <div class="label_extended">
+		<label for="group">Use group permission – <a href="#">Show settings</a> <span class="extra">Currently set to Public</span></label>
+	      </div>
+	    </li>
+	    <li>
+	      <input  id="custom" name="permissions_set" class="radio" type="radio" />
+	      <div class="label_extended">
+		<label for="custom">Custom settings – <a href="#">Edit settings</a> <span class="extra">Choose you're own permissions</span></label>
+	      </div>
+	    </li>
+	  </ul>
+	</li>
+      </ul>
+      <input type="hidden" name="uploader_name" value="{{request.user.username}}" />
+    </fieldset>
+    <input class="submit button" type="Submit" value="Upload" /> or <a href="#">Go back</a>
+  </form>
+  
+</div>
+
+{% endblock %}
