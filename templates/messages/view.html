@@ -1,31 +1,53 @@
 {% extends "messages/base.html" %} 
 
-{% load i18n %} 
+{% load i18n %}
 {% load oembed_tags %}
 {% load timezone_filters %}
 
-{% block body %}
-    {% include "messages/submenu.html" %}
+{% block page_title %}{% trans "Messages" %}{% endblock %}
 
- 
-    <h1>{% trans "View Message" %}</h1>
-    
-    <dl class="message-headers">
-        <dt>{% trans "Sender" %}:</dt>
-        <dd><a href="{% url profile_detail message.sender %}">{{ message.sender }}</a></dd>
-        <dt>{% trans "Subject" %}:</dt>
-        <dd><strong>{{ message.subject }}</strong></dd>
-        <dt>{% trans "Date" %}:</dt>
-        <dd>{{ message.sent_at|localtime:account.timezone|date:_("DATETIME_FORMAT")}}</dd>
-        <dt>{% trans "Recipient" %}:</dt>
-        <dd>{{ message.recipient }}</dd>
-    </dl>
-    
-    <p>{% oembed %}{{ message.body|linebreaksbr }}{% endoembed %}</p>
-    
-    {% ifequal message.recipient user %}
-        <p><a href="{% url messages_reply message.id %}">{% trans "Reply" %}</a></p>
-    {% endifequal %}
-    
-    <p><a href="{% url messages_delete message.id %}">{% trans "Delete" %}</a></p>
+{% block body %}
+
+<div id="message_viewer" class="tabbed section">
+
+	<ul class="tabbed_navigation">
+		{% ifequal message.recipient user %}
+		<li class="selected"><a href="{% url messages_all %}"><span>{% trans "Inbox" %} ({{ messages_inbox_count }})</span></a></li>
+		<li><a href="{% url messages_all %}#tabview=sent"><span>{% trans "Sent" %}</span></a></li>
+		{% else %}
+		<li><a href="{% url messages_all %}"><span>{% trans "Inbox" %} ({{ messages_inbox_count }})</span></a></li>
+		<li class="selected"><a href="{% url messages_all %}#tabview=sent"><span>{% trans "Sent" %}</span></a></li>
+		{% endifequal %}
+		<li><a href="{% url messages_all %}#tabview=trash"><span>{% trans "Trash" %}</span></a></li>
+		<li><a href="{% url messages_all %}#tabview=compose"><span>{% trans "Compose" %}</span></a></li>
+	</ul>
+
+	<dl class="message_headers">
+		<dt>{% trans "From" %}:</dt>
+		<dd><a href="{% url profile_detail message.sender %}">{{ message.sender }}</a></dd>
+		<dt>{% trans "Subject" %}:</dt>
+		<dd><strong>{{ message.subject }}</strong></dd>
+		<dt>{% trans "Date" %}:</dt>
+		<dd>{{ message.sent_at|localtime:account.timezone|date:_("DATETIME_FORMAT")}}</dd>
+		<dt>{% trans "To" %}:</dt>
+		<dd>{{ message.recipient }}</dd>
+	</dl>
+
+	<p class="message_body">{% oembed %}{% autoescape off %}{{ message.body|linebreaksbr }}{% endautoescape %}{% endoembed %}</p>
+
+	{% ifequal message.recipient user %}
+		<a class="button" href="{% url messages_reply message.id %}">{% trans "Reply" %}</a>
+		or
+	{% endifequal %}
+
+	<a href="{% url messages_delete message.id %}">{% trans "Delete message" %}</a>
+
+	{% ifequal message.recipient user %}
+		<a id="parent" href="{% url messages_all %}">{% trans "Back to Inbox" %}</a>
+	{% else %}
+		<a id="parent" href="{% url messages_all %}#tabview=sent">{% trans "Back to Sent" %}</a>
+	{% endifequal %}
+
+</div>
+
 {% endblock %}

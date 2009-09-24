@@ -74,15 +74,17 @@ def proxied_signup(request, application, form_class=SignupForm,
 
     # because this is a signup request that has an application object we, expect the application
 
+    display_name = "Visitor"
     if request.method == "POST":
         form = form_class(request.POST)
+        
         if form.is_valid():
             username = form.cleaned_data['username']
             password = form.cleaned_data['password1']
 
             application.applicant.become_member(username, accepted_by=request.user, password = password)
             user = authenticate(username=username, password=password)
-
+            display_name = application.applicant.get_display_name()
             
             auth_login(request, user)
             user.message_set.create(
@@ -113,12 +115,21 @@ def proxied_signup(request, application, form_class=SignupForm,
 
             application.delete()
             return HttpResponseRedirect(success_url)
+        else :
+            import ipdb
+            print form.errors
     else:
 
         form = form_class()
-        applicant = application.get_inner().applicant
-        form.email_address = applicant.email_address
+        try :
+            applicant = application.get_inner().applicant
+            form.email_address = applicant.email_address
+            form.username = applicant.username
+        except :
+            form.email_address = ''
+            form.username = ''
 
+        
 
     # the outstanding issue is how to make sure that the form we're rendering comes back here
     # ie. with the hmac, let's pass it down as a "submit_url"
@@ -130,8 +141,7 @@ def proxied_signup(request, application, form_class=SignupForm,
     return render_to_response(template_name, {
         "form": form,
         "submit_url" : request.build_absolute_uri(),
-        "display_name" : applicant.first_name + " " + applicant.last_name,
-        
+        "display_name" : display_name        
     }, context_instance=RequestContext(request))
 
 

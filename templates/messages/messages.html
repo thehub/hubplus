@@ -1,0 +1,24 @@
+ {% extends "site_base.html" %}
+
+{% load i18n %} 
+{% load timezone_filters %}
+{% load uni_form %}
+
+{% block page_title %}{% trans "Messages" %}{% endblock %}
+
+{% block body %}
+
+{% include "messages/tabbed_subs.html" %}
+
+{% endblock %}
+
+
+{% block side_bar %}
+
+<div id="feature_search" class="block">
+    <h3>Invite a friend</h3>
+	<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec faucibus lorem non mauris aliquam.</p>
+	<a class="button" href="{% url site_invite %}">Invite</a>
+</div>
+
+{% endblock %}

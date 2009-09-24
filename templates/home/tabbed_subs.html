@@ -1,0 +1,17 @@
+
+<div id="section_tab_navigation" class="tabbed section yui-navset">
+
+  <ul class="tabbed_navigation yui-nav">
+    <li class="selected" ><a href="#my_feed"><span>My feed</span></a></li>
+    <li><a href="#my_hub"><span>My Hub</span></a></li>
+    <li><a href="#global"><span>Global</span></a></li>
+  </ul>
+
+  <div class="tabbed_content yui-content">
+	{% include "home/my_feed.html" %}
+	{% include "home/my_hub.html" %}
+	{% include "home/global.html" %}
+  </div>
+
+</div>
+

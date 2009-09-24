@@ -25,9 +25,10 @@ class ContactAdmin:
     apply_msg = InterfaceReadWriteProperty
     find_out = InterfaceReadWriteProperty
     invited_by = InterfaceReadWriteProperty
-    
+
     become_member = InterfaceCallProperty
     invite = InterfaceCallProperty
+    has_group_request = InterfaceCallProperty
 
 class ContactInvite:
     pk = InterfaceReadProperty

@@ -5,23 +5,28 @@
 
 {% load uni_form %}
 
+{% block page_title %}
+{% trans "Invite " %}{% if site_name %}{% trans "to " %}{{ site_name }}{% endif %}
+{% endblock %}
+
 {% block body %}
 
+<div id="invite_to_site" class="block">
+	
   <form class="full uniForm" id="invite_non_member_form" method="post" action="{% url site_invite %}">
 
-    <h4>{% trans "Invites" %}</h4>
     <p>{% blocktrans %}Please enter the name and email of someone to invite to Hub+{% endblocktrans %}</p>
     <fieldset>
       <ul>
 	<li>
 	  {{ form.username.errors }}
-	  <p><label for="id_username"><span class="required">*</span> {% trans "Name" %}</label>
-	  <input  id="id_username" name="username" class="text" type="text" /></p>
+	  <label for="id_username"><span class="required">*</span> {% trans "Name" %}</label>
+	  <input  id="id_username" name="username" class="text" type="text" />
 	</li>
 	<li>
 	  {{ form.email_address.errors}} 
-	  <p><label for="id_email_address"><span class="required">*</span> {% trans "Email" %}</label>
-	  <input id="email_address" name="email_address" class="text" type="text" /></p>
+	  <label for="id_email_address"><span class="required">*</span> {% trans "Email" %}</label>
+	  <input id="email_address" name="email_address" class="text" type="text" />
  	</li>
 
 	<li class="checkboxes">
@@ -47,7 +52,7 @@
     
   </form>
 
-        
+</div>        
 
 {% endblock %}
 

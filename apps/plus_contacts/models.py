@@ -140,7 +140,7 @@ class Application(models.Model) :
             return True
         return False
 
-    def requests_group(self) :
+    def has_group_request(self) :
         """ Is this application requesting a group in addition to site membership?"""
         if self.group : 
             return True
@@ -148,6 +148,7 @@ class Application(models.Model) :
             return False
 
     def accept(self,sponsor,site_root,**kwargs) :
+
         self.status = WAITING_USER_SIGNUP
         if kwargs.has_key('admin_comment') :
             self.admin_comment = kwargs['admin_comment']

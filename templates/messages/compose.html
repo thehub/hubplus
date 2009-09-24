@@ -1,46 +1,36 @@
-{% extends "messages/base.html" %} 
-
 {% load i18n %} 
 {% load uni_form %}
 
-{% block body %} 
-    {% include "messages/submenu.html" %}
+<div id="compose">
 
- 
-    <h1>{% trans "Compose Message"%}</h1>
-    
-    <form action="" method="post" class="uniForm">
-        <fieldset class="inlineLabels">
-            {{ form|as_uni_form }}
-            <div class="form_block">
-                <input type="submit" value="{% trans "Send" %} &raquo;"/>
-            </div>
-    </form>
-{% endblock %}
+	<form class="page" method="post" action="">
+		<fieldset>
+			<ul class="message_headers">
+				<li>
+					<dl>
+						<dt><label for="message_recipient"><span class="required">*</span> {% trans 'To' %}</label></dt>
+						<dd><input type="text" id="message_recipient" name="recipient"/></dd>
+					</dl>
+				</li>
+				<li>
+					<dl>
+						<dt><label for="message_subject"><span class="required">*</span> {% trans 'Subject' %}</label></dt>
+						<dd><input type="text" id="message_subject" name="subject"/></dd>
+					</dl>
+				</li>
+			</ul>
+			<ul class="message_body">
+				<li>
+					<dl>
+						<dt><label for="message_content"><span class="required">*</span> Body</label></dt>
+						<dd><textarea name="body" cols="55" rows="12" id="message_content"></textarea></dd>
+					</dl>
+				</li>
+			</ul>
+			<input type="submit" value="{% trans 'Send' %}" class="button"/>
+		</fieldset>
+	</form>
 
-{% block extra_body %}
-    {{ block.super }}
-    <script type="text/javascript" src="{{ MEDIA_URL }}jquery.bgiframe.js"></script>
-    <script type="text/javascript" src="{{ MEDIA_URL }}jquery.dimensions.js"></script>
-    <script type="text/javascript" src="{{ MEDIA_URL }}jquery.ajaxQueue.js"></script>
-    <script type="text/javascript" src="{{ MEDIA_URL }}jquery.autocomplete.js"></script>
-    <script type="text/javascript">
-        $().ready(function() {
-            $("#id_recipient").autocomplete("{% url profile_username_autocomplete %}", {
-                formatItem: function(data, i, n, value) {
-                    values = value.split(",,");
-                    return values[0] + values[1] + "<br />" + values[2];
-                },
-                formatResult: function(data, value) {
-                    return value.split(",,")[1];
-                },
-                // TODO: improve highlighting to only affect username.
-                highlight: false,
-            });
-            $("#id_recipient").result(function() {
-                $("#id_subject").focus();
-            });
-            $("#id_recipient").focus()
-        });
-    </script>
-{% endblock %}
+</div>
+
+

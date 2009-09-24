@@ -333,6 +333,27 @@ th {
 }
 
 
+/* Home */
+
+#status {
+	overflow: hidden;
+}
+
+#status form,
+#status form textarea,
+#status form .buttons {
+	float: left;
+}
+
+#status form textarea {
+	margin-bottom	: 3px;
+}
+
+#status form .buttons {
+	clear: both;
+}
+
+
 /* Explore, Search & Results */
 
 #search #current {
@@ -394,6 +415,70 @@ th {
 	clear		: both;
 	width		: 100px;
 }
+
+/* Messages */
+
+.messages {
+	width		: 100%;
+}
+
+.messages th {
+	font-weight	: bold;
+	text-transform	: uppercase;
+}
+
+.messages th.contact { width: 20%; }
+.messages th.subject { width: 40%; }
+.messages th.date    { width: 30%; }
+.messages th.action  { width: 10%; }
+
+.messages tr {
+	border-bottom	: 1px solid #ddd;
+}
+
+.messages tr td {
+	padding		: 3px 0;
+}
+
+.message_headers,
+.message_body {
+	border-bottom	: 1px solid #ddd;
+	margin-bottom	: 10px;
+	overflow	: hidden;
+	padding-bottom	: 10px;
+}
+
+.message_body {
+	margin-bottom	: 15px;
+}
+
+.message_headers dt {
+	clear		: both;
+	float		: left;
+	width		: 20%;
+}
+
+.message_headers dd {
+	float		: left;	
+	width		: 70%;
+}
+
+
+#message_viewer #parent {
+	display		: block;
+	padding-top	: 10px;
+}
+
+#compose .message_headers,
+#compose .message_body {
+	margin-bottom	: 10px;
+	padding-bottom	: 7px;
+}
+
+#compose .message_body dt {
+	display		: none;
+}
+
 
 
 /* Wiki: History */

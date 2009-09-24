@@ -1,0 +1,36 @@
+{% extends "site_base.html" %}
+
+{% load i18n %}
+{% load microblogging_tags %}
+
+{% block head_title %}{% trans "Home" %}{% endblock %}
+
+{% block tab_id %}id="home_tab"{% endblock %}
+
+{% block body %}
+<div id="status" class="block">
+
+	<h3>{% trans "What's happening?" %}</h3>  
+	<div class="thumb tiny"><img src="../../site_media/images/member.jpg"/></div>
+
+	<form method="post" action="{% url home %}">
+		<textarea id="new_tweet" name="text" cols="50" rows="2"></textarea>
+		
+		<div class="buttons"><input type="submit" class="button" value="{% trans 'Share' %}" /> or <a href="#">Cancel</a></div>
+	</form>
+
+</div>
+
+{% include "home/tabbed_subs.html" %}
+
+{% endblock %}
+
+{% block side_bar %}
+
+<ul>
+	<li><a href="{% url list_open_applications %}">View recent applicants to the site</a></li>
+	<li><a href="{% url notification_notices %}">Look at your notices</a></li>
+	<li><a href="{% url site_invite %}">Invite someone to the site</a></li>
+</ul>
+
+{% endblock %}

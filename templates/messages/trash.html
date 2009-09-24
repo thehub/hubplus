@@ -1,22 +1,20 @@
-{% extends "messages/base.html" %} 
-
 {% load i18n %} 
 {% load timezone_filters %}
 
-{% block body %} 
-    {% include "messages/submenu.html" %}
-
- 
-    <h1>{% trans "Deleted Messages" %}</h1>
-    
+<div id="trash">
     <table class="messages">
         <thead>
-            <tr><th>{% trans "Sender" %}</th><th>{% trans "Subject" %}</th><th>{% trans "Date" %}</th><th>{% trans "Action" %}</th></tr>
+            <tr>
+				<th class="contact">{% trans "Sender" %}</th>
+				<th class="subject">{% trans "Subject" %}</th>
+				<th class="date"   >{% trans "Date" %}</th>
+				<th class="action" >{% trans "Action" %}</th>
+            </tr>
         </thead>
         <tbody>
-            {% for message in message_list %} 
+            {% for message in trash %} 
                 <tr>
-                    <td>{{ message.sender }}</td>
+                    <td>{% ifequal message.sender user %}Me{% else %}{{ message.sender }}{% endifequal %}</td>
                     <td> 
                         {{ message.subject }}
                     </td>
@@ -27,5 +25,5 @@
         </tbody>
     </table>
     <br />
-    <p>{% trans "Deleted Messages are removed from the trash at irregular intervals, don't rely on this feature for long-time storage." %}</p>
-{% endblock %}
+    <p>{% trans "Deleted messages are automatically removed from the trash frequently." %}</p>
+</div>
