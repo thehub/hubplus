@@ -74,10 +74,10 @@ urlpatterns = patterns('',
     (r'^lib/', include('plus_lib.urls')),
     (r'^links/', include('plus_links.urls')),
 
+    (r'^resources/', include('plus_resources.urls')),
 
     url(r'^hubs/$', 'plus_groups.views.groups',{'type':'hub'},name='hubs'),
     url(r'^regions/$', 'plus_groups.views.groups',{'type':'hub'},name='regions'),
-
 
     (r'^testing/sliders/$', direct_to_template, {'template' : 'plus_permissions/tester.html'}),
     (r'^testing/sliders/p$', direct_to_template, {'template' : 'plus_permissions/permissions.html'}), # temp

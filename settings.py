@@ -53,6 +53,7 @@ MEDIA_ROOT = os.path.join(os.path.dirname(__file__), "site_media")
 # Example: "http://media.lawrence.com"
 MEDIA_URL = '/site_media/'
 
+
 # URL prefix for admin media -- CSS, JavaScript and images. Make sure to use a
 # trailing slash.
 # Examples: "http://foo.com/media/", "/media/".
@@ -168,6 +169,7 @@ INSTALLED_APPS = (
     'plus_contacts',
     'plus_wiki',
     'plus_user',
+    'plus_resources',
     'staticfiles',
     'account',
     'tribes',

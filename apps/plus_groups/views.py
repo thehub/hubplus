@@ -33,6 +33,7 @@ from apps.plus_permissions.proxy_hmac import hmac_proxy
 
 from django.contrib.contenttypes.models import ContentType
 
+from apps.plus_resources.models import get_resources_for
  
 @secure_resource(TgGroup)
 def group(request, group, template_name="plus_groups/group.html"):
@@ -112,7 +113,12 @@ def group(request, group, template_name="plus_groups/group.html"):
         perms_bool = True
     except PlusPermissionsNoAccessException:
         perms_bool = False
-    
+
+
+    # XXX replace when we slot permissions in
+    resources = get_resources_for(group.get_inner())
+
+
     return render_to_response(template_name, {
             "head_title" : "%s" % group.get_display_name(),
             "head_title_status" : dummy_status,
@@ -131,7 +137,8 @@ def group(request, group, template_name="plus_groups/group.html"):
             "hosts": hosts,
             "host_count": host_count,
             "tweets" : tweets,
-            "permissions": perms_bool
+            "permissions": perms_bool,
+            "resources":resources,
             }, context_instance=RequestContext(request))
 
 from apps.plus_lib.utils import hub_name_plural
@@ -286,7 +293,7 @@ def possible_create_interfaces():
     """return tuples of form, interface string, label, subtext
     """
     return [["CreateWikiPage", _("Page"), _("Create new wiki page")], 
-            ["CreateUpload", _("File"), _("Upload a file")],
+            ["CreateResource", _("Resource"), _("Upload a resource")],
             ["CreateNews", _("News"), _("Create a new posting")],
             ["CreateEvent", _("Events"), _("Create a new event")]]
 
@@ -294,6 +301,7 @@ def possible_create_interfaces():
 @login_required
 @secure_resource(TgGroup)
 def add_content_form(request, group, form=None):
+
     possible_interfaces = possible_create_interfaces()
     if group:
         _interfaces = [g.split('.')[1] for g in group._interfaces]

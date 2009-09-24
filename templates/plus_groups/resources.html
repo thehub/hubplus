@@ -1,5 +1,13 @@
   <div id="resources" class="page_content">
     <!--<a href="{% url add_content resource_id=group.id %}" class="add_content" rel="#overlay">Add Resource</a>-->
+
+    <!-- XXX temporary until I can get Tom's add_content template to recognise that I'm adding resources -->
+    <p>
+      <a href="{% url upload_resource group.id %}">Upload File</a>
+ 
+   </p>
+    <!-- XXX temporary ends -->
+
     <div class="sorting">
       <label>Sort by:</label>
       <select name="state" size="1">
@@ -39,42 +47,19 @@
       <br />
     </div>
     <br />
+
     <ul id="resources_list" class="content_list">
-      <li class="first">
+      {% for resource in resources %}
+      <li class="Xfirst">
 	<img class="thumb" src="#" alt="Page" />
-	<div class="preview">
-	  <h3><a href="#">Ingredients!</a></h3>
-	  <p>Ut wisi enim ad minim veniam, quis nostrud exerci tation ullamcorper suscipit lobortis nisl ut aliquip ex ea commodo consequat.</p>
+	<div class="preview"> 
+	  <h3><a href="{{resource.download_url}}">{{resource.title}} ({{resource.download_url}})</a></h3>
+	 <div>
+	  {{resource.description|truncatewords:20}}
+	  </div>
 	</div>
       </li>
-      <li>
-	<img class="thumb" src="#" alt="Doc" />
-	<div class="preview">
-	  <h3><a href="#">Local organic food shops</a></h3>
-	  <p>Local organic food directory</p>
-	</div>
-      </li>
-      <li>
-	<img class="thumb" src="#" alt="Page" />
-	<div class="preview">
-	  <h3><a href="#">Ingredients!</a></h3>
-	  <p>Ut wisi enim ad minim veniam, quis nostrud exerci tation ullamcorper suscipit lobortis nisl ut aliquip ex ea commodo consequat.</p>
-	</div>
-      </li>
-      <li>
-	<img class="thumb" src="#" alt="Doc" />
-	<div class="preview">
-	  <h3><a href="#">Local organic food shops</a></h3>
-	  <p>Local organic food directory</p>
-	</div>
-      </li>
-      <li class="last">
-	<img class="thumb" src="#" alt="Page" />
-	<div class="preview">
-	  <h3><a href="#">Favourite Salads</a></h3>
-	  <p>Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy.</p>
-	</div>
-      </li>
+      {% endfor %}
     </ul>
     <a href="#">Show all (83)</a>
   </div>
