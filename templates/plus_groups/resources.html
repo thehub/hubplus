@@ -1,5 +1,13 @@
   <div id="resources" class="page_content">
     <!--<a href="{% url add_content resource_id=group.id %}" class="add_content" rel="#overlay">Add Resource</a>-->
+
+    <!-- XXX temporary until I can get Tom's add_content template to recognise that I'm adding resources -->
+    <p>
+      <a href="{% url upload_resource group.id %}">Upload File</a>
+ 
+   </p>
+    <!-- XXX temporary ends -->
+
     <div class="sorting">
       <label>Sort by:</label>
       <select name="state" size="1">
