@@ -22,12 +22,13 @@ PERMISSION_OPTIONS = (
 )
 CREATE_INTERFACES = (
     (u"CreateWikiPage", u"CreateWikiPage"),
-    (u"CreateUpload", u"CreateUpload"), 
+    (u"CreateResource", u"CreateResource"), 
     (u"CreateNews", u"CreateNews"),
     (u"CreateEvent", u"CreateEvent")
 )
 
 class AddContentForm(forms.Form):
+
     title = forms.CharField(max_length=100)
     group = forms.IntegerField()
     create_iface = forms.ChoiceField(choices=CREATE_INTERFACES)
