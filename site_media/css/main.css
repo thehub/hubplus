@@ -440,11 +440,16 @@ th {
 	padding		: 3px 0;
 }
 
-.message_headers {
+.message_headers,
+.message_body {
 	border-bottom	: 1px solid #ddd;
 	margin-bottom	: 10px;
 	overflow	: hidden;
 	padding-bottom	: 10px;
+}
+
+.message_body {
+	margin-bottom	: 15px;
 }
 
 .message_headers dt {
@@ -455,12 +460,25 @@ th {
 
 .message_headers dd {
 	float		: left;	
+	width		: 70%;
 }
+
 
 #message_viewer #parent {
 	display		: block;
-	padding-bottom	: 10px;
+	padding-top	: 10px;
 }
+
+#compose .message_headers,
+#compose .message_body {
+	margin-bottom	: 10px;
+	padding-bottom	: 7px;
+}
+
+#compose .message_body dt {
+	display		: none;
+}
+
 
 
 /* Wiki: History */
