@@ -92,7 +92,7 @@ ProfileInterfaces = {'Viewer': ProfileViewer,
 
 add_type_to_interface_map(Profile, ProfileInterfaces)
 
-SliderOptions = {'InterfaceOrder':['Viewer', 'Editor', 'EmailAddressViewer', 'HomeViewer', 'WorkViewer', 'MobileViewer', 'FaxViewer', 'AddressViewer', 'SkypeViewer', 'SipViewer']}
+SliderOptions = {'InterfaceOrder':['Viewer'], 'InterfaceLabels':{'Viewer':'View', 'Editor':'Edit'}}
 SetSliderOptions(Profile, SliderOptions) 
 
 

@@ -16,6 +16,7 @@ import datetime
 
 type_interfaces_map = {}  
 
+
 def get_interface_map(cls):
     if not isinstance(cls, basestring):
         cls = cls.__name__
@@ -37,6 +38,10 @@ def add_interfaces_to_type(cls, interfaces):
             raise "Interface "+ label  +"was not added to "+ `cls` +" because an interface of that name already exists"
 
 
+
+VisibleAgents = {}
+def SetVisibleAgents(type, options):
+     VisibleAgents[type] = options
 
 SliderOptions = {}
 def SetSliderOptions(type, options):
@@ -95,9 +100,6 @@ class SecurityContext(models.Model):
                  interface_str = '%s.%s' %(typ.__name__, interface_name)
                  self.setup_tag_from_defaults(interface_str, sad, agent_defaults)
 
-         tag = self.create_security_tag(interface='SetPermissionManager')
-         tag.save()
-         tag.add_agents([self.context_admin])
  
      def setup_tag_from_defaults(self, interface_str, sad, agent_defaults):
          typ, interface_name = interface_str.split('.')
@@ -166,13 +168,16 @@ class SecurityContext(models.Model):
          for i in self.get_interfaces():
              self.diagnose_interface(i)
              
-     def get_slider_agents(self):        
-         return SliderAgents[self.context_agent.obj.__class__](self)
+     def get_slider_agents(self, visible_only=False):
+         agents = SliderAgents[self.context_agent.obj.__class__](self)
+         if visible_only:
+             return [agent for agent in agents if agent[0] in VisibleAgents[self.context_agent.obj.__class__]]
+         return agents
 
-     def get_slider_agents_json(self):
+     def get_slider_agents_json(self, visible_only=False):
          return [{'agent_label':agent[0],
                   'agent_id':agent[1].obj.id,
-                  'agent_class':agent[1].obj.__class__.__name__} for agent in self.get_slider_agents()]
+                  'agent_class':agent[1].obj.__class__.__name__} for agent in self.get_slider_agents(visible_only)]
 
 
      def validate_constraints(self, type_name):
@@ -206,7 +211,7 @@ class SecurityContext(models.Model):
      def can_set_manage_permissions(self, interface, user):
          type_name, iface_name = interface.split('.')
          if iface_name == "ManagePermissions":
-             if not has_access(agent=user, security_context=self, interface='SetManagePermissions') :
+             if not has_access(agent=user, resource=self.context_agent.obj, interface=self.context_agent.obj.__class__.__name__ + '.SetManagePermissions') :
                  raise PlusPermissionsNoAccessException(None,None,"You can't set permission manager slider if you aren't the group admin")
         
         
@@ -241,9 +246,18 @@ class SecurityContext(models.Model):
          if not skip_validation:
              self.validate_constraints(type_name)
 
+     def get_acquiring_types(self, my_type):
+         """at some point we may have to check for cycling here
+         """
+         poss_types = PossibleTypes[my_type]             
+         for typ in poss_types:
+             return poss_types + [typ for typ in self.get_acquiring_types(typ) if typ not in poss_types]
+         return []
+
      def get_all_sliders(self, my_type, user):
-         types = [my_type] + PossibleTypes[my_type]
-         return [(typ.__name__, self.get_type_slider(typ, user)) for typ in types]
+         types = self.get_acquiring_types(my_type)
+         types.insert(0, my_type)
+         return [(typ.__name__, self.get_type_slider(typ, user)) for typ in types if has_access(user, self.get_target(), typ.__name__ + '.ManagePermissions')]
 
      def get_type_slider(self, typ, user):
          """get all the sliders associated with a particular type in this SecurityContext
@@ -271,7 +285,7 @@ class SecurityContext(models.Model):
 
          options = SliderOptions[typ]['InterfaceOrder']
          if 'ManagePermissions' in options:
-             if not has_access(agent=user, security_context=self, interface='SetManagePermissions'):
+             if not has_access(agent=user, resource=self.context_agent.obj, interface=self.context_agent.obj.__class__.__name__ + '.SetManagePermissions'):
                  options.remove('ManagePermissions')
          interface_levels = [(interface, self.get_slider_level_json(type_name + '.' + interface)) for interface in options ]
          return {'constraints': interpreted_constraints,

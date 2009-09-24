@@ -106,6 +106,12 @@ def group(request, group, template_name="plus_groups/group.html"):
                                  defaultfilters.timesince(latest_status.sent) )
     else :
         dummy_status = DisplayStatus('No status', '')
+
+    try:
+        group.get_all_sliders
+        perms_bool = True
+    except PlusPermissionsNoAccessException:
+        perms_bool = False
     
     return render_to_response(template_name, {
             "head_title" : "%s" % group.get_display_name(),
@@ -125,6 +131,7 @@ def group(request, group, template_name="plus_groups/group.html"):
             "hosts": hosts,
             "host_count": host_count,
             "tweets" : tweets,
+            "permissions": perms_bool
             }, context_instance=RequestContext(request))
 
 from apps.plus_lib.utils import hub_name_plural

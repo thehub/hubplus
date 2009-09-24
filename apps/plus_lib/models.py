@@ -9,10 +9,15 @@ class DisplayStatus :
     def __str__(self) :
         return self.txt
 
+from apps.plus_user.models import User
 
 def add_edit_key(cls) :
     def edit_key(self) :
-        return '%s-%s-' % (self.__class__.__name__,self.pk)
+        if self.__class__ == User:
+            id = self.username
+        else:
+            id = self.pk
+        return '%s-%s-' % (self.__class__.__name__, id)
     cls.edit_key = edit_key
 
 def add_get_display_name(cls) :

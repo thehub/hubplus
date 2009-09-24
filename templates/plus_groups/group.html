@@ -15,11 +15,11 @@
 
 <div id="intro" class="block">
   <div id="info" class="block_column">
-
+    {% if permissions %}
     <ul class="icon_text_button_set">
       <li><a href="#overlay" class="icon_text_button bt_permissions" rel="#overlay" id="{{group.edit_key}}permissionedit">Permissions</a></li>
     </ul>
-
+    {% endif %}
     <h3>{% trans "About" %}</h3>
 
     <ul>
