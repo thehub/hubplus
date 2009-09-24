@@ -1,5 +1,3 @@
-
-
 var tab_history = function (container_id) {
     var tab_titles = [];
     jq('#' + container_id + ' .yui-nav li a').each(function(i, ele) {
@@ -23,7 +21,6 @@ var tab_history = function (container_id) {
 	    tabView.set("activeIndex",jq.inArray(newState,  tab_titles));
         }
     }
-
     function initTabView (ele) {
         tabView = new YAHOO.widget.TabView(ele.id);
         tabView.addListener("activeTabChange", handleTabViewActiveTabChange);

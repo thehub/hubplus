@@ -1,8 +1,3 @@
-var initTabView = function (ele) {
-    var tabView = new YAHOO.widget.TabView(ele.id);
-    //tabView.addListener("activeTabChange", handleTabViewActiveTabChange);
-};
-
 var permission_ready = function () {
     jq('.bt_permissions').overlay({expose: {
 				       color: '#000000',
@@ -28,8 +23,7 @@ var load_sliders = function (perm_button) {
 
 	jq.getJSON(load_url, function(json){
 	    jq('#overlay_content').html(json.html);
-	    var all_sliders = jq('#permission_sliders');
-            initTabView(all_sliders.get(0));
+	    var all_sliders = jq('#permissions_tabs');
 	    var sliders = {};
 	    jq.each(json.sliders, function(index, slider_set){
 		sliders[slider_set[0]] = slider_set[1];
@@ -42,22 +36,28 @@ var load_sliders = function (perm_button) {
 
 	    var agents = json.agents;
 	    var custom = json.custom;
+	    var activated  = {};
 
-	    var create_slider_points = function (tbody) {
-		var rows = tbody.find('tr').slice(1);
-		var top_row = jq(rows[0]).offset().top;
-		var heights = rows.map(function (i, row) {
-		    var row = jq(row);
-		    var row_top = row.offset().top - top_row;
-		    var row_data = {'agent_id':row.attr('id').split('-')[2],'agent_class':row.attr('id').split('-')[1], middle:row_top + row.height()/2 - 6.5, 'top':row_top - 6.5, 'bottom':row_top + row.height() - 6.5};
-		    row.data('slider', row_data);
-		    return row_data;
-		});
-		return heights;
-	    };
-
-	    var setup_slider_group = function (i, ele) {
-		var slider_group = jq(ele);
+	    var setup_slider_group = function (e) {
+		var ele = tabs.get('activeTab').get('contentEl');
+		if (activated[ele.id]) {
+		    return;
+		} else {
+		    activated[ele.id] = true;
+		}
+		var create_slider_points = function (tbody) {
+		    var rows = tbody.find('tr').slice(1);
+		    var top_row = jq(rows[0]).offset().top;
+		    var heights = rows.map(function (i, row) {
+			var row = jq(row);
+			var row_top = row.offset().top - top_row;
+			var row_data = {'agent_id':row.attr('id').split('-')[2],'agent_class':row.attr('id').split('-')[1], middle:row_top + row.height()/2 - 6.5, 'top':row_top - 6.5, 'bottom':row_top + row.height() - 6.5};
+			row.data('slider', row_data);
+			return row_data;
+		    });
+		    return heights;
+		};
+		var slider_group = jq(ele).find('table');
 		var obj_class = slider_group.attr('id').split('-')[0];
 		var tbody = slider_group.find('tbody');
 		var heights = create_slider_points(tbody);
@@ -85,7 +85,7 @@ var load_sliders = function (perm_button) {
 		    var follow_position = function (position, iface, slideEnd) {
 			//iface = iface.split('_')[1];
 			var agent = interface_levels[_interface.split('_')[1]];
-			var agent_row = jq('#agent-{class}-{id}'.supplant({'class':agent.classname, 'id':agent.id}));
+			var agent_row = slider_group.find('#agent-{class}-{id}'.supplant({'class':agent.classname, 'id':agent.id}));
 			if (initialising==0 && position >= agent_row.data('slider').middle) {
 			    if (!slideEnd) {
 				locked = 1;
@@ -112,10 +112,13 @@ var load_sliders = function (perm_button) {
 			slider_limits.followers = [];
 			jq.each(slider_constraints, function (i, constraint) {
 			    if (constraint[1].indexOf('$') === 0) {
-				var agent_row = jq('#agent-' + constraint[1].substring(1));
+				var agent_row = slider_group.find('#agent-' + constraint[1].substring(1));
 			    } else {
 				var agent = interface_levels[constraint[1]];
-				var agent_row = jq('#agent-{class}-{id}'.supplant({'class':agent.classname, 'id':agent.id}));
+				if (!agent) {
+				    return;
+				}
+				var agent_row = slider_group.find('#agent-{class}-{id}'.supplant({'class':agent.classname, 'id':agent.id}));
 			    }
 			    if (constraint[0] == '<=') {
 				slider_limits.min = Math.max(slider_limits.min, agent_row.data('slider').top + 1);
@@ -204,11 +207,8 @@ var load_sliders = function (perm_button) {
 			if (locked === 1) {
 			    return false;
 			}
-
 			heights.each(function (i, row) {
 			      if (offsetFromStart > row.top && offsetFromStart < row.bottom) {
-				  var agent = interface_levels[_interface.split('_')[1]];
-				  var agent_row = jq('#agent-{class}-{id}'.supplant({'class':agent.classname, 'id':agent.id}));
 				  if (offsetFromStart != row.middle) {
 				      slider.setValue(row.middle);
 				  } else {
@@ -235,9 +235,8 @@ var load_sliders = function (perm_button) {
 
 		});
 	    };
-	    //if (custom) {
-		// Pulling in the YUI libraries
-		jq('.permissions_slider').each(setup_slider_group);
-	    //}
+	    var tabs = new YAHOO.widget.TabView(all_sliders.get(0).id);
+	    tabs.addListener("activeTabChange", setup_slider_group);
+	    setup_slider_group();
         });
 };
