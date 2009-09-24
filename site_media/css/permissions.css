@@ -28,6 +28,7 @@ HUB PLUS 2009
 
 .attribute_column {
 	width		: 15%;
+	text-align      : center; 
 }
 
 .group_column,

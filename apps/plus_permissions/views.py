@@ -18,7 +18,7 @@ from apps.plus_groups.models import TgGroup
 from apps.plus_lib.parse_json import json_view
 from django.contrib.auth.models import User
 from apps.plus_permissions.api import secure_resource, TemplateSecureWrapper
-from apps.plus_permissions.models import GenericReference
+from apps.plus_permissions.models import GenericReference, VisibleAgents, SliderOptions
 from django.template import loader, Context, RequestContext
 
 ##############Hubspace Patching######################################
@@ -110,14 +110,19 @@ def move_sliders(request, json, current):
     return json
 
 
+
+
 @secure_resource(obj_schema={'current':'any'})
 def json_slider_group(request, current):
     """This should be properly secured by doing everything through permissionable objects on the current resource. i.e. without getting the security context.
     """
     sec_context = current._inner.get_security_context()
-    custom = False
+    is_custom = False
     if sec_context.get_target() == current._inner:
-        custom = True
+        is_custom = True
+    is_agent = False
+    if current._inner.__class__ in [User, TgGroup]:
+        is_agent = True
 
     slider_sets = sec_context.get_all_sliders(current._inner.__class__, request.user)
     slider_agents = sec_context.get_slider_agents()
@@ -135,17 +140,28 @@ def json_slider_group(request, current):
                     selected = True
                 css_class = flags.get(interface, False) and 'active' or 'inactive'
                 interface_status_list.append((css_class, selected, interface))
-            
-            slider_agent_rows.append((slider_agent.obj, slider_agent.obj.__class__.__name__, interface_status_list))
+            slider_agent_rows.append((slider_agent.obj, slider_agent.obj.__class__.__name__, interface_status_list, agent_slot in VisibleAgents[sec_context.context_agent.obj.__class__]))
+        headers = []
+        InterfaceLabels = SliderOptions[current._inner.__class__]['InterfaceLabels']
+        
+        for header in slider_info['interface_levels']:
+            if InterfaceLabels.has_key(header[0]):
+                headers.append(InterfaceLabels[header[0]])
+            else:
+                headers.append(header[0])
+                         #XXX how many object of type typ acquire security from this context?
+        acquisition_count = sec_context.target.all()[0].acquirers.filter(content_type__name=typ.lower()).count()
+        pluralize = True
+        if acquisition_count == 1 or typ==sec_context.get_target().__class__.__name__:
+            pluralize = False
+        slider_data.append((typ, headers, slider_agent_rows, pluralize))
 
-        slider_data.append((typ, [header[0] for header in slider_info['interface_levels']],  slider_agent_rows))
-
-    agents = sec_context.get_slider_agents_json()
+    agents = sec_context.get_slider_agents_json() # visible_only=True)
 
     t = loader.get_template('plus_permissions/permissions.html')
-    c = RequestContext(request, {'current':current, 'current_class':current._inner.__class__.__name__, 'sliders':slider_data, 'custom':custom})
+    c = RequestContext(request, {'current':current, 'current_class':current._inner.__class__.__name__, 'sliders':slider_data, 'is_custom':is_custom, 'is_agent':is_agent})
     rendered = t.render(c)
-    json = simplejson.dumps({'current_id':current.id,  'sliders':slider_sets, 'agents':agents, 'custom':custom, 'html':rendered})
+    json = simplejson.dumps({'current_id':current.id,  'sliders':slider_sets, 'agents':agents, 'is_custom':is_custom, 'html':rendered})
     
     return HttpResponse(json, mimetype='application/json')
 

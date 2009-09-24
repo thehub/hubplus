@@ -22,12 +22,6 @@
 		<li><a href="{% url messages_all %}#tabview=compose"><span>{% trans "Compose" %}</span></a></li>
 	</ul>
 
-	{% ifequal message.recipient user %}
-	<a id="parent" href="{% url messages_all %}">{% trans "Back to Inbox" %}</a>
-	{% else %}
-	<a id="parent" href="{% url messages_all %}#tabview=sent">{% trans "Back to Sent" %}</a>
-	{% endifequal %}
-
 	<dl class="message_headers">
 		<dt>{% trans "From" %}:</dt>
 		<dd><a href="{% url profile_detail message.sender %}">{{ message.sender }}</a></dd>
@@ -39,7 +33,7 @@
 		<dd>{{ message.recipient }}</dd>
 	</dl>
 
-	<p>{% oembed %}{% autoescape off %}{{ message.body|linebreaksbr }}{% endautoescape %}{% endoembed %}</p>
+	<p class="message_body">{% oembed %}{% autoescape off %}{{ message.body|linebreaksbr }}{% endautoescape %}{% endoembed %}</p>
 
 	{% ifequal message.recipient user %}
 		<a class="button" href="{% url messages_reply message.id %}">{% trans "Reply" %}</a>
@@ -48,7 +42,12 @@
 
 	<a href="{% url messages_delete message.id %}">{% trans "Delete message" %}</a>
 
-</div>
+	{% ifequal message.recipient user %}
+		<a id="parent" href="{% url messages_all %}">{% trans "Back to Inbox" %}</a>
+	{% else %}
+		<a id="parent" href="{% url messages_all %}#tabview=sent">{% trans "Back to Sent" %}</a>
+	{% endifequal %}
 
+</div>
 
 {% endblock %}

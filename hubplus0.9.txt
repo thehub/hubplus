@@ -40,28 +40,19 @@ Tags *Tom*
       - tags have no delete method, they delete themselve when they no long exist
       - you should only see the add tag form if you have permission on the tagger_for user. Same for delete.
 
-Phil - application process - emails send out, 
-     - create group form
-     - host info security setup
-     - groups page loading time - wtf is going on server side
-     - links + contact details (e.g. host contact address). Some names might be required e.g. enquiries address for Hubs.
+Phil - host info security setup
      - ordering of lists, members, hosts (group page) and groups (profile page) 
-     - default images for group members
+
 
 Attribute Editing - Phil
 -----------------
 4. add location map
-
-Group - Resource - tag filters
-      - begin tag explorer
-      - explore
 
 
 
 hubspace
 --------
 rename member level hub groups from "group members" to "group" 
-
 
 misc
 ----
@@ -76,22 +67,6 @@ misc
 
 Permissions
 -----------
-     - slider group,  view only mode
-     - read json and display user feedback
-
-     - view should go through sec context target obj
-     - user/profile - edit where? 
-     - customize permissions + apply to group
-     
-     - manage permissions slider for owner
-
-     - single slider UI
-
-     - labels and display details (visible/invisible)
-     - error messages - if save failed
-
-
-Permissions added by Phil after conversation on 15 September
   Users and Profiles.
      - Profile acquire their SecurityContext from Users
      - We don't *customize* Profile security, in the sense of creating a specific Profile SecurityContext, we just edit the User
@@ -103,17 +78,10 @@ Permissions added by Phil after conversation on 15 September
      - put a "broad type" (permission_prototype) on security agents which can be used to store the "public" / "private" / "invited" et. distintion
      - restrict tabs showing sliders, according to ManagePermissions interface
      - labels on the sliders ... (use the _ functions )
-
      - permissions system - should itself using secure - access security context through its target
 
-Monday
---------
-- Tom wiki backend implementation
-- Phil - Group's UI  + create Hubs (with location object)
 
-Tuesday - Thursday
-------------------
-- Tom wiki UI
+
 - Phil + Jesson - Group permissions dashboard
 - Phil + Jesson - tweets, messaging and comments (on documents) from pinax + ui enhancements
                 - set status of a group

@@ -160,9 +160,14 @@ def profile(request, username, template_name="profiles/profile.html"):
                                  defaultfilters.timesince(latest_status.sent) )
     else : 
         dummy_status = DisplayStatus('No status', '')
-
-    profile = TemplateSecureWrapper(secure_wrap(profile, user))
-
+    profile = secure_wrap(profile, user)
+    try:
+        profile.get_all_sliders
+        perms_bool = True
+    except PlusPermissionsNoAccessException:
+        perms_bool = False
+    profile = TemplateSecureWrapper(profile)
+        
     return render_to_response(template_name, {
             "profile_form": profile_form,
             "is_me": is_me,
@@ -181,6 +186,7 @@ def profile(request, username, template_name="profiles/profile.html"):
             "needs" : needs,
             "interests" : interests,
             "other_user_tweets" : other_user_tweets,
+            "permissions":perms_bool
             }, context_instance=RequestContext(request))
 
 

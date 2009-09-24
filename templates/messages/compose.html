@@ -2,12 +2,35 @@
 {% load uni_form %}
 
 <div id="compose">
-    <form action="" method="post" class="uniForm">
-        <fieldset class="inlineLabels">
-            {{ form|as_uni_form }}
-            <div class="form_block">
-                <input type="submit" class="button" value="{% trans 'Send' %}"/>
-            </div>
-    </form>
+
+	<form class="page" method="post" action="">
+		<fieldset>
+			<ul class="message_headers">
+				<li>
+					<dl>
+						<dt><label for="message_recipient"><span class="required">*</span> {% trans 'To' %}</label></dt>
+						<dd><input type="text" id="message_recipient" name="recipient"/></dd>
+					</dl>
+				</li>
+				<li>
+					<dl>
+						<dt><label for="message_subject"><span class="required">*</span> {% trans 'Subject' %}</label></dt>
+						<dd><input type="text" id="message_subject" name="subject"/></dd>
+					</dl>
+				</li>
+			</ul>
+			<ul class="message_body">
+				<li>
+					<dl>
+						<dt><label for="message_content"><span class="required">*</span> Body</label></dt>
+						<dd><textarea name="body" cols="55" rows="12" id="message_content"></textarea></dd>
+					</dl>
+				</li>
+			</ul>
+			<input type="submit" value="{% trans 'Send' %}" class="button"/>
+		</fieldset>
+	</form>
+
 </div>
+
 

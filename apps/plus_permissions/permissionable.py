@@ -235,7 +235,7 @@ def s_eq(self, other):
 from apps.plus_permissions.models import GenericReference, SecurityContext
 from django.db.models.signals import post_save
 
-def security_patch(content_type, type_list):  
+def security_patch(content_type, type_list):
     print "patching %s" %content_type
     content_type.add_to_class('ref', generic.GenericRelation(GenericReference))
     content_type.get_ref = get_ref
@@ -258,11 +258,11 @@ def security_patch(content_type, type_list):
         
     
     if content_type == User:
-        content_type.add_to_class('objects',UserPermissionableManager())
+        content_type.add_to_class('objects', UserPermissionableManager())
     elif content_type.__name__ == 'TgGroup':
-        content_type.add_to_class('objects',TgGroupPermissionableManager())
+        content_type.add_to_class('objects', TgGroupPermissionableManager())
     else :
-         content_type.add_to_class('objects',PermissionableManager())
+         content_type.add_to_class('objects', PermissionableManager())
 
     post_save.connect(create_reference, sender=content_type)
 

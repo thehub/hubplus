@@ -1,5 +1,5 @@
 from apps.plus_permissions.interfaces import InterfaceReadProperty, InterfaceWriteProperty, InterfaceCallProperty, secure_wrap
-from apps.plus_permissions.models import SetSliderOptions, SetAgentDefaults, SetPossibleTypes, SetSliderAgents
+from apps.plus_permissions.models import SetSliderOptions, SetAgentDefaults, SetPossibleTypes, SetSliderAgents, SetVisibleAgents
 from apps.plus_permissions.default_agents import get_all_members_group, get_anonymous_group, get_creator_agent
 
 from django.contrib.auth.models import User
@@ -8,7 +8,6 @@ from django.db.models.signals import post_save
 from apps.profiles.models import Profile
 
 import datetime
-
 
 # We need our own get_or_create
 
@@ -65,9 +64,12 @@ class UserViewer:
     get_display_name = InterfaceCallProperty
     display_name = InterfaceReadProperty 
 
+class SetManagePermissions:
+    pass
 
 UserInterfaces = {
-    'Viewer':UserViewer
+    'Viewer':UserViewer,
+    'SetManagePermissions':SetManagePermissions
     }
 
 add_type_to_interface_map(User, UserInterfaces)
@@ -76,7 +78,7 @@ add_type_to_interface_map(User, UserInterfaces)
 # use InterfaceOrder to draw the slider and constraints, these are used in rendering the sliders and in validating the results
 # these exist on a per type basis and are globals for their type.
 # they don't need to be stored in the db
-SliderOptions = {'InterfaceOrder':[]}
+SliderOptions = {'InterfaceOrder':[], 'InterfaceLabels':{}}
 SetSliderOptions(User, SliderOptions) 
 
 
@@ -88,6 +90,12 @@ def get_slider_agents(scontext)  :
             ('context_agent', scontext.context_agent), 
             ('context_admin', scontext.context_admin)
            ]
+
+
+
+def visible_agents():
+    return ['anonymous_group', 'all_members_group', 'context_agent']
+SetVisibleAgents(User, visible_agents())
 
 SetSliderAgents(User, get_slider_agents)
 
@@ -101,10 +109,11 @@ SetPossibleTypes(User, child_types)
 
 #constraints - note that "higher" means wider access. Therefore if "anonymous can't edit" we must set that Editor<$anonymous OR if Editor functionality can't be given to a wider group than Viewer then we must set Editor < Viewer.
 AgentDefaults = {'public':
-
                      {'User':
                           {'defaults': {
                                 'Viewer': 'all_members_group',
+                                'SetManagePermissions': 'context_admin',
+                                'ManagePermissions':'context_admin',
                                 'Unknown': 'context_agent'
                                 },                           
                            'constraints':
@@ -113,13 +122,15 @@ AgentDefaults = {'public':
                       'Profile':
                           { 'defaults' : {'Viewer':'all_members_group',
                                           'Editor':'context_agent',
-                                          'Unknown': 'context_agent'},
-                            'constraints':['Viewer>=Editor', 'Viewer<$anonymous_group', 'Editor>=$context_agent', 'Editor>=EmailAddressViewer']
+                                          'Unknown': 'context_agent',
+                                          'ManagePermissions':'context_agent'},
+                            'constraints':['Viewer>=Editor', 'Editor<$anonymous_group', 'Editor>=$context_agent']
                             },
                       'Link': 
                           {'defaults': {'Viewer':'all_members_group',
-                                        'Manager':'context_agent'},
-                           'constraints':['Viewer>=Editor', 'Editor>=$context_agent']
+                                        'Manager':'context_agent',
+                                        'ManagePermissions':'context_admin'},
+                           'constraints':['Viewer>=Manager']
                            },
                       },
                  'private':

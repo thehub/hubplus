@@ -79,22 +79,28 @@ form.page #content_extra {
 	border		: 0;
 }
 
-form.page #content_extra dl {
+form.page #content_extra dl,
+form.page .message_headers dl {
 	clear		: both;
 	overflow	: hidden;
 }
 
-form.page #content_extra dt {
+form.page #content_extra dt,
+form.page .message_headers dt {
 	float		: left;
 	width		: 20%;
 	margin-right: 10px;
 }
 
-form.page #content_extra dd {
+form.page #content_extra dd,
+form.page .message_headers dd {
 	float		: left;
-	width		: 75%;
+	width		: 70%;
 }
 
+form.page .message_body textarea {
+	width		: 612px;
+}
 
 /* Forms: Full Size */
 

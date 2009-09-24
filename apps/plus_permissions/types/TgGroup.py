@@ -1,5 +1,5 @@
 from apps.plus_permissions.interfaces import InterfaceReadProperty, InterfaceWriteProperty, InterfaceCallProperty
-from apps.plus_permissions.models import SetSliderOptions, SliderOptions, SetAgentDefaults, SetPossibleTypes, SetSliderAgents, PossibleTypes, get_interface_map
+from apps.plus_permissions.models import SetSliderOptions, SliderOptions, SetAgentDefaults, SetPossibleTypes, SetSliderAgents, PossibleTypes, get_interface_map, SetVisibleAgents
 from apps.plus_groups.models import TgGroup
 from apps.plus_permissions.OurPost import OurPost
 from apps.plus_contacts.models import Application, Contact
@@ -134,7 +134,8 @@ class TgGroupManageMembers:
     accept_member = InterfaceCallProperty
     remove_member = InterfaceCallProperty
 
-
+class SetManagePermissions:
+    pass
 
 
 from apps.plus_permissions.models import add_type_to_interface_map
@@ -145,7 +146,8 @@ if not get_interface_map(TgGroup):
                          'Invite': TgGroupInviteMember,
                          'ManageMembers': TgGroupManageMembers,
                          'Join': TgGroupJoin,
-                         'Comment':TgGroupComment}
+                         'Comment':TgGroupComment,
+                         'SetManagePermissions':SetManagePermissions}
     add_type_to_interface_map(TgGroup, TgGroupInterfaces)
 
 
@@ -153,7 +155,11 @@ if not get_interface_map(TgGroup):
 # these exist on a per type basis and are globals for their type.
 # they don't need to be stored in the db
 if not SliderOptions.get(TgGroup, False):
-    SetSliderOptions(TgGroup, {'InterfaceOrder':['Viewer', 'Editor', 'Invite', 'Join', 'ManageMembers']})
+    SetSliderOptions(TgGroup, {'InterfaceOrder':['Viewer', 'Editor', 'Invite', 'Join', 'ManageMembers', 'ManagePermissions'], 
+                               'InterfaceLabels':{'Viewer':'View',
+                                                  'Editor': 'Edit',
+                                                  'ManageMembers': 'Manage Membership',
+                                                  'ManagePermissions':'Change Permissions'}})
 
 
 # ChildTypes are used to determine what types of objects can be created in this security context (and acquire security context from this). These are used when creating an explicit security context for an object of this type. 
@@ -176,6 +182,11 @@ def get_slider_agents(scontext)  :
 SetSliderAgents(TgGroup, get_slider_agents)
 
 
+def visible_agents():
+    return ['anonymous_group', 'all_members_group', 'context_agent', 'creator', 'context_admin']
+SetVisibleAgents(TgGroup, visible_agents())
+
+
 # The agent must have a set of default levels for every type which can be created within it. Other objects don't need these as they will be copied from acquired security context according to the possible types available at the "lower" level. We have different AgentDefaults for different group types e.g. standard, public, or private.
 
 #constraints - note that "higher" means wider access. Therefore if "anonymous can't edit" we must set that Editor<$anonymous OR if Editor functionality can't be given to a wider group than Viewer then we must set Editor < Viewer.
@@ -187,10 +198,12 @@ public_defaults = {'TgGroup':
                              'Invite':'context_agent',
                              'ManageMembers':'creator',
                              'Join':'all_members_group',
+                             'ManagePermissions':'context_admin',
+                             'SetManagePermissions':'context_admin',
                              'Unknown': 'context_agent'
-                             },                           
+                             },
                         'constraints':
-                            ['Viewer>=Editor', 'Invite>=ManageMembers', 'Join>=ManageMembers', 'ManageMembers<=$anonymous_group']
+                            ['Viewer>=Editor', 'Invite>=ManageMembers', 'Join>=ManageMembers', 'ManageMembers<=$anonymous_group', 'ManagePermissions<=$context_agent']
                         },
                    'WikiPage':
                        {'defaults':
@@ -199,7 +212,8 @@ public_defaults = {'TgGroup':
                              'Creator':'creator',
                              'Delete':'context_admin',
                              'Commentor':'context_agent',
-                             'Unknown':'context_agent'},
+                             'Unknown':'context_agent',
+                             'ManagePermissions':'creator'},
                         'constraints': ['Viewer>=Editor', 'Editor<$anonymous_group']
                         },
                    'OurPost':
@@ -207,13 +221,15 @@ public_defaults = {'TgGroup':
                          {'Viewer':'all_members_group',
                           'Editor':'creator',
                           'Commentor':'context_agent',
+                          'ManagePermissions':'creator',
                           'Unknown': 'context_agent'},
                          'constraints':['Viewer>=Editor', 'Editor<$anonymous_group']
                          },
                    'Site' : 
                    {'defaults':
                         {'create_Application':'anonymous_group',
-                         'Unknown': 'context_agent'},
+                         'ManagePermissions':'context_admin',
+                         'Unknown': 'context_agent'}, #shouldn't these perms be set to the context_admin?
                     'constraints': [] 
                     },
                    'Application':
@@ -221,6 +237,7 @@ public_defaults = {'TgGroup':
                         {'Viewer':'all_members_group',
                          'Editor':'creator',
                          'Accept':'all_members_group',
+                         'ManagePermissions':'context_admin',
                          'Unknown': 'context_agent'
                          },
                         'constraints':['Viewer>=Editor', 'Editor<$anonymous_group'] 
@@ -229,6 +246,7 @@ public_defaults = {'TgGroup':
                        {'defaults' : 
                         {'ContactAdmin':'context_admin',
                          'ContactInvite':'all_members_group',
+                         'ManagePermissions':'context_admin',
                          'Unknown': 'context_agent'
                          },               
                         'constraints':[]
@@ -237,9 +255,10 @@ public_defaults = {'TgGroup':
                        {'defaults' : 
                           { 'Viewer': 'anonymous_group',
                             'Manager': 'context_agent',
+                            'ManagePermissions':'context_admin',
                             'Unknown': 'context_agent',
                           },
-                          'constraints':[]
+                          'constraints':['Viewer>=Manager']
                         },
                    'Profile':
                        {'defaults': 
@@ -253,6 +272,7 @@ public_defaults = {'TgGroup':
                          'AddressViewer' : 'context_agent',
                          'SkypeViewer' : 'context_agent',
                          'SipViewer' : 'context_agent',
+                         'ManagePermissions':'context_admin',
                          'Unknown' : 'creator',
                          },
                         'constraints':[]

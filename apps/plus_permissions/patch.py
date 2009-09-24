@@ -13,7 +13,6 @@ def add_create_interfaces(content_type, child_types):
     for child in child_types:
         key = 'Create%s'%child.__name__
         type_interfaces_map[content_type.__name__][key] = add_creator_interface(child)
-        SliderOptions[content_type]['InterfaceOrder'].append(key)
 
 
 for module in types.__all__:
