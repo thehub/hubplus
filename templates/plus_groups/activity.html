@@ -3,7 +3,6 @@
 {% load microblogging_tags %}
 
 <div id="updates_feed" class="page_content">
-  <p>News from {{group.get_display_name}}</p>
   {% tweet_listing tweets 1 0 %}
 </div>
 

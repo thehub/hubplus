@@ -5,7 +5,18 @@
 {% block head_title %}{% trans "Privacy Policy" %}{% endblock %}
 {% block page_title %}{% trans "Privacy Policy" %}{% endblock %}
 
+{% block body_class %}{% trans "privacy" %}{% endblock %}
 
 {% block body %}
-    {% trans "<p>Your <b>Privacy Policy</b> would normally go here...</p>" %}
+<div class="block">
+    {% blocktrans %}
+
+	<p><b>Privacy Policy</b> goes here...</p>
+
+    {% endblocktrans %}
+</div>
+{% endblock %}
+
+{% block side_bar %}
+{% include "about/sidebar.html" %}
 {% endblock %}
