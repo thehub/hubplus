@@ -5,6 +5,9 @@
 
 {% load uni_form %}
 
+{% block head_title %}{% trans "Apply to join" %}{% endblock %}
+{% block page_title %}{% trans "Apply to join" %}{% endblock %}
+
 {% block body %}
 
 <div class="block">
@@ -16,7 +19,7 @@
   <form class="full uniForm" id="apply_form" method="post" action="{% url acct_apply %}">
 
     <h4>Your details</h4>
-    <p>Please enter your details below to request an account. {% if user.is_authenticated %}{% else %}{% trans "Already have an account?" %} <a href="{% url acct_login %}">{% trans "Log in" %}</a>!{% endif %}</p>
+    <p>Please enter your details below to request an account.</p>
     <fieldset>
       <ul>
 	<li>
@@ -79,16 +82,16 @@
 	</li>
       </ul>
     </fieldset>
-    <input class="submit button" type="submit" value="{% trans "Request account" %}" />
-    
+    <input class="submit button" type="submit" value="{% trans "Request account" %}" /> *
+	{% if user.is_authenticated %}{% else %}<p>{% trans "Already have an account?" %} <a href="{% url acct_login %}">{% trans "Log in" %}</a>!</p>{% endif %}
+	{% url terms as terms_url %}
+	{% url privacy as privacy_url %}
+
+	<p>{% blocktrans %}* By clicking "Request account", you are indicating that you have read and agree to the <a href="{{ terms_url }}">Terms of Use</a> and <a href="{{ privacy_url }}">Privacy Policy</a>.{% endblocktrans %}</p>
+
   </form>
 
         
-{% url terms as terms_url %}
-{% url privacy as privacy_url %}
-<p>{% blocktrans %}By clicking "Request account", you are indicating that you have read and agree to the <a href="{{ terms_url }}">Terms of Use</a> and <a href="{{ privacy_url }}">Privacy Policy</a>.{% endblocktrans %}</p>
-        
-<p>{% blocktrans %}If you have any trouble creating your account, contact us at <a href="mailto:{{ contact_email }}">{{ contact_email }}</a>.{% endblocktrans %}</p>
         
 </div>
 
