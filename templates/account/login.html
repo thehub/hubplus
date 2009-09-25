@@ -4,11 +4,13 @@
 {% load uni_form %}
 {% load ifsetting_tag %}
 
-{% block head_title %}{% trans "Login" %}{% endblock %}
+{% block head_title %}{% trans "Log in" %}{% endblock %}
+{% block page_title %}{% trans "Log in" %}{% endblock %}
 
-{% block page_title %}{% trans "Login" %}{% endblock %}
 {% block body %}
-    
+
+<div class="block">
+
     {% if user.is_authenticated %}
         <p><span class="warning">{% trans "Note" %}</span>: {% blocktrans %}you are already logged in as {{ user }}.{% endblocktrans %}</p>
     {% else %}
@@ -18,14 +20,26 @@
         {% endifsetting %}
     {% endif %}
     
-    <form class="login uniForm" method="POST" action="">
+    <form class="login uniForm full" method="POST" action="">
         <fieldset class="inlineLabels">
+	        <div id="div_id_username" class="ctrlHolder ">
+                <label for="id_username"><span class="required">*</span> Username</label>
+	            <input id="id_username" type="text" class="text" name="username" maxlength="30" />
+	        </div>
+	        <div id="div_id_password" class="ctrlHolder ">
+                <label for="id_password"><span class="required">*</span> Password</label>
+	            <input type="password" name="password" type="text" class="text" id="id_password" />
+	        </div>
+	        <div id="div_id_remember" class="ctrlHolder ">
+	            <input type="checkbox" name="remember" id="id_remember" />
+                <label for="id_remember">Remember Me</label>
+                <p id="hint_id_remember" class="formHint">Stay logged in for 3 weeks</p>
+	        </div>
+            <div class="form_block">
+                <input type="submit" class="button" value="{% trans "Log in" %}" />
+            </div>
             <div class="form_block">
                 <a href="{% url acct_passwd_reset %}">{% trans "Forgot password?" %}</a>
-            </div>
-            {{ form|as_uni_form }}
-            <div class="form_block">
-                <input type="submit" value="{% trans "Log in &raquo;" %}" />
             </div>
         </fieldset>
     </form>
@@ -36,6 +50,12 @@ If you have any trouble logging in to your account, contact us at
      <a href="mailto:{{EMAIL_ADDRESS}}">{{EMAIL_ADDRESS}}</a>.
    </p>
 
+</div>
+
+{% endblock %}
+
+{% block side_bar %}
+{% include "account/sidebar.html" %}
 {% endblock %}
 
 {% block extra_body %}
