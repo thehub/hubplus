@@ -73,6 +73,9 @@ class TweetInstanceManager(models.Manager):
         recipient_type = ContentType.objects.get_for_model(recipient)
         return TweetInstance.objects.filter(recipient_type=recipient_type, recipient_id=recipient.id)
 
+    def tweets_from(self, sender) :
+        sender_type = ContentType.objects.get_for_model(sender)
+        return TweetInstance.objects.filter(sender_type=sender_type, sender_id=sender.id)
 
 class TweetInstance(models.Model):
     """
@@ -185,3 +188,4 @@ post_save.connect(tweet, sender=Tweet)
 def send_tweet(sender, message) :
     t = Tweet(text=message, sender=sender)
     t.save()
+
