@@ -32,6 +32,13 @@ def handle_uploaded_file(user, owner, form, f_data) :
     resource = Resource(owner=owner, title=kwargs['title'], description=kwargs['description'],
                         author=kwargs['author'], uploader=kwargs['uploader'], license=kwargs['license'],
                         resource=kwargs['resource'])
+
+    # for generic_create compatibility XXX 
+    resource.stub= False
+    resource.in_agent = owner.get_ref()
+    resource.name = resource.title
+    # end of compatibility
+
     resource.save()
     path= make_full_save_path(ContentType.objects.get_for_model(owner).model, owner.id, resource.id)
 

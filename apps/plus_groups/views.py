@@ -99,7 +99,7 @@ def group(request, group, template_name="plus_groups/group.html"):
 
             pass
 
-    tweets = TweetInstance.objects.tweets_for(group).order_by("-sent") 
+    tweets = TweetInstance.objects.tweets_from(group).order_by("-sent") 
     if tweets :
         latest_status = tweets[0]
         dummy_status = DisplayStatus(
