@@ -34,10 +34,6 @@ from django.db.models import Q
 from itertools import chain
 from django.template import defaultfilters
 
-# edit keys should now be patched by plus_permissions/patch
-#add_edit_key(User)
-#add_edit_key(Profile)
-#add_edit_key(HostInfo)
 
 #from gravatar.templatetags.gravatar import gravatar as avatar
 
