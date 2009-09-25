@@ -170,6 +170,12 @@ class FollowingManager(models.Manager):
         except Following.DoesNotExist:
             pass
 
+    def toggle(self, follower, followed) :
+        if self.is_following(follower, followed) :
+            self.unfollow(follower, followed)
+        else :
+            self.follow(follower, followed)
+        
 
 class Following(models.Model):
     follower_content_type = models.ForeignKey(ContentType, related_name="followed", verbose_name=_('follower'))
