@@ -533,50 +533,60 @@ th {
 
 /* Blocks: Intro */
 
-#intro {
+#intro,
+#group_intro {
 	overflow	: hidden;
 }
 
-#intro #group_image {
+#group_intro #group_image {
 	width		: 200px;
 }
 
-#intro #extra {
+#intro #extra,
+#group_image #extra {
 	float		: left;
 	width		: 200px;
 }
 
-#intro #info {
+#intro #info,
+#group_image #info {
 	float		: left;
 	margin-left	: 10px;
 	width		: 388px;
 }
 
+
+
 li.place div.editable {
 	height		: 250px;
 }
 
-#intro dl {
+#intro dl,
+#group_intro dl {
 	overflow	: hidden;
 }
 
-#intro dt {
+#intro dt,
+#group_intro dt {
 	float		: left;
 	width		: 30%;
 }
 
-#intro dd {
+#intro dd,
+#group_intro dd {
 	float		: left;
 	width		: 70%;
 }
 
-#intro #info ul {
+#intro #info ul,
+#group_intro #info ul {
 	clear		: both;
 	list-style	: none;
 	padding-bottom	: 1em;
 }
 
-#intro #info ul li ul {
+#intro #info ul li ul,
+#group_intro #info ul li ul {
 	list-style	: none;
 	padding-bottom	: 0;
 }
