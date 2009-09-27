@@ -16,7 +16,7 @@ from django.db import models
 
 from django.template import RequestContext
 from apps.plus_groups.models import TgGroup
-from apps.plus_permissions.api import secure_resource, TemplateSecureWrapper
+from apps.plus_permissions.api import secure_resource, TemplateSecureWrapper, PlusPermissionsNoAccessException, has_access
 from apps.plus_wiki.models import WikiPage, VersionDelta
 from apps.plus_wiki.forms import EditWikiForm
 from apps.plus_lib.parse_json import json_view
@@ -50,11 +50,18 @@ def edit_wiki(request, group, page_name, template_name="plus_wiki/create_wiki.ht
     except WikiPage.DoesNotExist:
         raise Http404
     contributors = get_contributors(request.user, secure_page)
+    try:
+        secure_page.get_all_sliders
+        perms_bool = True
+    except PlusPermissionsNoAccessException:
+        perms_bool = False
+
     return render_to_response(template_name, 
                               {'page':TemplateSecureWrapper(secure_page),
                                'form_action':reverse("create_WikiPage", args=[secure_page.in_agent.obj.id, secure_page.name]),
                                'contributors':contributors,
-                               'tags':get_tags(request.user, secure_page)}, 
+                               'tags':get_tags(request.user, secure_page),
+                               'permissions':perms_bool}, 
                               context_instance=RequestContext(request))
 
 @revision.create_on_success
@@ -141,7 +148,14 @@ def view_wiki_page(request, group, page_name, template_name="plus_wiki/wiki.html
         can_comment = True
     except :
         pass # no permission
+    try:
+        obj.get_all_sliders
+        perms_bool = True
+    except PlusPermissionsNoAccessException:
+        perms_bool = False
         
+    edit = has_access(request.user, obj, 'WikiPage.Editor')
+
     return render_to_response(template_name, {
             'page':TemplateSecureWrapper(obj), 
             'version':version, 
@@ -149,6 +163,8 @@ def view_wiki_page(request, group, page_name, template_name="plus_wiki/wiki.html
             'can_comment':can_comment,
             'version_list':version_list,
             'tags':get_tags(request.user, obj),
+            'permissions':perms_bool,
+            'editable': edit,
             'comparable':version_list.count()>1}, context_instance=RequestContext(request))
 
 

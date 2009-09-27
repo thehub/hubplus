@@ -66,7 +66,7 @@ if not get_interface_map(WikiPage):
     add_type_to_interface_map(content_type, WikiPageInterfaces)
 
 if not SliderOptions.get(WikiPage, False):
-    SetSliderOptions(WikiPage, {'InterfaceOrder':['Viewer', 'Editor','Commentor']})
+    SetSliderOptions(WikiPage, {'InterfaceOrder':['Viewer', 'Editor','Commentor', 'ManagePermissions'], 'InterfaceLabels':{'Viewer':'View', 'Editor':'Edit', 'Commentor':'Comment', 'ManagePermissions':'Change Permissions'}})
 
 
 

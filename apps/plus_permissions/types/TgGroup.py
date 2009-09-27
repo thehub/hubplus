@@ -214,7 +214,7 @@ public_defaults = {'TgGroup':
                              'Commentor':'context_agent',
                              'Unknown':'context_agent',
                              'ManagePermissions':'creator'},
-                        'constraints': ['Viewer>=Editor', 'Editor<$anonymous_group']
+                        'constraints': ['Viewer>=Editor', 'Editor<$anonymous_group', 'Viewer>=Commentor']
                         },
                    'OurPost':
                        { 'defaults' : 
