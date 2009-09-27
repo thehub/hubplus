@@ -7,6 +7,8 @@ from apps.plus_wiki.models import WikiPage
 from apps.profiles.models import Profile
 from apps.plus_permissions.site import Site
 from apps.plus_links.models import Link
+from apps.plus_resources.models import Resource
+
 from django.db.models.signals import post_save
 import datetime
 from copy import deepcopy
@@ -58,7 +60,8 @@ def get_or_create(group_name=None, display_name=None, place=None, level=None, us
         created = False
     else :
         created = True
-        group = TgGroup(group_name=group_name, display_name=display_name, level=level, place=place, description=description)
+        group = TgGroup(group_name=group_name, display_name=display_name, level=level, 
+                        place=place, description=description, group_type=group_type)
         group.save()
 
         if level == 'member':
@@ -126,7 +129,8 @@ class TgGroupComment:
     pk = InterfaceReadProperty
     comment = InterfaceCallProperty
 
-
+class TgGroupUploader:
+    upload = InterfaceCallProperty
 
 class TgGroupManageMembers:
     pk = InterfaceReadProperty
@@ -147,6 +151,7 @@ if not get_interface_map(TgGroup):
                          'ManageMembers': TgGroupManageMembers,
                          'Join': TgGroupJoin,
                          'Comment':TgGroupComment,
+                         'Uploader':TgGroupUploader,
                          'SetManagePermissions':SetManagePermissions}
     add_type_to_interface_map(TgGroup, TgGroupInterfaces)
 
@@ -155,7 +160,7 @@ if not get_interface_map(TgGroup):
 # these exist on a per type basis and are globals for their type.
 # they don't need to be stored in the db
 if not SliderOptions.get(TgGroup, False):
-    SetSliderOptions(TgGroup, {'InterfaceOrder':['Viewer', 'Editor', 'Invite', 'Join', 'ManageMembers', 'ManagePermissions'], 
+    SetSliderOptions(TgGroup, {'InterfaceOrder':['Viewer', 'Editor', 'Invite', 'Join', 'Uploader', 'ManageMembers', 'ManagePermissions'], 
                                'InterfaceLabels':{'Viewer':'View',
                                                   'Editor': 'Edit',
                                                   'ManageMembers': 'Manage Membership',
@@ -164,7 +169,7 @@ if not SliderOptions.get(TgGroup, False):
 
 # ChildTypes are used to determine what types of objects can be created in this security context (and acquire security context from this). These are used when creating an explicit security context for an object of this type. 
 if TgGroup not in PossibleTypes:
-    child_types = [OurPost, Site, Application, Contact, Profile, WikiPage, Link]
+    child_types = [OurPost, Site, Application, Contact, Profile, WikiPage, Link, Resource]
     SetPossibleTypes(TgGroup, child_types)
 
 
@@ -260,6 +265,18 @@ public_defaults = {'TgGroup':
                           },
                           'constraints':['Viewer>=Manager']
                         },
+
+                   'Resource':
+                       {'defaults' :
+                          { 'Viewer': 'anonymous_group',
+                            'Manager': 'context_agent',
+                            'ManagePermissions':'context_admin',
+                            'Unknown': 'context_agent',
+                          },
+                          'constraints':['Viewer>=Manager']
+                        },
+
+
                    'Profile':
                        {'defaults': 
                         {'Viewer': 'anonymous_group',

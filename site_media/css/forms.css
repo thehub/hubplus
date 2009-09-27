@@ -140,7 +140,8 @@ form.full select {
 	width		: 260px;
 }
 
-form.full input.submit {
+form.full input.submit,
+form.full .input_extension {
 	margin-left	: 240px;
 }
 

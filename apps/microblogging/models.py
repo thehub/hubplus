@@ -24,13 +24,14 @@ except ImportError:
 # @@@ need to make @ and # handling more abstract
 
 import re
-user_ref_re = re.compile("@(\w+)")
+user_ref_re = re.compile("@([\w\.]+)")
 group_ref_re = re.compile("(?<!&)#(\w+)")
 reply_re = re.compile("^@(\w+)")
 
 def make_user_link(text):
     username = text.group(1)
-    return """@<a href="/profiles/%s/">%s</a>""" % (username, username)
+    return """@<a href="%s">%s</a>""" % (reverse("profile_detail", args=(username,)), username)
+
 
 def make_tribe_link(text):
     group_id = text.group(1)
@@ -73,6 +74,9 @@ class TweetInstanceManager(models.Manager):
         recipient_type = ContentType.objects.get_for_model(recipient)
         return TweetInstance.objects.filter(recipient_type=recipient_type, recipient_id=recipient.id)
 
+    def tweets_from(self, sender) :
+        sender_type = ContentType.objects.get_for_model(sender)
+        return TweetInstance.objects.filter(sender_type=sender_type, sender_id=sender.id)
 
 class TweetInstance(models.Model):
     """
@@ -167,6 +171,12 @@ class FollowingManager(models.Manager):
         except Following.DoesNotExist:
             pass
 
+    def toggle(self, follower, followed) :
+        if self.is_following(follower, followed) :
+            self.unfollow(follower, followed)
+        else :
+            self.follow(follower, followed)
+        
 
 class Following(models.Model):
     follower_content_type = models.ForeignKey(ContentType, related_name="followed", verbose_name=_('follower'))
@@ -185,3 +195,4 @@ post_save.connect(tweet, sender=Tweet)
 def send_tweet(sender, message) :
     t = Tweet(text=message, sender=sender)
     t.save()
+

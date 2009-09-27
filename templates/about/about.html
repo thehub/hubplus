@@ -3,45 +3,35 @@
 {% load i18n %}
 
 {% block head_title %}{% trans "About" %}{% endblock %}
+{% block page_title %}{% trans "About" %}{% endblock %}
 
 {% block body %}
-
+<div class="block">
     {% blocktrans %}
-<h2>About The Hub</h2>
 
-<h3>Why The Hub?</h3>
+	<h3>Why The Hub?</h3>
+	<p>This is the amazing thing. We all have ideas. But where to go to make them happen? We've learnt that people and institutions working at the frontier of new innovations need access to the all the experience, resources, connections and investment they can muster. So we're dedicating ourselves to designing and hosting events and experiences that create access to the resources, connections, experience, knowledge and capital to support the journey path of ideas into action.</p>
+	<p>Our events range from high-profile Hub Lectures, Thought Dinners and inter-disciplinary Innovation Labs to open-source Hub Lunches that foster peer-based learning and collaboration amongst our membership.</p>
+	<p><q>Probably the most gutsy and dynamic event I have ever been to.</q></p>
+	<p>Dame Anita Roddick, founder of The Body Shop</p>
+	<p><q>This place that has become known world-wide is proving what is possible.</q></p>
+	<p>Kofi Annan speaking on the Soweto Mountain of Hope, a Hub collaboration</p>
 
-<p>This is the amazing thing. We all have ideas. But where to go to make them happen? We've learnt that people and institutions working at the frontier of new innovations need access to the all the experience, resources, connections and investment they can muster. So we're dedicating ourselves to designing and hosting events and experiences that create access to the resources, connections, experience, knowledge and capital to support the journey path of ideas into action.</p>
+	<h3>What we do</h3>
+	<p>We're a social enterprise with the ambition to inspire and support imaginative and enterprising initiatives for a better world. The Hub is a global community of people from every profession, background and culture working at 'new frontiers' to tackle the world's most pressing social, cultural and environmental challenges.</p>
+	<p>We believe that there is no absence of good ideas in the world.  The problem is a crisis of access, scale, resources and impact. So it felt vital to create places around the world for accessing space, resources, connections, knowledge, experience and investment.</p>
+	<p>We've been working across four continents, and 12 cities to create places for people who change things. This is the ambition. We set out to create places that borrow from the best of a member's club, an innovation agency, a serviced office and a think-tank to create a very different kind of innovation environment. Places with all the tools and trimmings needed to grow and develop new ventures. Places to access experience, knowledge, finance and markets. And above all, places for experience and encounter, full of diverse people doing amazing things. We call these places Hubs. In many ways we're just getting started. And we'd like you to be part of it.</p>
 
-<p>Our events range from high-profile Hub Lectures, Thought Dinners and inter-disciplinary Innovation Labs to open-source Hub Lunches that foster peer-based learning and collaboration amongst our membership.</p>
-
-<p><q>Probably the most gutsy and dynamic event I have ever been to.</q></p>
-<p>Dame Anita Roddick, founder of The Body Shop</p>
-
-<p><q>This place that has become known world-wide is proving what is possible.</q></p>
-<p>Kofi Annan speaking on the Soweto Mountain of Hope, a Hub collaboration</p>
-
-
-
-<h3>What we do</h3>
-
-<p>We're a social enterprise with the ambition to inspire and support imaginative and enterprising initiatives for a better world. The Hub is a global community of people from every profession, background and culture working at 'new frontiers' to tackle the world's most pressing social, cultural and environmental challenges.</p>
-
-<p>We believe that there is no absence of good ideas in the world.  The problem is a crisis of access, scale, resources and impact. So it felt vital to create places around the world for accessing space, resources, connections, knowledge, experience and investment.</p>
-
-<p>We've been working across four continents, and 12 cities to create places for people who change things. This is the ambition. We set out to create places that borrow from the best of a member's club, an innovation agency, a serviced office and a think-tank to create a very different kind of innovation environment. Places with all the tools and trimmings needed to grow and develop new ventures. Places to access experience, knowledge, finance and markets. And above all, places for experience and encounter, full of diverse people doing amazing things. We call these places Hubs. In many ways we're just getting started. And we'd like you to be part of it.</p>
-
-
-<h3>You're invited.</h3>
-
-<p>This is an invitation to be part of a unique global ecosystem of people, places and ideas dedicated to creating a better world.</p>
-
-<p>The Hub is about the power of people with ideas. s about the audacity, optimism and drive of the people who believe they can change things. Change minds, change lives, and ultimately change the world a little. This is the thing. Another world is not just possible, s happening. People from every profession, background and culture are being united by one thing - the imagination and drive to pursue enterprising ideas for a radically better world. These are the people who see and do things differently. The entrepreneurs, the executives, the policy-makers, the freelance professionals, the community leaders. The Hub is becoming the place they call home.</p>
-
-<p>Hubs can be found in cities all over the world. They are places to work, meet, innovate, learn and relax. They are designed for people who crave the inspiration, resources, knowledge, connections and investment to start and grow new ideas.</p>
-
-<p>In the same way that an ecosystem is about the interaction of living things with their environment, the Hub is about the power of inspiring places where new connections, relationships and initiatives can evolve, adapt and thrive.</p>
+	<h3>You're invited.</h3>
+	<p>This is an invitation to be part of a unique global ecosystem of people, places and ideas dedicated to creating a better world.</p>
+	<p>The Hub is about the power of people with ideas. s about the audacity, optimism and drive of the people who believe they can change things. Change minds, change lives, and ultimately change the world a little. This is the thing. Another world is not just possible, s happening. People from every profession, background and culture are being united by one thing - the imagination and drive to pursue enterprising ideas for a radically better world. These are the people who see and do things differently. The entrepreneurs, the executives, the policy-makers, the freelance professionals, the community leaders. The Hub is becoming the place they call home.</p>
+	<p>Hubs can be found in cities all over the world. They are places to work, meet, innovate, learn and relax. They are designed for people who crave the inspiration, resources, knowledge, connections and investment to start and grow new ideas.</p>
+	<p>In the same way that an ecosystem is about the interaction of living things with their environment, the Hub is about the power of inspiring places where new connections, relationships and initiatives can evolve, adapt and thrive.</p>
 
     {% endblocktrans %}
+</div>
+{% endblock %}
 
+{% block side_bar %}
+{% include "about/sidebar.html" %}
 {% endblock %}

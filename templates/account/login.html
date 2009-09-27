@@ -4,11 +4,13 @@
 {% load uni_form %}
 {% load ifsetting_tag %}
 
-{% block head_title %}{% trans "Login" %}{% endblock %}
+{% block head_title %}{% trans "Log in" %}{% endblock %}
+{% block page_title %}{% trans "Log in to " %}{% if site_name %}{{ site_name }}{% else %}Site{% endif %} {% endblock %}
 
-{% block page_title %}{% trans "Login" %}{% endblock %}
 {% block body %}
-    
+
+<div class="block">
+
     {% if user.is_authenticated %}
         <p><span class="warning">{% trans "Note" %}</span>: {% blocktrans %}you are already logged in as {{ user }}.{% endblocktrans %}</p>
     {% else %}
@@ -18,24 +20,45 @@
         {% endifsetting %}
     {% endif %}
     
-    <form class="login uniForm" method="POST" action="">
-        <fieldset class="inlineLabels">
-            <div class="form_block">
-                <a href="{% url acct_passwd_reset %}">{% trans "Forgot password?" %}</a>
-            </div>
-            {{ form|as_uni_form }}
-            <div class="form_block">
-                <input type="submit" value="{% trans "Log in &raquo;" %}" />
-            </div>
+    <form class="login uniForm full" method="POST" action="">
+	    <h4>Log in</h4>
+	    <p>Please enter your username and password.</p>
+        <fieldset>
+			<ul>
+		        <li id="div_id_username" class="ctrlHolder ">
+	                <label for="id_username"><span class="required">*</span> Username</label>
+		            <input id="id_username" type="text" class="text" name="username" maxlength="30" />
+					{{ form.username.errors }}
+		        </li>
+		        <li id="div_id_password" class="ctrlHolder ">
+	                <label for="id_password"><span class="required">*</span> Password</label>
+		            <input type="password" name="password" type="text" class="text" id="id_password" />
+					{{ form.password.errors }}
+		        </li>
+		        <li id="div_id_remember" class="ctrlHolder checkboxes">
+	  				<label>&nbsp;</label>
+		            <input type="checkbox" class="checkbox" name="remember" id="id_remember" />
+	                <div class="label_extended">
+						<label for="id_remember">Remember me <span class="extra">Stay logged in for 3 weeks</span></label>
+			        </div>
+		        </li>
+			</ul>			
+			<ul>
+	            <li class="form_block">
+	                <input type="submit" class="submit button" value="{% trans "Log in" %}" />
+					or <a href="{% url acct_apply %}">Apply to join</a>
+	            </li>
+	        </ul>
         </fieldset>
     </form>
-  
-   <p>{% blocktrans %}
-If you have any trouble logging in to your account, contact us at 
-     {% endblocktrans %}
-     <a href="mailto:{{EMAIL_ADDRESS}}">{{EMAIL_ADDRESS}}</a>.
-   </p>
+    <a href="{% url acct_passwd_reset %}">{% trans "Forgot password?" %}</a>
 
+</div>
+
+{% endblock %}
+
+{% block side_bar %}
+{% include "account/sidebar.html" %}
 {% endblock %}
 
 {% block extra_body %}

@@ -109,6 +109,7 @@ def toggle_follow(request, username):
         is_me = True
     else:
         is_me = False
+
     if request.user.is_authenticated() and request.method == "POST" and not is_me:
         if request.POST["action"] == "follow":
             Following.objects.follow(request.user, other_user)
@@ -118,6 +119,9 @@ def toggle_follow(request, username):
         elif request.POST["action"] == "unfollow":
             Following.objects.unfollow(request.user, other_user)
             request.user.message_set.create(message=_("You have stopped following %(other_user)s") % {'other_user': other_user})
+    elif request.user.is_authenticated() and not is_me :
+        Following.objects.toggle(request.user,other_user)
+
     return HttpResponseRedirect(reverse("profile_detail", args=[other_user]))
 
 

@@ -243,6 +243,10 @@ th {
 	padding		: 5px 5px 6px;
 }
 
+.sub_tags li:hover {
+	filter		: alpha(opacity=100);
+	opacity		: 1.0;
+}
 
 /* Interface: Tabs */
 
@@ -416,6 +420,7 @@ th {
 	width		: 100px;
 }
 
+
 /* Messages */
 
 .messages {
@@ -528,51 +533,62 @@ th {
 
 /* Blocks: Intro */
 
-#intro {
+#intro,
+#group_intro {
 	overflow	: hidden;
 }
 
-#intro #group_image {
-	width		: 200px;
+#group_intro #group_image {
+	width		: 180px;
 }
 
-
-#intro #extra {
+#intro #extra,
+#group_intro #extra {
 	float		: left;
 	width		: 200px;
 }
 
-#intro #info {
+#intro #info,
+#group_intro #info {
 	float		: left;
 	margin-left	: 10px;
 	width		: 388px;
+}
+
+#group_intro #info {
+	margin		: 0 10px 0 0;
 }
 
 li.place div.editable {
 	height		: 250px;
 }
 
-#intro dl {
+#intro dl,
+#group_intro dl {
 	overflow	: hidden;
 }
 
-#intro dt {
+#intro dt,
+#group_intro dt {
 	float		: left;
 	width		: 30%;
 }
 
-#intro dd {
+#intro dd,
+#group_intro dd {
 	float		: left;
 	width		: 70%;
 }
 
-#intro #info ul {
+#intro #info ul,
+#group_intro #info ul {
 	clear		: both;
 	list-style	: none;
 	padding-bottom	: 1em;
 }
 
-#intro #info ul li ul {
+#intro #info ul li ul,
+#group_intro #info ul li ul {
 	list-style	: none;
 	padding-bottom	: 0;
 }

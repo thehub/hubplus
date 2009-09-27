@@ -15,7 +15,7 @@
 	
   <form class="full uniForm" id="invite_non_member_form" method="post" action="{% url site_invite %}">
 
-    <p>{% blocktrans %}Please enter the name and email of someone to invite to Hub+{% endblocktrans %}</p>
+    <p>{% blocktrans %}Please enter the name and email of someone to invite to {% endblocktrans %}{% if site_name %}{{ site_name }}{% else %}site{% endif %}</p>
     <fieldset>
       <ul>
 	<li>
@@ -31,7 +31,7 @@
 
 	<li class="checkboxes">
 	  <label>&nbsp;</label>
-	  <input id="group" name="physical_hub_check" class="checkbox" type="checkbox">
+	  <input id="physical_hub" name="physical_hub_check" class="checkbox" type="checkbox">
 	  <div class="label_extended">
 	    {{ form.which_hub.errors }}
 	    <label for="physical_hub">{% blocktrans %}Invite to a specific hub{% endblocktrans %}.</label>
@@ -48,7 +48,7 @@
 	</li>
       </ul>
     </fieldset>
-    <input class="submit button" type="submit" value="{% trans "Invite to Hub+" %}" />
+    <input class="submit button" type="submit" value="{% trans "Invite to" %} {% if site_name %}{{ site_name }}{% else %}site{% endif %}" />
     
   </form>
 

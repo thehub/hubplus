@@ -5,7 +5,16 @@
 {% block head_title %}{% trans "Terms of Service" %}{% endblock %}
 {% block page_title %}{% trans "Terms of Service" %}{% endblock %}
 
-
 {% block body %}
-    {% trans "<p>Your <b>Terms of Service</b> would normally go here...</p>" %}
+<div class="block">
+    {% blocktrans %}
+
+	<p><b>Terms of Service</b> goes here...</p>
+
+    {% endblocktrans %}
+</div>
+{% endblock %}
+
+{% block side_bar %}
+{% include "about/sidebar.html" %}
 {% endblock %}
