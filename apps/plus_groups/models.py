@@ -230,7 +230,7 @@ try :
                 from apps.microblogging.models import Following, send_tweet # avoid circularity
                 Following.objects.follow(self, user_or_group)
                 send_tweet(user_or_group,"%s joined the group %s" % (user_or_group.get_display_name(), self.get_display_name()))
-                #send_tweet(self,"%s joined the group %s" % (user_or_group.get_display_name(), self.get_display_name()))
+                send_tweet(self,"%s joined the group %s" % (user_or_group.get_display_name(), self.get_display_name()))
 
 
             if isinstance(user_or_group, self.__class__) and not self.child_groups.filter(id=user_or_group.id):
@@ -260,7 +260,7 @@ try :
                 Following.objects.follow(self, user_or_group)
                 send_tweet(user_or_group,"%s left the group %s" % (user_or_group.get_display_name(), self.get_display_name(\
 )))
-                #send_tweet(self,"%s left the group %s" % (user_or_group.get_display_name(), self.get_display_name()))
+                send_tweet(self,"%s left the group %s" % (user_or_group.get_display_name(), self.get_display_name()))
 
                 
                 Following.objects.unfollow(self, user_or_group)
