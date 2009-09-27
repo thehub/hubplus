@@ -137,7 +137,7 @@
 			  {% block page_header %}
 			        <h2 id="page_title">{% block page_title %}{{head_title}}{% endblock %}</h2>
 				{% if head_title_status %}
-			           <p>{{head_title_status}} - <span class="label_time">{{head_title_status.time}}</span></p>
+			           <p>{% autoescape off %}{{head_title_status}}{% endautoescape %} - <span class="label_time">{{head_title_status.time}}</span></p>
 				{% endif %}
 			  {% endblock %}
 			</div>
