@@ -24,13 +24,14 @@ except ImportError:
 # @@@ need to make @ and # handling more abstract
 
 import re
-user_ref_re = re.compile("@(\w+)")
+user_ref_re = re.compile("@([\w\.]+)")
 group_ref_re = re.compile("(?<!&)#(\w+)")
 reply_re = re.compile("^@(\w+)")
 
 def make_user_link(text):
     username = text.group(1)
-    return """@<a href="/profiles/%s/">%s</a>""" % (username, username)
+    return """@<a href="%s">%s</a>""" % (reverse("profile_detail", args=(username,)), username)
+
 
 def make_tribe_link(text):
     group_id = text.group(1)
