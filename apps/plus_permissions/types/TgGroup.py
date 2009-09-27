@@ -60,7 +60,8 @@ def get_or_create(group_name=None, display_name=None, place=None, level=None, us
         created = False
     else :
         created = True
-        group = TgGroup(group_name=group_name, display_name=display_name, level=level, place=place, description=description)
+        group = TgGroup(group_name=group_name, display_name=display_name, level=level, 
+                        place=place, description=description, group_type=group_type)
         group.save()
 
         if level == 'member':
