@@ -83,7 +83,7 @@
       </ul>
     </fieldset>
     <input class="submit button" type="submit" value="{% trans "Request account" %}" /> *
-	{% if user.is_authenticated %}{% else %}<p>{% trans "Already have an account?" %} <a href="{% url acct_login %}">{% trans "Log in" %}</a>!</p>{% endif %}
+	{% if user.is_authenticated %}{% else %}<p class="input_extension">{% trans "Already have an account?" %} <a href="{% url acct_login %}">{% trans "Log in" %}</a>!</p>{% endif %}
 	{% url terms as terms_url %}
 	{% url privacy as privacy_url %}
 
