@@ -25,16 +25,16 @@
 <!-- permissions_tabs -->
 <div id="permissions_tabs" class="tabbed section yui-navset">
   <ul class="tabbed_navigation yui-nav">
-    {% for obj_type, headers, slider_info, pluralize in sliders %}
+    {% for obj_type, headers, slider_info, type_label, pluralize in sliders %}
     <li class="{% if forloop.first %}selected{% endif %}" >
       <a href="#{{obj_type.lower}}-permissions">
-	<span>{{obj_type}}{% if pluralize %}s{% endif %}</span>
+	<span>{{type_label}}{% if pluralize %}s{% endif %}</span>
       </a>
     </li>
     {% endfor %}
   </ul>
   <div class="tabbed_content yui-content">
-  {% for obj_type, headers, slider_info in sliders %}
+  {% for obj_type, headers, slider_info, type_label in sliders %}
     <div id="{{obj_type.lower}}-permissions">
       <table class="permissions_slider" id="{{obj_type}}-permissions">
 	<tbody>
