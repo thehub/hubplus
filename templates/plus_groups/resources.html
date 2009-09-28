@@ -1,77 +1,59 @@
-  <div id="resources" class="page_content">
-    <!--<a href="{% url add_content resource_id=group.id %}" class="add_content" rel="#overlay">Add Resource</a>-->
+<div id="resources" class="page_content">
+<!--<a href="{% url add_content resource_id=group.id %}" class="add_content" rel="#overlay">Add Resource</a>-->
 
-    <!-- XXX temporary until I can get Tom's add_content template to recognise that I'm adding resources -->
-    <p>
-      <a href="{% url upload_resource group.id %}">Upload File</a>
- 
-   </p>
-    <!-- XXX temporary ends -->
-
-    <div class="sorting disabled">
-      <label>Sort by:</label>
-      <select name="state" size="1">
+	<div class="sorting disabled">
+	<label>Sort by:</label>
+	<select name="state" size="1">
 	<option value="latest">Most recent</option>
 	<option value="view">Most views</option>
 	<option value="az">A-Z</option>
-      </select>
-      <!--<label>Display:</label>
-	  <select name="state" size="1">
-	    <option value="all">All</option>
-	    <option value="pages">Pages</option>
-	    <option value="files">Files</option>
-	  </select>-->
-    </div>
-    <div id="filters" class="disabled">
-      Filter by tag:
-      <input name="search_term" type="text" /> <input type="submit" value="Go" />
-      <br /><br />
-      Popular tags:
-      <a href="#" class="tag option">food</a>
-      <a href="#" class="tag option">salad</a>
-      <a href="#" class="tag option">club</a>
-      <a href="#" class="tag option">fresh</a>
-      <a href="#" class="tag option">fun</a>
-      <a href="group_tag_organic.html#section_tab_navigation" class="tag option">organic</a>
-      <a href="#" class="tag option">share</a>
-      <a href="#" class="tag option">hub_islington</a>
-      <a href="#" class="tag option">vegan</a>
-      <a href="#" class="tag option">suppliers</a>
-      <a href="#" class="tag option">recipe</a>
-      <a href="#" class="tag option">cooking</a>
-      <a href="#" class="tag option">wednesdays</a>
-      <a href="#" class="tag option">vegetarian</a>
-      <a href="#" class="tag option">sharing</a>
-      <a href="#" class="tag option">kitchen</a>
-      <a href="#" class="tag option">weekly</a>
-      <br />
-    </div>
-    <br />
-
-    <ul id="resources_list" class="content_list">
-      {% for resource in resources %}
-      <li class="Xfirst">
-	<img class="thumb" src="#" alt="Upload" />
-	<div class="preview"> 
-	  <h3><a href="{{resource.download_url}}">{{resource.title}} ({{resource.resource.name}})</a></h3>
-	 <div>
-	  {{resource.description|truncatewords:20}}
-	  </div>
+	</select>
+	<!--<label>Display:</label>
+	<select name="state" size="1">
+	<option value="all">All</option>
+	<option value="pages">Pages</option>
+	<option value="files">Files</option>
+	</select>-->
 	</div>
-      </li>
-      {% endfor %}
-      {% for page in pages %}
-      <li>
-	<img class="thumb" src="#" alt="Page" />
-	<div class="preview">
-	  <h3><a href="{% url view_WikiPage group.id page.name%}">{{page.title}}</a></h3>
-         <div>
-          {{page.content|truncatewords:20}}
-          </div>
-	</div>
-      </li>
-      {% endfor %}
 
-    </ul>
-    <a href="#">Show all ()</a>
-  </div>
+	<ul id="resources_list" class="content_list">
+
+		{% for resource in resources %}
+		<li>
+
+			<div class="thumb tiny upload"> 
+				<img src="/site_media/images/upload.gif" alt="Upload" />
+			</div>
+			<div class="info"> 
+				<h4><a href="{{resource.download_url}}">{{resource.title}}</a></h4>
+				{{resource.resource.name}} | {{resource.size}} | More info
+				<div>
+				{{resource.description|truncatewords:20}}
+				</div>
+			</div>
+		</li>
+		{% endfor %}
+
+		{% for page in pages %}
+		<li>
+			<div class="thumb tiny page"> 
+				<img class="page" src="/site_media/images/page.gif" alt="Page" />
+			</div>
+			<div class="info">
+				<h4><a href="{% url view_WikiPage group.id page.name%}">{{page.title}}</a></h4>
+				<div>
+					{{page.content|truncatewords:20}}
+				</div>
+			</div>
+		</li>
+		{% endfor %}
+
+	</ul>
+	<a href="#">Show all (32)</a>
+
+	<!-- XXX temporary until I can get Tom's add_content template to recognise that I'm adding resources -->
+	<p><a href="{% url upload_resource group.id %}">Upload File</a></p>
+	<!-- XXX temporary ends -->
+
+
+</div>
