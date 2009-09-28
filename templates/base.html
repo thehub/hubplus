@@ -136,9 +136,11 @@
 			<div id="page_header">
 			  {% block page_header %}
 			        <h2 id="page_title">{% block page_title %}{{head_title}}{% endblock %}</h2>
+				<div id="head_title_status">
 				{% if head_title_status %}
 			           <p>{% autoescape off %}{{head_title_status}}{% endautoescape %} - <span class="label_time">{{head_title_status.time}}</span></p>
 				{% endif %}
+				</div>
 			  {% endblock %}
 			</div>
 			<!-- end page_header -->

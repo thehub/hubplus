@@ -22,7 +22,7 @@
 	    <option value="files">Files</option>
 	  </select>-->
     </div>
-    <div id="filters">
+    <div id="filters" class="disabled">
       Filter by tag:
       <input name="search_term" type="text" /> <input type="submit" value="Go" />
       <br /><br />
@@ -51,7 +51,7 @@
     <ul id="resources_list" class="content_list">
       {% for resource in resources %}
       <li class="Xfirst">
-	<img class="thumb" src="#" alt="Page" />
+	<img class="thumb" src="#" alt="Upload" />
 	<div class="preview"> 
 	  <h3><a href="{{resource.download_url}}">{{resource.title}} ({{resource.resource.name}})</a></h3>
 	 <div>
@@ -60,6 +60,18 @@
 	</div>
       </li>
       {% endfor %}
+      {% for page in pages %}
+      <li>
+	<img class="thumb" src="#" alt="Page" />
+	<div class="preview">
+	  <h3><a href="{% url view_WikiPage group.id page.name%}">{{page.title}}</a></h3>
+         <div>
+          {{page.content|truncatewords:20}}
+          </div>
+	</div>
+      </li>
+      {% endfor %}
+
     </ul>
-    <a href="#">Show all (83)</a>
+    <a href="#">Show all ()</a>
   </div>

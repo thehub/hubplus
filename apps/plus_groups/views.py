@@ -34,6 +34,12 @@ from apps.plus_permissions.proxy_hmac import hmac_proxy
 from django.contrib.contenttypes.models import ContentType
 
 from apps.plus_resources.models import get_resources_for
+
+#XXX Temporarily here. If this becomes a long term way of listing wiki pages for groups' 
+# this should be moved into plus_wiki app
+def get_pages_for(group) :
+    content_type = ContentType.objects.get_for_model(group)
+    return WikiPage.objects.filter(in_agent__content_type=content_type, in_agent__object_id=group.id)
  
 @secure_resource(TgGroup)
 def group(request, group, template_name="plus_groups/group.html"):
@@ -42,7 +48,6 @@ def group(request, group, template_name="plus_groups/group.html"):
     if not user.is_authenticated():
         user = get_anon_user()
         request.user = user 
-
     
     members = group.get_users()[:10]
     member_count = group.get_no_members()
@@ -117,7 +122,8 @@ def group(request, group, template_name="plus_groups/group.html"):
 
     # XXX replace when we slot permissions in
     resources = get_resources_for(group.get_inner())
-
+    # XXX replace when we have more sophisticated listings search
+    pages = get_pages_for(group.get_inner())
 
     return render_to_response(template_name, {
             "head_title" : "%s" % group.get_display_name(),
@@ -139,6 +145,7 @@ def group(request, group, template_name="plus_groups/group.html"):
             "tweets" : tweets,
             "permissions": perms_bool,
             "resources":resources,
+            "pages":pages,
             }, context_instance=RequestContext(request))
 
 from apps.plus_lib.utils import hub_name_plural
