@@ -15,7 +15,7 @@
       
       <ul class="icon_text_button_set">
 	<!--<li><a class="icon_text_button bt_edit" href="#">Edit page</a></li>-->
-	<li><a class="icon_text_button bt_permissions" href="#">Permissions</a></li>
+	    {% if permissions %}<li><a class="icon_text_button bt_permissions" href="#" rel="#overlay" id="{{page.edit_key}}permissionedit">{% trans "Permissions" %}</a></li>{% endif %}
       </ul>
       {% if preview_content %}
       <div id="preview_content">

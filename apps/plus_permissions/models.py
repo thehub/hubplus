@@ -285,6 +285,7 @@ class SecurityContext(models.Model):
 
          options = SliderOptions[typ]['InterfaceOrder']
          if 'ManagePermissions' in options:
+             options = list(options) #copy the list so that we can remove the item *only* for this rendering
              if not has_access(agent=user, resource=self.context_agent.obj, interface=self.context_agent.obj.__class__.__name__ + '.SetManagePermissions'):
                  options.remove('ManagePermissions')
          interface_levels = [(interface, self.get_slider_level_json(type_name + '.' + interface)) for interface in options ]
@@ -328,7 +329,7 @@ class GenericReference(models.Model):
     class Meta:
         unique_together = (("content_type", "object_id"),)
 
-    content_type = models.ForeignKey(ContentType, related_name='security_tag_agent')
+    content_type = models.ForeignKey(ContentType, related_name='security_tag_agent') # this related name makes no sense, is it used anywhere or can we change it?
     object_id = models.PositiveIntegerField()
     obj = generic.GenericForeignKey()
     

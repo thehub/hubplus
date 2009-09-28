@@ -11,8 +11,8 @@
 <div id="main_content" class="block">
 
   <ul class="icon_text_button_set">
-    <li><a class="icon_text_button bt_edit" href="{% url edit_WikiPage page.in_agent.obj.id page.name %}">Edit page</a></li>
-    <li><a class="icon_text_button bt_permissions" href="#">Permissions</a></li>
+    {% if can_edit %}<li><a class="icon_text_button bt_edit" href="{% url edit_WikiPage page.in_agent.obj.id page.name %}">{% trans "Edit page"%}</a></li>{% endif %}
+    {% if permissions %}<li><a class="icon_text_button bt_permissions" href="#overlay" rel="#overlay" id="{{page.edit_key}}permissionedit">{% trans "Permissions" %}</a></li>{% endif %}
   </ul>
   <div id="content">
      {% autoescape off %}{{page.content}}{% endautoescape %}
