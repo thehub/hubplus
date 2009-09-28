@@ -63,6 +63,22 @@ PossibleTypes = {}
 def SetPossibleTypes(type, options):
      PossibleTypes[type] = options
 
+VisibleTypes = {}
+def SetVisibleTypes(type, options):
+     VisibleTypes[type] = options
+
+class TypeLabels(dict): 
+    def __init__(self):
+        dict.__init__(self)
+
+    def __missing__(self, key):
+        return key.__name__
+
+typelabels = TypeLabels()
+
+def SetTypeLabels(type, options):
+     typelabels[type] = options
+
 from apps.plus_permissions.default_agents import get_anonymous_group, get_admin_user, get_all_members_group, get_creator_agent, CreatorMarker
 from apps.plus_permissions.exceptions import PlusPermissionsReadOnlyException, PlusPermissionsNoAccessException, NonExistentPermission, PlusPermissionAnonUserException
 
@@ -246,18 +262,27 @@ class SecurityContext(models.Model):
          if not skip_validation:
              self.validate_constraints(type_name)
 
-     def get_acquiring_types(self, my_type):
+     def get_acquiring_types(self, my_type, already_seen=None):
          """at some point we may have to check for cycling here
          """
-         poss_types = PossibleTypes[my_type]             
+         if already_seen == None:
+             already_seen = []
+         try:
+             poss_types = list(VisibleTypes[my_type])    #assumes we only use this for display - otherwise we would use PossibleTypes
+         except KeyError:
+             poss_types = []
          for typ in poss_types:
-             return poss_types + [typ for typ in self.get_acquiring_types(typ) if typ not in poss_types]
+             if typ in already_seen:
+                 continue
+             already_seen.append(typ)
+             return  poss_types + [typ for typ in self.get_acquiring_types(typ, already_seen) if typ not in poss_types]
+         #if this_type:
+         #    return [this_type]
          return []
 
      def get_all_sliders(self, my_type, user):
          types = self.get_acquiring_types(my_type)
-         types.insert(0, my_type)
-         return [(typ.__name__, self.get_type_slider(typ, user)) for typ in types if has_access(user, self.get_target(), typ.__name__ + '.ManagePermissions')]
+         return [(typ.__name__, self.get_type_slider(typ, user), typelabels[typ]) for typ in types if has_access(user, self.get_target(), typ.__name__ + '.ManagePermissions')]
 
      def get_type_slider(self, typ, user):
          """get all the sliders associated with a particular type in this SecurityContext

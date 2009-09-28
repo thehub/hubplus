@@ -1,5 +1,5 @@
 from apps.plus_permissions.interfaces import InterfaceReadProperty, InterfaceWriteProperty, InterfaceCallProperty, secure_wrap
-from apps.plus_permissions.models import SetSliderOptions, SetAgentDefaults, SetPossibleTypes, SetSliderAgents, SetVisibleAgents
+from apps.plus_permissions.models import SetSliderOptions, SetAgentDefaults, SetPossibleTypes, SetSliderAgents, SetVisibleAgents, SetVisibleTypes
 from apps.plus_permissions.default_agents import get_all_members_group, get_anonymous_group, get_creator_agent
 
 from django.contrib.auth.models import User
@@ -104,6 +104,7 @@ SetSliderAgents(User, get_slider_agents)
 
 child_types = [Profile]
 SetPossibleTypes(User, child_types)
+SetVisibleTypes(User, [Profile])
 
 # The agent must have a set of default levels for every type which can be created within it. Other objects don't need these as they will be copied from acquired security context according to the possible types available at the "lower" level. We have different AgentDefaults for different group types e.g. standard, public, or private.
 
