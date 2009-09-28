@@ -143,7 +143,7 @@ def view_wiki_page(request, group, page_name, template_name="plus_wiki/wiki.html
     contributors = get_contributors(request.user, obj)
     contributors = [TemplateSecureWrapper(contributor) for contributor in contributors]
     can_comment = False
-    try : 
+    try:
         obj.comment
         can_comment = True
     except :
