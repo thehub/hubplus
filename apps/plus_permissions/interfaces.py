@@ -90,6 +90,8 @@ class SecureWrapper:
         self.__dict__['_exceptions'] = [ 
             lambda x : x[0] == '_',
             lambda x : x == 'id',
+            lambda x : x == 'pk',
+            lambda x : x == 'object_id',
             lambda x : x == 'save',
             lambda x : x == 'get_ref',
             lambda x : x == 'edit_key',
