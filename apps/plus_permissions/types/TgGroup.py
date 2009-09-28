@@ -1,5 +1,5 @@
 from apps.plus_permissions.interfaces import InterfaceReadProperty, InterfaceWriteProperty, InterfaceCallProperty
-from apps.plus_permissions.models import SetSliderOptions, SliderOptions, SetAgentDefaults, SetPossibleTypes, SetSliderAgents, PossibleTypes, get_interface_map, SetVisibleAgents
+from apps.plus_permissions.models import SetSliderOptions, SliderOptions, SetAgentDefaults, SetPossibleTypes, SetSliderAgents, PossibleTypes, get_interface_map, SetVisibleAgents, SetVisibleTypes, SetTypeLabels
 from apps.plus_groups.models import TgGroup
 from apps.plus_permissions.OurPost import OurPost
 from apps.plus_contacts.models import Application, Contact
@@ -171,8 +171,8 @@ if not SliderOptions.get(TgGroup, False):
 if TgGroup not in PossibleTypes:
     child_types = [OurPost, Site, Application, Contact, Profile, WikiPage, Link, Resource]
     SetPossibleTypes(TgGroup, child_types)
-
-
+    SetVisibleTypes(content_type, [TgGroup, WikiPage, Resource, Application])
+    SetTypeLabels(content_type, 'Group')
 
 # if the security context is in this agent, this set of slider_agents apply, irrespective of the type of resource they are
 def get_slider_agents(scontext)  : 

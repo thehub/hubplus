@@ -2,7 +2,7 @@
 # Permissions for OurPost, an example 
 from django.db import models
 
-from apps.plus_permissions.models import SetSliderOptions, SetAgentSecurityContext, SetAgentDefaults, SetPossibleTypes, SetSliderAgents, SliderOptions, add_type_to_interface_map, get_interface_map
+from apps.plus_permissions.models import SetSliderOptions, SetAgentSecurityContext, SetAgentDefaults, SetPossibleTypes, SetSliderAgents, SliderOptions, add_type_to_interface_map, get_interface_map, SetVisibleTypes, SetTypeLabels
 
 from apps.plus_permissions.interfaces import InterfaceReadProperty, InterfaceWriteProperty, InterfaceCallProperty
 
@@ -25,6 +25,9 @@ from apps.plus_permissions.default_agents import get_or_create_root_location, ge
 # Currently OurPost has none, but, for example, a TgGroup can have OurPosts or WikiPages etc.
 child_types = []
 SetPossibleTypes(content_type, child_types)
+SetVisibleTypes(content_type, [WikiPage])
+SetTypeLabels(content_type, 'Page')
+
 
 # Here's the wrapping we have to put around it.
 

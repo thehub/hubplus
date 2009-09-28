@@ -1,5 +1,5 @@
 from apps.plus_permissions.interfaces import InterfaceReadProperty, InterfaceWriteProperty, InterfaceCallProperty, InterfaceReadWriteProperty
-from apps.plus_permissions.models import SetSliderOptions, SetAgentDefaults, SetPossibleTypes, SetSliderAgents, SetSliderOptions, SliderOptions
+from apps.plus_permissions.models import SetSliderOptions, SetAgentDefaults, SetPossibleTypes, SetSliderAgents, SetSliderOptions, SliderOptions, SetTypeLabels
 from apps.plus_resources.models import Resource
 
 content_type = Resource
@@ -21,4 +21,5 @@ if not SliderOptions.get(Resource, False):
 
 child_types = []
 SetPossibleTypes(Resource, child_types)
+SetTypeLabels(content_type, 'Upload')
 
