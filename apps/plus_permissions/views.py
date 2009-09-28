@@ -18,7 +18,7 @@ from apps.plus_groups.models import TgGroup
 from apps.plus_lib.parse_json import json_view
 from django.contrib.auth.models import User
 from apps.plus_permissions.api import secure_resource, TemplateSecureWrapper
-from apps.plus_permissions.models import GenericReference, VisibleAgents, SliderOptions
+from apps.plus_permissions.models import GenericReference, VisibleAgents, SliderOptions, TypeLabels
 from django.template import loader, Context, RequestContext
 
 ##############Hubspace Patching######################################
@@ -139,7 +139,7 @@ def get_json_slider_group(request, current):
     slider_sets = sec_context.get_all_sliders(current._inner.__class__, request.user)
     slider_agents = sec_context.get_slider_agents()
     slider_data = []
-    for typ, slider_info in slider_sets:
+    for typ, slider_info, type_label in slider_sets:
         flags = {}
         slider_agent_rows = []
         for agent_slot, slider_agent in slider_agents:
@@ -166,7 +166,7 @@ def get_json_slider_group(request, current):
         pluralize = True
         if acquisition_count == 1 or typ==sec_context.get_target().__class__.__name__:
             pluralize = False
-        slider_data.append((typ, headers, slider_agent_rows, pluralize))
+        slider_data.append((typ, headers, slider_agent_rows, type_label, pluralize))
 
     agents = sec_context.get_slider_agents_json() # visible_only=True)
     permission_prototype = sec_context.context_agent.permission_prototype
