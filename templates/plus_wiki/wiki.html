@@ -1,6 +1,7 @@
 {% extends "site_base.html" %}
 {% load i18n %}
 {% load plus_tags %}
+{% load threadedcommentstags %}
 
 {% block page_header %}
 <a id="parent" href="{% url group page.in_agent.obj.id %}">{{page.in_agent.obj.display_name}}</a>
@@ -32,8 +33,9 @@
 </div>
 <div id="section_tab_navigation" class="tabbed section yui-navset">
   <ul class="tabbed_navigation yui-nav">
-    <li class="selected"><a href="#comments"><span>{% trans "Comments" %} (23)</span></a></li>
-    <li><a href="#attachments"><span>{% trans "Attachments" %} (2)</span></a></li>
+    {% get_comment_count for page as comment_count %}
+    <li class="selected"><a href="#comments"><span>{% trans "Comments" %}({{comment_count}})</span></a></li>
+    <li><a href="#attachments"><span>{% trans "Attachments" %} (0)</span></a></li>
     <li><a href="#history"><span>{% trans "History" %} ({{version_list.count}} {% trans "revisions" %})</span></a></li>    
   </ul>
   <div class="tabbed_content yui-content">

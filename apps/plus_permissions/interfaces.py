@@ -90,6 +90,8 @@ class SecureWrapper:
         self.__dict__['_exceptions'] = [ 
             lambda x : x[0] == '_',
             lambda x : x == 'id',
+            lambda x : x == 'pk',
+            lambda x : x == 'object_id',
             lambda x : x == 'save',
             lambda x : x == 'get_ref',
             lambda x : x == 'edit_key',
@@ -197,6 +199,7 @@ def add_manage_permissions_interface():
     class ManagePermissions:
         pk = InterfaceReadProperty
         create_custom_security_context = InterfaceCallProperty
+        use_acquired_security_context = InterfaceCallProperty
         move_sliders = InterfaceCallProperty  #use explicit 
         add_arbitrary_agent = InterfaceCallProperty
         remove_arbitrary_agent = InterfaceCallProperty

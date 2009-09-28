@@ -56,12 +56,16 @@ class WikiPageCommentor:
     comment = InterfaceCallProperty
 
 
+class WikiPageCommentReader:
+    view_comments = InterfaceReadProperty
+
 if not get_interface_map(WikiPage):
     WikiPageInterfaces = {'Viewer':WikiPageViewer,
                           'Editor':WikiPageEditor,
                           'Delete':WikiPageDelete,
                           'Creator':WikiPageCreator,
-                          "Commentor":WikiPageCommentor}
+                          "Commentor":WikiPageCommentor,
+                          "ViewComments":WikiPageCommentReader}
 
     add_type_to_interface_map(content_type, WikiPageInterfaces)
 

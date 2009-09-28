@@ -282,7 +282,6 @@ class SecurityContext(models.Model):
                  interpreted_constraints[arg1].append([stringify(op), arg2])
                  interpreted_constraints.setdefault(arg2, [])
                  interpreted_constraints[arg2].append([stringify(reverse(op)), arg1])
-
          options = SliderOptions[typ]['InterfaceOrder']
          if 'ManagePermissions' in options:
              options = list(options) #copy the list so that we can remove the item *only* for this rendering
