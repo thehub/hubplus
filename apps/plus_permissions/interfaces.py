@@ -199,6 +199,7 @@ def add_manage_permissions_interface():
     class ManagePermissions:
         pk = InterfaceReadProperty
         create_custom_security_context = InterfaceCallProperty
+        use_acquired_security_context = InterfaceCallProperty
         move_sliders = InterfaceCallProperty  #use explicit 
         add_arbitrary_agent = InterfaceCallProperty
         remove_arbitrary_agent = InterfaceCallProperty

@@ -7,5 +7,6 @@ urlpatterns = patterns('',
                        url(r'^patch_in_groups$', 'plus_permissions.views.patch_in_groups', name='hubspace_group_patch'),
                        url(r'^perm_patch$', 'plus_permissions.views.patch_in_permission_prototype', name='perm_patch'),
                        url(r'^edit/$', 'plus_permissions.views.json_slider_group', name="hubplus permissions editor"),
-                       url(r'^move/$', 'plus_permissions.views.move_sliders', name="move a role/interface slider "),
+                       url(r'^move/$', 'plus_permissions.views.move_sliders', name="move_slider"),
+                       url(r'^toggle_custom/$', 'plus_permissions.views.toggle_custom_permissions', name="customize")
                        )

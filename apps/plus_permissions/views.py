@@ -110,12 +110,25 @@ def move_sliders(request, json, current):
     return json
 
 
-
+@secure_resource(obj_schema={'current':'any'})
+def toggle_custom_permissions(request, current):
+    custom = int(request.POST['custom'])
+    if custom:
+        current.create_custom_security_context()
+    else:
+        current.use_acquired_security_context()
+    json = get_json_slider_group(request, current)
+    return HttpResponse(json, mimetype='application/json')
 
 @secure_resource(obj_schema={'current':'any'})
 def json_slider_group(request, current):
     """This should be properly secured by doing everything through permissionable objects on the current resource. i.e. without getting the security context.
     """
+    json = get_json_slider_group(request, current)
+    return HttpResponse(json, mimetype='application/json')
+
+
+def get_json_slider_group(request, current):
     sec_context = current._inner.get_security_context()
     is_custom = False
     if sec_context.get_target() == current._inner:
@@ -123,8 +136,6 @@ def json_slider_group(request, current):
     is_agent = False
     if current._inner.__class__ in [User, TgGroup]:
         is_agent = True
-    #import ipdb
-    #ipdb.set_trace()
     slider_sets = sec_context.get_all_sliders(current._inner.__class__, request.user)
     slider_agents = sec_context.get_slider_agents()
     slider_data = []
@@ -158,11 +169,10 @@ def json_slider_group(request, current):
         slider_data.append((typ, headers, slider_agent_rows, pluralize))
 
     agents = sec_context.get_slider_agents_json() # visible_only=True)
-
+    permission_prototype = sec_context.context_agent.permission_prototype
+    render_sliders = is_custom or is_agent
     t = loader.get_template('plus_permissions/permissions.html')
-    c = RequestContext(request, {'current':current, 'current_class':current._inner.__class__.__name__, 'sliders':slider_data, 'is_custom':is_custom, 'is_agent':is_agent})
+    c = RequestContext(request, {'current':current, 'current_class':current._inner.__class__.__name__, 'sliders':slider_data, 'is_custom':is_custom, 'is_agent':is_agent, 'permission_prototype':permission_prototype, 'render_sliders':render_sliders})
     rendered = t.render(c)
-    json = simplejson.dumps({'current_id':current.id,  'sliders':slider_sets, 'agents':agents, 'is_custom':is_custom, 'html':rendered})
-    
-    return HttpResponse(json, mimetype='application/json')
-
+    json = simplejson.dumps({'current_id':current.id,  'sliders':slider_sets, 'agents':agents, 'is_custom':is_custom, 'is_agent':is_agent, 'html':rendered})
+    return json

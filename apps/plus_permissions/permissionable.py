@@ -116,6 +116,14 @@ def create_custom_security_context(self) :
 
     return new_sc
 
+def use_acquired_security_context(self):
+    sc = self.get_security_context()
+    sc.target.clear()
+    sc.delete()
+    # check that related security tags are deleted here
+    sc = self.get_security_context()
+    return sc
+
 def set_security_context(self, scontext):
     """Set the security context used by this object
     """
@@ -245,6 +253,7 @@ def security_patch(content_type, type_list):
     content_type.acquires_from = acquires_from
     content_type.get_tag_for_interface = get_tag_for_interface
     content_type.create_custom_security_context = create_custom_security_context
+    content_type.use_acquired_security_context = use_acquired_security_context
     content_type.move_sliders = move_sliders
     content_type.add_arbitrary_agent = add_arbitrary_agent
     content_type.remove_arbitrary_agent = remove_arbitrary_agent
