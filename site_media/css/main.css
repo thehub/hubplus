@@ -130,6 +130,11 @@ th {
 .thumb.small  img { width : 35px; }
 .thumb.medium img {	width : 80px; }
 
+.thumb.page,
+.thumb.upload {
+	border		: 0;
+}
+
 
 /* Listings */
 
@@ -155,7 +160,6 @@ th {
 }
 
 .content_list li .description {
-	margin-left	: 50px;
 	padding		: 5px 0 0;
 }
 
@@ -165,6 +169,15 @@ th {
 
 .content_list li .thumb {
 	margin		: -3px 10px -3px 0;
+}
+
+.content_list li .info {
+	padding-left: 40px;
+}
+
+.content_list li .info h3 {
+	clear		: none;
+	text-transform	: none;
 }
 
 
