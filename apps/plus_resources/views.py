@@ -29,13 +29,12 @@ def handle_uploaded_file(user, owner, form, f_data) :
 
     # XXX change to this when permissions defined,
     # resource = owner.create_Resource(**kwargs)
-    resource = Resource(owner=owner, title=kwargs['title'], description=kwargs['description'],
+    resource = Resource(in_agent=owner.get_ref(), title=kwargs['title'], description=kwargs['description'],
                         author=kwargs['author'], uploader=kwargs['uploader'], license=kwargs['license'],
                         resource=kwargs['resource'])
 
     # for generic_create compatibility XXX 
     resource.stub= False
-    resource.in_agent = owner.get_ref()
     resource.name = resource.title
     # end of compatibility
 
@@ -61,7 +60,7 @@ def handle_uploaded_file(user, owner, form, f_data) :
 # XXX generalize to more than group, but getting bogged down making that obj_schema thing work at the moment
 @login_required
 @secure_resource(TgGroup)
-def upload_resource(request, group, template_name=None, success_url=None, **kwargs) :
+def edit_resource(request, group, template_name=None, success_url=None, **kwargs) :
     if not template_name :
         template_name = 'plus_resources/upload.html'
     if not success_url :
