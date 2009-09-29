@@ -19,7 +19,7 @@
     {% if can_comment %}
     <h3>Comment on page</h3>
 	<div class="thumb small">
-		<img src="http://pinaxdev.the-hub.net:1955/site_media/images/member.jpg"/>
+		<img src="{{SITE_MEDIA}}images/member.jpg"/>
 	</div>
     <form method="POST" action="{% get_comment_url page %}">
         <ul>

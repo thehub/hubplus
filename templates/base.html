@@ -87,6 +87,7 @@
 	<script src="{{ MEDIA_URL }}js/plus_permissions/views.js"></script> 	
 	<script src="{{ MEDIA_URL }}js/pinax_libs/comments.js"></script>
 	<script src="{{ MEDIA_URL }}js/plus_links/plus_links.js"></script>
+	<script src="{{ MEDIA_URL }}js/listings.js"></script>
 	<!-- SCRIPT: SITE READY (Put your "on load" functions that fire it all off in here) -->
 	<script src="{{ MEDIA_URL }}js/ready.js"></script>
 
@@ -138,7 +139,8 @@
 			        <h2 id="page_title">{% block page_title %}{{head_title}}{% endblock %}</h2>
 				<div id="head_title_status">
 				{% if head_title_status %}
-			           <p>{% autoescape off %}{{head_title_status}}{% endautoescape %} - <span class="label_time">{{head_title_status.time}}</span></p>
+			           <p>{% autoescape off %}{{head_title_status}}{% endautoescape %} - <span class="label_time">{{head_title_status.time}}</span>
+<span id="new_status"></span></p>
 				{% endif %}
 				</div>
 			  {% endblock %}

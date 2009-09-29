@@ -7,7 +7,6 @@ licenses = (('',''),
             ('',''))
 
 
-
 class UploadFileForm(forms.Form):
     title = forms.CharField(max_length=50)
     resource  = forms.FileField(required=False)
@@ -16,14 +15,9 @@ class UploadFileForm(forms.Form):
     license = forms.CharField(required=False)
 
     author = forms.CharField(required=False)
-    uploader_name = forms.CharField()
+    in_agent = forms.CharField(required=False)
 
-    def clean_uploader_name(self) :
-        username = self.cleaned_data['uploader_name']
-        if User.objects.filter(username=username).count() < 1 :
-            raise forms.ValidationError('Uploader must be a real user')
-        self.cleaned_data['uploader'] = User.objects.get(username=username)
-        return username
-
+    name = forms.CharField(required=True)
+    
 
 

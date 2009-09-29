@@ -101,6 +101,7 @@ th {
 
 /* Images & Thumbnails */
 
+.avatar_choices label,
 .image,
 .thumb {
 	border		: 1px solid #ddd;
@@ -108,9 +109,23 @@ th {
 	display		: block;
 }
 
+.avatar_choices label,
 .image {
 	margin-bottom 	: 1.5em;
 	padding		: 10px;
+}
+
+.avatar_choices label {
+	padding		: 95px 10px 5px;
+	position	: relative;
+	text-align	: center;
+	width		: 80px;
+}
+
+.avatar_choices label img {
+	position	: absolute;
+	top			: 10px;
+	left		: 10px;
 }
 
 .thumb {
@@ -124,11 +139,16 @@ th {
 
 .thumb.tiny       { padding : 2px; margin-bottom : 0; }
 .thumb.small      { padding : 3px; }
-.thumb.medium     {	padding : 4px; }
+.thumb.medium     {	padding : 4px; width: 80px; }
 
 .thumb.tiny   img { width : 25px; }
 .thumb.small  img { width : 35px; }
 .thumb.medium img {	width : 80px; }
+
+.thumb.page,
+.thumb.upload {
+	border		: 0;
+}
 
 
 /* Listings */
@@ -155,7 +175,6 @@ th {
 }
 
 .content_list li .description {
-	margin-left	: 50px;
 	padding		: 5px 0 0;
 }
 
@@ -165,6 +184,15 @@ th {
 
 .content_list li .thumb {
 	margin		: -3px 10px -3px 0;
+}
+
+.content_list li .info {
+	padding-left: 40px;
+}
+
+.content_list li .info h3 {
+	clear		: none;
+	text-transform	: none;
 }
 
 

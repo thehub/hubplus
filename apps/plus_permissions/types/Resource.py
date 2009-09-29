@@ -8,6 +8,14 @@ class ResourceViewer :
     title = InterfaceReadProperty
     description = InterfaceReadProperty
     download_url = InterfaceCallProperty
+    author = InterfaceReadProperty
+
+    license = InterfaceReadProperty
+    resource = InterfaceReadProperty
+    created_by = InterfaceReadProperty
+
+    stub = InterfaceReadProperty
+    name = InterfaceReadProperty
 
 class ResourceManager :
     delete = InterfaceCallProperty
