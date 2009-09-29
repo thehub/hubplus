@@ -1,5 +1,7 @@
-<h2>Permissions</h2>
-<p>Change permissions on this {{current_class.lower}}</p>
+{% load i18n %}
+
+<h2>{% trans "Permissions" %}</h2>
+<p>{% blocktrans %}Change permissions on this {{current_label}} {% endblocktrans %}</p>
 
 {% if is_agent %}{% else %}
 <form id="customize_permissions" action="{% url customize %}">

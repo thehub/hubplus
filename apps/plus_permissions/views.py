@@ -18,7 +18,7 @@ from apps.plus_groups.models import TgGroup
 from apps.plus_lib.parse_json import json_view
 from django.contrib.auth.models import User
 from apps.plus_permissions.api import secure_resource, TemplateSecureWrapper
-from apps.plus_permissions.models import GenericReference, VisibleAgents, SliderOptions, TypeLabels
+from apps.plus_permissions.models import GenericReference, VisibleAgents, SliderOptions, typelabels
 from django.template import loader, Context, RequestContext
 
 ##############Hubspace Patching######################################
@@ -172,7 +172,7 @@ def get_json_slider_group(request, current):
     permission_prototype = sec_context.context_agent.permission_prototype
     render_sliders = is_custom or is_agent
     t = loader.get_template('plus_permissions/permissions.html')
-    c = RequestContext(request, {'current':current, 'current_class':current._inner.__class__.__name__, 'sliders':slider_data, 'is_custom':is_custom, 'is_agent':is_agent, 'permission_prototype':permission_prototype, 'render_sliders':render_sliders})
+    c = RequestContext(request, {'current':current, 'current_label':typelabels[current._inner.__class__], 'current_class':current._inner.__class__.__name__, 'sliders':slider_data, 'is_custom':is_custom, 'is_agent':is_agent, 'permission_prototype':permission_prototype, 'render_sliders':render_sliders})
     rendered = t.render(c)
     json = simplejson.dumps({'current_id':current.id,  'sliders':slider_sets, 'agents':agents, 'is_custom':is_custom, 'is_agent':is_agent, 'html':rendered})
     return json

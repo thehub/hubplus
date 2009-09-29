@@ -5,4 +5,5 @@ jq(document).ready(function () {
     permission_ready();
     jq(".accordion").accordion({ autoHeight: false });
     plus_links_ready();
+    listing_ready();
 });
