@@ -20,7 +20,6 @@ class Resource(models.Model):
     title = models.CharField(max_length=100)
     description = models.TextField()
     
-    uploader = models.ForeignKey(User)
     author = models.CharField(max_length=100)
     license = models.CharField(max_length=50)
 
