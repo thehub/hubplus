@@ -44,9 +44,7 @@ else:
 
 def profiles(request, template_name="profiles/profiles.html"):
     users = User.objects.all().order_by("-date_joined")
-
     users = users.filter(~Q(username='admin')).filter(~Q(username='anon'))
-
     search_terms = request.GET.get('search', '')
     order = request.GET.get('order')
     if not order:
@@ -61,7 +59,7 @@ def profiles(request, template_name="profiles/profiles.html"):
         'users':users,
         'order' : order,
         'search_terms' : search_terms,
-		'head_title' : 'Members'
+        'head_title' : 'Members'
     }, context_instance=RequestContext(request))
 
 

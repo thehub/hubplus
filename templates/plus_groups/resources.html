@@ -1,59 +1,104 @@
-<div id="resources" class="page_content">
-<!--<a href="{% url add_content resource_id=group.id %}" class="add_content" rel="#overlay">Add Resource</a>-->
+{% load i18n %}
+{% load pagination_tags %}
+{% load avatar_tags %}
+{% load humanize %}
+{% load profile_tags %}
+<div id="resources" class="page_content">   
 
-	<div class="sorting disabled">
+<!-- Start Search and Tag Filtering x-->
+ <div id="search">
+  <div id="current">
+    <h3>Search</h3>
+    <form class="large">
+      <input name="search_term" type="text" class="text" value="" /> <input class="button" type="submit" value="Search" />
+    </form>
+    <ul class="tag_list large">
+      <li><span class="tag">green</span><a href="explore.html" class="delete_tag">-</a></li>  
+    </ul>
+    <a href="#" class="bt_advance">More options</a>
+  </div>
+  <div id="filter">
+    <div id="filter_tags">
+      <h3>Refine by tag</h3>		
+      <ol class="tag_list">
+	<li><span href="#" class="tag pop8">earth (19)</span><a href="#" class="add_tag">+</a></li>
+	<li><span href="#" class="tag pop8">fairtrade (21)</span><a href="explore_tagged_2.html" class="add_tag">+</a></li>
+	<li><span href="#" class="tag pop8">design (16)</span><a href="#" class="add_tag">+</a></li>
+	<li><span href="#" class="tag pop8">reference (16)</span><a href="#" class="add_tag">+</a></li> 
+	<li><span href="#" class="tag pop8">dip (16)</span><a href="#" class="add_tag">+</a></li>
+	<li><span href="#" class="tag pop8">architecture (16)</span><a href="#" class="add_tag">+</a></li>
+	<li><span href="#" class="tag pop7">developement (15)</span><a href="#" class="add_tag">+</a></li>
+	<li><span href="#" class="tag pop7">hub (14)</span><a href="#" class="add_tag">+</a></li>
+	<li><span href="#" class="tag pop6">environment (12)</span><a href="#" class="add_tag">+</a></li> 
+	<li><span href="#" class="tag pop6">sustainability (11)</span><a href="#" class="add_tag">+</a></li>
+	<li><span href="#" class="tag pop6">product (10)</span><a href="#" class="add_tag">+</a></li>
+	<li><span href="#" class="tag pop5">salad (5)</span><a href="#" class="add_tag">+</a></li>
+	<li><span href="#" class="tag pop3">energy (3)</span><a href="#" class="add_tag">+</a></li>
+	<li><span href="#" class="tag pop2">living (2)</span><a href="#" class="add_tag">+</a></li>
+	<li><span href="#" class="tag pop2">shopping (1)</span><a href="#" class="add_tag">+</a></li>						
+      </ol>
+    </div>
+  </div>
+</div> 
+<!-- End Search and Tag Filtering --> 					
+    <ul class="display_options">
+      <li class="sort">
 	<label>Sort by:</label>
-	<select name="state" size="1">
-	<option value="latest">Most recent</option>
-	<option value="view">Most views</option>
-	<option value="az">A-Z</option>
+	<select size="1" name="state">
+	  <!--<option value="relevance">Relevance</option>-->
+	  <option value="latest">Most recent</option>
+	  <!--<option value="view">Most views</option>-->
+	  <option value="az">A-Z</option>
 	</select>
-	<!--<label>Display:</label>
-	<select name="state" size="1">
-	<option value="all">All</option>
-	<option value="pages">Pages</option>
-	<option value="files">Files</option>
-	</select>-->
-	</div>
-
-	<ul id="resources_list" class="content_list">
-
-		{% for resource in resources %}
-		<li>
-
-			<div class="thumb tiny upload"> 
-				<img src="/site_media/images/upload.gif" alt="Upload" />
-			</div>
-			<div class="info"> 
-				<h4><a href="{{resource.download_url}}">{{resource.title}}</a></h4>
-				{{resource.resource.name}} | {{resource.size}} | More info
-				<div>
-				{{resource.description|truncatewords:20}}
-				</div>
-			</div>
-		</li>
-		{% endfor %}
-
-		{% for page in pages %}
-		<li>
-			<div class="thumb tiny page"> 
-				<img class="page" src="/site_media/images/page.gif" alt="Page" />
-			</div>
-			<div class="info">
-				<h4><a href="{% url view_WikiPage group.id page.name%}">{{page.title}}</a></h4>
-				<div>
-					{{page.content|truncatewords:20}}
-				</div>
-			</div>
-		</li>
-		{% endfor %}
-
+      </li>
+    </ul>
+      <!-- results_all -->
+      <div id="results_all">
+	<ul id="results_list_all" class="content_list results">
+	  <li>
+	    <div class="thumb medium"><img src="../../site_media/images/resource.jpg" /></div>
+	    <dl>
+	      <dt>Name:</dt>
+	      <dd><a href="#">5 Crucial Elements for Great Spaces</a></dd>
+	      <dt>Description:</dt>
+	      <dd>What can you do with an outdated fireplace? Rip it out, patch the walls with drywall, redesign the surround, the mantel and the hearth?</dd>
+	    </dl>
+	  </li>
+	  <li>
+	    <div class="thumb medium"><img src="../../site_media/images/hub.jpg" /></div>
+	    <dl>
+	      <dt>Name:</dt>
+	      <dd><a href="#">The Hub Islington</a></dd>
+	      <dt>Location:</dt>
+	      <dd>London</dd>
+	      <dt>Description:</dt>
+	      <dd>Hub Islington is where it all began! This flagship Hub located in a converted warehouse offers flexible time-based membership for spaces to work and meet. They include all you need to run a project or a business; wireless internet connection and access to meeting and event spaces, printers, scanners, phones, fax, physical and virtual storage space and admin support according to your tariff. Membership also includes access to a community of like-minded professionals as well as learning and social events and a light business support service.</dd>
+	      <dt>Members:</dt>
+	      <dd>338 members</dd>
+	    </dl>
+	  </li>
+	  <li class="last">
+	    <div class="thumb medium"><img src="../../site_media/images/temp/salad.jpg" /></div>
+	    <dl>
+	      <dt>Name</dt>
+	      <dd><a href="#">Sexy salad club</a></dd>
+	      <dt>Type:</dt>
+	      <dd>Interest Group</dd>
+	      <dt>Description:</dt>
+	      <dd>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent sollicitudin velit quis quam rutrum sodales. Etiam at risus elit, eget porttitor odio. Vivamus pretium ultricies ultrices. Donec in lectus gravida ante porta dignissim at id nibh. Vivamus pharetra dolor at tortor gravida vestibulum. In condimentum ante a justo porttitor tincidunt.</dd>
+	      <dt>Members:</dt>
+	      <dd>74 members</dd>
+	      
+	    </dl>
+	  </li>
 	</ul>
-	<a href="#">Show all (32)</a>
-
-	<!-- XXX temporary until I can get Tom's add_content template to recognise that I'm adding resources -->
-	<p><a href="{% url edit_Resource group.id %}">Upload File</a></p>
-	<!-- XXX temporary ends -->
-
-
-</div>
+	<div class="pagination">
+	  <span class="disabled prev">‹‹ Previous</span>
+	  <span class="current page">1</span>
+	  <a class="page" href="?page=2">2</a>
+	  <a class="page" href="?page=3">3</a>
+	  <a class="next" href="?page=2">Next ››</a>
+	</div>
+      </div>
+      <!-- end results_all -->
+  </div>
