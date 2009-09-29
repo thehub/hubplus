@@ -1,14 +1,18 @@
 {% load i18n %}
-{% load pagination_tags %}
 {% load avatar_tags %}
-{% load humanize %}
+{% load plus_tags %}
 
-<div class="profile clearfix">
-    {# @@@ factor out style into css file #}
-    <div style="float: left;">{% avatar user 40 %}</div>
-    <div style="padding: 5px; margin-left: 50px;"><a href="{% url profile_detail user.username %}">{{ user }}</a><br />
-     {% if user.get_profile.name %}<b>{% trans "Name" %}</b>: {{ user.get_profile.name }}{% endif %}<br />
-     {% if user.get_profile.about %}<b>{% trans "About" %}</b>: {{ user.get_profile.about }}{% endif %}<br />
-     {% if user.get_profile.location%}<b>{% trans "Location" %}</b>: {{ user.get_profile.location }}{% endif %}<br />
-     {% if user.get_profile.website %}<b>{% trans "Website" %}</b>: <a href="{{ other_user.get_profile.website }}">{{ user.get_profile.website }}</a>{% endif %}
-</div>
+  <a href="{% url profile_detail user.username %}">
+  <div class="thumb medium">{% avatar user 80 %}</div>
+  </a>
+  <dl>
+    <dt>{% trans "Name" %}</dt>
+    <dd><a href="{% url profile_detail user.username %}">{{user.display_name}}</a></dd>
+    <dt>{% trans "Organisation" %}:</dt>	      
+    <dd>{{user.organisation}}</dd>
+    <dt>{% trans "Hub" %}:</dt>
+    <dd><a href="{% url group homehub.id %}">{{homehub.display_name}}</a></dd>
+    {% view_plus_tag 'Interests' 'interests'  profile  user %}
+  </dl>
+
+

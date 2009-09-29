@@ -101,6 +101,7 @@ th {
 
 /* Images & Thumbnails */
 
+.avatar_choices label,
 .image,
 .thumb {
 	border		: 1px solid #ddd;
@@ -108,9 +109,23 @@ th {
 	display		: block;
 }
 
+.avatar_choices label,
 .image {
 	margin-bottom 	: 1.5em;
 	padding		: 10px;
+}
+
+.avatar_choices label {
+	padding-bottom	: 30px;
+	position	: relative;
+	text-align	: center;
+	width		: 180px;
+}
+
+.avatar_choices label img {
+	position	: absolute;
+	bottom		: 8px;
+	left		: 50%;
 }
 
 .thumb {
