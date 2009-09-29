@@ -29,13 +29,21 @@ def handle_uploaded_file(user, owner, form, f_data) :
 
     # XXX change to this when permissions defined,
     # resource = owner.create_Resource(**kwargs)
-    resource = Resource(in_agent=owner.get_ref(), title=kwargs['title'], description=kwargs['description'],
-                        author=kwargs['author'], uploader=kwargs['uploader'], license=kwargs['license'],
+    resources = Resource.objects.filter(in_agent=owner.get_ref(),name=kwargs['name'])
+    if resources.count() < 1 :
+        resource = Resource(in_agent=owner.get_ref(), title=kwargs['title'], description=kwargs['description'],
+                        author=kwargs['author'], license=kwargs['license'],
                         resource=kwargs['resource'])
+    else :
+        resource = resources[0]
+        resource.title = kwargs['title']
+        resource.description = kwargs['description']
+        resource.author = kwargs['author']
+        resource.license = kwargs['license']
+        resource.resource = kwargs['resource']
 
     # for generic_create compatibility XXX 
     resource.stub= False
-    resource.name = resource.title
     # end of compatibility
 
     resource.save()
@@ -57,14 +65,19 @@ def handle_uploaded_file(user, owner, form, f_data) :
 
 
 
-# XXX generalize to more than group, but getting bogged down making that obj_schema thing work at the moment
 @login_required
 @secure_resource(TgGroup)
-def edit_resource(request, group, template_name=None, success_url=None, **kwargs) :
-    if not template_name :
-        template_name = 'plus_resources/upload.html'
+def edit_resource(request, group, resource_name,  
+                  template_name='plus_resources/upload.html', success_url=None, **kwargs) :
+
+    try:
+        secure_upload = Resource.objects.plus_get(request.user, name=resource_name, in_agent=group.get_ref())
+    except Resource.DoesNotExist:
+        raise Http404
+ 
     if not success_url :
         success_url = reverse('group',args=(group.id,))
+
     if request.POST :
         form = UploadFileForm(request.POST, request.FILES)
         if form.is_valid() :
@@ -77,7 +90,8 @@ def edit_resource(request, group, template_name=None, success_url=None, **kwargs
 
     else :
         form = UploadFileForm()
-        
+        form.data['title'] = secure_upload.title
+        form.data['name'] = secure_upload.name
     
     return render_to_response(template_name, {
         'form' : form,

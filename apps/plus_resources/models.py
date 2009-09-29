@@ -10,6 +10,7 @@ from apps.plus_permissions.models import GenericReference
 def make_file_path(owner_class, owner_id, resource_id) :
     return "member_resources/%s/%s/%s" % (owner_class, owner_id, resource_id)
 
+
 def get_resources_for(owner) :
     return Resource.objects.filter(in_agent=owner.get_ref())
     
