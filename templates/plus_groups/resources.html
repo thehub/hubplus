@@ -2,31 +2,30 @@
 <!--<a href="{% url add_content resource_id=group.id %}" class="add_content" rel="#overlay">Add Resource</a>-->
 
 	<div class="sorting disabled">
-	<label>Sort by:</label>
-	<select name="state" size="1">
-	<option value="latest">Most recent</option>
-	<option value="view">Most views</option>
-	<option value="az">A-Z</option>
-	</select>
-	<!--<label>Display:</label>
-	<select name="state" size="1">
-	<option value="all">All</option>
-	<option value="pages">Pages</option>
-	<option value="files">Files</option>
-	</select>-->
+		<label>Sort by:</label>
+		<select name="state" size="1">
+			<option value="latest">Most recent</option>
+			<option value="view">Most views</option>
+			<option value="az">A-Z</option>
+		</select>
+		<!--<label>Display:</label>
+		<select name="state" size="1">
+		<option value="all">All</option>
+		<option value="pages">Pages</option>
+		<option value="files">Files</option>
+		</select>-->
 	</div>
 
 	<ul id="resources_list" class="content_list">
 
 		{% for resource in resources %}
 		<li>
-
 			<div class="thumb tiny upload"> 
 				<img src="/site_media/images/upload.gif" alt="Upload" />
 			</div>
 			<div class="info"> 
 				<h4><a href="{{resource.download_url}}">{{resource.title}}</a></h4>
-				{{resource.resource.name}} | {{resource.size}} | More info
+				{{resource.resource.name}} | 1.3MB | More info
 				<div>
 				{{resource.description|truncatewords:20}}
 				</div>
