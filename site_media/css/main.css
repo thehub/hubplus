@@ -107,6 +107,22 @@ th {
 
 /* Images & Thumbnails */
 
+#avatar_current,
+#avatar_add {
+	margin-bottom	: 20px;
+	overflow: hidden;
+}
+
+.avatar_choices ul {
+	margin-bottom	: 0;
+}
+
+.avatar_choices li {
+	float		: left;
+	margin-bottom	: 13px;
+	margin-right: 10px;
+}
+
 .avatar_choices label,
 .image,
 .thumb {
@@ -118,6 +134,15 @@ th {
 .image {
 	margin-bottom 	: 1.5em;
 	padding		: 10px;
+	position	: relative;
+}
+
+.image .bt_edit {
+	background-color	: #fff;
+	border		: 6px solid #fff;
+	bottom		: 4px;
+	position	: absolute;
+	right		: 4px;
 }
 
 .avatar_choices label {
