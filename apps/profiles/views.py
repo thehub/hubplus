@@ -59,7 +59,8 @@ def profiles(request, template_name="profiles/profiles.html"):
         'users':users,
         'order' : order,
         'search_terms' : search_terms,
-        'head_title' : 'Members'
+        'head_title' : 'Members',
+        'results_label': 'Profiles'
     }, context_instance=RequestContext(request))
 
 
