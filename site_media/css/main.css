@@ -109,7 +109,6 @@ th {
 	display		: block;
 }
 
-.avatar_choices label,
 .image {
 	margin-bottom 	: 1.5em;
 	padding		: 10px;
@@ -124,8 +123,8 @@ th {
 
 .avatar_choices label img {
 	position	: absolute;
-	top			: 10px;
-	left		: 10px;
+	top			: 4px;
+	left		: 4px;
 }
 
 .thumb {
@@ -139,7 +138,7 @@ th {
 
 .thumb.tiny       { padding : 2px; margin-bottom : 0; }
 .thumb.small      { padding : 3px; }
-.thumb.medium     {	padding : 4px; width: 80px; }
+.thumb.medium     {	padding : 4px; }
 
 .thumb.tiny   img { width : 25px; }
 .thumb.small  img { width : 35px; }
