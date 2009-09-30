@@ -1,0 +1,16 @@
+{% load i18n %}
+{% load avatar_tags %}
+<a href="{% url group group.id %}">
+    <div class="thumb medium"><img src="/site_media/images/{{group_label}}.jpg" /></div>
+</a>
+<dl>
+  <dt>{% trans "Name" %}</dt>
+  <dd><a href="{% url group group.id %}">{{group.get_display_name}}</a></dd>
+  <dt>{% trans "Type" %}:</dt>
+  <dd>{{group.group_type}}</dd>
+  <dt>{% trans "Description" %}:</dt>
+  <dd>{{group.description|truncatewords:20}}</dd>
+  <dt>{% trans "Members" %}:</dt>
+  <dd>{% blocktrans %}{{no_of_members}} members{% endblocktrans %}</dd>  
+</dl>
+

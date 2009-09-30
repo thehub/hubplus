@@ -8,12 +8,26 @@
 {% load profile_tags %}
 
 {% block body %}
+{% block create_button %}{% endblock %}
+
+{% ifequal search_type "member" %}
 <form method="GET" action="{% url profile_list %}" class="order_list">
+{% endifequal %}
+{% ifequal search_type "group" %}
+<form method="GET" action="{% url groups %}" class="order_list">
+{% endifequal %}
+{% ifequal search_type "hub" %}
+<form method="GET" action="{% url hubs %}" class="order_list">
+{% endifequal %}
+{% ifequal search_type "region" %}
+<form method="GET" action="{% url regions %}" class="order_list">
+{% endifequal %}
+
 	<div class="block">
 	  <input type="text" class="text" name="search" value="{{ search_terms }}" />
 	  <input type="submit" class="button" value="Search" />
 	</div>
-    {% if users %}
+    {% if objects %}
     <ul class="display_options">
       <li class="sort"> 
 	  <label>{% trans "Sort by" %}:</label>
@@ -26,7 +40,7 @@
       </li>
     </ul>
 </form>
-      {% autopaginate users 10 %}
+      {% autopaginate objects 10 %}
       <div id="results_all">
 	{% plus_paginate_header %}
 	<ul id="results_list_all" class="content_list results">
