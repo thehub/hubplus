@@ -152,15 +152,6 @@ from apps.plus_lib.utils import hub_name_plural, hub_name
 @site_context
 def groups(request, site, type='other', template_name='plus_groups/groups.html'):
     if type == 'hub' :
-<<<<<<< HEAD:apps/plus_groups/views.py
-        return groups_list(request, site, 
-                           TgGroup.objects.plus_hub_filter(request.user, level='member'), 
-                           type, template_name, hub_name_plural(), '')
-    else :
-        return groups_list(request, site, 
-                           TgGroup.objects.plus_virtual_filter(request.user, level='member'),
-                           type, template_name, 'Groups', '')
-=======
         head_title = hub_name_plural()
         search_type = hub_name().lower()
         groups = TgGroup.objects.plus_hub_filter(request.user, level='member')
@@ -172,12 +163,8 @@ def groups(request, site, type='other', template_name='plus_groups/groups.html')
     return groups_list(request, site, 
                        groups, 
                        template_name, head_title, search_type, '')
->>>>>>> 94eb8cd1dbb21fe35da09b55b6d7b695f404230d:apps/plus_groups/views.py
 
-<<<<<<< HEAD:apps/plus_groups/views.py
-def groups_list(request, site, groups, type, template_name, head_title='', head_title_status='') :
-=======
->>>>>>> 94eb8cd1dbb21fe35da09b55b6d7b695f404230d:apps/plus_groups/views.py
+
 
 def groups_list(request, site, groups, template_name, head_title='', search_type='group', head_title_status='') :
     search_terms = request.GET.get('search', '')
@@ -187,22 +174,17 @@ def groups_list(request, site, groups, template_name, head_title='', search_type
     create = False
 
     if request.user.is_authenticated() :
-<<<<<<< HEAD:apps/plus_groups/views.py
+
         try :
             if type == 'hub' :
                 site.create_hub
             else :
                 site.create_virtual
-=======
-        try:
-            site.create_TgGroup 
->>>>>>> 94eb8cd1dbb21fe35da09b55b6d7b695f404230d:apps/plus_groups/views.py
             create = True
         except Exception, e:
             print "User can't create a group",e
     
     
-
     return render_to_response(template_name, {
             "objects" : groups,
             "order" : order,
