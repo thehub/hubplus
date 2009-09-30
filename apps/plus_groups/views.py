@@ -148,35 +148,46 @@ def group(request, group, template_name="plus_groups/group.html"):
             "pages":pages,
             }, context_instance=RequestContext(request))
 
-from apps.plus_lib.utils import hub_name_plural
+from apps.plus_lib.utils import hub_name_plural, hub_name
 @site_context
 def groups(request, site, type='other', template_name='plus_groups/groups.html'):
     if type == 'hub' :
-        return groups_list(request, site, 
-                           TgGroup.objects.plus_hub_filter(request.user, level='member'), 
-                           template_name, hub_name_plural(), '')
-    else :
-        return groups_list(request, site, 
-                           TgGroup.objects.plus_virtual_filter(request.user, level='member'),
-                           template_name, 'Groups', '')
+        head_title = hub_name_plural()
+        search_type = hub_name().lower()
+        groups = TgGroup.objects.plus_hub_filter(request.user, level='member')
+    else:
+        head_title = 'Groups'
+        search_type = 'group'
+        groups = TgGroup.objects.plus_virtual_filter(request.user, level='member')
 
-def groups_list(request, site, groups, template_name, head_title='', head_title_status='') :
+    return groups_list(request, site, 
+                       groups, 
+                       template_name, head_title, search_type, '')
 
+
+def groups_list(request, site, groups, template_name, head_title='', search_type='group', head_title_status='') :
+    search_terms = request.GET.get('search', '')
+    order = request.GET.get('order')
+    if not order:
+        order = 'name'
     create = False
     if request.user.is_authenticated() :
-        try :
+        try:
             site.create_TgGroup 
             create = True
         except Exception, e:
             print "User can't create a group",e
     
+    
 
     return render_to_response(template_name, {
-            "head_title" : head_title,
-            "head_title_status" : head_title_status,
-            "groups" : groups,
-            "create" : create,
-
+            "objects" : groups,
+            "order" : order,
+            "search_terms":search_terms,
+            "search_type":search_type,
+            "head_title":head_title,
+            "results_label":head_title,
+            "create":create
             }, context_instance=RequestContext(request))
 
 

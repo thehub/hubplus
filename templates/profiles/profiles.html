@@ -8,20 +8,9 @@
 {% load profile_tags %}
 
 {% block list_data %}
-        {% ifequal order 'date'  %}
-            {% regroup users by date_joined.date as users_by_date_joined %}
-            {% for date in users_by_date_joined %}
-                {% for user in date.list %}
-                  <li {% if forloop.first %}class="first"{% endif %}>
-                    {% show_profile request user %}
-		  </li>
-                {% endfor %}
-            {% endfor %}
-        {% else %}
-            {% for user in users %}
+            {% for user in objects %}
                <li {% if forloop.first %}class="first"{% endif %} {% if forloop.last %}class="last"{% endif %}> 
                 {% show_profile request user %}
 	       </li>
             {% endfor %}
-        {% endifequal %}
 {% endblock %}

@@ -44,11 +44,11 @@ else:
 
 def profiles(request, template_name="profiles/profiles.html"):
     users = User.objects.all().order_by("-date_joined")
-    users = users.filter(~Q(username='admin')).filter(~Q(username='anon'))
+    users = users.filter(~Q(username='admin')).filter(~Q(username='anon')).filter(~Q(username='webapi'))
     search_terms = request.GET.get('search', '')
     order = request.GET.get('order')
     if not order:
-        order = 'date'
+        order = 'name'
     if search_terms:
         users = users.filter(username__icontains=search_terms)
     if order == 'date':
@@ -56,11 +56,12 @@ def profiles(request, template_name="profiles/profiles.html"):
     elif order == 'name':
         users = users.order_by("username")
     return render_to_response(template_name, {
-        'users':users,
+        'objects':users,
         'order' : order,
         'search_terms' : search_terms,
         'head_title' : 'Members',
-        'results_label': 'Profiles'
+        'results_label': 'Profiles',
+        'search_type':'member'
     }, context_instance=RequestContext(request))
 
 
