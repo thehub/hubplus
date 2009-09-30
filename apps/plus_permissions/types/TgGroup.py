@@ -96,17 +96,17 @@ class TgGroupViewer:
     place = InterfaceReadProperty
     website = InterfaceReadProperty
     display_name = InterfaceReadProperty
-
+    get_display_name = InterfaceCallProperty # huh
+    group_name = InterfaceReadProperty
     group_type = InterfaceReadProperty
     address = InterfaceReadProperty
-
     apply = InterfaceCallProperty
     leave = InterfaceCallProperty
     get_users = InterfaceCallProperty
     get_no_members = InterfaceCallProperty
     get_admin_group = InterfaceCallProperty
-    get_display_name = InterfaceCallProperty # huh
-    display_name = InterfaceReadProperty
+    homeplace = InterfaceReadProperty
+
 
 class TgGroupEditor: 
     pk = InterfaceReadProperty
