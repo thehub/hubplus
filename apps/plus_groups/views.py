@@ -154,18 +154,22 @@ def groups(request, site, type='other', template_name='plus_groups/groups.html')
     if type == 'hub' :
         return groups_list(request, site, 
                            TgGroup.objects.plus_hub_filter(request.user, level='member'), 
-                           template_name, hub_name_plural(), '')
+                           type, template_name, hub_name_plural(), '')
     else :
         return groups_list(request, site, 
                            TgGroup.objects.plus_virtual_filter(request.user, level='member'),
-                           template_name, 'Groups', '')
+                           type, template_name, 'Groups', '')
 
-def groups_list(request, site, groups, template_name, head_title='', head_title_status='') :
+def groups_list(request, site, groups, type, template_name, head_title='', head_title_status='') :
 
     create = False
+
     if request.user.is_authenticated() :
         try :
-            site.create_TgGroup 
+            if type == 'hub' :
+                site.create_hub
+            else :
+                site.create_virtual
             create = True
         except Exception, e:
             print "User can't create a group",e
@@ -245,23 +249,24 @@ def message_members(request, group, **kwargs) :
 
 @login_required
 @site_context
-def create_group(request, site, template_name="plus_groups/create_group.html"):
+def create_group(request, site, is_hub=False, template_name="plus_groups/create_group.html"):
     if request.POST :
         form = TgGroupForm(request.POST)
         
         if not form.is_valid() :
             print form.errors
         else :
-            group = form.save(request.user, site)
+            group = form.save(request.user, site, type)
             return HttpResponseRedirect(reverse('group', args=(group.id,)))
     else :
         form = TgGroupForm()
     
     return render_to_response(template_name, {
-            "head_title" : "Create New Group",
+            "head_title" : "Create New %s"%hub_name_plural(),
             "head_title_status" : "",
             "group" : form,
             "form" : form,
+            "is_hub" : is_hub,
             }, context_instance=RequestContext(request))
 
 

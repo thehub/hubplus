@@ -13,6 +13,7 @@ from apps.plus_lib.utils import make_name
 from apps.plus_groups.models import GROUP_TYPES, TgGroup, name_from_title
 from apps.plus_lib.utils import HTMLField
 
+from apps.plus_permissions.default_agents import get_or_create_root_location
 
 PERMISSION_OPTIONS = (
     (u'public', u'Public'),
@@ -60,6 +61,8 @@ class TgGroupForm(forms.Form):
     address = forms.CharField(required=False)
     location = forms.CharField(required=False)
     permissions_set = forms.ChoiceField(choices=PERMISSION_OPTIONS)
+
+    is_hub = forms.BooleanField()
     
     def clean_name(self):
         name = self.cleaned_data['name']
@@ -72,6 +75,9 @@ class TgGroupForm(forms.Form):
         return group_name
     
     def save(self, user, site):
+        if not self.cleaned_data['is_hub'] :
+            place = get_or_create_root_location()
+            
 
         group = site.create_TgGroup(
             group_name=self.cleaned_data['group_name'],
