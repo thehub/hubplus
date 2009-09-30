@@ -425,17 +425,37 @@ th {
 }
 
 .display_options {
-	border-bottom	: 1px solid #ddd;
+	float		: right;
 	list-style	: none;
-	padding		: 0 0 10px;
 	overflow	: hidden;
 	text-align	: right;
-	width		: 100%;
 }
 
 .display_options li {
-	float		: right;
 	margin-left	: 20px;
+}
+
+.display_options,
+.show_count {
+	padding-bottom: 3px;
+}
+
+.search_term {
+	margin-bottom	: 1.5em;
+}
+
+#results_list_all {
+	padding-bottom	: 3px;
+	margin-bottom	: 0;
+}
+
+.pagination a,
+.pagination span {
+	padding		: 5px;	
+}
+
+.pagination .first {
+	padding-left: 0;
 }
 
 .results {
@@ -680,6 +700,10 @@ li.place div.editable {
 #about_block ul li ul {
 	list-style	: none;
 	padding-bottom	: 0;
+}
+
+#about_block #skills_needs_list li {
+	padding-bottom	: 3px;
 }
 
 
