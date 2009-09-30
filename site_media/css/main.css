@@ -57,8 +57,10 @@ h3 {
 }
 
 h4 {
-	font-size	: 1.2em;
+	clear		: both;
 	font-weight	: normal;
+	font-size	: 1.5em;
+	padding-bottom	: 9px;
 }
 
 p {
@@ -80,6 +82,10 @@ th {
 
 .label_time {
 	color		: #888;
+}
+
+.extra {
+	color		: #888888;
 }
 
 .error_message {
@@ -115,10 +121,10 @@ th {
 }
 
 .avatar_choices label {
-	padding		: 95px 10px 5px;
+	padding		: 88px 10px 4px;
 	position	: relative;
 	text-align	: center;
-	width		: 80px;
+	width		: 68px;
 }
 
 .avatar_choices label img {
