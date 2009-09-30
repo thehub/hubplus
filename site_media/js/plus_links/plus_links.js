@@ -16,6 +16,7 @@ function links(ele) {
     }
  
     manager.find(".remove_link").each(function(i,e)  {
+	    alert(e);
             jq(e).click(function(ev) { 
 		    console.log(jq(e).attr('id'));
 		    
@@ -30,7 +31,7 @@ function links(ele) {
 		    return false;
 	    });
 	    //jq.get( manager.find('.remove_link').attr('href'), {'resource_id':}, remove_link);
-	    return false;
+	    return true;
 	});
 
     var remove_link= function(id) {
