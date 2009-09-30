@@ -53,8 +53,7 @@ def field(request, default='', **kwargs) :
                 new_val = field_validator.clean(new_val)
             except Exception, e:
                 print e
-                import ipdb
-                ipdb.set_trace()
+
 
         except ValidationError, e:
             return HttpResponse('%s' % e, status=500)
