@@ -8,7 +8,7 @@
 		{% block login %}
 		<ul id="account_navigation" style="">
 			{% if user.is_authenticated %}
-				<li class="first"><span>{% openid_icon openid user %}{% trans "Welcome" %} {{ user }}</span></li>
+				<li class="first"><span>{% openid_icon openid user %}{% trans "Welcome" %} {{ user.get_display_name }}</span></li>
 				<li><a href="{% url profile_detail user.username %}">{% trans "Profile" %}</a></li>
 				<li><a href="{% url messages_all %}">{% trans "Inbox" %}</a></li>
 				<li class="disabled"><a href="{% url acct_email %}">{% trans "Settings" %}</a></li>

@@ -34,11 +34,9 @@
 	  <input id="physical_hub" name="physical_hub_check" class="checkbox" type="checkbox">
 	  <div class="label_extended">
 	    {{ form.which_hub.errors }}
-	    <label for="physical_hub">{% blocktrans %}Invite to a specific hub{% endblocktrans %}.</label>
+	    <label for="physical_hub">{% blocktrans %}Invite to a specific {{HUB_NAME}}{% endblocktrans %}.</label>
 	    <select class="disabled" id="group" name="group">
-	   
-	      <option value="" readonly="readonly" selected="selected">Please select a Hub...</option>
-
+	      <option value="" readonly="readonly" selected="selected">Please select a {{HUB_NAME}}...</option>
 	      {% for h in hubs %}
 	      <option value="{{h.group_name}}">{{h.display_name}}</option>
 	      {% endfor %}

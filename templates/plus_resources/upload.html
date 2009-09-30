@@ -12,24 +12,29 @@
           
 <div id="permission_sliders"></div>
 
-<h2>Share a file</h2>
+<h2>{% trans "Share a file" %}</h2>
 	  
-<div id="site_wide_messages"></div>
 	  
 <div id="body">
   <form class="full block" enctype="multipart/form-data" method="POST">
-    <h4>Upload resource</h4>
+    <h4>{% trans "Upload resource" %}</h4>
     <p>Fill in the form below to upload a new resource.</p>
 
     <fieldset>
       <ul>
+	<li>
+          <label for="name"><span class="required">*</span>Document Name</label>
+          <input  id="name" name="name" class="text" type="hidden" value="{{form.data.name}}" />
+	  {{form.data.name}}
+          {{form.name.errors}}
+	</li>
 	<li>
 	  <label for="title"><span class="required">*</span> Title</label>
 	  <input  id="title" name="title" class="text" type="text" value="{{form.data.title}}" />
 	  {{form.title.errors}}
 	</li>
 	<li>
-	  <label for="description"><span class="required">*</span> Description</label>
+	  <label for="description">Description</label>
 	  <textarea id="description" name="description" rows="3" maxlength="20">{{form.data.description}}</textarea>
 	  {{form.description.errors}}
 	</li>

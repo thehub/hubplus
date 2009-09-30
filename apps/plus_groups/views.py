@@ -284,10 +284,12 @@ def add_content_object(request, group):
         create = getattr(group, "create_" + type_string)
         title = form.cleaned_data['title']
         name = form.cleaned_data['name']
+
         obj = create(request.user, title=title, name=name, in_agent=group.get_ref(), stub=True)
         obj.save()
 
         #can't do a normal redirect via ajax call, so tell the js to redirect for us
+
         return HttpResponse('redirect:' + reverse('edit_' + type_string, args=[group.id, obj.name]))
         
         #redirect to the edit page
@@ -332,7 +334,7 @@ def autocomplete(request, j=None):
     user = request.user
     q = request.GET['q']
     limit = request.GET['limit']  
-    groups = TgGroup.objects.plus_filter(user, interface_names=['Viewer', 'CreateWikiPage'], required_interfaces=['CreateWikiPage'], all_or_any='ANY', display_name__istartswith=q, level__in=['host', 'member'], limit=6)
+    groups = TgGroup.objects.plus_filter(user, interface_names=['Viewer', 'CreateWikiPage','CreateResource'], required_interfaces=['CreateWikiPage','CreateResource'], all_or_any='ANY', display_name__istartswith=q, level__in=['host', 'member'], limit=6)
 
     options = [{'display_name':group.display_name, 'id':str(group.id), 'interfaces':[iface.split('.')[1] for iface in group._interfaces]} for group in groups]
     return options
