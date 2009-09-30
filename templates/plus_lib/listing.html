@@ -9,34 +9,36 @@
 
 {% block body %}
 <form method="GET" action="{% url profile_list %}" class="order_list">
+
 	<div class="block">
-	  <input type="text" class="text" name="search" value="{{ search_terms }}" />
-	  <input type="submit" class="button" value="Search" />
+		<div class="search_term">
+			<input type="text" class="text" name="search" value="{{ search_terms }}" />
+			<input type="submit" class="button" value="Search" />
+		</div>
+		{% if users %}
+		{% autopaginate users 10 %}
+		<div id="results_all">
+			<ul class="display_options">
+				<li class="sort"> 
+					<label>{% trans "Sort by" %}:</label>
+					<select size="1" name="order">
+						<!--<option value="relevance">Relevance</option>-->
+						<option value="date" {% ifequal order "date" %}selected="selected"{% endifequal %}>{% trans "Most recent" %}</option>
+						<!--<option value="view">Most views</option>-->
+						<option value="name" {% ifequal order "name" %}selected="selected"{% endifequal %}>{% trans "A-Z" %}</option>
+					</select>
+				</li>
+			</ul>
+			{% plus_paginate_header %}
+			<ul id="results_list_all" class="content_list results">
+				{% block list_data %} {% endblock %}
+			</ul>
+			{% plus_paginate %}
+		</div>
+		{% else %}
+		<p>No {{results_label.lower}} were found.</p>
+		{% endif %}
 	</div>
-    {% if users %}
-    <ul class="display_options">
-      <li class="sort"> 
-	  <label>{% trans "Sort by" %}:</label>
-	  <select size="1" name="order">
-	    <!--<option value="relevance">Relevance</option>-->
-	    <option value="date" {% ifequal order "date" %}selected="selected"{% endifequal %}>{% trans "Most recent" %}</option>
-	    <!--<option value="view">Most views</option>-->
-	    <option value="name" {% ifequal order "name" %}selected="selected"{% endifequal %}>{% trans "A-Z" %}</option>
-	  </select>
-      </li>
-    </ul>
+
 </form>
-      {% autopaginate users 10 %}
-      <div id="results_all">
-	{% plus_paginate_header %}
-	<ul id="results_list_all" class="content_list results">
-	  {% block list_data %} {% endblock %}
-        </ul>
-      </div>
-        {% plus_paginate %}
-        
-       {% else %}
-           <p>No {{results_label.lower}} were found.</p>
-      {% endif %}
-	</div>
 {% endblock %}
