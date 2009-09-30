@@ -1,0 +1,4 @@
+{% if is_paginated %}
+{% load i18n %}
+<p>Showing {{page_obj.start_index}} - {{page_obj.end_index}} of {{page_obj.paginator.count}} {% if search_terms %}for "{{search_terms}}"{% endif %}</p>
+{% endif %}
