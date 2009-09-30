@@ -30,5 +30,12 @@ def add_link(request, target):
 @login_required
 @secure_resource(Link)
 def remove_link(request, link) :
-    link.delete()
-    
+
+    try :
+        link.delete()
+        data = simplejson.dumps({'deleted':deleted})
+    except Exception, e :
+        data = simplejson.dumps({'error':'%s'%e})
+
+    return HttpResponse(data, mimetype='application/json')
+
