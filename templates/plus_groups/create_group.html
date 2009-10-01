@@ -10,8 +10,8 @@
 <div id="intro" class="block">
 
 <form class="full" method="POST" action="{% url create_group %}">
-  <h4>About your {{HUB_NAME}}</h4>
-  <p>Please enter your details below to create a new {{HUB_NAME}}.</p>
+  <h4>About your {{name_of_created}}</h4>
+  <p>Please enter your details below to create a new {{name_of_created}}.</p>
   <fieldset>
     <ul>
       <li>
@@ -19,9 +19,11 @@
 	<input  id="name" name="name" class="text" type="text" />
 	{{form.name.errors}}
       </li>
-      {% if is_hub %}{% else %}
+      {% if is_hub %}
+      <input type='hidden' name='is_hub' value='True'/>
+      {% else %}
+      <input type='hidden' name='is_hub' value='False'/>
       <li>
-
 	<label for="group_type"><span class="required">*</span> {% trans "Type" %}</label>
 	<select id="group_type" name="group_type">
 	  <option value="interest">Interest group</option>
