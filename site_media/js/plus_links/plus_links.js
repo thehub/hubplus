@@ -16,16 +16,13 @@ function links(ele) {
     }
  
     manager.find(".remove_link").each(function(i,e)  {
-	    alert(e);
+	
             jq(e).click(function(ev) { 
-		    console.log(jq(e).attr('id'));
-		    
-		    var link = jq(e).parent().parent();
-		    console.log(link);
-		   
-		    jq.get(jq(e).attr('id'), [], function(data) {
-			    console.log(link);
 			    
+		    var link = jq(e).parent().parent();
+			   
+		    jq.get(jq(e).attr('id'), [], function(data) {
+				    
 			    link.remove();
 			}, "json");
 		    return false;
