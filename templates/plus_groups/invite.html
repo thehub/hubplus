@@ -7,7 +7,7 @@
 
 {% block body %}
 
-  <form class="full uniForm" id="invite_non_member_form" method="post" action="{% url invite_to_group group.id %}">
+  <form class="full uniForm" id="invite_non_member_form" method="post" action="{% url plus_groups:invite_to_group group.id %}">
 
     <h4>{% trans "Invites" %}</h4>
     <p>{% blocktrans %}Please enter the username or email of someone to invite to {% endblocktrans %}{{group.get_display_name}}</p>

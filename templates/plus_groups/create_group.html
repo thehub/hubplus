@@ -9,9 +9,11 @@
 
 <div id="intro" class="block">
 
-<form class="full" method="POST" action="{% url create_group %}">
+
+<form class="full" method="POST" action="{% url create_group:create_group %}">
   <h4>About your {{name_of_created}}</h4>
   <p>Please enter your details below to create a new {{name_of_created}}.</p>
+
   <fieldset>
     <ul>
       <li>

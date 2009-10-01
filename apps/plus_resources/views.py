@@ -68,7 +68,7 @@ def handle_uploaded_file(user, owner, form, f_data) :
 @login_required
 @secure_resource(TgGroup)
 def edit_resource(request, group, resource_name,  
-                  template_name='plus_resources/upload.html', success_url=None, **kwargs) :
+                  template_name='plus_resources/upload.html', success_url=None, current_app="plus_groups", **kwargs) :
 
     try:
         secure_upload = Resource.objects.plus_get(request.user, name=resource_name, in_agent=group.get_ref())
@@ -76,7 +76,7 @@ def edit_resource(request, group, resource_name,
         raise Http404
  
     if not success_url :
-        success_url = reverse('group',args=(group.id,))
+        success_url = reverse(current_app + ':group',args=(group.id,))
 
     if request.POST :
         form = UploadFileForm(request.POST, request.FILES)
@@ -96,7 +96,7 @@ def edit_resource(request, group, resource_name,
     return render_to_response(template_name, {
         'form' : form,
         'page_title' : 'Upload a resource',
-    }, context_instance=RequestContext(request))
+    }, context_instance=RequestContext(request, current_app=current_app))
 
 
 

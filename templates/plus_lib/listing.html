@@ -6,23 +6,12 @@
 {% load avatar_tags %}
 {% load humanize %}
 {% load profile_tags %}
+{% load plus_url %}
 
 {% block body %}
 {% block create_button %}{% endblock %}
 
-{% ifequal search_type "member" %}
-<form method="GET" action="{% url profile_list %}" class="order_list">
-{% endifequal %}
-{% ifequal search_type "group" %}
-<form method="GET" action="{% url groups %}" class="order_list">
-{% endifequal %}
-{% ifequal search_type "hub" %}
-<form method="GET" action="{% url hubs %}" class="order_list">
-{% endifequal %}
-{% ifequal search_type "region" %}
-<form method="GET" action="{% url regions %}" class="order_list">
-{% endifequal %}
-
+<form method="GET" action="{% plus_url search_type %}" class="order_list">
 	<div class="block">
 	  <input type="text" class="text" name="search" value="{{ search_terms }}" />
 	  <input type="submit" class="button" value="Search" />
