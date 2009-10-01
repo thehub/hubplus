@@ -445,13 +445,23 @@ th {
 }
 
 #results_list_all {
-	padding-bottom	: 3px;
+	padding-bottom	: 0;
 	margin-bottom	: 0;
+}
+
+.pagination {
+	margin-bottom	: 1.5em;
 }
 
 .pagination a,
 .pagination span {
-	padding		: 5px;	
+	float		: left;
+	padding		: 9px 5px 5px;
+}
+
+.pagination .current,
+.pagination .page:hover {
+	background	: url('../images/icon_arrow_dn.gif') 50% -105px no-repeat;
 }
 
 .pagination .first {
