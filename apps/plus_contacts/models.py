@@ -99,21 +99,22 @@ Please visit the following link to confirm your account : %s""" % url
     def accept_mail(self, sponsor, site_root, application_id):
         message = """
 Dear %s %s
-We are delighted to confirm you have been accepted as a member of Hub+
+We are delighted to confirm you have been accepted as a member of MHPSS
 """ % (self.first_name, self.last_name)
-        return self.send_link_email("Confirmation of account on Hub+", message, sponsor, site_root, application_id)
+        return self.send_link_email("Confirmation of account on MHPSS", message, sponsor, site_root, application_id)
 
     def invite_mail(self, sponsor, site_root, application_id) :
         message = """
 Dear %s %s,
-%s has invited you to become a member of Hub+ ... MORE TEXT HERE""" % (self.first_name, self.last_name, sponsor.display_name)
-        return self.send_link_email("Invite to join Hub+", message, sponsor, site_root, application_id)
+%s has invited you to become a member of MHPSS... MORE TEXT HERE""" % (self.first_name, self.last_name, sponsor.display_name)
+        return self.send_link_email("Invite to join MHPSS", message, sponsor, site_root, application_id)
 
 
 
     def invite(self, site, sponsor, site_root, group=None):
         # this called on a contact if someone is inviting them to join the site
-        application = site.create_Application(sponsor, applicant=self)
+        # XXX revisit this get_inner
+        application = site.get_inner().create_Application(sponsor, applicant=self)
         if group :
             # this is an invitation, probably to a hub
             application.group=group
