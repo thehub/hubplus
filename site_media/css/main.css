@@ -334,9 +334,7 @@ th {
 }
 
 .tabbed ul.tabbed_navigation li {
-    display:inline-block;
-    display:-moz-inline-stack;
-    *display:inline; /* IE */
+	float		: left;
 	margin		: 0 20px 0 0;
 	padding		: 0;
 }
