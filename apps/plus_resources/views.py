@@ -1,3 +1,5 @@
+from __future__ import with_statement
+
 from django.shortcuts import render_to_response, get_object_or_404
 from django.template import RequestContext
 from django.contrib.auth.models import User
@@ -7,7 +9,7 @@ from django.core.exceptions import ValidationError
 from django.utils.translation import ugettext_lazy as _
 
 from apps.plus_resources.forms import UploadFileForm
-from apps.plus_resources.models import Resource, make_file_path
+from apps.plus_resources.models import Resource
 
 from django.contrib.auth.decorators import login_required
 
@@ -20,12 +22,10 @@ from django.core.files import File
 
 import os
 
-def make_full_save_path(owner_class, owner_id, resource_id) :
-    return "%s/%s" % (settings.MEDIA_ROOT, make_file_path(owner_class, owner_id, resource_id))
-
 
 def handle_uploaded_file(user, owner, form, f_data) :
     kwargs = dict([(k,v) for k,v in form.cleaned_data.iteritems()])
+
 
     # XXX change to this when permissions defined,
     # resource = owner.create_Resource(**kwargs)
@@ -47,21 +47,25 @@ def handle_uploaded_file(user, owner, form, f_data) :
     # end of compatibility
 
     resource.save()
-    path= make_full_save_path(ContentType.objects.get_for_model(owner).model, owner.id, resource.id)
+    return 
+
+    #path= make_full_save_path(ContentType.objects.get_for_model(owner).model, owner.id, resource.id)
 
     try:
         os.makedirs(path)
     except Exception, e:
         print e
         # path probably exists
+    
+    import ipdb
+    ipdb.set_trace()
 
-    # but we still have to save it manually, ourselves, try creating path manually
-    f_name = "%s/%s"% (path, resource.resource.name)
+    # but we still have to save it manually, ourselves
+    f_name = "%s/%s"% (path, resource.resource.name)    
+    with open(f_name, 'wb+') as destination :
+        for chunk in f_data.chunks():
+            destination.write(chunk)
 
-    destination = open(f_name, 'wb+')
-    for chunk in f_data.chunks():
-        destination.write(chunk)
-    destination.close()
 
 
 
