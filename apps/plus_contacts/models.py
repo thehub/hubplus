@@ -113,7 +113,8 @@ Dear %s %s,
 
     def invite(self, site, sponsor, site_root, group=None):
         # this called on a contact if someone is inviting them to join the site
-        application = site.create_Application(sponsor, applicant=self)
+        # XXX revisit this get_inner
+        application = site.get_inner().create_Application(sponsor, applicant=self)
         if group :
             # this is an invitation, probably to a hub
             application.group=group

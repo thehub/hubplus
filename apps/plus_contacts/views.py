@@ -107,7 +107,10 @@ def site_invite(request, site, template_name='plus_contacts/invite_non_member.ht
             else :
                 print "New contact"
                 username, first_name, last_name = split_name(form.cleaned_data['username'])
-                contact = site.create_Contact(request.user, 
+                # we don't really want to give "create_Contact" in general to this user
+                # just convenient to have a contact now ... hence site.get_inner
+                # XXX rethink this 
+                contact = site.get_inner().create_Contact(request.user, 
                                     email_address = email_address, 
                                     first_name=first_name,
                                     last_name=last_name)
