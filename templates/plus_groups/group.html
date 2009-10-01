@@ -90,7 +90,7 @@
       <img id="group_image" src="/site_media/group_images/default_interest_group.jpg" />
     </div>
     <ul id="actions" class="link_list">
-      {% if group.message_members %}
+      {% if message %}
       <li class="first"><a href="{% url plus_groups:message_members group.id %}">Message members</a></li>
       {% endif %}
       {% if invite %}
