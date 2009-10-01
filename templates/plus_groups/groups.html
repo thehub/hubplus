@@ -1,20 +1,21 @@
-{% extends "site_base.html" %}
+{% extends "plus_lib/listing.html" %}
 
 {% load i18n %}
-{% load avatar_tags %}
-
-{% load uni_form %}
-
-{% block body %}
-	<div class="block">
-		{% if create %}
-			<a class="button" href="{% url create_group%}">{% trans "Create New "%}</a>
-		{% endif %}
-		
-		<ul>
-		{% for group in groups %}
-		<li><a href='/groups/{{group.id}}/'>{{group.display_name}}</a></li>
-		{% endfor %}
-		</li>
-	</div>
+{% load group_tags %}
+{% block create_button %}
+{% if create %}
+<a class="button" href="{% url plus_groups:create_group %}">{% blocktrans %}Create New {{head_title}}{% endblocktrans %}</a>
+{% endif %}
 {% endblock %}
+
+{% block list_data %}
+    {% for group in objects %}
+       <li {% if forloop.first %}class="first"{% endif %} {% if forloop.last %}class="last"{% endif %}> 
+         {% show_group group %}
+       </li>
+    {% endfor %}
+{% endblock %}
+
+
+
+		

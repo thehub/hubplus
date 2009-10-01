@@ -38,8 +38,9 @@
          {% editable "Website" profile 'website' 'My site' 'url' %} 
       </li> 
     </ul>
+
     <h3>Skills and needs</h3>
-    <ul>
+    <ul id="skills_needs_list">
       <li>
 	<dl>
 	  {% plus_tag 'Skills' 'skills'  profile  profile.user %}
@@ -53,8 +54,5 @@
     </ul>
     
     {% include "profiles/profile_about_form.html" %}
-    
-
-    { % include "profiles/profile_host_info_form.html" % }
 
 </div>

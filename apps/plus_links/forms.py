@@ -12,5 +12,7 @@ class LinkForm(forms.Form) :
     def __init__(self, *args, **kwargs):
         super(LinkForm, self).__init__(*args, **kwargs)
         self.fields['service'].choices = [(service.id, servive.name) for service in Service.objects.all()]
-    
+
+    def clean_service(self) :
+        return None
     

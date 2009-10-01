@@ -6,9 +6,11 @@ from django.db import models
 from apps.plus_permissions.site import Site
 
 def get_site(user) :
+    from apps.plus_permissions.interfaces import secure_wrap
+ 
     ss = Site.objects.all()
     if len(ss) > 0 :
-        return ss[0]
+        return secure_wrap(ss[0],user)
     s = Site()
     s.save() 
 
@@ -16,7 +18,6 @@ def get_site(user) :
     # permission-wise, the site lives under the all_members_admin group
     s.acquires_from(admin)
 
-    from apps.plus_permissions.interfaces import secure_wrap
     return secure_wrap(s, user)
 
 

@@ -45,7 +45,7 @@ def add_get_display_name(cls) :
             pass
         
         try:
-            if self.group_name :
+            if not self.display_name and self.group_name:
                 return self.group_name
         except :
             pass

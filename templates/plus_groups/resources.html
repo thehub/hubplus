@@ -91,6 +91,28 @@
 	      
 	    </dl>
 	  </li>
+
+	  <!-- quick and dirty list of uploads -->
+	  {% for resource in resources %}
+	  <li class="last">
+            <div class="thumb medium"><img src="../../site_media/images/temp/salad.jpg" /></div>
+            <dl>
+              <dt>Name</dt>
+              <dd><a href="{{resource.download_url}}">{{resource.title}}</a></dd>
+              <dt>Type:</dt>
+              <dd>Uploaded File</dd>
+              <dt>Description:</dt>
+              <dd>{{resource.description}}</dd>
+              <dt>Author:</dt>
+              <dd>{{resource.author}}</dd>
+	      <dt>Size:</dt>
+	      <dd>{{resource.resource.size}}</dd>
+
+            </dl>
+          </li>
+
+	  {% endfor %}
+
 	</ul>
 	<div class="pagination">
 	  <span class="disabled prev">‹‹ Previous</span>

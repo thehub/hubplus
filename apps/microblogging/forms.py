@@ -32,3 +32,6 @@ class TweetForm(forms.ModelForm):
         tweet_instance.sender = self.user
         tweet_instance.save()
         #tweet(self.user, text, tweet_instance)
+
+
+        

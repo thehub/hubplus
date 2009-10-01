@@ -42,7 +42,7 @@ def get_pages_for(group) :
     return WikiPage.objects.filter(in_agent__content_type=content_type, in_agent__object_id=group.id)
  
 @secure_resource(TgGroup)
-def group(request, group, template_name="plus_groups/group.html"):
+def group(request, group, template_name="plus_groups/group.html", current_app='plus_groups', **kwargs):
 
     user = request.user
     if not user.is_authenticated():
@@ -124,7 +124,7 @@ def group(request, group, template_name="plus_groups/group.html"):
     resources = get_resources_for(group.get_inner())
     # XXX replace when we have more sophisticated listings search
     pages = get_pages_for(group.get_inner())
-
+    context = RequestContext(request, current_app=current_app)
     return render_to_response(template_name, {
             "head_title" : "%s" % group.get_display_name(),
             "head_title_status" : dummy_status,
@@ -146,69 +146,85 @@ def group(request, group, template_name="plus_groups/group.html"):
             "permissions": perms_bool,
             "resources":resources,
             "pages":pages,
-            }, context_instance=RequestContext(request))
+            }, context_instance=context)
 
-from apps.plus_lib.utils import hub_name_plural
+from apps.plus_lib.utils import hub_name_plural, hub_name
 @site_context
-def groups(request, site, type='other', template_name='plus_groups/groups.html'):
+def groups(request, site, type='other', template_name='plus_groups/groups.html', current_app='plus_groups'):
     if type == 'hub' :
-        return groups_list(request, site, 
-                           TgGroup.objects.plus_hub_filter(request.user, level='member'), 
-                           template_name, hub_name_plural(), '')
-    else :
-        return groups_list(request, site, 
-                           TgGroup.objects.plus_virtual_filter(request.user, level='member'),
-                           template_name, 'Groups', '')
+        head_title = hub_name_plural()
+        groups = TgGroup.objects.plus_hub_filter(request.user, level='member')
+    else:
+        head_title = 'Groups'
+        groups = TgGroup.objects.plus_virtual_filter(request.user, level='member')
 
-def groups_list(request, site, groups, template_name, head_title='', head_title_status='') :
+    return groups_list(request, site, groups, 
+                       template_name, head_title, '', current_app=current_app)
 
+
+
+def groups_list(request, site, groups, template_name, head_title='', head_title_status='', current_app=None) :
+
+    search_terms = request.GET.get('search', '')
+    order = request.GET.get('order')
+    if not order:
+        order = 'name'
     create = False
+
     if request.user.is_authenticated() :
+
         try :
-            site.create_TgGroup 
+            if current_app == 'plus_groups' :
+                site.create_virtual
+            else :
+                site.create_hub
             create = True
         except Exception, e:
             print "User can't create a group",e
     
+    
+    context = RequestContext(request, current_app=current_app)
 
     return render_to_response(template_name, {
-            "head_title" : head_title,
-            "head_title_status" : head_title_status,
-            "groups" : groups,
-            "create" : create,
-
-            }, context_instance=RequestContext(request))
+            "objects" : groups,
+            "order" : order,
+            "search_terms":search_terms,
+            "search_type":'plus_groups:groups',
+            "head_title":head_title,
+            "results_label":head_title,
+            "create":create
+            }, context_instance=context)
 
 
 @login_required
 @secure_resource(TgGroup, required_interfaces=['Join','Viewer'])
-def join(request, group,  template_name="plus_groups/group.html"):
+def join(request, group,  template_name="plus_groups/group.html", current_app='plus_groups', **kwargs):
     group.join(request.user)
-    return HttpResponseRedirect(reverse('group',args=(group.id,)))
+    return HttpResponseRedirect(reverse(current_app + ':group',args=(group.id,)))
 
 
 @login_required
 @secure_resource(TgGroup, required_interfaces=['Apply','Viewer'])
-def apply(request, group_id):
+def apply(request, group_id, current_app='plus_groups', **kwargs):
     group.apply(request.user)
-    return HttpResponseRedirect(reverse('apply_to_group',args=(group.id)))            
+    return HttpResponseRedirect(reverse(current_app + ':apply_to_group',args=(group.id)))            
     
 
 @login_required
 @secure_resource(TgGroup, required_interfaces=['Join','Viewer']) 
-def leave(request, group, template_name="plus_groups/group.html"):
+def leave(request, group, template_name="plus_groups/group.html", current_app='plus_groups', **kwargs):
     group.leave(request.user)
-    return HttpResponseRedirect(reverse('group',args=(group.id,)))
+    return HttpResponseRedirect(reverse(current_app + ':group',args=(group.id,)))
 
 @login_required
 @secure_resource(TgGroup, required_interfaces=['Invite', 'Viewer'])
-def invite(request, group, template_name='plus_groups/invite.html'):
+def invite(request, group, template_name='plus_groups/invite.html', current_app='plus_groups', **kwargs):
     if request.POST :
         form = TgGroupMemberInviteForm(request.POST)
         if form.is_valid() :
             invited = form.cleaned_data['user']
             group.invite_member(invited, form.cleaned_data['special_message'], request.user, request.get_host())
-            return HttpResponseRedirect(reverse('group',args=(group.id,)))
+            return HttpResponseRedirect(reverse(current_app + ':group',args=(group.id,)))
 
             
     else :
@@ -216,55 +232,63 @@ def invite(request, group, template_name='plus_groups/invite.html'):
     return render_to_response(template_name,{
             'form' : form,
             'group' : group,
-            },context_instance=RequestContext(request))
+            }, context_instance=RequestContext(request, current_app=current_app))
 
 
 @hmac_proxy
 @secure_resource(TgGroup,["ManageMembers"])
-def add_member(request, group, username, **kwargs) :
+def add_member(request, group, username, current_app='plus_groups', **kwargs) :
     user = get_object_or_404(User, username=username)
     group.add_member(user)
-    return HttpResponseRedirect(reverse('group',args=(group.id,)))
+    return HttpResponseRedirect(reverse(current_app + ':group',args=(group.id,)))
 
 @login_required
 @secure_resource(TgGroup, required_interfaces=['Message','Viewer'])
-def message_members(request, group, **kwargs) :
+def message_members(request, group, current_app='plus_groups', **kwargs) :
     template_name = "plus_groups/message_members.html"
     if request.POST :
         form = TgGroupMessageMemberForm(request.POST)
         if form.is_valid() :
             group.message_members(request.user, message_header, message_body)
             request.user.message_set.create(message=_("You have successfully messaged everyone in %s"))
-            return HttpResponseRedirect(reverse('group',args=(group.id)))
+            return HttpResponseRedirect(reverse(current_app + ':group',args=(group.id)))
     else :
         form = TgGroupMessageMemberForm()
     return render_to_response(template_name, 
                               {'form' : form,
-                               'group': group }, context_instance=RequestContext(request))
+                               'group': group }, context_instance=RequestContext(request, current_app=current_app))
 
 
 @login_required
 @site_context
-def create_group(request, site, template_name="plus_groups/create_group.html"):
+def create_group(request, site, template_name="plus_groups/create_group.html", current_app='plus_groups', **kwargs):
+
     if request.POST :
         form = TgGroupForm(request.POST)
-        
+
         if not form.is_valid() :
             print form.errors
         else :
             group = form.save(request.user, site)
-            return HttpResponseRedirect(reverse('group', args=(group.id,)))
+            return HttpResponseRedirect(reverse(current_app + ':group', args=(group.id,)))
     else :
         form = TgGroupForm()
     
+    if current_app == 'plus_groups' :
+        name_of_created = "Group"
+        is_hub = False
+    else :
+        name_of_created = hub_name()
+        is_hub = True
+
     return render_to_response(template_name, {
-            "head_title" : "Create New Group",
+            "head_title" : "Create New %s"%name_of_created,
+            "name_of_created": name_of_created,
             "head_title_status" : "",
             "group" : form,
             "form" : form,
-            }, context_instance=RequestContext(request))
-
-
+            "is_hub" : is_hub, 
+            }, context_instance=RequestContext(request, current_app=current_app))
 
 
 @login_required
@@ -276,7 +300,7 @@ def group_field(request, group, classname, fieldname, *args, **kwargs) :
 
 @login_required
 @secure_resource(obj_schema={'group':[TgGroup]})
-def add_content_object(request, group):
+def add_content_object(request, group, current_app='plus_groups', **kwargs):
     form = AddContentForm(request.POST)
     if form.is_valid():
         title = form.cleaned_data['title']
@@ -290,7 +314,7 @@ def add_content_object(request, group):
 
         #can't do a normal redirect via ajax call, so tell the js to redirect for us
 
-        return HttpResponse('redirect:' + reverse('edit_' + type_string, args=[group.id, obj.name]))
+        return HttpResponse('redirect:' + reverse(current_app + ':edit_' + type_string, args=[group.id, obj.name]))
         
         #redirect to the edit page
         #return HttpResponseRedirect(reverse('edit_' + type_string, args=[group.id, obj.name]))
@@ -309,7 +333,7 @@ def possible_create_interfaces():
 
 @login_required
 @secure_resource(TgGroup)
-def add_content_form(request, group, form=None):
+def add_content_form(request, group, form=None, current_app='plus_groups', **kwargs):
 
     possible_interfaces = possible_create_interfaces()
     if group:
@@ -323,12 +347,12 @@ def add_content_form(request, group, form=None):
             can_add += 1
         else:
             iface.append(False)
-    return render_to_response("plus_groups/add_content.html", {'group':group, 'possible_interfaces': possible_interfaces, 'can_add':can_add, 'form':form})
+    return render_to_response("plus_groups/add_content.html", {'group':group, 'possible_interfaces': possible_interfaces, 'can_add':can_add, 'form':form}, RequestContext(request, current_app=current_app))
 
 
 
 @json_view
-def autocomplete(request, j=None):
+def autocomplete(request, j=None, current_app='plus_groups', **kwargs):
     """filter groups to see which ones this user can add content too. Check that the user can create at least something on the groups that we autocomplete for them
     """
     user = request.user

@@ -11,11 +11,19 @@ content_type = Site
 
 # we need a special set_permissions interface which is only editable by the scontext_admin and determines who can set permissions or override them for an object. 
 
-
 from apps.plus_permissions.models import add_type_to_interface_map
 
-SiteInterfaces = {
+# Here we set separate interfaces for creating virtual groups and real world hubs / regions . Different permissions for each
+class SiteCreateVirtual:
+    create_virtual = InterfaceCallProperty
 
+class SiteCreateHub:
+    create_hub = InterfaceCallProperty
+
+
+SiteInterfaces = {
+    'CreateVirtual' : SiteCreateVirtual,
+    'CreateHub' : SiteCreateHub,
     }
 
 add_type_to_interface_map(Site, SiteInterfaces)
@@ -24,7 +32,7 @@ add_type_to_interface_map(Site, SiteInterfaces)
 # use InterfaceOrder to draw the slider and constraints, these are used in rendering the sliders and in validating the results
 # these exist on a per type basis and are globals for their type.
 # they don't need to be stored in the db
-SliderOptions = {'InterfaceOrder':[]}
+SliderOptions = {'InterfaceOrder':['CreateVirtual','CreateHub']}
 SetSliderOptions(Site, SliderOptions) 
 
 

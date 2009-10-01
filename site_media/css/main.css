@@ -107,6 +107,22 @@ th {
 
 /* Images & Thumbnails */
 
+#avatar_current,
+#avatar_add {
+	margin-bottom	: 20px;
+	overflow: hidden;
+}
+
+.avatar_choices ul {
+	margin-bottom	: 0;
+}
+
+.avatar_choices li {
+	float		: left;
+	margin-bottom	: 13px;
+	margin-right: 10px;
+}
+
 .avatar_choices label,
 .image,
 .thumb {
@@ -118,6 +134,15 @@ th {
 .image {
 	margin-bottom 	: 1.5em;
 	padding		: 10px;
+	position	: relative;
+}
+
+.image .bt_edit {
+	background-color	: #fff;
+	border		: 6px solid #fff;
+	bottom		: 4px;
+	position	: absolute;
+	right		: 4px;
 }
 
 .avatar_choices label {
@@ -400,17 +425,37 @@ th {
 }
 
 .display_options {
-	border-bottom	: 1px solid #ddd;
+	float		: right;
 	list-style	: none;
-	padding		: 0 0 10px;
 	overflow	: hidden;
 	text-align	: right;
-	width		: 100%;
 }
 
 .display_options li {
-	float		: right;
 	margin-left	: 20px;
+}
+
+.display_options,
+.show_count {
+	padding-bottom: 3px;
+}
+
+.search_term {
+	margin-bottom	: 1.5em;
+}
+
+#results_list_all {
+	padding-bottom	: 3px;
+	margin-bottom	: 0;
+}
+
+.pagination a,
+.pagination span {
+	padding		: 5px;	
+}
+
+.pagination .first {
+	padding-left: 0;
 }
 
 .results {
@@ -655,6 +700,10 @@ li.place div.editable {
 #about_block ul li ul {
 	list-style	: none;
 	padding-bottom	: 0;
+}
+
+#about_block #skills_needs_list li {
+	padding-bottom	: 3px;
 }
 
 
