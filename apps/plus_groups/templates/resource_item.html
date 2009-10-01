@@ -9,7 +9,5 @@
   <dt>{% trans "Name" %}</dt>
   <dd><a href="{{resource_url}}">{{resource.get_display_name}}</a></dd>
   <dt>{% trans "Description" %}:</dt>
-  <dd>{{resource.content|truncatewords:20}}</dd>
-  <dt>{% trans "Members" %}:</dt>
-  <dd>{% blocktrans %}{{no_of_members}} members{% endblocktrans %}</dd>  
+  <dd>{% autoescape off %}{{resource.content|truncatewords:20}}{% endautoescape %}</dd>
 </dl>

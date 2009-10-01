@@ -146,7 +146,7 @@ def group(request, group, template_name="plus_groups/group.html", current_app='p
             "host_count": host_count,
             "tweets" : tweets,
             "permissions": perms_bool,
-            "objects":resources,
+            "objects":pages,
             "search_type":"plus_groups:group",
             "group_id":group.id,
             "pages":pages,
