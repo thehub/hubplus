@@ -125,3 +125,11 @@ def toggle_follow(request, username):
     return HttpResponseRedirect(reverse("profile_detail", args=[other_user]))
 
 
+def ajax_tweet_form(request, sender_class, sender_id) :
+    return render_to_response("microblogging/form.html",
+                              {'sender_class':sender_class,
+                               'sender_id':sender_id})
+
+
+def ajax_post(request) :
+    pass

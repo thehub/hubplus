@@ -171,20 +171,27 @@ def groups(request, site, type='other', template_name='plus_groups/groups.html',
 
 
 def groups_list(request, site, groups, template_name, head_title='', head_title_status='', type_name='Group', current_app=None) :
+
     search_terms = request.GET.get('search', '')
     order = request.GET.get('order')
     if not order:
         order = 'name'
     create = False
+
     if request.user.is_authenticated() :
-        try:
-            site.create_TgGroup 
+
+        try :
+            if current_app == 'plus_groups' :
+                site.create_virtual
+            else :
+                site.create_hub
             create = True
         except Exception, e:
             print "User can't create a group",e
     
     
     context = RequestContext(request, current_app=current_app)
+
     return render_to_response(template_name, {
             "objects" : groups,
             "order" : order,
@@ -264,9 +271,10 @@ def message_members(request, group, current_app='plus_groups', **kwargs) :
 @login_required
 @site_context
 def create_group(request, site, template_name="plus_groups/create_group.html", current_app='plus_groups', **kwargs):
+
     if request.POST :
         form = TgGroupForm(request.POST)
-        
+
         if not form.is_valid() :
             print form.errors
         else :
@@ -275,14 +283,21 @@ def create_group(request, site, template_name="plus_groups/create_group.html", c
     else :
         form = TgGroupForm()
     
+    if current_app == 'plus_groups' :
+        name_of_created = "Group"
+        is_hub = False
+    else :
+        name_of_created = hub_name()
+        is_hub = True
+
     return render_to_response(template_name, {
-            "head_title" : "Create New Group",
+            "head_title" : "Create New %s"%name_of_created,
+            "name_of_created": name_of_created,
             "head_title_status" : "",
             "group" : form,
             "form" : form,
+            "is_hub" : is_hub, 
             }, context_instance=RequestContext(request, current_app=current_app))
-
-
 
 
 @login_required

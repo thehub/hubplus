@@ -1,12 +1,5 @@
 /* Forms */
 
-form h4 {
-	clear		: both;
-	font-weight	: normal;
-	font-size	: 1.5em;
-	padding-bottom	: 9px;
-}
-
 form p {
 	color		: #888888;
 }
@@ -37,7 +30,6 @@ form ul li {
 }
 
 form label .extra {
-	color		: #888888;
 	font-size	: 0.8181em;
 	display		: block;
 }

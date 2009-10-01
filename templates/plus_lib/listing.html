@@ -60,9 +60,10 @@
       </li>
     </ul>
 </form>
-      {% autopaginate objects 10 %}
-      <div id="results_all">
-	{% plus_paginate_header %}
+
+{% autopaginate objects 10 %}
+<div id="results_all">
+	{%plus_paginate_header %}
 	<ul id="results_list_all" class="content_list results">
 	  {% block list_data %} {% endblock %}
         </ul>
@@ -72,4 +73,5 @@
        {% else %}
            <p>No {{results_label.lower}} were found.</p>
       {% endif %}
+
 {% endblock %}

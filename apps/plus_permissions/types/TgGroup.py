@@ -234,7 +234,9 @@ public_defaults = {'TgGroup':
                    {'defaults':
                         {'create_Application':'anonymous_group',
                          'ManagePermissions':'context_admin',
-                         'Unknown': 'context_agent'}, #shouldn't these perms be set to the context_admin?
+                         'CreateVirtual':'all_members_group',
+                         'CreateHub':'context_admin',
+                         'Unknown': 'context_admin'}, 
                     'constraints': [] 
                     },
                    'Application':

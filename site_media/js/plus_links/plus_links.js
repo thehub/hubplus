@@ -15,10 +15,23 @@ function links(ele) {
 	manager.find(".link_form").toggle();
     }
  
-    manager.find(".remove_link").click(function(e)  {
-            alert(this);
+    manager.find(".remove_link").each(function(i,e)  {
+	    alert(e);
+            jq(e).click(function(ev) { 
+		    console.log(jq(e).attr('id'));
+		    
+		    var link = jq(e).parent().parent();
+		    console.log(link);
+		   
+		    jq.get(jq(e).attr('id'), [], function(data) {
+			    console.log(link);
+			    
+			    link.remove();
+			}, "json");
+		    return false;
+	    });
 	    //jq.get( manager.find('.remove_link').attr('href'), {'resource_id':}, remove_link);
-	    return false;
+	    return true;
 	});
 
     var remove_link= function(id) {
