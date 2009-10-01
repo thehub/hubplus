@@ -265,7 +265,7 @@ def create_group(request, site, template_name="plus_groups/create_group.html", c
 
     if request.POST :
         form = TgGroupForm(request.POST)
-        
+
         if not form.is_valid() :
             print form.errors
         else :
@@ -274,16 +274,20 @@ def create_group(request, site, template_name="plus_groups/create_group.html", c
     else :
         form = TgGroupForm()
     
-    if is_hub :
-        name_of_created = hub_name_plural()
-    else :
+    if current_app == 'plus_groups' :
         name_of_created = "Group"
+        is_hub = False
+    else :
+        name_of_created = hub_name()
+        is_hub = True
+
     return render_to_response(template_name, {
             "head_title" : "Create New %s"%name_of_created,
             "name_of_created": name_of_created,
             "head_title_status" : "",
             "group" : form,
             "form" : form,
+            "is_hub" : is_hub, 
             }, context_instance=RequestContext(request, current_app=current_app))
 
 

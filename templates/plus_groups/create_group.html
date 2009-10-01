@@ -10,7 +10,7 @@
 <div id="intro" class="block">
 
 
-<form class="full" method="POST" action="{% url create_group:create_group %}">
+<form class="full" method="POST" action="{% url plus_groups:create_group %}">
   <h4>About your {{name_of_created}}</h4>
   <p>Please enter your details below to create a new {{name_of_created}}.</p>
 
@@ -18,13 +18,15 @@
     <ul>
       <li>
 	<label for="name"><span class="required">*</span> {% trans "Name" %}</label>
-	<input  id="name" name="name" class="text" type="text" />
+	<input  id="name" name="name" class="text" type="text" value="{{form.data.name}}" />
 	{{form.name.errors}}
       </li>
       {% if is_hub %}
       <input type='hidden' name='is_hub' value='True'/>
+      <input type="hidden" name="group_type" value="internal"/>
       {% else %}
       <input type='hidden' name='is_hub' value='False'/>
+ 
       <li>
 	<label for="group_type"><span class="required">*</span> {% trans "Type" %}</label>
 	<select id="group_type" name="group_type">
@@ -39,15 +41,17 @@
       <li>
 	{{form.description.errors}}
 	<label for="descripton"><span class="required">*</span> Description <span class="extra">what is this group about?</span></label>
-	<textarea id="description" name="description" rows="5"></textarea>
+	<textarea id="description" name="description" rows="5">{{form.data.description}}</textarea>
 	
       </li>
+      {% if is_hub %}
       <li>
 	{{form.location.errors}}
 	<label for="location">Location <span class="extra">postcode, country</span></label>
 	<input  id="location" class="text" name="location" type="text" />
 	<br /><span style="color:red">(Use existing google maps here)</span>
       </li>
+      {% endif %}
       <li class="disabled">
 	<label for="about"><span class="required">*</span> What is the group about?</label>
 	<span style="color:red">(Use existing tag functionality here)</span>
@@ -165,7 +169,7 @@
       </li>
     </ul>
   </fieldset>
-  <input class="submit button" type="Submit" value="Create new group" /> or <a href="#">Go back</a>
+  <input class="submit button" type="Submit" value="{% trans "Create new" %} {{HUB_NAME}}" /> or <a href="#">Go back</a>
 </form>
 
 </div>

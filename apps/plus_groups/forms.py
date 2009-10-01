@@ -10,7 +10,7 @@ from django.contrib.sites.models import Site
 from django.contrib.auth.models import User
 
 from apps.plus_lib.utils import make_name
-from apps.plus_groups.models import GROUP_TYPES, TgGroup, name_from_title
+from apps.plus_groups.models import GROUP_TYPES, TgGroup, name_from_title, Location
 from apps.plus_lib.utils import HTMLField
 
 from apps.plus_permissions.default_agents import get_or_create_root_location
@@ -62,7 +62,7 @@ class TgGroupForm(forms.Form):
     location = forms.CharField(required=False)
     permissions_set = forms.ChoiceField(choices=PERMISSION_OPTIONS)
 
-    is_hub = forms.BooleanField()
+    is_hub = forms.CharField()
     
     def clean_name(self):
         name = self.cleaned_data['name']
@@ -73,11 +73,21 @@ class TgGroupForm(forms.Form):
         self.cleaned_data['display_name'] = name
         self.cleaned_data['group_name'] = group_name
         return group_name
+
+    def clean_is_hub(self) :
+        if self.cleaned_data['is_hub'] == 'True' : 
+            self.cleaned_data['is_hub'] = True
+        else :
+            self.cleaned_data['is_hub'] = False
+        return self.cleaned_data['is_hub']
+
+
     
     def save(self, user, site):
         if not self.cleaned_data['is_hub'] :
             place = get_or_create_root_location()
-            
+        else :
+            place,created = Location.objects.get_or_create(name=self.cleaned_data['location'])
 
         group = site.create_TgGroup(
             group_name=self.cleaned_data['group_name'],
@@ -87,6 +97,7 @@ class TgGroupForm(forms.Form):
             user = user,
             description = self.cleaned_data['description'],
             permission_prototype = self.cleaned_data['permissions_set'],
+            place = place,
             )
         group.save()
         return group
