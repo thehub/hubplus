@@ -23,5 +23,6 @@ register.inclusion_tag("group_item.html", takes_context=True)(show_group)
 
 def show_resource(context, item):
     item = TemplateSecureWrapper(item)
-    return {'resource':item, 'resource_url':"here"}
+    url = reverse(context.current_app + ":view_WikiPage", args=[item.in_agent.obj.id, item.name])
+    return {'resource':item, 'resource_url':url}
 register.inclusion_tag("resource_item.html", takes_context=True)(show_resource)
