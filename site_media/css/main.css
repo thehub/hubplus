@@ -105,6 +105,21 @@ th {
 }
 
 
+/* Copy */
+
+.copy ul {
+	list-style	: disc;
+	padding		: 0 0 1.5em 2em;
+}
+
+.copy ol {
+	list-style	: decimal;
+	padding		: 0 0 1.5em 2em;
+}
+
+
+
+
 /* Images & Thumbnails */
 
 #avatar_current,
@@ -319,7 +334,9 @@ th {
 }
 
 .tabbed ul.tabbed_navigation li {
-	float		: left;
+    display:inline-block;
+    display:-moz-inline-stack;
+    *display:inline; /* IE */
 	margin		: 0 20px 0 0;
 	padding		: 0;
 }
