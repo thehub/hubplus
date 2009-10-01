@@ -21,3 +21,7 @@ register.inclusion_tag("group_item.html", takes_context=True)(show_group)
 
 
 
+def show_resource(context, item):
+    item = TemplateSecureWrapper(item)
+    return {'resource':item, 'resource_url':"here"}
+register.inclusion_tag("resource_item.html", takes_context=True)(show_resource)

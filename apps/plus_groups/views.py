@@ -48,6 +48,8 @@ def group(request, group, template_name="plus_groups/group.html", current_app='p
     if not user.is_authenticated():
         user = get_anon_user()
         request.user = user 
+        
+    search_terms = request.GET.get('search_terms', '')
     
     members = group.get_users()[:10]
     member_count = group.get_no_members()
@@ -144,8 +146,12 @@ def group(request, group, template_name="plus_groups/group.html", current_app='p
             "host_count": host_count,
             "tweets" : tweets,
             "permissions": perms_bool,
-            "resources":resources,
+            "objects":resources,
+            "search_type":"plus_groups:group",
+            "group_id":group.id,
             "pages":pages,
+            "base":"plus_lib/listing_frag.html",
+            "search_terms":search_terms
             }, context_instance=context)
 
 from apps.plus_lib.utils import hub_name_plural, hub_name
@@ -153,16 +159,18 @@ from apps.plus_lib.utils import hub_name_plural, hub_name
 def groups(request, site, type='other', template_name='plus_groups/groups.html', current_app='plus_groups'):
     if type == 'hub' :
         head_title = hub_name_plural()
+        type_name = hub_name()
         groups = TgGroup.objects.plus_hub_filter(request.user, level='member')
     else:
         head_title = 'Groups'
+        type_name = "Group"
         groups = TgGroup.objects.plus_virtual_filter(request.user, level='member')
 
     return groups_list(request, site, groups, 
-                       template_name, head_title, '', current_app=current_app)
+                       template_name, head_title, '', type_name=type_name, current_app=current_app)
 
 
-def groups_list(request, site, groups, template_name, head_title='', head_title_status='', current_app=None) :
+def groups_list(request, site, groups, template_name, head_title='', head_title_status='', type_name='Group', current_app=None) :
     search_terms = request.GET.get('search', '')
     order = request.GET.get('order')
     if not order:
@@ -183,8 +191,10 @@ def groups_list(request, site, groups, template_name, head_title='', head_title_
             "search_terms":search_terms,
             "search_type":'plus_groups:groups',
             "head_title":head_title,
+            "obj_type": type_name,
             "results_label":head_title,
-            "create":create
+            "create":create,
+            'base': "profiles/base.html"
             }, context_instance=context)
 
 

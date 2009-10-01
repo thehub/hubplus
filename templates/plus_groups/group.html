@@ -91,7 +91,7 @@
     </div>
     <ul id="actions" class="link_list">
       {% if group.message_members %}
-      <li class="first"><a href="{% url message_members group.id %}">Message members</a></li>
+      <li class="first"><a href="{% url plus_groups:message_members group.id %}">Message members</a></li>
       {% endif %}
       {% if invite %}
       <li><a href="{% url plus_groups:invite_to_group group.id %}">Invite members</a></li>

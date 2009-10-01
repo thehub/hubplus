@@ -1,4 +1,4 @@
-{% extends "profiles/base.html" %}
+{% extends base %}
 
 {% load i18n %}
 {% load pagination_tags %}
@@ -11,11 +11,42 @@
 {% block body %}
 {% block create_button %}{% endblock %}
 
-<form method="GET" action="{% plus_url search_type %}" class="order_list">
-	<div class="block">
+<form method="GET" action="{% if group_id %}{% plus_url search_type group_id %}{% else %}{% plus_url search_type %}{% endif %}" class="order_list">
+  <div id="search">
+    <div id="current">
+      <h3>{% trans "Search" %}</h3>
 	  <input type="text" class="text" name="search" value="{{ search_terms }}" />
-	  <input type="submit" class="button" value="Search" />
-	</div>
+	  <input type="submit" class="button" value="{% trans 'Search' %}" />
+    </div>
+  </div>
+  
+<!--  <div id="filter">
+    <div id="filter_tags">
+      <h3>Refine by tag</h3>		
+      <ol class="tag_list">
+	<li><span href="#" class="tag pop8">earth (19)</span><a href="#" class="add_tag">+</a></li>
+	<li><span href="#" class="tag pop8">fairtrade (21)</span><a href="explore_tagged_2.html" class="add_tag">+</a></li>
+	<li><span href="#" class="tag pop8">design (16)</span><a href="#" class="add_tag">+</a></li>
+	<li><span href="#" class="tag pop8">reference (16)</span><a href="#" class="add_tag">+</a></li> 
+	<li><span href="#" class="tag pop8">dip (16)</span><a href="#" class="add_tag">+</a></li>
+	<li><span href="#" class="tag pop8">architecture (16)</span><a href="#" class="add_tag">+</a></li>
+	<li><span href="#" class="tag pop7">developement (15)</span><a href="#" class="add_tag">+</a></li>
+	<li><span href="#" class="tag pop7">hub (14)</span><a href="#" class="add_tag">+</a></li>
+	<li><span href="#" class="tag pop6">environment (12)</span><a href="#" class="add_tag">+</a></li> 
+	<li><span href="#" class="tag pop6">sustainability (11)</span><a href="#" class="add_tag">+</a></li>
+	<li><span href="#" class="tag pop6">product (10)</span><a href="#" class="add_tag">+</a></li>
+	<li><span href="#" class="tag pop5">salad (5)</span><a href="#" class="add_tag">+</a></li>
+	<li><span href="#" class="tag pop3">energy (3)</span><a href="#" class="add_tag">+</a></li>
+	<li><span href="#" class="tag pop2">living (2)</span><a href="#" class="add_tag">+</a></li>
+	<li><span href="#" class="tag pop2">shopping (1)</span><a href="#" class="add_tag">+</a></li>						
+      </ol>
+    </div>
+  </div> -->
+<!--    <ul class="tag_list large">
+      <li><span class="tag">green</span><a href="explore.html" class="delete_tag">-</a></li>  
+    </ul> -->
+<!--    <a href="#" class="bt_advance">More options</a> -->
+
     {% if objects %}
     <ul class="display_options">
       <li class="sort"> 
@@ -41,5 +72,4 @@
        {% else %}
            <p>No {{results_label.lower}} were found.</p>
       {% endif %}
-	</div>
 {% endblock %}

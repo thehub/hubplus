@@ -37,7 +37,7 @@ urlpatterns = patterns('',
     
     (r'^plus_tags/', include('plus_tags.urls')),
 
-    (r'^groups/', include('plus_groups.urls', namespace=u'plus_groups', app_name=u'plus_groups'), {'current_app':'plus_groups'}),
+    (r'^groups/', include('plus_groups.urls', namespace=u'groups', app_name=u'plus_groups'), {'current_app':'groups'}),
     (r'^hubs/', include('plus_groups.urls', namespace=u'hubs', app_name=u'plus_groups'), {'type':'hub', 'current_app':'hubs'}),
     (r'^regions/', include('plus_groups.urls', namespace=u'regions', app_name=u'plus_groups'), {'type':'hub', 'current_app':'regions'}),
 

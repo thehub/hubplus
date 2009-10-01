@@ -1,0 +1,15 @@
+{% load i18n %}
+{% load avatar_tags %}
+{% load plus_url %}
+{% load group_tags %}
+<a href="{{resource_url}}">
+    <div class="thumb medium"><img src="/site_media/images/resource.jpg" /></div>
+</a>
+<dl>
+  <dt>{% trans "Name" %}</dt>
+  <dd><a href="{{resource_url}}">{{resource.get_display_name}}</a></dd>
+  <dt>{% trans "Description" %}:</dt>
+  <dd>{{resource.content|truncatewords:20}}</dd>
+  <dt>{% trans "Members" %}:</dt>
+  <dd>{% blocktrans %}{{no_of_members}} members{% endblocktrans %}</dd>  
+</dl>

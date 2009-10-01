@@ -4,7 +4,7 @@
 {% load group_tags %}
 {% block create_button %}
 {% if create %}
-<a class="button" href="{% url plus_groups:create_group %}">{% blocktrans %}Create New {{head_title}}{% endblocktrans %}</a>
+<a class="button" href="{% url plus_groups:create_group %}">{% blocktrans %}Create New {{obj_type}}{% endblocktrans %}</a>
 {% endif %}
 {% endblock %}
 
