@@ -329,30 +329,26 @@ th {
 	line-height	: 1em;
 	list-style	: none;
 	margin		: 0 0 10px;
-	overflow	: hidden;
 	padding		: 0;
 }
 
 .tabbed ul.tabbed_navigation li {
-	float		: left;
 	margin		: 0 20px 0 0;
-	padding		: 0;
+	padding		: 0 0 12px;
 }
 
 .tabbed ul.tabbed_navigation li a {
 	color		: #999;
-	display		: block;
-	margin		: 0;
-	padding		: 0 0 12px;
+	padding		: 0 0 5px;
 }
 
-.tabbed ul.tabbed_navigation li a:hover,
-.tabbed ul.tabbed_navigation li.selected a {
+.tabbed ul.tabbed_navigation li:hover,
+.tabbed ul.tabbed_navigation li.selected {
 	color		: #777;
 	background	: url('../images/tabbed_nav_indicator.gif') 50% 100% no-repeat;
 }
 
-.tabbed ul.tabbed_navigation li.selected a {
+.tabbed ul.tabbed_navigation li.selected {
 	color		: #5a0000;
 }
 
@@ -365,6 +361,10 @@ th {
 
 .tabbed ul.tabbed_navigation li.selected a .count {
 	color		: #777;
+}
+
+.tabbed_content {
+	clear: both;
 }
 
 .tabbed .tabbed_content .content_list {
@@ -460,6 +460,7 @@ th {
 }
 
 #results_list_all {
+	clear		: both;
 	padding-bottom	: 0;
 	margin-bottom	: 0;
 }
