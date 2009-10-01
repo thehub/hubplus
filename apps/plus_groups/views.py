@@ -176,10 +176,10 @@ def groups_list(request, site, groups, template_name, head_title='', search_type
     if request.user.is_authenticated() :
 
         try :
-            if type == 'hub' :
-                site.create_hub
-            else :
+            if search_type == 'group' :
                 site.create_virtual
+            else :
+                site.create_hub
             create = True
         except Exception, e:
             print "User can't create a group",e
@@ -268,13 +268,18 @@ def create_group(request, site, is_hub=False, template_name="plus_groups/create_
         if not form.is_valid() :
             print form.errors
         else :
-            group = form.save(request.user, site, type)
+            group = form.save(request.user, site)
             return HttpResponseRedirect(reverse('group', args=(group.id,)))
     else :
         form = TgGroupForm()
     
+    if is_hub :
+        name_of_created = hub_name_plural()
+    else :
+        name_of_created = "Group"
     return render_to_response(template_name, {
-            "head_title" : "Create New %s"%hub_name_plural(),
+            "head_title" : "Create New %s"%name_of_created,
+            "name_of_created": name_of_created,
             "head_title_status" : "",
             "group" : form,
             "form" : form,
