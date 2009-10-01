@@ -22,7 +22,13 @@ register.inclusion_tag("group_item.html", takes_context=True)(show_group)
 
 
 def show_resource(context, item):
+    if item.__class__.__name__ == "WikiPage":
+        url_name = "view_WikiPage"
+        url_name = context.current_app + ":"+ url_name
+        url = reverse(url_name, args=[item.in_agent.obj.id, item.name])
+    elif item.__class__.__name__ == "Resource":
+        url = item.download_url()
+
     item = TemplateSecureWrapper(item)
-    url = reverse(context.current_app + ":view_WikiPage", args=[item.in_agent.obj.id, item.name])
     return {'resource':item, 'resource_url':url}
 register.inclusion_tag("resource_item.html", takes_context=True)(show_resource)
