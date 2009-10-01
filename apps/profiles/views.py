@@ -61,7 +61,7 @@ def profiles(request, template_name="profiles/profiles.html"):
         'search_terms' : search_terms,
         'head_title' : 'Members',
         'results_label': 'Profiles',
-        'search_type':'member'
+        'search_type':'profile_list'
     }, context_instance=RequestContext(request))
 
 

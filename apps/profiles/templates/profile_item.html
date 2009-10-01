@@ -11,7 +11,7 @@
     <dt>{% trans "Organisation" %}:</dt>	      
     <dd>{{user.organisation}}</dd>
     <dt>{% trans "Hub" %}:</dt>
-    <dd><a href="{% url group homehub.id %}">{{homehub.display_name}}</a></dd>
+    <dd><a href="{% url hubs:group homehub.id %}">{{homehub.display_name}}</a></dd>
     {% view_plus_tag 'Interests' 'interests'  profile  user %}
   </dl>
 

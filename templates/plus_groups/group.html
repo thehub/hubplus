@@ -94,16 +94,16 @@
       <li class="first"><a href="{% url message_members group.id %}">Message members</a></li>
       {% endif %}
       {% if invite %}
-      <li><a href="{% url invite_to_group group.id %}">Invite members</a></li>
+      <li><a href="{% url plus_groups:invite_to_group group.id %}">Invite members</a></li>
       {% endif %}
       {% if join %}
-      <li><a href="{% url join_group group.id %}">Join Group</a></li>
+      <li><a href="{% url plus_groups:join_group group.id %}">Join Group</a></li>
       {% endif %}
       {% if apply %}
-      <li><a href="{% url apply_group group.id %}/">Apply to Group</a></li>
+      <li><a href="{% url plus_groups:apply_group group.id %}/">Apply to Group</a></li>
       {% endif %}
       {% if leave %}
-      <li><a href="{% url leave_group group.id %}">Leave Group</a></li>
+      <li><a href="{% url plus_groups:leave_group group.id %}">Leave Group</a></li>
       {% endif %}
       <li class="disabled last"><a href="#">Follow group ?</a></li>
     </ul>

@@ -40,8 +40,8 @@
 			<li class="first"><a href="{% url home %}">{% trans "Home" %}</a></li>
 			<li class="disabled"><a href="#">{% trans "Explore" %}</a></li>	
 			<li><a href="{% url profile_list %}">{% trans "Members" %}</a></li>
-			<li><a href="{% url groups %}">{% trans "Groups" %}</a></li>
-			<li><a href="{% url hubs %}">{{HUB_NAME_PLURAL}}</a></li>
+			<li><a href="{% url plus_groups:groups %}">{% trans "Groups" %}</a></li>
+			<li><a href="{% url hubs:groups %}">{{HUB_NAME_PLURAL}}</a></li>
 			<li class="last disabled"><a href="#">{% trans "Events" %}</a></li>
 		</ul>
 
