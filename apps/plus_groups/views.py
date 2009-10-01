@@ -19,7 +19,7 @@ from microblogging.models import Tweet, TweetInstance, Following
 
 from apps.plus_lib.models import DisplayStatus, add_edit_key
 from apps.plus_lib.parse_json import json_view
-from apps.plus_permissions.models import SecurityTag
+from apps.plus_permissions.models import SecurityTag, GenericReference
 from apps.plus_permissions.interfaces import PlusPermissionsNoAccessException, SecureWrapper, secure_wrap, TemplateSecureWrapper
 from apps.plus_permissions.types.TgGroup import *
 from django.contrib.auth.decorators import login_required
@@ -34,13 +34,24 @@ from apps.plus_permissions.proxy_hmac import hmac_proxy
 from django.contrib.contenttypes.models import ContentType
 
 from apps.plus_resources.models import get_resources_for
+import itertools
+
 
 #XXX Temporarily here. If this becomes a long term way of listing wiki pages for groups' 
 # this should be moved into plus_wiki app
 def get_pages_for(group) :
     content_type = ContentType.objects.get_for_model(group)
     return WikiPage.objects.filter(in_agent__content_type=content_type, in_agent__object_id=group.id)
- 
+
+def get_resources_and_pages_for(group):
+    #objects = GenericReference.objects.filter(object_id=group.get_ref().id, content_type)
+    objects = []
+    q1 = get_pages_for(group)
+    q2 = get_resources_for(group)
+    for thing in itertools.chain(q1,q2):
+        objects.append(thing) 
+    return objects
+
 @secure_resource(TgGroup)
 def group(request, group, template_name="plus_groups/group.html", current_app='plus_groups', **kwargs):
 
@@ -123,9 +134,10 @@ def group(request, group, template_name="plus_groups/group.html", current_app='p
 
 
     # XXX replace when we slot permissions in
-    resources = get_resources_for(group.get_inner())
     # XXX replace when we have more sophisticated listings search
-    pages = get_pages_for(group.get_inner())
+    #pages = get_pages_for(group.get_inner())
+    #resources = get_resources_for(group.get_inner())
+    objects = get_resources_and_pages_for(group)
     context = RequestContext(request, current_app=current_app)
     return render_to_response(template_name, {
             "head_title" : "%s" % group.get_display_name(),
@@ -146,10 +158,9 @@ def group(request, group, template_name="plus_groups/group.html", current_app='p
             "host_count": host_count,
             "tweets" : tweets,
             "permissions": perms_bool,
-            "objects":pages,
+            "objects":objects,
             "search_type":"plus_groups:group",
             "group_id":group.id,
-            "pages":pages,
             "base":"plus_lib/listing_frag.html",
             "search_terms":search_terms
             }, context_instance=context)
