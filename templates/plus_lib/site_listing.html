@@ -1,3 +1,4 @@
+{% extends 'site_base.html' %}
 {% load i18n %}
 {% load pagination_tags %}
 {% load pagination  %}
@@ -6,7 +7,10 @@
 {% load profile_tags %}
 {% load plus_url %}
 
-<div id="resources" class="page_content">
+
+{% block body %}
+<div class="block">
 {% block listing %}
 {% endblock %}
 </div>
+{% endblock %}
