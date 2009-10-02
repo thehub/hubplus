@@ -68,11 +68,11 @@ def group(request, group, template_name="plus_groups/group.html", current_app='p
     hosts = group.get_admin_group().get_users()[:10]
     host_count = group.get_admin_group().get_no_members()
 
-    join = False
+    can_join = False
     apply = False
     leave = False
     invite = False
-    comment = False
+    can_comment = False
     message = False
     add_link = False
 
@@ -85,23 +85,25 @@ def group(request, group, template_name="plus_groups/group.html", current_app='p
             except Exception, e :# user doesn't have invite permission
                 pass
 
-            try :
-                group.comment
-                comment = True
-            except Exception, e: # user doesn't have comment permission
-                pass
         else :
             try :
                 group.join 
-                join = True
+                can_join = True
             except Exception, e: # user doesn't have join permission
                 pass
             try :
-                if not join :
+                if not can_join :
                     group.apply
                     apply = True
             except Exception, e : # user doesn't have apply permission
                 pass
+
+        try : 
+            group.comment
+            can_comment = True
+        except :
+            pass
+
 
         try :
             group.message
@@ -148,10 +150,10 @@ def group(request, group, template_name="plus_groups/group.html", current_app='p
             "members" : members,
             "member_count" : member_count,
             "leave": leave,
-            "join" : join, 
+            "can_join" : can_join, 
             "apply" : apply, 
             "invite" : invite, 
-            "comment" : comment, 
+            "can_comment" : can_comment, 
             "message" : message,
             "add_link" : add_link,
             "hosts": hosts,
