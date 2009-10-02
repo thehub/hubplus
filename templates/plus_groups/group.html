@@ -96,7 +96,7 @@
       {% if invite %}
       <li><a href="{% url plus_groups:invite_to_group group.id %}">Invite members</a></li>
       {% endif %}
-      {% if join %}
+      {% if can_join %}
       <li><a href="{% url plus_groups:join_group group.id %}">Join Group</a></li>
       {% endif %}
       {% if apply %}

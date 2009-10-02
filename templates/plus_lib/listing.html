@@ -9,6 +9,7 @@
 {% load plus_url %}
 
 {% block body %}
+
 {% block create_button %}{% endblock %}
 
 <form method="GET" action="{% if group_id %}{% plus_url search_type group_id %}{% else %}{% plus_url search_type %}{% endif %}" class="order_list">
