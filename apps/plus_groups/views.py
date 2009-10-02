@@ -212,7 +212,7 @@ def groups_list(request, site, groups, template_name, head_title='', head_title_
             "obj_type": type_name,
             "results_label":head_title,
             "create":create,
-            'base': "profiles/base.html"
+            'base': "plus_lib/site_listing.html"
             }, context_instance=context)
 
 
