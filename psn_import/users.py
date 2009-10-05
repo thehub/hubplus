@@ -2,6 +2,8 @@ import pickle
 from django.contrib.auth.models import User
 from apps.plus_permissions.types.User import create_user
 
+from avatar.models import Avatar
+
 from apps.plus_permissions.default_agents import get_or_create_root_location
 
 def user_exists(username, email) :
@@ -32,8 +34,10 @@ for u in users:
     
     if description : 
         user.description = description
-    elif biography :
-        user.description = biography
+    else :
+        user.description = ''
+    if biography :
+        user.description += '\n'+biography
 
     if not user.homeplace :
         user.homeplace = get_or_create_root_location()
@@ -48,5 +52,8 @@ for u in users:
 
     user.first_name = first[:30]
     user.last_name = last[:30]
+
+    avatar = Avatar()
+
     user.save()
 
