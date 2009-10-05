@@ -15,10 +15,18 @@
 
 {% block side_bar %}
 
-<div id="feature_search" class="block">
+<div id="feature_invite" class="block">
     <h3>Invite a friend</h3>
 	<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec faucibus lorem non mauris aliquam.</p>
 	<a class="button" href="{% url site_invite %}">Invite</a>
+</div>
+
+<div id="feature_email_settings" class="block">
+    <h3>Email Notifications</h3>
+	<ul class="link_list">
+		<li><a href="{% url acct_email %}">Change your email address</a></li>
+		<li><a href="{% url notification_notices %}">Notification settings</a></li>
+	</ul>
 </div>
 
 {% endblock %}

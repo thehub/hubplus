@@ -62,7 +62,7 @@ def profiles(request, template_name="profiles/profiles.html"):
         'head_title' : 'Members',
         'results_label': 'Profiles',
         'search_type':'profile_list',
-        'base': "profiles/base.html"
+        'base': "plus_lib/site_listing.html"
     }, context_instance=RequestContext(request))
 
 

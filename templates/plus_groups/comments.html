@@ -1,44 +1,45 @@
 {% load threadedcommentstags %}
 {% load i18n %}
-
+{% load avatar_tags %}
 
 <div id="comments" class="page_content">
-  
-    <h3>Comments on This Group:</h3>
+
     {% get_threaded_comment_tree for group as tree %}
+	{% if tree %}<ul class="content_list">{% endif %}
     {% for comment in tree %}
-    <div class='one_comment'>
+    <li class='one_comment'>
         <div style="margin-left: {{ comment.depth }}em;" class="comment">
+			<div class="thumb small">{% avatar comment.user 40 %}</div>
             <a href="{% url profile_detail comment.user.username%}">{{ comment.user.get_display_name }}</a> said:<br/>
             {% auto_transform_markup comment %}
-        </div>
-<a id="c{{comment.id }}" href="javascript:show_reply_form('c{{ comment.id }}','{% get_comment_url group comment %}','{{ comment.name }}')">Reply</a>
-
-    </div>
+        </div>	
+	{% if can_comment %}<a id="c{{comment.id }}" href="javascript:show_reply_form('c{{ comment.id }}','{% get_comment_url group comment %}','{{ comment.name }}')">Reply</a>{% endif %}
+    </li>
     {% endfor %}
+	{% if tree %}</ul>{% endif %}
 
-    {% if comment %}
-    <p>Reply to Original:</p>
+    {% if can_comment %}
+    <h3>Wew comment:</h3>
+	<div class="thumb small">{% avatar user 40 %}</div>
     <form method="POST" action="{% get_comment_url group %}">
         <ul>
 	  <li>
-	    <label for="id_name">Name: {{request.user.get_display_name}}</label>
+	    <label for="id_name">{{request.user.get_display_name}}</label>
 	    <input id="id_name" type="hidden" name="name" value="{{request.user.username}}"/>
-	  </li>
-	  <li>
-	    <label for="id_email">E-mail address: {{request.user.email_address}}</label>
 	    <input id="id_email" type="hidden" name="email" value="{{request.user.email_address}}"/>
 	  </li>
 	  <li>
-	    <label for="id_comment">comment:</label>
-	    <textarea id="id_comment" name="comment" cols="40" rows="10"></textarea>
+	    <textarea id="id_comment" name="comment" cols="40" rows="6"></textarea>
 	  </li>
-
-	  <li><input type="submit" value="Submit Comment" /></li>
+	  <li><input type="submit" class="button" value="Comment" /></li>
         </ul>
     </form>
     {% else %}
-        {% trans "Log-in to comment here" %} 
+        {% if request.user.is_authenticated %}
+		You do not have permissions to comment on this group.
+    	{% else %}
+		<p class="extra">You must be logged in to comment on {{site_name}}. Group Hosts may set who can comment. <!--a href="{% url acct_login %}">{% trans "Log in" %}</a--></p>
+    	{% endif %}
     {% endif %}
 
 </div>
