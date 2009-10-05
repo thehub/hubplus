@@ -5,22 +5,22 @@
 <div id="comments" class="page_content">
 
     {% get_threaded_comment_tree for group as tree %}
-	<ul>
+	{% if tree %}<ul class="content_list">{% endif %}
     {% for comment in tree %}
     <li class='one_comment'>
         <div style="margin-left: {{ comment.depth }}em;" class="comment">
-			<span class="thumb">{% avatar comment.user 40 %}</span>
+			<div class="thumb small">{% avatar comment.user 40 %}</div>
             <a href="{% url profile_detail comment.user.username%}">{{ comment.user.get_display_name }}</a> said:<br/>
             {% auto_transform_markup comment %}
         </div>	
 	{% if can_comment %}<a id="c{{comment.id }}" href="javascript:show_reply_form('c{{ comment.id }}','{% get_comment_url group comment %}','{{ comment.name }}')">Reply</a>{% endif %}
     </li>
     {% endfor %}
-	</ul>
+	{% if tree %}</ul>{% endif %}
 
     {% if can_comment %}
-    <p>Comment on Group:</p>
-<span class="thumb">{% avatar user 40 %}</span>
+    <h3>Wew comment:</h3>
+	<div class="thumb small">{% avatar user 40 %}</div>
     <form method="POST" action="{% get_comment_url group %}">
         <ul>
 	  <li>

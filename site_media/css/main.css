@@ -495,6 +495,11 @@ th {
 	padding-left: 0;
 }
 
+.pagination .page.first {
+	padding-left: 5px;
+}
+
+
 .results {
 	margin-bottom	: 10px;
 }
