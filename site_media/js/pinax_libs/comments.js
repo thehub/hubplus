@@ -3,10 +3,7 @@
 
 
 function show_reply_form(comment_id, url, person_name) {
-    console.log('in show_reply_form');
-    console.log(url);
-    console.log(person_name);
-    console.log(comment_id);
+
     // careful, next depends on structure of url given to us, 
     // we expect /comments/freecomment/CONTENT_TYPE/CONTENT_ID/FREECOMMENT_ID/
     xs = url.split('/');
