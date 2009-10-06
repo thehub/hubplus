@@ -270,7 +270,7 @@ public_defaults = {'TgGroup':
 
                    'Resource':
                        {'defaults' :
-                          { 'Viewer': 'anonymous_group',
+                          { 'Viewer': 'context_agent',
                             'Manager': 'context_agent',
                             'ManagePermissions':'context_admin',
                             'Unknown': 'context_agent',
