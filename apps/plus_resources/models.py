@@ -6,7 +6,7 @@ from django.contrib.contenttypes.models import ContentType
 from django.contrib.auth.models import User
 from apps.plus_permissions.models import GenericReference
 
-
+from apps.plus_lib.models import extract
 
 def get_resources_for(owner) :
     return Resource.objects.filter(in_agent=owner.get_ref())
@@ -41,5 +41,21 @@ class Resource(models.Model):
         return self.resource.url
 
    
+def get_or_create(user, owner, **kwargs) :
 
-
+    resources = Resource.objects.filter(in_agent=owner.get_ref(),name=kwargs['name'])
+    if resources.count() < 1 :
+        resource = Resource(in_agent=owner.get_ref(), title=kwargs['title'], description=kwargs['description'],
+                        author=kwargs['author'], license=kwargs['license'])
+        resource.save()
+        if kwargs.has_key('resource') :
+            resource.resource = kwargs['resource']
+        resource.save()
+    else :
+        resource = resources[0]
+        resource.in_agent = owner.get_ref()
+        dummy = extract(kwargs,'in_agent')
+        for k,v in kwargs.iteritems() :
+            setattr(resource, k, v)
+    resource.save()
+    return resource
