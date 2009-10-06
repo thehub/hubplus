@@ -105,6 +105,19 @@ th {
 }
 
 
+/* Copy */
+
+.copy ul {
+	list-style	: disc;
+	padding		: 0 0 1.5em 2em;
+}
+
+.copy ol {
+	list-style	: decimal;
+	padding		: 0 0 1.5em 2em;
+}
+
+
 /* Images & Thumbnails */
 
 #avatar_current,
@@ -306,6 +319,7 @@ th {
 	opacity		: 1.0;
 }
 
+
 /* Interface: Tabs */
 
 .tabbed ul.tabbed_navigation {
@@ -314,30 +328,38 @@ th {
 	line-height	: 1em;
 	list-style	: none;
 	margin		: 0 0 10px;
-	overflow	: hidden;
 	padding		: 0;
 }
 
 .tabbed ul.tabbed_navigation li {
-	float		: left;
-	margin		: 0 20px 0 0;
-	padding		: 0;
-}
+    display:inline-block;
+    display:-moz-inline-stack;
+    *display:inline; /* IE */
+    vertical-align:bottom; /* safari: for overlap */
+    cursor:pointer; /* gecko: due to -moz-inline-stack on anchor */
+    zoom:1; /* IE: kill space between horizontal tabs */
 
-.tabbed ul.tabbed_navigation li a {
-	color		: #999;
-	display		: block;
-	margin		: 0;
+	margin		: 0 20px 0 0;
 	padding		: 0 0 12px;
 }
 
-.tabbed ul.tabbed_navigation li a:hover,
-.tabbed ul.tabbed_navigation li.selected a {
+.tabbed ul.tabbed_navigation li a {
+    display:block;
+    display:inline-block;
+    vertical-align:bottom; /* safari: for overlap */
+    zoom:1;
+
+	color		: #999;
+	padding		: 0 0 5px;
+}
+
+.tabbed ul.tabbed_navigation li:hover,
+.tabbed ul.tabbed_navigation li.selected {
 	color		: #777;
 	background	: url('../images/tabbed_nav_indicator.gif') 50% 100% no-repeat;
 }
 
-.tabbed ul.tabbed_navigation li.selected a {
+.tabbed ul.tabbed_navigation li.selected {
 	color		: #5a0000;
 }
 
@@ -350,6 +372,10 @@ th {
 
 .tabbed ul.tabbed_navigation li.selected a .count {
 	color		: #777;
+}
+
+.tabbed_content {
+	clear: both;
 }
 
 .tabbed .tabbed_content .content_list {
@@ -425,18 +451,54 @@ th {
 }
 
 .display_options {
-	border-bottom	: 1px solid #ddd;
+	float		: right;
 	list-style	: none;
-	padding		: 0 0 10px;
 	overflow	: hidden;
 	text-align	: right;
-	width		: 100%;
 }
 
 .display_options li {
-	float		: right;
 	margin-left	: 20px;
 }
+
+.display_options,
+.show_count {
+	padding-bottom: 3px;
+}
+
+.search_term {
+	margin-bottom	: 1.5em;
+}
+
+#results_list_all {
+	clear		: both;
+	padding-bottom	: 0;
+	margin-bottom	: 0;
+}
+
+.pagination {
+	margin-bottom	: 1.5em;
+}
+
+.pagination a,
+.pagination span {
+	float		: left;
+	padding		: 9px 5px 5px;
+}
+
+.pagination .current,
+.pagination .page:hover {
+	background	: url('../images/icon_arrow_dn.gif') 50% -105px no-repeat;
+}
+
+.pagination .first {
+	padding-left: 0;
+}
+
+.pagination .page.first {
+	padding-left: 5px;
+}
+
 
 .results {
 	margin-bottom	: 10px;
@@ -680,6 +742,10 @@ li.place div.editable {
 #about_block ul li ul {
 	list-style	: none;
 	padding-bottom	: 0;
+}
+
+#about_block #skills_needs_list li {
+	padding-bottom	: 3px;
 }
 
 

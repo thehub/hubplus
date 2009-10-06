@@ -4,7 +4,7 @@
 {% load threadedcommentstags %}
 
 {% block page_header %}
-<a id="parent" href="{% url group page.in_agent.obj.id %}">{{page.in_agent.obj.display_name}}</a>
+<a id="parent" href="{% url plus_groups:group page.in_agent.obj.id %}">{{page.in_agent.obj.display_name}}</a>
 <h2 id="page_title">{{page.title}}</h2>
 {% endblock %}
 
@@ -12,7 +12,7 @@
 <div id="main_content" class="block">
 
   <ul class="icon_text_button_set">
-    {% if can_edit %}<li><a class="icon_text_button bt_edit" href="{% url edit_WikiPage page.in_agent.obj.id page.name %}">{% trans "Edit page"%}</a></li>{% endif %}
+    {% if can_edit %}<li><a class="icon_text_button bt_edit" href="{% url plus_groups:edit_WikiPage page.in_agent.obj.id page.name %}">{% trans "Edit page"%}</a></li>{% endif %}
     {% if permissions %}<li><a class="icon_text_button bt_permissions" href="#overlay" rel="#overlay" id="{{page.edit_key}}permissionedit">{% trans "Permissions" %}</a></li>{% endif %}
   </ul>
   <div id="content">
@@ -46,7 +46,7 @@
       Attachments go here
     </div>
     <div id="history">
-      <form id="page_id-{{page.id}}" action="{% url compareversions_WikiPage page.in_agent.obj.id page.name %}">
+      <form id="page_id-{{page.id}}" action="{% url plus_groups:compareversions_WikiPage page.in_agent.obj.id page.name %}">
 	<table>
 	  {% if comparable %}
 	  <tr class="head">
@@ -66,7 +66,7 @@
 	      <span class="label_time">{% trans "on" %} {{ ver.revision.date_created|date }} {% trans "at" %} {{ver.revision.date_created|time}}</span>
 	    </td>
 	    <td>
-	      <div class="actions"><a class="view_old" href="{% url viewversion_WikiPage page.in_agent.obj.id page.name  %}">{% trans "View" %}</a> <!--| <a href="#">{% trans "Changes" %}</a>--> | <a href="{% url revert_WikiPage page.in_agent.obj.id page.name %}?ver_id={{ver.id}}">{% trans "Make current" %}</a></div>
+	      <div class="actions"><a class="view_old" href="{% url plus_groups:viewversion_WikiPage page.in_agent.obj.id page.name  %}">{% trans "View" %}</a> <!--| <a href="#">{% trans "Changes" %}</a>--> | <a href="{% url plus_groups:revert_WikiPage page.in_agent.obj.id page.name %}?ver_id={{ver.id}}">{% trans "Make current" %}</a></div>
 	    </td>  
 	  </tr>
 	  {% endfor %}

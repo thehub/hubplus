@@ -96,17 +96,17 @@ class TgGroupViewer:
     place = InterfaceReadProperty
     website = InterfaceReadProperty
     display_name = InterfaceReadProperty
-
+    get_display_name = InterfaceCallProperty # huh
+    group_name = InterfaceReadProperty
     group_type = InterfaceReadProperty
     address = InterfaceReadProperty
-
     apply = InterfaceCallProperty
     leave = InterfaceCallProperty
     get_users = InterfaceCallProperty
     get_no_members = InterfaceCallProperty
     get_admin_group = InterfaceCallProperty
-    get_display_name = InterfaceCallProperty # huh
-    display_name = InterfaceReadProperty
+    homeplace = InterfaceReadProperty
+
 
 class TgGroupEditor: 
     pk = InterfaceReadProperty
@@ -234,7 +234,9 @@ public_defaults = {'TgGroup':
                    {'defaults':
                         {'create_Application':'anonymous_group',
                          'ManagePermissions':'context_admin',
-                         'Unknown': 'context_agent'}, #shouldn't these perms be set to the context_admin?
+                         'CreateVirtual':'all_members_group',
+                         'CreateHub':'context_admin',
+                         'Unknown': 'context_admin'}, 
                     'constraints': [] 
                     },
                    'Application':

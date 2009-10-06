@@ -7,13 +7,17 @@ from django.contrib.auth.models import User
 from apps.plus_permissions.models import GenericReference
 
 
-def make_file_path(owner_class, owner_id, resource_id) :
-    return "member_resources/%s/%s/%s" % (owner_class, owner_id, resource_id)
-
 
 def get_resources_for(owner) :
     return Resource.objects.filter(in_agent=owner.get_ref())
     
+
+def upload_to(instance, file_name) :
+    owner = instance.in_agent.obj
+    owner_class = ContentType.objects.get_for_model(owner)
+    owner_id = owner.id
+    return "member_resources/%s/%s/%s/%s" % (owner_class, owner_id, instance.id, file_name)
+
 class Resource(models.Model):
 
     in_agent = models.ForeignKey(GenericReference, related_name="resources")
@@ -24,7 +28,7 @@ class Resource(models.Model):
     author = models.CharField(max_length=100)
     license = models.CharField(max_length=50)
 
-    resource = models.FileField(upload_to='resources')
+    resource = models.FileField(upload_to=upload_to)
     created_by = models.ForeignKey(User, related_name="created_resource", null=True) 
 
     # XXX 
@@ -34,12 +38,8 @@ class Resource(models.Model):
 
 
     def download_url(self) :
-        owner_class= ContentType.objects.get_for_model(self.in_agent.obj).model
-        owner_id = self.in_agent.obj.id
+        return self.resource.url
 
-        return "%s/%s/%s" % (settings.MEDIA_URL, 
-                             make_file_path(owner_class, owner_id, self.id),
-                             self.resource.name)
    
 
 

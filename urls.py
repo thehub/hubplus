@@ -37,7 +37,10 @@ urlpatterns = patterns('',
     
     (r'^plus_tags/', include('plus_tags.urls')),
 
-    (r'^groups/', include('plus_groups.urls')),                                                                                                         
+    (r'^groups/', include('plus_groups.urls', namespace=u'groups', app_name=u'plus_groups'), {'current_app':'groups'}),
+    (r'^hubs/', include('plus_groups.urls', namespace=u'hubs', app_name=u'plus_groups'), {'type':'hub', 'current_app':'hubs'}),
+    (r'^regions/', include('plus_groups.urls', namespace=u'regions', app_name=u'plus_groups'), {'type':'hub', 'current_app':'regions'}),
+
     (r'^plus_wiki/', include('plus_wiki.urls')),
     (r'^plus_comments/', include('plus_comments.urls')),
 
@@ -75,9 +78,6 @@ urlpatterns = patterns('',
     (r'^links/', include('plus_links.urls')),
 
     (r'^resources/', include('plus_resources.urls')),
-
-    url(r'^hubs/$', 'plus_groups.views.groups',{'type':'hub'},name='hubs'),
-    url(r'^regions/$', 'plus_groups.views.groups',{'type':'hub'},name='regions'),
 
     (r'^testing/sliders/$', direct_to_template, {'template' : 'plus_permissions/tester.html'}),
     (r'^testing/sliders/p$', direct_to_template, {'template' : 'plus_permissions/permissions.html'}), # temp

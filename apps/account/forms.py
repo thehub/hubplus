@@ -394,7 +394,8 @@ class HubPlusApplicationForm(forms.Form):
         username = self.cleaned_data["username"]
         email = self.cleaned_data["email_address"]
         if username.find(' ') > 0 :
-            first_name, last_name = (username.split(' ')) # note that if users need > 2 names, we have to do something
+            
+            first_name, last_name = (username.rsplit(' ',1)) # note that if users need > 2 names, we have to do something
             username = '%s.%s' % (first_name,last_name)
         else : 
             first_name=username

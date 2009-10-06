@@ -12,7 +12,7 @@
 
 	<ul class="tabbed_navigation">
 		{% ifequal message.recipient user %}
-		<li class="selected"><a href="{% url messages_all %}"><span>{% trans "Inbox" %} ({{ messages_inbox_count }})</span></a></li>
+		<li class="selected"><a href="{% url messages_all %}"><span>{% trans "Inbox" %}{% if messages_inbox_count %} ({{ messages_inbox_count }}){% endif %}</span></a></li>
 		<li><a href="{% url messages_all %}#tabview=sent"><span>{% trans "Sent" %}</span></a></li>
 		{% else %}
 		<li><a href="{% url messages_all %}"><span>{% trans "Inbox" %} ({{ messages_inbox_count }})</span></a></li>

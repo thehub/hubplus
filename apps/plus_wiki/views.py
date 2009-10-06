@@ -44,7 +44,7 @@ def htmldiffer(ver_1, ver_2):
 
 @login_required
 @secure_resource(TgGroup)
-def edit_wiki(request, group, page_name, template_name="plus_wiki/create_wiki.html"):
+def edit_wiki(request, group, page_name, template_name="plus_wiki/create_wiki.html", current_app='plus_groups', **kwargs):
     try:
         secure_page = WikiPage.objects.plus_get(request.user, name=page_name, in_agent=group.get_ref())
     except WikiPage.DoesNotExist:
@@ -58,16 +58,16 @@ def edit_wiki(request, group, page_name, template_name="plus_wiki/create_wiki.ht
 
     return render_to_response(template_name, 
                               {'page':TemplateSecureWrapper(secure_page),
-                               'form_action':reverse("create_WikiPage", args=[secure_page.in_agent.obj.id, secure_page.name]),
+                               'form_action':reverse(current_app + ":create_WikiPage", args=[secure_page.in_agent.obj.id, secure_page.name]),
                                'contributors':contributors,
                                'tags':get_tags(request.user, secure_page),
                                'permissions':perms_bool}, 
-                              context_instance=RequestContext(request))
+                              context_instance=RequestContext(request, current_app=current_app))
 
 @revision.create_on_success
 @login_required
 @secure_resource(TgGroup)
-def create_wiki_page(request, group, page_name, template_name="plus_wiki/create_wiki.html"):
+def create_wiki_page(request, group, page_name, template_name="plus_wiki/create_wiki.html", current_app='plus_groups', **kwargs):
     """creates OR saves WikiPages
     """
     form = EditWikiForm(request.POST)
@@ -85,8 +85,8 @@ def create_wiki_page(request, group, page_name, template_name="plus_wiki/create_
                                       {'page':TemplateSecureWrapper(obj),
                                        'data':form.data,
                                        'preview_content': content,
-                                       'form_action':reverse("create_WikiPage", args=[obj.in_agent.obj.id, obj.name])}, 
-                                      context_instance=RequestContext(request))
+                                       'form_action':reverse(current_app + ":create_WikiPage", args=[obj.in_agent.obj.id, obj.name])}, 
+                                      context_instance=RequestContext(request, current_app=current_app))
         else:
             if obj.stub: # we should change the "created_by" on the genericreference/permissions system to "owner"
                 obj.created_by = request.user
@@ -105,15 +105,15 @@ def create_wiki_page(request, group, page_name, template_name="plus_wiki/create_
             obj.license = license
             obj.stub = False
             obj.save()
-            return HttpResponseRedirect(reverse('view_WikiPage', args=[group.id, obj.name]))
+            return HttpResponseRedirect(reverse(current_app + ':view_WikiPage', args=[group.id, obj.name]))
 
     return render_to_response(template_name, 
                               {'page':TemplateSecureWrapper(obj),
                                'revision':revision,
                                'data':form.data,
                                'errors': form.errors,
-                               'form_action':reverse("create_WikiPage", args=[obj.in_agent.obj.id, obj.name])}, 
-                              context_instance=RequestContext(request))
+                               'form_action':reverse(current_app + ":create_WikiPage", args=[obj.in_agent.obj.id, obj.name])}, 
+                              context_instance=RequestContext(request, current_app=current_app))
 
 def get_contributors(user, obj):
     """Get all users who have a revision on this object in their revision_set
@@ -133,7 +133,7 @@ from apps.plus_permissions.api import TemplateSecureWrapper
 
 
 @secure_resource(TgGroup)
-def view_wiki_page(request, group, page_name, template_name="plus_wiki/wiki.html"):
+def view_wiki_page(request, group, page_name, template_name="plus_wiki/wiki.html", current_app='plus_groups', **kwargs):
     try:
         obj = WikiPage.objects.plus_get(request.user, name=page_name, in_agent=group.get_ref())
     except WikiPage.DoesNotExist:
@@ -155,7 +155,7 @@ def view_wiki_page(request, group, page_name, template_name="plus_wiki/wiki.html
         perms_bool = False
         
     edit = has_access(request.user, obj, 'WikiPage.Editor')
-
+    
     return render_to_response(template_name, {
             'page':TemplateSecureWrapper(obj), 
             'version':version, 
@@ -164,8 +164,8 @@ def view_wiki_page(request, group, page_name, template_name="plus_wiki/wiki.html
             'version_list':version_list,
             'tags':get_tags(request.user, obj),
             'permissions':perms_bool,
-            'editable': edit,
-            'comparable':version_list.count()>1}, context_instance=RequestContext(request))
+            'can_edit': edit,
+            'comparable':version_list.count()>1}, context_instance=RequestContext(request, current_app=current_app))
 
 
 
@@ -175,7 +175,7 @@ def view_wiki_page(request, group, page_name, template_name="plus_wiki/wiki.html
 @login_required
 @json_view
 @secure_resource(TgGroup)
-def view_version(request, group, page_name):
+def view_version(request, group, page_name, **kwargs):
     ver_id = int(request.GET['ver_id'])
     ver = Version.objects.get(id=ver_id)
     obj = ver.get_object_version().object
@@ -186,7 +186,7 @@ from django.template.defaultfilters import date, time
 @login_required
 @revision.create_on_success
 @secure_resource(TgGroup, required_interfaces=['Editor'])
-def revert_wiki_page(request, group, page_name):
+def revert_wiki_page(request, group, page_name, current_app='plus_groups', **kwargs):
     try:
         obj = WikiPage.objects.plus_get(request.user, name=page_name, in_agent=group.get_ref())
     except WikiPage.DoesNotExist:
@@ -199,13 +199,13 @@ def revert_wiki_page(request, group, page_name):
     revision.add_meta(VersionDelta, delta="change")
     revision.comment = 'Reverted to version by %s written on %s at %s' %(ver.revision.user.display_name, date(ver.revision.date_created), time(ver.revision.date_created))
 
-    return HttpResponseRedirect(reverse('view_WikiPage', args=[group.id, obj.name]))
+    return HttpResponseRedirect(reverse(current_app + ':view_WikiPage', args=[group.id, obj.name]))
 
 
 @login_required
 @secure_resource(TgGroup)
 @json_view
-def compare_versions(request, group, page_name):
+def compare_versions(request, group, page_name, **kwargs):
     ver_1 = Version.objects.get(id=int(request.GET['ver_1'])).object_version.object
     ver_2 = Version.objects.get(id=int(request.GET['ver_2'])).object_version.object
     return htmldiffer(ver_1, ver_2)
@@ -213,11 +213,11 @@ def compare_versions(request, group, page_name):
 
 @login_required
 @secure_resource(TgGroup)
-def delete_stub_page(request, group, page_name):
+def delete_stub_page(request, group, page_name, current_app='plus_groups', **kwargs):
     try:
         obj = WikiPage.objects.plus_get(request.user, name=page_name, in_agent=group.get_ref(), stub=True)
         obj.delete()
     except WikiPage.DoesNotExist:
         pass
-    return HttpResponseRedirect(reverse('group', args=[group.id]))
+    return HttpResponseRedirect(reverse(current_app + ':group', args=[group.id]))
         
