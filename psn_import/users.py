@@ -1,13 +1,21 @@
+from __future__ import with_statement
+
 import pickle
 from django.contrib.auth.models import User
 from apps.plus_permissions.types.User import create_user
 
 from apps.plus_permissions.default_agents import get_or_create_root_location
+from avatar.models import Avatar, avatar_file_path
+
+from django.core.files.images import ImageFile
+
 
 def user_exists(username, email) :
     if User.objects.filter(username=username) : return True
     if User.objects.filter(email_address=email) : return True
     return False
+
+
 
 users = pickle.load(open('mhpss_export/users.pickle'))
 for u in users:    
@@ -49,4 +57,20 @@ for u in users:
     user.first_name = first[:30]
     user.last_name = last[:30]
     user.save()
+
+
+    f = ImageFile(open('mhpss_export/user_images/%s'%portrait),'rb')
+    path = avatar_file_path(user=user, filename=portrait)
+ 
+    avatar = Avatar(
+        user = user,
+        primary = True,
+        avatar = path,
+        )
+
+    avatar.save()
+
+    new_file = avatar.avatar.storage.save(path, f)
+    avatar.save()
+   
 
