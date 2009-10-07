@@ -57,6 +57,10 @@ def add_get_display_name(cls) :
                 # may fail if we're still setting up the user
                 pass
 
+        try :
+            return self.title
+        except :
+            pass
         return '(class: %s, pk: %s)' % (self.__class__.__name__, self.pk)
 
     cls.get_display_name = get_display_name
