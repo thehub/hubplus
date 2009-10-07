@@ -63,6 +63,9 @@ for u in users:
 
 
     f = ImageFile(open('mhpss_export/user_images/%s'%portrait),'rb')
+    if f.size == 1357 :
+        continue
+
     path = avatar_file_path(user=user, filename=portrait)
  
     avatar = Avatar(
@@ -70,6 +73,7 @@ for u in users:
         primary = True,
         avatar = path,
         )
+
 
     avatar.save()
 
