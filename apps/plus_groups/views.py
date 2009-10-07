@@ -75,6 +75,7 @@ def group(request, group, template_name="plus_groups/group.html", current_app='p
     can_comment = False
     message = False
     add_link = False
+    can_tag = False
 
     if user.is_authenticated():
         if user.is_direct_member_of(group.get_inner()):
@@ -116,8 +117,15 @@ def group(request, group, template_name="plus_groups/group.html", current_app='p
             add_link = True
         except Exception, e :
             print e
-
             pass
+
+        try :
+            group.description = group.description 
+            # XXX dumb test for editor interface, need a Tag type in plus_permissions so this can be handled 
+            can_tag = True
+        except :
+            pass
+            
 
     tweets = TweetInstance.objects.tweets_from(group).order_by("-sent") 
     if tweets :
@@ -156,6 +164,7 @@ def group(request, group, template_name="plus_groups/group.html", current_app='p
             "can_comment" : can_comment, 
             "message" : message,
             "add_link" : add_link,
+            "can_tag" : can_tag,
             "hosts": hosts,
             "host_count": host_count,
             "tweets" : tweets,
