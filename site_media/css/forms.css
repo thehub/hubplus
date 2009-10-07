@@ -29,9 +29,12 @@ form ul li {
 	margin-bottom	: 3px;
 }
 
-form label .extra {
+label .extra {
 	font-size	: 0.8181em;
-	display		: block;
+}
+
+dt .extra {
+	padding-right	: 10px;
 }
 
 input.text,

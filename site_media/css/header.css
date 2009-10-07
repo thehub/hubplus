@@ -47,6 +47,11 @@
 	padding-top	: 10px;
 }
 
+#header #account_navigation li span a {
+	display		: inline;
+	padding-top	: 0;
+}
+
 #header #account_navigation li.active a,
 #header #account_navigation li a:hover {
 	background	: url('../images/account_nav_indicator.gif') 50% 0 no-repeat;
