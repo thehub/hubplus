@@ -139,6 +139,8 @@ def patch_user_class():
     User.add_to_class('sip_id',models.TextField())
     User.add_to_class('website',models.TextField())
     User.add_to_class('homeplace', models.ForeignKey(Location, null=True))
+
+    User.add_to_class('psn_id', models.CharField(max_length=50,null=True))
     
     User.email = AliasOf('email_address')
     User.set_password = set_password

@@ -22,7 +22,7 @@ function show_reply_form(comment_id, url, person_name) {
 		       comment_reply.replaceWith(new Array('<a id="', 
 						comment_id,'" href="javascript:hide_reply_form(\'',
 						comment_id, '\',\'', url, '\',\'', person_name,
-						'\')">Stop Replying</a>').join(''));
+						'\')">Cancel</a>').join(''));
 		   }); 
 	  
 	   });

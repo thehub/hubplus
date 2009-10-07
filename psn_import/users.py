@@ -27,8 +27,9 @@ for u in users:
     biography = u['biography']
     email = u['email']
     portrait = u['portraitfile'].split('/')[-1]
+    psn_id = u['uid']
     
-    print username, description, fullname, email, biography, roles, portrait
+    print username, description, fullname, email, biography, roles, portrait, psn_id
 
     if not user_exists(username, email) :
         user = create_user(username, email_address=email, password='password')
@@ -56,10 +57,15 @@ for u in users:
 
     user.first_name = first[:30]
     user.last_name = last[:30]
+    user.psn_id = psn_id
+
     user.save()
 
 
     f = ImageFile(open('mhpss_export/user_images/%s'%portrait),'rb')
+    if f.size == 1357 :
+        continue
+
     path = avatar_file_path(user=user, filename=portrait)
  
     avatar = Avatar(
@@ -67,6 +73,7 @@ for u in users:
         primary = True,
         avatar = path,
         )
+
 
     avatar.save()
 

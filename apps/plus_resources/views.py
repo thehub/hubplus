@@ -9,7 +9,7 @@ from django.core.exceptions import ValidationError
 from django.utils.translation import ugettext_lazy as _
 
 from apps.plus_resources.forms import UploadFileForm
-from apps.plus_resources.models import Resource
+from apps.plus_resources.models import Resource, get_or_create
 
 from django.contrib.auth.decorators import login_required
 
@@ -21,51 +21,14 @@ from django.contrib.contenttypes.models import ContentType
 from django.core.files import File
 
 import os
-
+    
 
 def handle_uploaded_file(user, owner, form, f_data) :
     kwargs = dict([(k,v) for k,v in form.cleaned_data.iteritems()])
 
-
-    # XXX change to this when permissions defined,
-    # resource = owner.create_Resource(**kwargs)
-    resources = Resource.objects.filter(in_agent=owner.get_ref(),name=kwargs['name'])
-    if resources.count() < 1 :
-        resource = Resource(in_agent=owner.get_ref(), title=kwargs['title'], description=kwargs['description'],
-                        author=kwargs['author'], license=kwargs['license'],
-                        resource=kwargs['resource'])
-    else :
-        resource = resources[0]
-        resource.title = kwargs['title']
-        resource.description = kwargs['description']
-        resource.author = kwargs['author']
-        resource.license = kwargs['license']
-        resource.resource = kwargs['resource']
-
-    # for generic_create compatibility XXX 
+    resource = get_or_create(user, owner, **kwargs)
     resource.stub= False
-    # end of compatibility
-
     resource.save()
-    return 
-
-    #path= make_full_save_path(ContentType.objects.get_for_model(owner).model, owner.id, resource.id)
-
-    try:
-        os.makedirs(path)
-    except Exception, e:
-        print e
-        # path probably exists
-    
-    import ipdb
-    ipdb.set_trace()
-
-    # but we still have to save it manually, ourselves
-    f_name = "%s/%s"% (path, resource.resource.name)    
-    with open(f_name, 'wb+') as destination :
-        for chunk in f_data.chunks():
-            destination.write(chunk)
-
 
 
 
@@ -89,8 +52,7 @@ def edit_resource(request, group, resource_name,
             return HttpResponseRedirect(success_url)
         else :
             print form.errors
-            import ipdb
-            ipdb.set_trace()
+
 
     else :
         form = UploadFileForm()

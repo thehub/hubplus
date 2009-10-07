@@ -33,7 +33,7 @@ from apps.plus_permissions.proxy_hmac import hmac_proxy
 
 from django.contrib.contenttypes.models import ContentType
 
-from apps.plus_resources.models import get_resources_for
+from apps.plus_resources.models import get_permissioned_resources_for
 import itertools
 
 
@@ -43,11 +43,11 @@ def get_pages_for(group) :
     content_type = ContentType.objects.get_for_model(group)
     return WikiPage.objects.filter(in_agent__content_type=content_type, in_agent__object_id=group.id)
 
-def get_resources_and_pages_for(group):
+def get_resources_and_pages_for(user, group):
     #objects = GenericReference.objects.filter(object_id=group.get_ref().id, content_type)
     objects = []
     q1 = get_pages_for(group)
-    q2 = get_resources_for(group)
+    q2 = get_permissioned_resources_for(user, group)
     for thing in itertools.chain(q1,q2):
         objects.append(thing) 
     return objects
@@ -75,6 +75,7 @@ def group(request, group, template_name="plus_groups/group.html", current_app='p
     can_comment = False
     message = False
     add_link = False
+    can_tag = False
 
     if user.is_authenticated():
         if user.is_direct_member_of(group.get_inner()):
@@ -116,8 +117,15 @@ def group(request, group, template_name="plus_groups/group.html", current_app='p
             add_link = True
         except Exception, e :
             print e
-
             pass
+
+        try :
+            group.description = group.description 
+            # XXX dumb test for editor interface, need a Tag type in plus_permissions so this can be handled 
+            can_tag = True
+        except :
+            pass
+            
 
     tweets = TweetInstance.objects.tweets_from(group).order_by("-sent") 
     if tweets :
@@ -133,13 +141,14 @@ def group(request, group, template_name="plus_groups/group.html", current_app='p
         perms_bool = True
     except PlusPermissionsNoAccessException:
         perms_bool = False
-
-
+        
     # XXX replace when we slot permissions in
     # XXX replace when we have more sophisticated listings search
     #pages = get_pages_for(group.get_inner())
     #resources = get_resources_for(group.get_inner())
-    objects = get_resources_and_pages_for(group)
+    
+    objects = get_resources_and_pages_for(user, group)
+
     context = RequestContext(request, current_app=current_app)
     return render_to_response(template_name, {
             "head_title" : "%s" % group.get_display_name(),
@@ -156,6 +165,7 @@ def group(request, group, template_name="plus_groups/group.html", current_app='p
             "can_comment" : can_comment, 
             "message" : message,
             "add_link" : add_link,
+            "can_tag" : can_tag,
             "hosts": hosts,
             "host_count": host_count,
             "tweets" : tweets,

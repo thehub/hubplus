@@ -3,6 +3,7 @@ from django.core.urlresolvers import reverse
 from django.template import Context
 from apps.plus_permissions.api import TemplateSecureWrapper
 from apps.plus_lib.utils import hub_name
+from apps.plus_tags.models import get_tags
 
 
 register = template.Library()
@@ -22,6 +23,9 @@ register.inclusion_tag("group_item.html", takes_context=True)(show_group)
 
 
 def show_resource(context, item):
+    if item.__class__.__name__ == 'SecureWrapper' :
+        item = item.get_inner()
+
     if item.__class__.__name__ == "WikiPage":
         url_name = "view_WikiPage"
         url_name = context.current_app + ":"+ url_name
@@ -29,6 +33,7 @@ def show_resource(context, item):
     elif item.__class__.__name__ == "Resource":
         url = item.download_url()
 
+        tags = get_tags(item)
     item = TemplateSecureWrapper(item)
-    return {'resource':item, 'resource_url':url}
+    return {'resource':item, 'resource_url':url, 'tags':tags}
 register.inclusion_tag("resource_item.html", takes_context=True)(show_resource)

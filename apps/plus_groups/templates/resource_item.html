@@ -10,4 +10,6 @@
   <dd><a href="{{resource_url}}">{{resource.get_display_name}}</a></dd>
   <dt>{% trans "Description" %}:</dt>
   <dd>{% autoescape off %}{{resource.content|truncatewords:20}}{% endautoescape %}</dd>
+  <dt>{% trans "Tags" %}:</dt>
+  <dd>{% for tag in tags %}{{tag.keyword}}{% endfor %}</dd>
 </dl>

@@ -1,0 +1,20 @@
+{% extends "site_base.html" %}
+
+{% load i18n %}
+
+{% block head_title %}{% trans "Help" %}{% endblock %}
+{% block page_title %}{% trans "Help" %}{% endblock %}
+
+{% block body %}
+<div class="block copy">
+    {% blocktrans %}
+
+Help copy goes here...
+
+	{% endblocktrans %}
+</div>
+{% endblock %}
+
+{% block side_bar %}
+{% include "about/sidebar.html" %}
+{% endblock %}

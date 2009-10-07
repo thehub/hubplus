@@ -78,6 +78,7 @@ td {
 
 th {
 	text-align	: left;
+	vertical-align	: top;
 }
 
 .label_time {
@@ -86,6 +87,7 @@ th {
 
 .extra {
 	color		: #888888;
+	display		: block;
 }
 
 .error_message {
@@ -185,7 +187,7 @@ th {
 .thumb.medium     {	padding : 4px; }
 
 .thumb.tiny   img { width : 25px; }
-.thumb.small  img { width : 35px; }
+.thumb.small  img { width : 40px; }
 .thumb.medium img {	width : 80px; }
 
 .thumb.page,
@@ -194,7 +196,7 @@ th {
 }
 
 
-/* Listings */
+/* Listings & tables*/
 
 .content_list,
 .link_list {
@@ -237,6 +239,25 @@ th {
 	clear		: none;
 	text-transform	: none;
 }
+
+#body table {
+	width		: 100%;
+}
+
+table th {
+	font-weight	: bold;
+	padding		: 4px 0 5px 0;
+	text-transform	: uppercase;
+}
+
+table tr {
+	border-bottom	: 1px solid #ddd;
+}
+
+table td {
+	padding		: 3px 0;
+}
+
 
 
 /* Interface: Tags */
@@ -445,9 +466,9 @@ th {
 /* Explore, Search & Results */
 
 #search #current {
-	margin-bottom	: 10px;
-	padding-bottom	: 10px;
-	border-bottom	: 1px solid #ddd;
+	margin-bottom	: 20px;
+	/*padding-bottom	: 10px;*/
+	/*border-bottom	: 1px solid #ddd;*/
 }
 
 .display_options {
@@ -496,7 +517,7 @@ th {
 }
 
 .pagination .page.first {
-	padding-left: 5px;
+	padding-left: 3px;
 }
 
 
@@ -541,29 +562,22 @@ th {
 }
 
 
+/* Applications */
+
+.list_of_applications th.name    { width: 20%; }
+.list_of_applications th.message { width: 33%; }
+.list_of_applications th.found   { width: 20%; }
+.list_of_applications th.date    { width: 6%; }
+.list_of_applications th.group   { width: 6%; }
+.list_of_applications th.action  { width: 5%; }
+
+
 /* Messages */
-
-.messages {
-	width		: 100%;
-}
-
-.messages th {
-	font-weight	: bold;
-	text-transform	: uppercase;
-}
 
 .messages th.contact { width: 20%; }
 .messages th.subject { width: 40%; }
 .messages th.date    { width: 30%; }
 .messages th.action  { width: 10%; }
-
-.messages tr {
-	border-bottom	: 1px solid #ddd;
-}
-
-.messages tr td {
-	padding		: 3px 0;
-}
 
 .message_headers,
 .message_body {
