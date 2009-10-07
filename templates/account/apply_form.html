@@ -45,7 +45,7 @@
 	</li>
 	<li>
 	  {{ form.about_and_why.errors}}
-	  <label for="id_about"><span class="required">*</span> Tell us a bit about yourself <span class="extra">what you do and why you're interested in the Hub?</span></label>
+	  <label for="id_about"><span class="required">*</span> Tell us a bit about yourself <span class="extra">what you do and why you're interested in {{ site_name }}?</span></label>
 	  <textarea id="id_about" name="about_and_why" rows="5"></textarea>
 	</li>
 	<li  class='disabled'>
@@ -85,12 +85,10 @@
 	{% url terms as terms_url %}
 	{% url privacy as privacy_url %}
 
-	<p>{% blocktrans %}* By clicking "Request account", you are indicating that you have read and agree to the <a href="{{ terms_url }}">Terms of Service</a> and <a href="{{ privacy_url }}">Privacy Policy</a>.{% endblocktrans %}</p>
-
   </form>
 
-        
-        
+  <span class="extra">{% blocktrans %}* By clicking "Request account", you are indicating that you have read and agree to the <a href="{{ terms_url }}">Terms of Service</a> and <a href="{{ privacy_url }}">Privacy Policy</a>.{% endblocktrans %}</span>
+
 </div>
 
 {% endblock %}

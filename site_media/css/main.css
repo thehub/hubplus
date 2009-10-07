@@ -185,7 +185,7 @@ th {
 .thumb.medium     {	padding : 4px; }
 
 .thumb.tiny   img { width : 25px; }
-.thumb.small  img { width : 35px; }
+.thumb.small  img { width : 40px; }
 .thumb.medium img {	width : 80px; }
 
 .thumb.page,
@@ -445,9 +445,9 @@ th {
 /* Explore, Search & Results */
 
 #search #current {
-	margin-bottom	: 10px;
-	padding-bottom	: 10px;
-	border-bottom	: 1px solid #ddd;
+	margin-bottom	: 20px;
+	/*padding-bottom	: 10px;*/
+	/*border-bottom	: 1px solid #ddd;*/
 }
 
 .display_options {
@@ -496,7 +496,7 @@ th {
 }
 
 .pagination .page.first {
-	padding-left: 5px;
+	padding-left: 3px;
 }
 
 
