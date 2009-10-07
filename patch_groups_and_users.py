@@ -37,7 +37,7 @@ def patch_in_profiles():
 
     users = User.objects.all()
     for user in users:
-        if user not in site_members:
+        if user not in site_members and user.username != 'anon':
             site_members_group.users.add(user)
         if not user.homeplace :
             user.homeplace = get_or_create_root_location()
