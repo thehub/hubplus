@@ -7,7 +7,7 @@
   </a>
   <dl>
     <dt>{% trans "Name" %}</dt>
-    <dd><a href="{% url profile_detail user.username %}">{{user.display_name}}</a></dd>
+    <dd><a href="{% url profile_detail user.username %}">{{user.get_display_name}}</a></dd>
     <dt>{% trans "Organisation" %}:</dt>	      
     <dd>{{user.organisation}}</dd>
     <dt>{% trans "Hub" %}:</dt>
