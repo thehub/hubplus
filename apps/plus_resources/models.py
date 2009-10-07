@@ -11,6 +11,8 @@ from apps.plus_lib.models import extract
 def get_resources_for(owner) :
     return Resource.objects.filter(in_agent=owner.get_ref())
     
+def get_permissioned_resources_for(user, owner) :
+    return Resource.objects.plus_filter(user, in_agent=owner.get_ref(), required_interfaces=['Viewer'])
 
 def upload_to(instance, file_name) :
     owner = instance.in_agent.obj
@@ -44,18 +46,24 @@ class Resource(models.Model):
 def get_or_create(user, owner, **kwargs) :
 
     resources = Resource.objects.filter(in_agent=owner.get_ref(),name=kwargs['name'])
+    
+
     if resources.count() < 1 :
-        resource = Resource(in_agent=owner.get_ref(), title=kwargs['title'], description=kwargs['description'],
-                        author=kwargs['author'], license=kwargs['license'])
+        resource = owner.create_Resource(user, in_agent=owner.get_ref(), 
+                                         title=kwargs['title'], description=kwargs['description'],
+                                         author=kwargs['author'], license=kwargs['license'])
         resource.save()
+
         if kwargs.has_key('resource') :
-            resource.resource = kwargs['resource']
+            resource.get_inner().resource = kwargs['resource']
         resource.save()
     else :
         resource = resources[0]
-        resource.in_agent = owner.get_ref()
+        resource.get_inner().in_agent = owner.get_ref()
         dummy = extract(kwargs,'in_agent')
         for k,v in kwargs.iteritems() :
-            setattr(resource, k, v)
+            setattr(resource.get_inner(), k, v)
+
     resource.save()
+
     return resource
