@@ -19,8 +19,7 @@ def view_plus_tag(label, tag_type, tagged, tagger) :
 def plus_tag(label, tag_type, tagged, tagger) :
     """XXX update to deal with tagged for and tagged by
     """
-    import ipdb
-    ipdb.set_trace()
+
     tags = get_tags(tagged=tagged, tagger=tagger, tag_type=tag_type)
     return {'label':label,
             'tags' : tags, 
