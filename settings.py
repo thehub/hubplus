@@ -257,25 +257,43 @@ WIKI_REQUIRES_LOGIN = True
 # YAHOO_MAPS_API_KEY = ''
 
 # See if we can over-ride the default GRAVATAR
-
 AVATAR_GRAVATAR_BACKUP = False
 AVATAR_DEFAULT_URL = "/site_media/images/member.jpg"
 
 
 # local_settings.py can be used to override environment-specific settings
 # like database and email that differ between development and production.
-
 SYNC_ENABLED = False
 HUBPLUSSVCUID = "hubplus"
-HUBPLUSSVCPASS = "secret"
+HUBPLUSSVCPASS = "SECRET"
 SYNCER_HOST = "127.0.0.1"
 SYNCER_PORT = 9003
 
-SESSION_COOKIE_DOMAIN = ".the-hub.net"
-COPYRIGHT_HOLDER = "Hub World Ltd"
-PROJECT_THEME = 'plus'
+DATABASE_ENGINE = ''    # 'postgresql_psycopg2', 'postgresql', 'mysql', 'sqlite3' or 'ado_mssql'.  
+DATABASE_NAME = ''       # Or path to database file if using sqlite3.
+DATABASE_USER = ''             # Not used with sqlite3.
+DATABASE_PASSWORD = ''         # Not used with sqlite3.
+DATABASE_HOST = ''             # Set to empty string for localhost. Not used with sqlite3.
+DATABASE_PORT = ''             # Set to empty string for default. Not used with sqlite3.
+
+SESSION_COOKIE_DODMAIN = ".XXX.net"
+HUBSPACE_COMPATIBLE = True # is this running against a HUBSPACE database?
+ROOT_URLCONF = 'XXX.urls'
+
+PROJECT_NAME="Hub+"
+PROJECT_THEME='plus'
+COPYRIGHT_HOLDER='Hub World Ltd'
+
+EMAIL_HOST= 'XXX'
+EMAIL_HOST_PASSWORD='XXX_EMAIL_PASSWORD'
+EMAIL_HOST_USER=''
+EMAIL_PORT='25'
+EMAIL_USE_TLS=False
+
+HMAC_KEY = "XXXXXXXXX"
 
 VIRTUAL_HUB_NAME = 'HubPlus'
+
 # a local_settings file can over-ride the above
 try:
     from local_settings import *
