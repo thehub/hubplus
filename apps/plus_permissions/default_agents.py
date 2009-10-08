@@ -2,6 +2,7 @@ from apps.plus_groups.models import TgGroup, Location
 from django.contrib.auth.models import User
 
 from django.db import models
+from django.conf import settings
 
 from apps.plus_permissions.site import Site
 
@@ -22,7 +23,7 @@ def get_site(user) :
 
 
 def get_or_create_root_location():
-    root_location, created = Location.objects.get_or_create(name='HubPlus')
+    root_location, created = Location.objects.get_or_create(name=settings.VIRTUAL_HUB_NAME)
     if created:
         root_location.save()
     return root_location

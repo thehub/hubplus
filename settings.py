@@ -270,9 +270,13 @@ HUBPLUSSVCUID = "hubplus"
 HUBPLUSSVCPASS = "secret"
 SYNCER_HOST = "127.0.0.1"
 SYNCER_PORT = 9003
+
 SESSION_COOKIE_DOMAIN = ".the-hub.net"
 COPYRIGHT_HOLDER = "Hub World Ltd"
 PROJECT_THEME = 'plus'
+
+VIRTUAL_HUB_NAME = 'HubPlus'
+# a local_settings file can over-ride the above
 try:
     from local_settings import *
 except ImportError:
