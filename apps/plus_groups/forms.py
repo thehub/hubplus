@@ -10,9 +10,10 @@ from django.contrib.sites.models import Site
 from django.contrib.auth.models import User
 
 from apps.plus_lib.utils import make_name
-from apps.plus_groups.models import GROUP_TYPES, TgGroup, name_from_title, Location
+from apps.plus_groups.models import TgGroup, name_from_title, Location
 from apps.plus_lib.utils import HTMLField
 
+from django.conf import settings
 from apps.plus_permissions.default_agents import get_or_create_root_location
 
 PERMISSION_OPTIONS = (
@@ -56,7 +57,7 @@ class AddContentForm(forms.Form):
 class TgGroupForm(forms.Form):
     
     name = forms.CharField()
-    group_type = forms.ChoiceField(choices=GROUP_TYPES)
+    group_type = forms.ChoiceField(choices=settings.GROUP_TYPES)
     description = forms.CharField()
     address = forms.CharField(required=False)
     location = forms.CharField(required=False)
