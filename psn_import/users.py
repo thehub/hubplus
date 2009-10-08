@@ -39,6 +39,7 @@ for u in users:
         except :
             user = User.objects.get(email_address=email)
     
+    user.set_password('password')
     if description : 
         user.description = description
     elif biography :
