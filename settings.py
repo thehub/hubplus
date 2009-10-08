@@ -294,6 +294,16 @@ HMAC_KEY = "XXXXXXXXX"
 
 VIRTUAL_HUB_NAME = 'HubPlus'
 
+# This is the list of group types we currently know about                                                                    
+GROUP_TYPES = (
+    (u'interest', u'Interest'),
+    (u'organisation', u'Organisation'),
+    (u'project', u'Project'),
+    (u'internal', u'Internal'),
+    (u'hub', u'Hub'),
+)
+
+
 # a local_settings file can over-ride the above
 try:
     from local_settings import *
