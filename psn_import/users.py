@@ -16,7 +16,6 @@ def user_exists(username, email) :
     return False
 
 
-
 users = pickle.load(open('mhpss_export/users.pickle'))
 for u in users:    
     print u
@@ -61,7 +60,6 @@ for u in users:
     user.psn_id = psn_id
 
     user.save()
-
 
     f = ImageFile(open('mhpss_export/user_images/%s'%portrait),'rb')
     if f.size == 1357 :
