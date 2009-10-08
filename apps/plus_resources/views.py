@@ -65,4 +65,7 @@ def edit_resource(request, group, resource_name,
     }, context_instance=RequestContext(request, current_app=current_app))
 
 
-
+@secure_resource(Resource)
+def view_resource(request, resource) :
+    import ipdb
+    ipdb.set_trace()

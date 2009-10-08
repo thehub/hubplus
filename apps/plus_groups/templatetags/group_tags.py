@@ -31,7 +31,10 @@ def show_resource(context, item):
         url_name = context.current_app + ":"+ url_name
         url = reverse(url_name, args=[item.in_agent.obj.id, item.name])
     elif item.__class__.__name__ == "Resource":
-        url = item.download_url()
+        download_url = item.download_url()
+        url_name = "view_Resource"
+        url_name = context.current_app + ":"+ url_name
+        url = reverse(url_name, args=[item.in_agent.obj.id, item.name])
 
         tags = get_tags(item)
     item = TemplateSecureWrapper(item)
