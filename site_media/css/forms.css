@@ -345,3 +345,7 @@ form .label_permissions {
 	border-color: #bbb #999 #999 #bbb;
 	cursor		: default;
 }
+
+.external_links .button {
+	margin-bottom	: 15px;
+}
