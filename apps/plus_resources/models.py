@@ -8,6 +8,7 @@ from apps.plus_permissions.models import GenericReference
 
 from apps.plus_lib.models import extract
 
+
 def get_resources_for(owner) :
     return Resource.objects.filter(in_agent=owner.get_ref())
     
@@ -51,11 +52,12 @@ def get_or_create(user, owner, **kwargs) :
     if resources.count() < 1 :
         resource = owner.create_Resource(user, in_agent=owner.get_ref(), 
                                          title=kwargs['title'], description=kwargs['description'],
-                                         author=kwargs['author'], license=kwargs['license'])
+                                         author=kwargs['author'], license=kwargs['license'],
+                                         created_by=user, name=kwargs['name'])
         resource.save()
 
         if kwargs.has_key('resource') :
-            resource.get_inner().resource = kwargs['resource']
+            resource.get_inner().resource = kwargs['resource']  
         resource.save()
     else :
         resource = resources[0]
@@ -64,9 +66,12 @@ def get_or_create(user, owner, **kwargs) :
         except :
             pass
         resource.in_agent = owner.get_ref()
+        resource.created_by = user
         dummy = extract(kwargs,'in_agent')
+        dummy = extract(kwargs,'created_by')
         for k,v in kwargs.iteritems() :
             setattr(resource, k, v)
+
 
     resource.save()
 
