@@ -204,14 +204,13 @@ def groups_list(request, site, groups, template_name, head_title='', head_title_
     if request.user.is_authenticated() :
 
         try :
-            if current_app == 'plus_groups' :
+            if current_app == 'groups' :
                 site.create_virtual
             else :
                 site.create_hub
             create = True
         except Exception, e:
             print "User can't create a group",e
-    
     
     context = RequestContext(request, current_app=current_app)
 
