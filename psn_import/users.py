@@ -8,7 +8,7 @@ from apps.plus_permissions.default_agents import get_or_create_root_location
 from avatar.models import Avatar, avatar_file_path
 
 from django.core.files.images import ImageFile
-
+from apps.plus_groups.models import Location
 
 def user_exists(username, email) :
     if User.objects.filter(username=username) : return True
@@ -27,6 +27,7 @@ for u in users:
     email = u['email']
     portrait = u['portraitfile'].split('/')[-1]
     psn_id = u['uid']
+    location = u['location']
     
     print username, description, fullname, email, biography, roles, portrait, psn_id
 
@@ -45,7 +46,11 @@ for u in users:
         user.description = biography
 
     if not user.homeplace :
-        user.homeplace = get_or_create_root_location()
+        if location :
+            p,flag = Location.objects.get_or_create(name=location)
+            user.homeplace = p
+        else :
+            user.homeplace = get_or_create_root_location()
     
     if " " in fullname :
         first, last = fullname.rsplit(' ',1)
