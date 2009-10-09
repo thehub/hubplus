@@ -102,6 +102,7 @@ def group(request, group, template_name="plus_groups/group.html", current_app='p
         try : 
             group.comment
             can_comment = True
+            can_tag = True # XXX commentor interface governs who can tag. Do we need a special tag interface?
         except :
             pass
 
@@ -119,13 +120,6 @@ def group(request, group, template_name="plus_groups/group.html", current_app='p
             print e
             pass
 
-        try :
-            group.description = group.description 
-            # XXX dumb test for editor interface, need a Tag type in plus_permissions so this can be handled 
-            can_tag = True
-        except :
-            pass
-            
 
     tweets = TweetInstance.objects.tweets_from(group).order_by("-sent") 
     if tweets :
