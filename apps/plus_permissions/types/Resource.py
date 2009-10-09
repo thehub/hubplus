@@ -17,6 +17,8 @@ class ResourceViewer :
     stub = InterfaceReadProperty
     name = InterfaceReadProperty
 
+    in_agent = InterfaceReadProperty
+
 class ResourceManager :
     delete = InterfaceCallProperty
 
