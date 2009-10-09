@@ -335,3 +335,13 @@ form .label_permissions {
 .editable_set .buttons .button {
 	margin-right	: 3px;
 }
+
+#add_form input.disabled {
+	display		: block !important;
+}
+
+#add_form input.disabled:hover {
+	background	: #e8e8e8 url('../images/button_bg.gif') 0 0 repeat-x;
+	border-color: #bbb #999 #999 #bbb;
+	cursor		: default;
+}
