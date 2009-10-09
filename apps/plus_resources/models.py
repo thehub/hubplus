@@ -59,10 +59,14 @@ def get_or_create(user, owner, **kwargs) :
         resource.save()
     else :
         resource = resources[0]
-        resource.get_inner().in_agent = owner.get_ref()
+        try : 
+            resource = resource.get_inner()
+        except :
+            pass
+        resource.in_agent = owner.get_ref()
         dummy = extract(kwargs,'in_agent')
         for k,v in kwargs.iteritems() :
-            setattr(resource.get_inner(), k, v)
+            setattr(resource, k, v)
 
     resource.save()
 
