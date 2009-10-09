@@ -1,0 +1,43 @@
+{% extends "site_base.html" %}
+
+{% load i18n %}
+
+{% load app_plugins %}
+{% load uni_form %}
+{% load plus_tags %}    
+{% load editable_attribute %}
+
+{% block page_title %}{% trans "Uploaded File"%}:{{resource.title}} {% endblock %}
+
+{% block body %}
+<div id="extra" class="block_column">
+
+  <ul>
+    <li>
+      <dt>{% trans "Title" %}:</dt>
+      <dd>{{resource.title}}</dd>
+    </li>
+    
+    <li>
+      {% editable "Description" resource 'description' 'About this document'%}
+    </li>
+    <li>
+      
+      <dl>   {% plus_tag 'Tags' 'folder_name'  resource  request.user %}</dl>
+    </li>
+    <li>
+      {% editable "License" resource 'license' 'License'%}
+    </li>
+    
+    <li>
+      {% editable "Author" resource 'author' 'Author'%}
+    </li>
+    
+    <li>
+      <dt>{% trans "Download"%}</dt>
+      <dd><a href="{{resource.download_url}}">Download</a></dd>
+    </li>
+    
+  </ul>
+</div>
+{% endblock %}
