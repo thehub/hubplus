@@ -19,15 +19,25 @@ class ResourceViewer :
 
     in_agent = InterfaceReadProperty
 
+class ResourceEditor :
+    title = InterfaceWriteProperty
+    description = InterfaceWriteProperty
+    author = InterfaceWriteProperty
+    license = InterfaceWriteProperty
+    resource = InterfaceWriteProperty
+    
 class ResourceManager :
     delete = InterfaceCallProperty
 
 from apps.plus_permissions.models import add_type_to_interface_map
-ResourceInterfaces = {'Viewer': ResourceViewer,  'Manager' : ResourceManager  }
+ResourceInterfaces = {
+    'Viewer': ResourceViewer,
+    'Editor': ResourceEditor,
+    'Manager' : ResourceManager  }
 add_type_to_interface_map(Resource, ResourceInterfaces)
 
 if not SliderOptions.get(Resource, False):
-    SetSliderOptions(Resource, {'InterfaceOrder':['Viewer', 'Manager'], 'InterfaceLabels':{}})
+    SetSliderOptions(Resource, {'InterfaceOrder':['Viewer', 'Editor', 'Manager'], 'InterfaceLabels':{}})
 
 child_types = []
 SetPossibleTypes(Resource, child_types)
