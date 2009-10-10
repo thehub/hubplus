@@ -5,7 +5,7 @@ all = get_all_members_group()
 hosts = all.get_admin_group()
 
 names = ['jonathanrobinson','alisonstrang','sabine.rakotomalala','ralphonse',
-         'jonathan.morgan','lec','Chathuri','brighton','agalappatti',
+         'jonathan.morgan','lec','Chathuri','brighton','agalappatti','s.fredericks',
          #'',''
          ]
 
