@@ -4,7 +4,7 @@ from django.db import transaction
 from django.utils import simplejson
 from models import *
 from django.http import HttpResponse, HttpResponseRedirect, HttpResponseForbidden, HttpResponseNotFound
-
+from django.core.urlresolvers import reverse
 # this collection must be kept up-to-date for each type of model which 
 # CHANGE THIS
 from apps.profiles.models import Profile
@@ -27,7 +27,8 @@ def add_tag(request, tagged, tagged_for=None, tag_string=None):
         tag_type = form.cleaned_data['tag_type']
         tag_value = form.cleaned_data['tag_value']
         tag, added = tag_add(tagged, tag_type, tag_value, tagged_by, tagged_for)
-        data = simplejson.dumps({'keyword':tag.keyword, 'tag_type':tag.tag_type, 'tagged':'yourself', 'added':added}) #why yourself?
+        tag_url = reverse('explore_filtered', args=[tag.keyword])
+        data = simplejson.dumps({'keyword':tag.keyword, 'tag_type':tag.tag_type, 'tagged':'yourself', 'added':added, 'tag_url':tag_url}) #why yourself?
     else:
         data = {}
         for key, err in form.errors.items():

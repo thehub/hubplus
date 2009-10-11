@@ -60,7 +60,7 @@ var editing = function () {
 
 var tag_list = function (ele) {
     var manager = jq(ele);
-
+    var delete_url = manager.find('ul .first a.delete_tag').attr('href');
     var tag_type = manager.find('.tag_type').val();
     var tagged_id = manager.find('.tagged_id').val();
     var tagged_class = manager.find('.tagged_class').val();
@@ -73,7 +73,7 @@ var tag_list = function (ele) {
 	    manager.find('.error_message').html(data.error_message);
 	    return;
 	}
-	var tag = jq('<li><a href="/plus_tags/tag/' + data.keyword + '" class="tag option">' + data.keyword + '</a><a class="delete_tag" href="/plus_tags/delete_tag/">X</a></li>');
+	var tag = jq('<li><a href="' + data.tag_url + '" class="tag option">' + data.keyword + '</a><a class="delete_tag" href="'+ delete_url +'">X</a></li>');
 	manager.find('.tag_list').append(tag);
 	manager.find('input.tag_value').val("");
 	manager.find('.error_message').html("");
@@ -105,7 +105,7 @@ var tag_list = function (ele) {
 			{name : 'tagged_id', value : tagged_id}
 			];
 	var tag = jq(this).parent();
-	jq.post('/plus_tags/delete_tag/', tag_data, function(data) {
+	jq.post(delete_url, tag_data, function(data) {
 	    delete_tag(tag, data);
 	}, "json");
 	return false;
