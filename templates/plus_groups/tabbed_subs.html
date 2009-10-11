@@ -1,12 +1,12 @@
-
+{% load i18n %}
 <div id="section_tab_navigation" class="tabbed section yui-navset">
 
   <ul class="tabbed_navigation yui-nav">
-    <li class="selected" ><a href="#resources"><span>Resources</span></a></li>
-    <li><a href="#activity"><span>Activity</span></a></li>
-    <li class="disabled"><a href="#news"><span>News</span></a></li>
-    <li class="disabled"><a href="#events"><span>Events</span></a></li>
-    <li><a href="#comments"><span>Comments</span></a></li>
+    <li class="selected" ><a href="#resources"><span>{% trans "Resources" %}</span></a></li>
+    <li><a href="#activity"><span>{% trans "Activity" %}</span></a></li>
+    <li class="disabled"><a href="#news"><span>{% trans "News" %}</span></a></li>
+    <li class="disabled"><a href="#events"><span>{% trans "Events" %}</span></a></li>
+    <li><a href="#comments"><span>{% trans "Comments" %}</span></a></li>
   </ul>
 
   <div class="tabbed_content yui-content">

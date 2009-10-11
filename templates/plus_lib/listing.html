@@ -1,77 +1,43 @@
-{% extends base %}
-
 {% load i18n %}
 {% load pagination_tags %}
 {% load pagination  %}
 {% load avatar_tags %}
 {% load humanize %}
 {% load profile_tags %}
+{% load group_tags %}
 {% load plus_url %}
 
 {% block listing %}
 {% block create_button %}{% endblock %}
 
-<form method="GET" action="{% if group_id %}{% plus_url search_type group_id %}{% else %}{% plus_url search_type %}{% endif %}" class="order_list">
-  <div id="search">
-    <div id="current">
-      <h3>{% trans "Search" %}</h3>
-	  <input type="text" class="text" name="search" value="{{ search_terms }}" />
-	  <input type="submit" class="button" value="{% trans 'Search' %}" />
-    </div>
-  </div>
   
-<!--  <div id="filter">
-    <div id="filter_tags">
-      <h3>Refine by tag</h3>		
-      <ol class="tag_list">
-	<li><span href="#" class="tag pop8">earth (19)</span><a href="#" class="add_tag">+</a></li>
-	<li><span href="#" class="tag pop8">fairtrade (21)</span><a href="explore_tagged_2.html" class="add_tag">+</a></li>
-	<li><span href="#" class="tag pop8">design (16)</span><a href="#" class="add_tag">+</a></li>
-	<li><span href="#" class="tag pop8">reference (16)</span><a href="#" class="add_tag">+</a></li> 
-	<li><span href="#" class="tag pop8">dip (16)</span><a href="#" class="add_tag">+</a></li>
-	<li><span href="#" class="tag pop8">architecture (16)</span><a href="#" class="add_tag">+</a></li>
-	<li><span href="#" class="tag pop7">developement (15)</span><a href="#" class="add_tag">+</a></li>
-	<li><span href="#" class="tag pop7">hub (14)</span><a href="#" class="add_tag">+</a></li>
-	<li><span href="#" class="tag pop6">environment (12)</span><a href="#" class="add_tag">+</a></li> 
-	<li><span href="#" class="tag pop6">sustainability (11)</span><a href="#" class="add_tag">+</a></li>
-	<li><span href="#" class="tag pop6">product (10)</span><a href="#" class="add_tag">+</a></li>
-	<li><span href="#" class="tag pop5">salad (5)</span><a href="#" class="add_tag">+</a></li>
-	<li><span href="#" class="tag pop3">energy (3)</span><a href="#" class="add_tag">+</a></li>
-	<li><span href="#" class="tag pop2">living (2)</span><a href="#" class="add_tag">+</a></li>
-	<li><span href="#" class="tag pop2">shopping (1)</span><a href="#" class="add_tag">+</a></li>						
-      </ol>
-    </div>
-  </div> -->
-<!--    <ul class="tag_list large">
-      <li><span class="tag">green</span><a href="explore.html" class="delete_tag">-</a></li>  
-    </ul> -->
-<!--    <a href="#" class="bt_advance">More options</a> -->
-
-    {% if objects %}
-    <ul class="display_options">
-      <li class="sort"> 
-	  <label>{% trans "Sort by" %}:</label>
-	  <select size="1" name="order">
-	    <!--<option value="relevance">Relevance</option>-->
-	    <option value="date" {% ifequal order "date" %}selected="selected"{% endifequal %}>{% trans "Most recent" %}</option>
-	    <!--<option value="view">Most views</option>-->
-	    <option value="name" {% ifequal order "name" %}selected="selected"{% endifequal %}>{% trans "A-Z" %}</option>
-	  </select>
-      </li>
-    </ul>
-</form>
-
-{% autopaginate objects 10 %}
+{% if items %}
+{% autopaginate items 10 %}
 <div id="results_all">
-	{%plus_paginate_header %}
-	<ul id="results_list_all" class="content_list results">
-	  {% block list_data %} {% endblock %}
-        </ul>
-      </div>
-        {% plus_paginate %}
-        
-       {% else %}
-           <p>No {{results_label.lower}} were found.</p>
-      {% endif %}
+  {% plus_paginate_header %}
+  <ul id="results_list_all" class="content_list results">
+    {% for item in items %}
+    <li {% if forloop.first %}class="first"{% endif %} {% if forloop.last %}class="last"{% endif %}>
+      {% ifequal item.obj.get_class 'Profile' %}
+         {% show_profile item %}
+      {% endifequal %}
+      {% ifequal item.obj.get_class 'Resource' %}
+         {% show_resource item.obj %}
+      {% endifequal %}
+      {% ifequal item.obj.get_class 'WikiPage' %}
+         {% show_resource item.obj %}
+      {% endifequal %}
+      {% ifequal item.obj.get_class 'TgGroup' %}
+         {% show_group item.obj %}
+      {% endifequal %}
+    </li>
+    {% endfor %}
+  </ul>
+</div>
+{% plus_paginate %}
+
+{% else %}
+<p>{% blocktrans  %}No {{results_label.lower}} were found.{% endblocktrans %}</p>
+{% endif %}
 
 {% endblock %}

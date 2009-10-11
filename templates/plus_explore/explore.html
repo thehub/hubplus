@@ -1,0 +1,21 @@
+{% extends "site_base.html" %}
+{% load i18n %}
+{% load plus_tags %}
+
+{% block body %}
+<div id='body'>
+  <div id="tag_refinement" class="block">
+    {% goto_tag %}
+    <br />
+    <h3>{% trans "Popular tags" %}</h3>
+    <ol class="tag_list large">
+      {% for tag in tags %}
+      <li><a href="{% url explore_filtered tag.keyword %}" class="tag pop{{tag.level}}">{{tag.keyword}}</a></li> <!-- tags pop 1 to 8 -->
+      {% endfor %}
+    </ol>
+  </div>  
+</div>
+{% endblock %}
+{% block side_bar %}
+{% include "plus_explore/side_search.html" %}
+{% endblock %}

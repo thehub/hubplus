@@ -137,9 +137,9 @@ def profile(request, username, template_name="profiles/profile.html"):
     else:
         profile_form = None
 
-    interests = get_tags(tagged = other_user.get_profile(), tagger = other_user, tag_type = 'interest')
-    skills = get_tags(tagged = other_user.get_profile(), tagger = other_user, tag_type = 'skill')
-    needs = get_tags(tagged = other_user.get_profile(), tagger = other_user, tag_type = 'need')
+    interests = get_tags(tagged=other_user.get_profile(), tagged_for=other_user, tag_type='interest')
+    skills = get_tags(tagged = other_user.get_profile(), tagged_for=other_user, tag_type='skill')
+    needs = get_tags(tagged = other_user.get_profile(), tagged_for=other_user, tag_type='need')
 
     profile = other_user.get_profile()
     user = request.user
@@ -164,7 +164,6 @@ def profile(request, username, template_name="profiles/profile.html"):
     except PlusPermissionsNoAccessException:
         perms_bool = False
     profile = TemplateSecureWrapper(profile)
-        
     return render_to_response(template_name, {
             "profile_form": profile_form,
             "is_me": is_me,

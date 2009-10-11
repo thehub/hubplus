@@ -1,0 +1,35 @@
+{% load i18n %}
+
+<div id="search" class="block">
+  <div id="current">
+    <h3>{% trans "Search" %}</h3>
+    <input type="text" class="text" name="search" value="{{search_terms}}" />
+    <input type="submit" class="button" value="{% trans 'Search' %}" />
+    <ul class="tag_list large">
+      {% for tag, remove_link in remove_tag_links %}
+      <li>
+	<span class="tag">{{tag}}</span>
+	{% if remove_link %}<a href="{% url explore_filtered remove_link %}{{tag_extra}}" class="delete_tag">-</a>
+	{% else %}<a href="{% url explore %}{{tag_extra}}" class="delete_tag">-</a>
+	{% endif %}
+      </li>
+      {% endfor %}
+    </ul>
+    {% if multiple_tags %}
+    <a class="clear_tag" href="{% url explore %}{{tag_extra}}">{% trans "Clear all tags" %}</a> 
+    {% endif %}
+    <!--|  <a href="#" class="bt_advance">More options</a> -->
+  </div>
+  {% if tag_intersection %}
+  <div id="filter">
+    <div id="filter_tags">
+      <h3>{% trans "Refine by tag" %}</h3>
+      <ol class="tag_list">
+	{% for tag in tag_intersection %}
+	<li><span class="tag pop5">{{tag.keyword}} ({{tag.num_keyword}})</span><a href="{% url explore_filtered tag.tag_filter %}{{tag_extra}}" class="add_tag">+</a></li> 	
+	{% endfor %}
+      </ol>
+    </div>
+  </div> 
+  {% endif %}
+</div>

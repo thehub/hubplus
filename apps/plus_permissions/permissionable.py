@@ -239,6 +239,8 @@ def s_eq(self, other):
     return False
 
 
+def get_class(self):
+    return self.__class__.__name__
 
 from apps.plus_permissions.models import GenericReference, SecurityContext
 from django.db.models.signals import post_save
@@ -260,6 +262,7 @@ def security_patch(content_type, type_list):
     content_type.get_all_sliders = get_all_sliders
     content_type.get_slider_level = get_slider_level
     content_type.get_creator = get_creator
+    content_type.get_class = get_class
     content_type.s_eq = s_eq
 
     for typ in type_list:

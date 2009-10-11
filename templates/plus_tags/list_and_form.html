@@ -12,8 +12,8 @@
   <div class="add_tag_form" id="{% url add_generic_tag %}" > 
     <input name="tagged_class" class="tagged_class" value="{{tagged_class}}" type="hidden" />
     <input name="tagged_id" class="tagged_id" value="{{tagged_id}}" type="hidden" />
-    <input name="tag_type" class="tag_type" value="{{tag_type}}" type="hidden" />
-    <input name="tag_value" class="tag_value text" />
+    <input name="tag_type" type="hidden" class="tag_type text" value="{{tag_type}}" />
+    <input name="tag_value" class="tag_value text" id="{% url autocomplete_typed_tag tag_type %}" />
     <input class="button add_tag" type="submit" value="Add" />
   </div> 
 

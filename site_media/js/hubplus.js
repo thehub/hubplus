@@ -57,6 +57,7 @@ var editing = function () {
     });
 };
 
+
 var tag_list = function (ele) {
     var manager = jq(ele);
 
@@ -65,8 +66,11 @@ var tag_list = function (ele) {
     var tagged_class = manager.find('.tagged_class').val();
 
     var append_tag = function (data) {
-	if (data.added === false) {
+	if (data.added === false && !data.error_message) {
 	    manager.find('.error_message').html("You have already tagged " + data.tagged + " as having the " + data.tag_type + " <em>" +  data.keyword + "</em>");
+	    return;
+	} else if (data.error_message) {
+	    manager.find('.error_message').html(data.error_message);
 	    return;
 	}
 	var tag = jq('<li><a href="/plus_tags/tag/' + data.keyword + '" class="tag option">' + data.keyword + '</a><a class="delete_tag" href="/plus_tags/delete_tag/">X</a></li>');
@@ -79,9 +83,7 @@ var tag_list = function (ele) {
 	    tag.remove();
 	}
     };
-    manager.find('.tag_value').autocomplete('/plus_tags/autocomplete_tag/'+
-					    manager.find('.tag_type').val()+
-					    '/?tagged_class=' + manager.find('.tagged_class').val()+
+    manager.find('.tag_value').autocomplete(manager.find('.tag_value').attr('id') + '?tagged_class=' + manager.find('.tagged_class').val()+
 					    '&tagged_id=' + manager.find('.tagged_id').val(),
                                             {width: 175,
 					     matchSubset: false,
@@ -113,7 +115,12 @@ var setup_tag_lists = function () {
     jq('.tag_manager').each(function(i, ele) {
 	tag_list(ele);
     });
+    jq('.goto_tag').autocomplete(jq('.goto_tag').attr('id'), {width: 175,
+							      matchSubset: false,
+							      selectFirst: false,
+							      max:10});
 };
+
 var setup_maps = function () {
     jq("[id$='-place']").each(function () {
 	create_map(jq(this), plot_point);
