@@ -39,17 +39,29 @@ def import_group(f_name, group_type, fn_place) :
         print description
         print keywords
 
-        group = site.create_TgGroup(
-            group_name = group_name,
-            display_name = display_name,
-            group_type = group_type ,
-            level = 'member',
-            user = admin,
-            description = description,
-            permission_prototype = permission_prototype,
-        )
-        group.get_inner().psn_id = psn_id
+        groups = TgGroup.objects.filter(group_name=group_name)
+        if groups : 
+            group = groups[0]
+        else :
+            group = site.create_TgGroup(
+                group_name = group_name,
+                display_name = display_name,
+                group_type = group_type ,
+                level = 'member',
+                user = admin,
+                description = description,
+                permission_prototype = permission_prototype,
+                )
+            group = group.get_inner()
+        group.psn_id = psn_id
+        
         group.place = fn_place(g)
+        
+        if group.place.id != get_or_create_root_location().id :
+ 
+            admin = group.get_admin_group()
+            admin.place = group.place
+            admin.save()
         group.save()
 
 
