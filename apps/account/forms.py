@@ -411,6 +411,7 @@ class HubPlusApplicationForm(forms.Form):
             contact.username = username
             contact.find_out = self.cleaned_data["find_out"]
             contact.email_address = email
+            contact.location = self.cleaned_data["location"]
             contact.save()
         else :
             contact = Contact.objects.get(email_address=email)
