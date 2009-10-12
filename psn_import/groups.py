@@ -70,4 +70,4 @@ def region_place(dict) :
     return l
     
 
-import_group('mhpss_export/hubs.pickle', 'hub',region_place)
+import_group('mhpss_export/hubs.pickle', 'Hub',region_place)
