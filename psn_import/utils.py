@@ -21,3 +21,14 @@ def list_type(type,fields) :
         print
 
         
+def get_for(cls, uid) :
+    xs = cls.objects.filter(psn_id=uid)
+    if xs.count() > 0 :
+        return xs[0]
+    raise Exception('not found')
+
+def get_group_for(uid) :
+    return get_for(TgGroup,uid)
+
+def get_user_for(uid):
+    return get_for(User,uid)

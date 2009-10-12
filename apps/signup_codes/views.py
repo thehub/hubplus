@@ -71,8 +71,10 @@ def proxied_signup(request, application, form_class=SignupForm,
     if success_url is None:
         success_url = get_default_redirect(request)
 
+    import ipdb
+    ipdb.set_trace()
 
-    # because this is a signup request that has an application object we, expect the application
+    # because this is a signup request that has an application object, we expect the application
 
     display_name = "Visitor"
     if request.method == "POST":
@@ -93,30 +95,14 @@ def proxied_signup(request, application, form_class=SignupForm,
             })
 
             # Now, what happens if this application or invite came with a group?
-            # If the group is not a Hub and the user has permissions on the group, then it's ok to add
             if application.group :
-                if application.group.group_type != 'hub' :
-                    group = secure_wrap(application.group, request.user)
-                    group.add_member(user)
-                else :
-                    # but if the group *is* a hub, we need to do something over in Hubspace.
-                    # So alert an appropriate admin
-                    admins = application.group.get_admin_group().get_members()
-                    from notification import models as notification
-                    
-                    for a in admin :
-                        notification.send(admin, "new_application_for_hub", 
-                            {'first_name':user.first_name,
-                             'last_name':user.last_name,
-                             'email_address':user.email_address,
-                             'hub':group.display_name,
-                       })
-            
+                group = secure_wrap(application.group, request.user)
+                group.add_member(user)                   
 
-            application.delete()
+            #application.delete()
             return HttpResponseRedirect(success_url)
         else :
-            import ipdb
+
             print form.errors
     else:
 
@@ -124,10 +110,12 @@ def proxied_signup(request, application, form_class=SignupForm,
         try :
             applicant = application.get_inner().applicant
             form.email_address = applicant.email_address
-            form.username = applicant.username
+            form.username = "%s %s" % (applicant.first_name, applicant.last_name)
+            display_name = form.username
         except :
             form.email_address = ''
             form.username = ''
+            
 
         
 
