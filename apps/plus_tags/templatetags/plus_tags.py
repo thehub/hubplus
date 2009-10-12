@@ -20,11 +20,13 @@ def view_plus_tag(label, tag_type, tagged, tagged_for) :
 def plus_tag(label, tag_type, tagged, tagged_for) :
     """XXX update to deal with tagged for and tagged by
     """
+
     if tagged.__class__ == TemplateSecureWrapper:
         tagged = tagged.obj()
     if tagged_for.__class__ == TemplateSecureWrapper:
         tagged_for == tagged_for.obj()
     tags = get_tags(tagged=tagged, tagged_for=tagged_for, tag_type=tag_type)
+
     return {'label':label,
             'tags' : tags, 
             'tagged_class' : tagged.__class__.__name__ ,

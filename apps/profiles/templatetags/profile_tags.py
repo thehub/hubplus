@@ -1,5 +1,7 @@
 from django import template
 from apps.plus_permissions.api import secure_wrap, TemplateSecureWrapper
+from apps.plus_lib.utils import main_hub_name
+
 from apps.plus_permissions.models import GenericReference
 
 register = template.Library()
@@ -9,8 +11,10 @@ def show_profile(context, profile):
         profile = profile.obj
     homehub = profile.homeplace.tggroup_set.filter(level='member')[0]
     #profile = TemplateSecureWrapper(secure_wrap(profile, context['request'].user, interface_names=['Viewer'], required_interfaces=['Viewer']))
-    return {"homehub":homehub, "profile":profile}
+    user = profile.get_user()
+    return {"homehub":homehub, "profile":profile, "user": user, "main_hub_name":main_hub_name()}
 register.inclusion_tag("profile_item.html", takes_context=True)(show_profile)
+
 
 def clear_search_url(request):
     getvars = request.GET.copy()

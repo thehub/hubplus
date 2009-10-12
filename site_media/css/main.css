@@ -78,6 +78,7 @@ td {
 
 th {
 	text-align	: left;
+	vertical-align	: top;
 }
 
 .label_time {
@@ -86,6 +87,7 @@ th {
 
 .extra {
 	color		: #888888;
+	display		: block;
 }
 
 .error_message {
@@ -116,8 +118,6 @@ th {
 	list-style	: decimal;
 	padding		: 0 0 1.5em 2em;
 }
-
-
 
 
 /* Images & Thumbnails */
@@ -187,7 +187,7 @@ th {
 .thumb.medium     {	padding : 4px; }
 
 .thumb.tiny   img { width : 25px; }
-.thumb.small  img { width : 35px; }
+.thumb.small  img { width : 40px; }
 .thumb.medium img {	width : 80px; }
 
 .thumb.page,
@@ -196,7 +196,7 @@ th {
 }
 
 
-/* Listings */
+/* Listings & tables*/
 
 .content_list,
 .link_list {
@@ -239,6 +239,25 @@ th {
 	clear		: none;
 	text-transform	: none;
 }
+
+#body table {
+	width		: 100%;
+}
+
+table th {
+	font-weight	: bold;
+	padding		: 4px 0 5px 0;
+	text-transform	: uppercase;
+}
+
+table tr {
+	border-bottom	: 1px solid #ddd;
+}
+
+table td {
+	padding		: 3px 0;
+}
+
 
 
 /* Interface: Tags */
@@ -321,6 +340,7 @@ th {
 	opacity		: 1.0;
 }
 
+
 /* Interface: Tabs */
 
 .tabbed ul.tabbed_navigation {
@@ -329,30 +349,38 @@ th {
 	line-height	: 1em;
 	list-style	: none;
 	margin		: 0 0 10px;
-	overflow	: hidden;
 	padding		: 0;
 }
 
 .tabbed ul.tabbed_navigation li {
-	float		: left;
-	margin		: 0 20px 0 0;
-	padding		: 0;
-}
+    display:inline-block;
+    display:-moz-inline-stack;
+    *display:inline; /* IE */
+    vertical-align:bottom; /* safari: for overlap */
+    cursor:pointer; /* gecko: due to -moz-inline-stack on anchor */
+    zoom:1; /* IE: kill space between horizontal tabs */
 
-.tabbed ul.tabbed_navigation li a {
-	color		: #999;
-	display		: block;
-	margin		: 0;
+	margin		: 0 20px 0 0;
 	padding		: 0 0 12px;
 }
 
-.tabbed ul.tabbed_navigation li a:hover,
-.tabbed ul.tabbed_navigation li.selected a {
+.tabbed ul.tabbed_navigation li a {
+    display:block;
+    display:inline-block;
+    vertical-align:bottom; /* safari: for overlap */
+    zoom:1;
+
+	color		: #999;
+	padding		: 0 0 5px;
+}
+
+.tabbed ul.tabbed_navigation li:hover,
+.tabbed ul.tabbed_navigation li.selected {
 	color		: #777;
 	background	: url('../images/tabbed_nav_indicator.gif') 50% 100% no-repeat;
 }
 
-.tabbed ul.tabbed_navigation li.selected a {
+.tabbed ul.tabbed_navigation li.selected {
 	color		: #5a0000;
 }
 
@@ -365,6 +393,10 @@ th {
 
 .tabbed ul.tabbed_navigation li.selected a .count {
 	color		: #777;
+}
+
+.tabbed_content {
+	clear: both;
 }
 
 .tabbed .tabbed_content .content_list {
@@ -434,9 +466,9 @@ th {
 /* Explore, Search & Results */
 
 #search #current {
-	margin-bottom	: 10px;
-	padding-bottom	: 10px;
-	border-bottom	: 1px solid #ddd;
+	margin-bottom	: 20px;
+	/*padding-bottom	: 10px;*/
+	/*border-bottom	: 1px solid #ddd;*/
 }
 
 .display_options {
@@ -460,6 +492,7 @@ th {
 }
 
 #results_list_all {
+	clear		: both;
 	padding-bottom	: 0;
 	margin-bottom	: 0;
 }
@@ -482,6 +515,11 @@ th {
 .pagination .first {
 	padding-left: 0;
 }
+
+.pagination .page.first {
+	padding-left: 3px;
+}
+
 
 .results {
 	margin-bottom	: 10px;
@@ -524,29 +562,22 @@ th {
 }
 
 
+/* Applications */
+
+.list_of_applications th.name    { width: 20%; }
+.list_of_applications th.message { width: 33%; }
+.list_of_applications th.found   { width: 20%; }
+.list_of_applications th.date    { width: 6%; }
+.list_of_applications th.group   { width: 6%; }
+.list_of_applications th.action  { width: 5%; }
+
+
 /* Messages */
-
-.messages {
-	width		: 100%;
-}
-
-.messages th {
-	font-weight	: bold;
-	text-transform	: uppercase;
-}
 
 .messages th.contact { width: 20%; }
 .messages th.subject { width: 40%; }
 .messages th.date    { width: 30%; }
 .messages th.action  { width: 10%; }
-
-.messages tr {
-	border-bottom	: 1px solid #ddd;
-}
-
-.messages tr td {
-	padding		: 3px 0;
-}
 
 .message_headers,
 .message_body {

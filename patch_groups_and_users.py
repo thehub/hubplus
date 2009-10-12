@@ -1,5 +1,5 @@
 from apps.plus_groups.models import TgGroup
-from apps.plus_permissions.default_agents import get_admin_user, get_all_members_group
+from apps.plus_permissions.default_agents import get_admin_user, get_all_members_group, get_or_create_root_location
 from apps.plus_permissions.views import setup_hubs_security, create_reference, setup_group_security
 from django.contrib.auth.models import User
 from apps.plus_permissions.types.User import setup_user_security
@@ -29,7 +29,7 @@ def patch_in_groups():
 
 
 def patch_in_profiles():
-    """create profiles and setup security hubspace users                                                                     
+    """create profiles and setup security hubspace users 
     """
 
     site_members_group = get_all_members_group()
@@ -37,8 +37,12 @@ def patch_in_profiles():
 
     users = User.objects.all()
     for user in users:
-        if user not in site_members:
+        if user not in site_members and user.username != 'anon':
             site_members_group.users.add(user)
+        if not user.homeplace :
+            user.homeplace = get_or_create_root_location()
+            user.save()
+            print "%s at %s" % (user.username, user.homeplace)
 
     users = User.objects.filter(profile__isnull=True)
     no_of_users = users.count()

@@ -2,8 +2,8 @@
 <div class='external_links'>
   <ul class="list_of_links">
     {% for l in links %}
-    <dl id='links{{l.id}}'><dt>{{l.text}}:</dt><dd><a href="{{l.url}}">{{l.url}}</a> 
-	<a class="remove_link" href="" id="{% url remove_link l.id %}">X</a>
+    <dl id='links{{l.id}}'><dt>{{l.text}}</dt><dd><a href="{{l.url}}">{{l.url}}</a> 
+	<a class="remove_link button" href="" id="{% url remove_link l.id %}">X</a>
     </dd></dl>
     {% endfor %}
   </ul>
@@ -11,14 +11,13 @@
   <form target="{% url add_link %}" class="link_form">
     <input name="target_class" class="target_class" value="{{target_class_name}}" type="hidden" />
     <input name="target_id" class="target_id" value="{{target_id}}" type="hidden" />
-
     <ul>
       <li>
-	<label for="text">Caption:</label>
+	<label for="text">Title <span class="extra">('Website', 'Flickr')</span> </label>
 	<input name="text" id="text" class="link_text text" value="{{text}}" />
       </li>
       <li>
-	<label for="url">Address:</label>
+	<label for="url">Website <span class="extra">('www.mysite.com')</span></label>
 	<input name="url" id="url" class="url text" />
       </li>
     </ul>

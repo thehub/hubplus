@@ -16,9 +16,11 @@ from apps.plus_permissions.models import add_type_to_interface_map
 # Here we set separate interfaces for creating virtual groups and real world hubs / regions . Different permissions for each
 class SiteCreateVirtual:
     create_virtual = InterfaceCallProperty
+    create_TgGroup = InterfaceCallProperty
 
 class SiteCreateHub:
     create_hub = InterfaceCallProperty
+    create_TgGroup = InterfaceCallProperty
 
 
 SiteInterfaces = {

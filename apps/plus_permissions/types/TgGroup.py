@@ -78,6 +78,9 @@ def get_or_create(group_name=None, display_name=None, place=None, level=None, us
         elif level == 'host':
             setup_group_security(group, group, group, user, 'private')
 
+            if group.group_name != "all_members_hosts" :
+                group.add_member(get_all_members_group().get_admin_group())
+
     return group, created
 
 # XXX will be moved to patch.py
@@ -106,7 +109,7 @@ class TgGroupViewer:
     get_no_members = InterfaceCallProperty
     get_admin_group = InterfaceCallProperty
     homeplace = InterfaceReadProperty
-
+    get_group_type_display = InterfaceReadProperty
 
 class TgGroupEditor: 
     pk = InterfaceReadProperty
@@ -270,7 +273,8 @@ public_defaults = {'TgGroup':
 
                    'Resource':
                        {'defaults' :
-                          { 'Viewer': 'anonymous_group',
+                          { 'Viewer': 'all_members_group',
+                            'Editor':  'context_agent',
                             'Manager': 'context_agent',
                             'ManagePermissions':'context_admin',
                             'Unknown': 'context_agent',

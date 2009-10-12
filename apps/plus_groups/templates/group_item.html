@@ -8,7 +8,7 @@
   <dt>{% trans "Name" %}</dt>
   <dd><a href="{{group_url}}">{{group.get_display_name}}</a></dd>
   <dt>{% trans "Type" %}:</dt>
-  <dd>{{group.group_type}}</dd>
+  <dd>{{group.get_group_type_display}}</dd>
   <dt>{% trans "Description" %}:</dt>
   <dd>{% autoescape off %}{{group.description|truncatewords_html:20}}{% endautoescape %}</dd>
   <dt>{% trans "Members" %}:</dt>

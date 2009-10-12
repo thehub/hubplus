@@ -8,6 +8,8 @@ from apps.plus_permissions.interfaces import secure_wrap
 from apps.plus_permissions.decorators import check_interfaces
 from apps.plus_permissions.exceptions import PlusPermissionsNoAccessException
 
+from django.conf import settings
+
 class MissingSecurityContextException(Exception): 
     def __init__(self, cls, security_context) :
         self.cls = cls
@@ -70,14 +72,16 @@ class UserPermissionableManager(UserManager, PermissionableManager) :
     pass
 
 class TgGroupPermissionableManager(PermissionableManager) :
-
+    """ NB: that this class allows us to search for "virtual" groups (ie. online groups) or 
+        real "hubs". The name of the virtual group is now controlled by the setting "VIRTUAL_HUB_NAME".
+        Database will have to be recreated or patched with this name"""
     def plus_hub_filter(self, p_user, **kwargs) :
         # bloody django templating language ... why does it work with comprehensions but not generator expressions?
         # XXX needs to be fixed when we work out our lazy filter
-        return [group for group in self.plus_filter(p_user, **kwargs) if group.get_inner().place.name != 'HubPlus']
+        return [group for group in self.plus_filter(p_user, **kwargs) if group.get_inner().place.name != settings.VIRTUAL_HUB_NAME]
 
     def plus_virtual_filter(self, p_user, **kwargs) :
-        kwargs['place__name']='HubPlus' # adding another criteria to query
+        kwargs['place__name']=settings.VIRTUAL_HUB_NAME # adding another criteria to query
         return self.plus_filter(p_user, **kwargs)
 
 

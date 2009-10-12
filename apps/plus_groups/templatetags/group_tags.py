@@ -5,6 +5,9 @@ from apps.plus_permissions.api import TemplateSecureWrapper
 from apps.plus_lib.utils import hub_name
 from apps.plus_groups.models import Location
 
+from apps.plus_tags.models import get_tags
+
+
 register = template.Library()
 
 def show_group(context, group):
@@ -33,14 +36,21 @@ def show_resource(context, item):
     else:
         group_label = hub_name().lower()
 
+    if item.__class__.__name__ == 'SecureWrapper' :
+        item = item.get_inner()
+
+
     if item.__class__.__name__ == "WikiPage":
         url_name = "view_WikiPage"
         url_name = group_label + "s:"+ url_name
         url = reverse(url_name, args=[item.in_agent.obj.id, item.name])
     elif item.__class__.__name__ == "Resource":
-        url = item.download_url()
+        url_name = context.current_app + ":view_Resource"
+        url = reverse(url_name, args=[item.in_agent.obj.id, item.name])
+        download_url = item.download_url()
 
+    tags = get_tags(item)
     item = TemplateSecureWrapper(item)
-    return {'resource':item, 'resource_url':url}
+    return {'resource':item, 'resource_url':url, 'tags':tags}
 register.inclusion_tag("resource_item.html", takes_context=True)(show_resource)
 

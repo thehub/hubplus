@@ -10,7 +10,6 @@ def import_documents(f_name) :
         print d
 
 
-
 import sys
 
 if __name__ == '__main__' :

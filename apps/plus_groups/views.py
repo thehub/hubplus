@@ -33,7 +33,7 @@ from apps.plus_permissions.proxy_hmac import hmac_proxy
 
 from django.contrib.contenttypes.models import ContentType
 
-from apps.plus_resources.models import get_resources_for
+from apps.plus_resources.models import get_permissioned_resources_for
 import itertools
 
 
@@ -43,11 +43,11 @@ def get_pages_for(group) :
     content_type = ContentType.objects.get_for_model(group)
     return WikiPage.objects.filter(in_agent__content_type=content_type, in_agent__object_id=group.id)
 
-def get_resources_and_pages_for(group):
+def get_resources_and_pages_for(user, group):
     #objects = GenericReference.objects.filter(object_id=group.get_ref().id, content_type)
     objects = []
     q1 = get_pages_for(group)
-    q2 = get_resources_for(group)
+    q2 = get_permissioned_resources_for(user, group)
     for thing in itertools.chain(q1,q2):
         objects.append(thing) 
     return objects
@@ -77,13 +77,14 @@ def group(request, group, template_name="plus_groups/group.html", current_app='p
     hosts = group.get_admin_group().get_users()[:10]
     host_count = group.get_admin_group().get_no_members()
 
-    join = False
+    can_join = False
     apply = False
     leave = False
     invite = False
-    comment = False
+    can_comment = False
     message = False
     add_link = False
+    can_tag = False
 
     if user.is_authenticated():
         if user.is_direct_member_of(group.get_inner()):
@@ -94,23 +95,26 @@ def group(request, group, template_name="plus_groups/group.html", current_app='p
             except Exception, e :# user doesn't have invite permission
                 pass
 
-            try :
-                group.comment
-                comment = True
-            except Exception, e: # user doesn't have comment permission
-                pass
         else :
             try :
                 group.join 
-                join = True
+                can_join = True
             except Exception, e: # user doesn't have join permission
                 pass
             try :
-                if not join :
+                if not can_join :
                     group.apply
                     apply = True
             except Exception, e : # user doesn't have apply permission
                 pass
+
+        try : 
+            group.comment
+            can_comment = True
+            can_tag = True # XXX commentor interface governs who can tag. Do we need a special tag interface?
+        except :
+            pass
+
 
         try :
             group.message
@@ -123,8 +127,8 @@ def group(request, group, template_name="plus_groups/group.html", current_app='p
             add_link = True
         except Exception, e :
             print e
-
             pass
+
 
     tweets = TweetInstance.objects.tweets_from(group).order_by("-sent") 
     if tweets :
@@ -140,13 +144,17 @@ def group(request, group, template_name="plus_groups/group.html", current_app='p
         perms_bool = True
     except PlusPermissionsNoAccessException:
         perms_bool = False
+
     search_type = current_app + ':group'
     search_url = reverse(search_type, args=[group.id])
+
     # XXX replace when we slot permissions in
     # XXX replace when we have more sophisticated listings search
     #pages = get_pages_for(group.get_inner())
     #resources = get_resources_for(group.get_inner())
     #objects = get_resources_and_pages_for(group)
+    #objects = get_resources_and_pages_for(user, group)
+
     context = RequestContext(request, current_app=current_app)
     all_results, search_types, tag_intersection = plus_search(tags, search, narrow_search_types('Resource'), order) #, extra_filter={'context':'TgGroup'})
     return render_to_response(template_name, {
@@ -158,12 +166,13 @@ def group(request, group, template_name="plus_groups/group.html", current_app='p
             "members" : members,
             "member_count" : member_count,
             "leave": leave,
-            "join" : join, 
+            "can_join" : can_join, 
             "apply" : apply, 
             "invite" : invite, 
-            "comment" : comment, 
+            "can_comment" : can_comment, 
             "message" : message,
             "add_link" : add_link,
+            "can_tag" : can_tag,
             "hosts": hosts,
             "host_count": host_count,
             "tweets" : tweets,
@@ -211,7 +220,7 @@ def groups(request, site, type='other', template_name='plus_explore/explore_filt
 
     if request.user.is_authenticated() :
         try :
-            if current_app == 'plus_groups' :
+            if current_app == 'groups' :
                 site.create_virtual
             else :
                 site.create_hub

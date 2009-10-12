@@ -6,6 +6,7 @@ from django.contrib.auth.models import User, UserManager, check_password
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes import generic
 
+from django.conf import settings
 
 from apps.plus_contacts.status_codes import WAITING_USER_SIGNUP
 from apps.plus_permissions.proxy_hmac import attach_hmac 
@@ -171,19 +172,6 @@ django.db.models.fields.related.create_many_related_manager = create_many_relate
 
 try :
 
-
-# This is the list of group types we currently know about
-
-    GROUP_TYPES = (
-        (u'interest', u'Interest'),
-        (u'organisation', u'Organisation'),
-        (u'project', u'Project'),
-        (u'internal', u'Internal'),
-        (u'hub', u'Hub'),
-    )
-
-
-
     class TgGroup(models.Model):
         
         class Meta:
@@ -213,7 +201,7 @@ try :
         #  getting rid of "about" as there's no data in it from hubspace and we're using "description"
         #about = models.TextField('about', null=True, blank=True)
 
-        group_type = models.CharField('type', max_length=10, choices=GROUP_TYPES)
+        group_type = models.CharField('type', max_length=10, choices=settings.GROUP_TYPES)
     
         title = models.CharField(max_length=60)
         description = models.TextField()

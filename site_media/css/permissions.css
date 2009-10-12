@@ -22,55 +22,55 @@ HUB PLUS 2009
 	overflow: visible;
 }
 
-.group_column {
+.permissions_slider .group_column {
 	color		: #FFF;
 }
 
-.attribute_column {
+.permissions_slider .attribute_column {
 	width		: 15%;
 	text-align      : center; 
 }
 
-.group_column,
-.group_label {
+.permissions_slider .group_column,
+.permissions_slider .group_label {
 	text-align	: left;
 }
 
-.setting {
+.permissions_slider .setting {
 	background: url('../images/slider_bar.gif') no-repeat 50% 0;
 	vertical-align: top;
 }
 
-.setting.limited_up {
+.permissions_slider .setting.limited_up {
 
 }
 
-.setting.limited_down {
+.permissions_slider .setting.limited_down {
 
 }
 
-.setting.active {
+.permissions_slider .setting.active {
 	background-position	: 50% -200px;
 }
 
-.setting.inactive {
+.permissions_slider .setting.inactive {
 	background-position	: 50% -100px;
 }
 
-th {
+.permissions_slider .permissions_slider th {
 	font-weight	: normal;
 }
 
-th,
-td.group_label {
+.permissions_slider tr th,
+.permissions_slider tr td.group_label {
 	padding		: 4px 0 5px 0;;
 }
 
-.slider_holder {
+.permissions_slider .slider_holder {
 	position	:relative;
 }
 
-.slider {
+.permissions_slider .slider {
 	background	: url('../images/slider_handle.gif') no-repeat;
 	cursor		: pointer;
 	height		:13px;
