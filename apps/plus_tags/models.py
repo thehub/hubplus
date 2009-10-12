@@ -126,7 +126,7 @@ def get_tags(tagged=None, tag_type=None, tag_value=None, tagged_for=None, tagged
     return tags
 
 
-def tag_add(tagged, tag_type, tag_value, tagged_by, tagged_for):
+def tag_add(tagged, tag_type, tag_value, tagged_by, tagged_for=None):
     if not tagged_for:
         tagged_for = tagged_by.get_ref()
 
