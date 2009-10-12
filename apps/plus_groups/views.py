@@ -145,8 +145,8 @@ def group(request, group, template_name="plus_groups/group.html", current_app='p
     except PlusPermissionsNoAccessException:
         perms_bool = False
 
-    search_type = current_app + ':group'
-    search_url = reverse(search_type, args=[group.id])
+    search_type = current_app + ':groups'
+    search_url = reverse(search_type)
 
     # XXX replace when we slot permissions in
     # XXX replace when we have more sophisticated listings search
@@ -188,6 +188,7 @@ def group(request, group, template_name="plus_groups/group.html", current_app='p
             'tag_intersection':tag_intersection,
             'search_types':search_types,
             "search_type":search_type,
+            "search_types_len":len(search_types),
             "search_url":search_url,
             "group_id":group.id,
             'multitabbed':False,
@@ -235,9 +236,13 @@ def groups(request, site, type='other', template_name='plus_explore/explore_filt
     else:
         head_title = _('Groups')
         type_name = "Group"
+        
+    search_types = narrow_search_types(type_name)
+    search_types_len = len(search_types)
+    search_type_label = search_types[0][1][2]
 
     search_type = current_app + ':groups'
-    all_results, search_types, tag_intersection  = plus_search(tags, search, narrow_search_types(type_name), order)
+    all_results, search_types, tag_intersection  = plus_search(tags, search, search_types, order)
     return render_to_response(template_name, {'head_title':head_title, 
                                               'order':order,
                                               'explicit_order':order,
@@ -249,6 +254,8 @@ def groups(request, site, type='other', template_name='plus_explore/explore_filt
                                               'multiple_tags':len(tags)>1,
                                               'tag_intersection':tag_intersection,
                                               'search_types':search_types,
+                                              "search_types_len":search_types_len,
+                                              'search_type_label':search_type_label,
                                               'search_type':search_type,
                                               'multitabbed':False,
                                               'base':"site_base.html"}, context_instance=RequestContext(request, current_app=current_app))
