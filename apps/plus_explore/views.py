@@ -77,6 +77,7 @@ def filter(request, tag_string, template_name='plus_explore/explore_filtered.htm
                                               'search_types':search_types,
                                               'search_type':search_type,
                                               'multitabbed':True,
+                                              'results_label':'items',
                                               'base':"site_base.html"}, context_instance=RequestContext(request))
 
 def plus_search(tags, search, search_types, order, extra_filter=None):
@@ -97,7 +98,9 @@ def plus_search(tags, search, search_types, order, extra_filter=None):
         q = q & Q(**extra_filter)
     if q:
         items = items.filter(q)
-
+    
+    results_map = {}
+    tag_intersection = []
     if search:
         results = RelatedSearchQuerySet().auto_query(search)
         results_map = {}
@@ -109,11 +112,9 @@ def plus_search(tags, search, search_types, order, extra_filter=None):
             results_map = {'All':EmptySearchQuerySet()}
     else:
         if items:
-            results_map = {}
             results_map['All'] = items.all()
 
     if 'All' in results_map:
-        tag_intersection = []
         tag_intersection = get_intersecting_tags(results_map['All'], n=15)    
         if len(search_types) > 1:
             for typ, info in search_types:
