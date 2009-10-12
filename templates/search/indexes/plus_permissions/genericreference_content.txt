@@ -1,6 +1,6 @@
 {{ object.obj.display_name }}
 
-{{ object.creator }}
+{{ object.creator.display_name }}
 
 {{ object.obj.content }}
 

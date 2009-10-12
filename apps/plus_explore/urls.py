@@ -1,18 +1,20 @@
+# -- side bar clouds and searches a) in group/hubs/members search groups/hubs/members only, b) in group search resources
+
 # filter group resources properly
-# add/remove tag filter url
+# add/remove tag filter url - current_application?
 # paginate tabs separately
 
-# -- side bar clouds and searches a) in group/hubs/members search groups/hubs/members only, b) in group search resources
 
 # tag filtering on group, hub, member, resources
 # -- integrate explore_filtered with explore index 
 # -- if results set empty, include tag cloud
 # group search, hash tag position
 
+# ordering
+
 # fulltext search b) - write template
 #                    - reindex
 # 
-# ordering
 # create a form to validate search term and order and current
 # permission based filtering - need to do this efficiently
 # re-write load_all to return a sqlQuery object + play nicely with pagination

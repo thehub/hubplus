@@ -60,7 +60,10 @@ def profiles(request, template_name="plus_explore/explore_filtered.html"):
     except ValueError:
         pass
     search_type = 'profile_list'
-    all_results, search_types, tag_intersection  = plus_search(tags, search, narrow_search_types(), order)
+    search_types = narrow_search_types()
+    search_types_len = len(search_types)
+    search_type_label = search_types[0][1][2]
+    all_results, search_types, tag_intersection  = plus_search(tags, search, search_types, order)
     head_title = _('Members')
     #users = users.filter(~Q(username='admin')).filter(~Q(username='anon')).filter(~Q(username='webapi'))
     return render_to_response(template_name, {'head_title':head_title, 
@@ -74,6 +77,8 @@ def profiles(request, template_name="plus_explore/explore_filtered.html"):
                                               'multiple_tags':len(tags)>1,
                                               'tag_intersection':tag_intersection,
                                               'search_types':search_types,
+                                              "search_types_len":search_types_len,
+                                              'search_type_label':search_type_label,
                                               'search_type':search_type,
                                               'multitabbed':False,
                                               'base':"site_base.html"}, context_instance=RequestContext(request))
@@ -191,6 +196,12 @@ def profile(request, username, template_name="profiles/profile.html"):
     except PlusPermissionsNoAccessException:
         perms_bool = False
     profile = TemplateSecureWrapper(profile)
+
+    search_type = 'profile_list' 
+    search_types = narrow_search_types()
+    search_types_len = len(search_types)
+    search_type_label = search_types[0][1][2]
+
     return render_to_response(template_name, {
             "profile_form": profile_form,
             "is_me": is_me,
@@ -209,7 +220,10 @@ def profile(request, username, template_name="profiles/profile.html"):
             "needs" : needs,
             "interests" : interests,
             "other_user_tweets" : other_user_tweets,
-            "permissions":perms_bool
+            "permissions":perms_bool,
+            "search_type":search_type,
+            "search_type_label":search_type_label,
+            "search_types_len":search_types_len
             }, context_instance=RequestContext(request))
 
 

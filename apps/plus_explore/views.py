@@ -11,7 +11,15 @@ from django.db.models import Q
 import settings
 
 def index(request, template_name="plus_explore/explore.html"):
-    if request.GET.get('search', ''):
+    search = request.GET.get('search', '')
+    search_type = request.GET.get('current_area', '')
+    if search_type:
+        url = reverse(search_type)
+        if search:
+            url += '?search=' + search
+        return HttpResponseRedirect(url)
+
+    if search:
         return filter(request, tag_string='')
     
     return render_to_response(template_name, {'head_title':_('Explore'), 'tags':top_tags()}, context_instance=RequestContext(request))
@@ -51,7 +59,7 @@ def filter(request, tag_string, template_name='plus_explore/explore_filtered.htm
     explicit_order = ''
     if order:
         explicit_order = order
-
+        
     try:
         tags.remove('')
     except ValueError:
@@ -75,6 +83,7 @@ def filter(request, tag_string, template_name='plus_explore/explore_filtered.htm
                                               'multiple_tags':len(tags)>1,
                                               'tag_intersection':tag_intersection,
                                               'search_types':search_types,
+                                              'search_types_len':len(search_types),
                                               'search_type':search_type,
                                               'multitabbed':True,
                                               'results_label':'items',
