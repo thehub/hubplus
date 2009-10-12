@@ -27,6 +27,7 @@ def get_group_for(uid) :
 def get_user_for(uid) :
     return get_for(User,uid)
 
+stop_words = ['of','the','and','in','-']
 
 def get_ultimate_container(uid) :
 
@@ -100,8 +101,11 @@ for folder in maps['folders'] :
                                                  license=license, author=author, stub=False)
                         resource.save()
 
-                        tag = folder['title']
-                        tag_add(resource, 'folder_name', tag, creator)
+
+                        tag_words = [s.lower() for s in folder['title'].split(' ') if (s.lower() not in stop_words)]
+                        
+                        for tw in tag_words:
+                            tag_add(resource, 'folder', tw, creator)
                         
 
                     except :

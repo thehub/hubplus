@@ -61,10 +61,13 @@ import_group('mhpss_export/groups.pickle', 'group', group_place)
 
 def region_place(dict) :
     name= dict['location']
+    if name == '' :
+        name = dict['groupname']
     if Location.objects.filter(name=name).count() > 0 :
         return Location.objects.get(name=name)
     l = Location(name=name)
     l.save()
     return l
     
+
 import_group('mhpss_export/hubs.pickle', 'hub',region_place)
