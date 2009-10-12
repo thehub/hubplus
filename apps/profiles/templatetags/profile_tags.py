@@ -12,7 +12,7 @@ def show_profile(context, profile):
     try:
         homehub = profile.homeplace.tggroup_set.filter(level='member')[0]
     except:
-        homehub = {'display_name':"Unknown"}
+        homehub = TgGroup.objects.get(id=1)
         
     #profile = TemplateSecureWrapper(secure_wrap(profile, context['request'].user, interface_names=['Viewer'], required_interfaces=['Viewer']))
     user = profile.user

@@ -13,6 +13,7 @@ def configs(context):
             'COPYRIGHT_HOLDER' : settings.COPYRIGHT_HOLDER,
             'PROJECT_THEME': settings.PROJECT_THEME,
             'WELCOME_PAGE' : 'clients/%s/welcome.html' % settings.PROJECT_THEME,
+            'INTRO_BAR' : 'clients/%s/intro_bar.html' % settings.PROJECT_THEME,
             'site_name' : settings.PROJECT_NAME,
             'HUB_NAME' : hub_name(),
             'HUB_NAME_PLURAL' : hub_name_plural(),

@@ -199,6 +199,7 @@ EMAIL_CONFIRMATION_DAYS = 2
 EMAIL_DEBUG = DEBUG
 
 CONTACT_EMAIL = "world.tech.plus@the-hub.net"
+SUPPORT_EMAIL = "world.tech.plus@the-hub.net"
 
 SITE_NAME = "Hub+"
 LOGIN_URL = "/account/login"
