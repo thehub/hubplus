@@ -3,7 +3,7 @@ from apps.plus_permissions.api import secure_wrap, TemplateSecureWrapper
 from apps.plus_lib.utils import main_hub_name
 
 from apps.plus_permissions.models import GenericReference
-
+from apps.plus_groups.models import TgGroup
 register = template.Library()
 
 def show_profile(context, profile):
@@ -12,7 +12,7 @@ def show_profile(context, profile):
     try:
         homehub = profile.homeplace.tggroup_set.filter(level='member')[0]
     except:
-        homehub = TgGroup.objects.get(name="HubPlus")
+        homehub = TgGroup.objects.get(id=1)
         
     #profile = TemplateSecureWrapper(secure_wrap(profile, context['request'].user, interface_names=['Viewer'], required_interfaces=['Viewer']))
     user = profile.user
