@@ -13,6 +13,8 @@ class WikiPage(models.Model):
         return self.name
 
     title = models.CharField(max_length=100)
+    def display_name(self):
+        return self.title
     stub = models.BooleanField(default=True)
     license = models.CharField(max_length=100)
     content = models.TextField(blank=True)  # html field

@@ -46,7 +46,7 @@
       <li>
 	<dl>
 	  {% if can_tag %}
-    	      {% plus_tag 'Skills' 'skills'  group user %}
+    	      {% plus_tag 'Skills <span class="extra">Tell the community about the skills you have to offer</span>' 'skills'  group user %}
 	  {% else %}
 	      {% view_plus_tag 'Skills' 'skills' group user %}
 	  {% endif %}
@@ -58,7 +58,7 @@
       <li>
 	<dl>
 	  {% if can_tag %}
-	      {% plus_tag 'Needs' 'needs'  group  user %}
+	      {% plus_tag 'Needs <span class="extra">Looking for something a member could help you with?</span>' 'needs'  group  user %}
 	  {% else %}
 	      {% view_plus_tag 'Needs' 'needs' group user %}
           {% endif %}
@@ -89,7 +89,7 @@
 		{% avatar host 40 %}
 	  </a>
 	  {% endfor %}
-	  <br /><a href="#" class='disabled'>Show all ({{host_count}})</a>
+	  <br /><a href="#" class='disabled'>{% trans "Show all ({{host_count}})" %}</a>
 	</dd>
       </dl>
     </li>

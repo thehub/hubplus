@@ -1,6 +1,7 @@
 {% extends "site_base.html" %}
 
 {% load i18n %}
+{% load listings %}
 {% load microblogging_tags %}
 
 {% block head_title %}{% trans "Home" %}{% endblock %}
@@ -8,6 +9,7 @@
 {% block tab_id %}id="home_tab"{% endblock %}
 
 {% block body %}
+
 <div id="status" class="block">
 
 	<h3>{% trans "What's happening?" %}</h3>  
@@ -27,8 +29,10 @@
 
 {% block side_bar %}
 
-<ul>
-	<li><a href="{% url list_open_applications %}">View recent applicants to the site</a></li>
-</ul>
+	{% include "plus_explore/side_search.html" %}
+	{% include "add.html" %}
+	<ul>
+		<li><a href="{% url list_open_applications %}">View recent applicants to the site</a></li>
+	</ul>
 
 {% endblock %}

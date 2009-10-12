@@ -54,14 +54,23 @@ def get_resources_and_pages_for(user, group):
 
 @secure_resource(TgGroup)
 def group(request, group, template_name="plus_groups/group.html", current_app='plus_groups', **kwargs):
+    tag_string = ''
+    tags = tag_string.split('+')
+    search = request.GET.get('search', '')
+    order = request.GET.get('order', '')
+    explicit_order = ''
+    if order:
+        explicit_order = order
+    try:
+        tags.remove('')
+    except ValueError:
+        pass
 
     user = request.user
     if not user.is_authenticated():
         user = get_anon_user()
         request.user = user 
-        
-    search_terms = request.GET.get('search_terms', '')
-    
+            
     members = group.get_users()[:10]
     member_count = group.get_no_members()
 
@@ -102,6 +111,7 @@ def group(request, group, template_name="plus_groups/group.html", current_app='p
         try : 
             group.comment
             can_comment = True
+            can_tag = True # XXX commentor interface governs who can tag. Do we need a special tag interface?
         except :
             pass
 
@@ -119,13 +129,6 @@ def group(request, group, template_name="plus_groups/group.html", current_app='p
             print e
             pass
 
-        try :
-            group.description = group.description 
-            # XXX dumb test for editor interface, need a Tag type in plus_permissions so this can be handled 
-            can_tag = True
-        except :
-            pass
-            
 
     tweets = TweetInstance.objects.tweets_from(group).order_by("-sent") 
     if tweets :
@@ -141,15 +144,19 @@ def group(request, group, template_name="plus_groups/group.html", current_app='p
         perms_bool = True
     except PlusPermissionsNoAccessException:
         perms_bool = False
-        
+
+    search_type = current_app + ':group'
+    search_url = reverse(search_type, args=[group.id])
+
     # XXX replace when we slot permissions in
     # XXX replace when we have more sophisticated listings search
     #pages = get_pages_for(group.get_inner())
     #resources = get_resources_for(group.get_inner())
-    
-    objects = get_resources_and_pages_for(user, group)
+    #objects = get_resources_and_pages_for(group)
+    #objects = get_resources_and_pages_for(user, group)
 
     context = RequestContext(request, current_app=current_app)
+    all_results, search_types, tag_intersection = plus_search(tags, search, narrow_search_types('Resource'), order) #, extra_filter={'context':'TgGroup'})
     return render_to_response(template_name, {
             "head_title" : "%s" % group.get_display_name(),
             "head_title_status" : dummy_status,
@@ -170,62 +177,99 @@ def group(request, group, template_name="plus_groups/group.html", current_app='p
             "host_count": host_count,
             "tweets" : tweets,
             "permissions": perms_bool,
-            "objects":objects,
-            "search_type":"plus_groups:group",
+            'order':order,
+            'explicit_order':order,
+            'search_terms':search,
+            'items': all_results,
+            'items_len': len(all_results),
+            'tag_filter':tags,
+            'tag_string':tag_string,
+            'multiple_tags':len(tags)>1,
+            'tag_intersection':tag_intersection,
+            'search_types':search_types,
+            "search_type":search_type,
+            "search_url":search_url,
             "group_id":group.id,
+            'multitabbed':False,
             "base":"plus_lib/listing_frag.html",
-            "search_terms":search_terms
             }, context_instance=context)
 
+
 from apps.plus_lib.utils import hub_name_plural, hub_name
+from apps.plus_explore.views import plus_search, get_search_types
+
+def narrow_search_types(type_name):
+    types = dict(get_search_types())
+    return ((type_name, types[type_name]),)
+
 @site_context
-def groups(request, site, type='other', template_name='plus_groups/groups.html', current_app='plus_groups'):
-    if type == 'hub' :
-        head_title = hub_name_plural()
-        type_name = hub_name()
-        groups = TgGroup.objects.plus_hub_filter(request.user, level='member')
-    else:
-        head_title = 'Groups'
-        type_name = "Group"
-        groups = TgGroup.objects.plus_virtual_filter(request.user, level='member')
+def groups(request, site, type='other', template_name='plus_explore/explore_filtered.html', current_app='plus_groups'):
+    tag_string = ''
+    tags = tag_string.split('+')
+    search = request.GET.get('search', '')
+    order = request.GET.get('order', '')
+    explicit_order = ''
+    if order:
+        explicit_order = order
+    try:
+        tags.remove('')
+    except ValueError:
+        pass
 
-    return groups_list(request, site, groups, 
-                       template_name, head_title, '', type_name=type_name, current_app=current_app)
-
-
-def groups_list(request, site, groups, template_name, head_title='', head_title_status='', type_name='Group', current_app=None) :
-
-    search_terms = request.GET.get('search', '')
-    order = request.GET.get('order')
-    if not order:
-        order = 'name'
     create = False
 
     if request.user.is_authenticated() :
-
         try :
-            if current_app == 'plus_groups' :
+            if current_app == 'groups' :
                 site.create_virtual
             else :
                 site.create_hub
             create = True
         except Exception, e:
             print "User can't create a group",e
-    
-    
-    context = RequestContext(request, current_app=current_app)
 
-    return render_to_response(template_name, {
-            "objects" : groups,
-            "order" : order,
-            "search_terms":search_terms,
-            "search_type":'plus_groups:groups',
-            "head_title":head_title,
-            "obj_type": type_name,
-            "results_label":head_title,
-            "create":create,
-            'base': "plus_lib/site_listing.html"
-            }, context_instance=context)
+
+    if type == 'hub' :
+        head_title = _(hub_name_plural())
+        type_name = hub_name()
+    else:
+        head_title = _('Groups')
+        type_name = "Group"
+
+    search_type = current_app + ':groups'
+    all_results, search_types, tag_intersection  = plus_search(tags, search, narrow_search_types(type_name), order)
+    return render_to_response(template_name, {'head_title':head_title, 
+                                              'order':order,
+                                              'explicit_order':order,
+                                              'search_terms':search,
+                                              'items': all_results,
+                                              'items_len': len(all_results),
+                                              'tag_filter':tags,
+                                              'tag_string':tag_string,
+                                              'multiple_tags':len(tags)>1,
+                                              'tag_intersection':tag_intersection,
+                                              'search_types':search_types,
+                                              'search_type':search_type,
+                                              'multitabbed':False,
+                                              'base':"site_base.html"}, context_instance=RequestContext(request, current_app=current_app))
+
+    #return groups_list(request, site, groups, 
+    #                   template_name, head_title, '', type_name=type_name, current_app=current_app)
+
+
+#def groups_list(request, site, groups, template_name, head_title='', head_title_status='', type_name='Group', current_app=None) :
+
+#    return render_to_response(template_name, {
+#            "objects" : groups,
+#            "order" : order,
+#            "search_terms":search_terms,
+#            "search_type":'plus_groups:groups',
+ #           "head_title":head_title,
+#            "obj_type": type_name,
+#            "results_label":head_title,
+#            "create":create,
+#            'base': "plus_lib/site_listing.html"
+#            }, context_instance=context)
 
 
 @login_required

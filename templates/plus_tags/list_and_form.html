@@ -2,8 +2,8 @@
 <dd class="tag_manager" id="{{tag_type}}">
   <ul class="tag_list">
     {% for t in tags %}
-    <li><a href="/plus_tags/tag/{{t.keyword}}/" class="tag option">{{t.keyword}}</a>
-        <a class="delete_tag" href="/plus_tags/{{tagged_class}}/{{tagged_id}}/delete/">X</a></li>
+    <li {% if forloop.first %}class="first"{% endif %}><a href="{% url explore_filtered  t.keyword  %}" class="tag option">{{t.keyword}}</a>
+        <a class="delete_tag" href="{% url delete_generic_tag %}">X</a></li>
         <!-- should have a permission delete tag item on the tagged_for agent -->
     {% endfor %}                   
   </ul>
@@ -12,8 +12,8 @@
   <div class="add_tag_form" id="{% url add_generic_tag %}" > 
     <input name="tagged_class" class="tagged_class" value="{{tagged_class}}" type="hidden" />
     <input name="tagged_id" class="tagged_id" value="{{tagged_id}}" type="hidden" />
-    <input name="tag_type" class="tag_type" value="{{tag_type}}" type="hidden" />
-    <input name="tag_value" class="tag_value text" />
+    <input name="tag_type" type="hidden" class="tag_type text" value="{{tag_type}}" />
+    <input name="tag_value" class="tag_value text" id="{% url autocomplete_typed_tag tag_type %}" />
     <input class="button add_tag" type="submit" value="Add" />
   </div> 
 

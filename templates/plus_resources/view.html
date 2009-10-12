@@ -1,0 +1,82 @@
+{% extends "site_base.html" %}
+
+{% load i18n %}
+
+{% load app_plugins %}
+{% load uni_form %}
+{% load plus_tags %}    
+{% load editable_attribute %}
+{% load threadedcommentstags %}
+
+
+{% block page_header %}
+<a id="parent" href="{% url plus_groups:group resource.in_agent.obj.id %}">{{resource.in_agent.obj.display_name}}</a>
+<h2 id="page_title">{{resource.title}}</h2>
+{% endblock %}
+
+
+{% block body %}
+<div id="main_content" class="block">
+  <ul class="icon_text_button_set">
+    {% if can_edit %}
+    <li>
+      <a class="icon_text_button bt_edit" href="{% url plus_groups:edit_Resource resource.in_agent.obj.id resource.name %}">{% trans "Edit page"%}</a>
+    </li>
+    {% endif %}
+    {% if permissions %}
+    <li>
+      <a class="icon_text_button bt_permissions" href="#overlay" rel="#overlay" id="{{resource.edit_key}}permissionedit">{% trans "Permissions" %}</a>
+    </li>
+    {% endif %}
+  </ul>
+</div>
+
+<div id="content_extra">
+  <ul id="meta">
+    <li>
+      <dt>{% trans "Title" %}:</dt>
+      <dd>{{resource.title}}</dd>
+    </li>
+    
+    <li>
+      {% editable "Description" resource 'description' 'About this document'%}
+    </li>
+    <li>
+      
+      <dl>   {% plus_tag 'Tags' 'folder_name'  resource  request.user %}</dl>
+    </li>
+    <li>
+      {% editable "License" resource 'license' 'License'%}
+    </li>
+    
+    <li>
+      {% editable "Author" resource 'author' 'Author'%}
+    </li>
+
+    <li>
+      <dt>{% trans "Uploaded by" %}</dt>
+      <dd>{{created_by}}</dd>
+    
+    <li>
+      <dt>{% trans "Download"%}</dt>
+      <dd><a href="{{resource.download_url}}">Download</a></dd>
+    </li>
+    
+  </ul>
+</div>
+
+
+<div id="section_tab_navigation" class="tabbed section yui-navset">
+  <ul class="tabbed_navigation yui-nav">
+    {% get_comment_count for resource as comment_count %}
+    <li class="selected"><a href="#comments"><span>{% trans "Comments" %}({{comment_count}})</span></a></li>
+    <!--li><a href="#attachments"><span>{% trans "Attachments" %} (0)</span></a></li>
+    <li><a href="#history"><span>{% trans "History" %} ({{version_list.count}} {% trans "revisions" %})</span></a></li-->
+  </ul>
+  <div class="tabbed_content yui-content">
+    <div id="comments">
+      {% include "plus_resources/comments.html" %}
+    </div>
+  </div>
+</div>
+{% endblock %}

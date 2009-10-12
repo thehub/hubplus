@@ -39,17 +39,29 @@ def import_group(f_name, group_type, fn_place) :
         print description
         print keywords
 
-        group = site.create_TgGroup(
-            group_name = group_name,
-            display_name = display_name,
-            group_type = group_type ,
-            level = 'member',
-            user = admin,
-            description = description,
-            permission_prototype = permission_prototype,
-        )
-        group.get_inner().psn_id = psn_id
+        groups = TgGroup.objects.filter(group_name=group_name)
+        if groups : 
+            group = groups[0]
+        else :
+            group = site.create_TgGroup(
+                group_name = group_name,
+                display_name = display_name,
+                group_type = group_type ,
+                level = 'member',
+                user = admin,
+                description = description,
+                permission_prototype = permission_prototype,
+                )
+            group = group.get_inner()
+        group.psn_id = psn_id
+        
         group.place = fn_place(g)
+        
+        if group.place.id != get_or_create_root_location().id :
+ 
+            admin = group.get_admin_group()
+            admin.place = group.place
+            admin.save()
         group.save()
 
 
@@ -61,10 +73,13 @@ import_group('mhpss_export/groups.pickle', 'group', group_place)
 
 def region_place(dict) :
     name= dict['location']
+    if name == '' :
+        name = dict['groupname']
     if Location.objects.filter(name=name).count() > 0 :
         return Location.objects.get(name=name)
     l = Location(name=name)
     l.save()
     return l
     
-import_group('mhpss_export/hubs.pickle', 'hub',region_place)
+
+import_group('mhpss_export/hubs.pickle', 'Hub',region_place)

@@ -1,6 +1,6 @@
 
 from django.conf import settings
-from utils import hub_name,  hub_name_plural
+from utils import hub_name,  hub_name_plural, main_hub_name
 
 def get_area(context):
     segment = context.path.split('/')[0]
@@ -13,9 +13,11 @@ def configs(context):
             'COPYRIGHT_HOLDER' : settings.COPYRIGHT_HOLDER,
             'PROJECT_THEME': settings.PROJECT_THEME,
             'WELCOME_PAGE' : 'clients/%s/welcome.html' % settings.PROJECT_THEME,
+            'INTRO_BAR' : 'clients/%s/intro_bar.html' % settings.PROJECT_THEME,
             'site_name' : settings.PROJECT_NAME,
             'HUB_NAME' : hub_name(),
             'HUB_NAME_PLURAL' : hub_name_plural(),
+            "MAIN_HUB_NAME" : main_hub_name(),
             'PROJECT_NAME' : settings.PROJECT_NAME,
             'current_area': get_area(context)
             }

@@ -1,19 +1,19 @@
 {% load i18n %}
 
 <h2>{% trans "Add new" %}</h2>
-<div id="body">
+<div id="add_form">
   <form class="full block" method="POST" action="{% url plus_groups:add_content_object %}">
     <h4>{% trans "Create new content" %}<!--  in Sexy Salad Club  --><!-- <img style="margin-bottom: 5px;" src="images/dropdown.gif" /> --><!-- <a href="add_content2.html" style="font-size: .6em; line-height: 1em;">Change group/Hub</a> --></h4>
-    <!--<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>-->
+    <p>Here you can add new pages and files, simply give it a title and choose which group or {{HUB_NAME}} to put it.</p>
     <fieldset>
       <ul>
 	<li>
-	  <label for="title"><span class="required">*</span>{% trans "Title" %}</label>
+	  <label for="title"><span class="required">*</span> {% trans "Title" %}</label>
 	  <input name="title" id="title" class="text" type="text" value="{{form.data.title}}" />
 	  {% if form.errors.title %}<span class="error">{{form.errors.title}}<span>{% endif %}
 	</li>
       </ul>
-      <label><span class="required">*</span>{% trans "Add this to" %}</label>
+      <label><span class="required">*</span> {% trans "Add this to" %}</label>
       <ul class="checkboxes">
 	<li {% if can_add %}{% else %}class="hidden"{% endif %}>
 	  <div class="label_extended">
@@ -23,14 +23,14 @@
 	</li>
 	<li id="auto_change_group" {% if can_add %}class="hidden"{% endif %}>
 	  <div class="label_extended">
-	    <label for="autocomplete">{% trans "Choose group or Hub:" %}</label>
 	    <input id="autocomplete_group"  class="text" type="text" />
+	    <span class="extra">{% blocktrans %}Choose a group or {{HUB_NAME}} to add to{% endblocktrans %}</span>
 	  </div>
 	</li>	
       </ul>
       <ul {% if can_add %}{% else %}class="hidden"{% endif %}>
 	<li>
-	  <label><span class="required">*</span>{% trans "Type of content" %} </label>
+	  <label><span class="required">*</span> {% trans "Type of content" %} </label>
 	  <ul id="choose_type" class="checkboxes">
 	    {% for create_interface, label, sub_title, active in possible_interfaces %}
 	    <li id="{{create_interface}}" {% if active %}{% else %}class="cannot_add" disabled="disabled"{% endif %}>
@@ -43,7 +43,7 @@
       </ul>
       
     </fieldset>
-    <input id="create_content" {% if can_add %}{% else %}disabled="disabled"{% endif %} class="{% if can_add %}{% else %}hidden {% endif %}submit button" type="Submit" value="{% trans 'Create' %}" />
+    <input id="create_content" {% if can_add %}{% else %}disabled="disabled"{% endif %} class="{% if can_add %}{% else %}disabled {% endif %}submit button" type="Submit" value="{% trans 'Create' %}" />
   </form>
   
 </div>

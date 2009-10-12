@@ -22,7 +22,8 @@ class DelegateToUser(object) :
 
 class Profile(models.Model):    
    user = models.ForeignKey(User, unique=True, verbose_name=_('user'))
-   
+   def content(self):
+      return self.about
    about = DelegateToUser('description')
    email_address = DelegateToUser('email_address')
    name = DelegateToUser('username')

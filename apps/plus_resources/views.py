@@ -14,6 +14,7 @@ from apps.plus_resources.models import Resource, get_or_create
 from django.contrib.auth.decorators import login_required
 
 from apps.plus_permissions.decorators import secure_resource
+from apps.plus_permissions.api import TemplateSecureWrapper
 
 from apps.plus_groups.models import TgGroup
 from django.core.urlresolvers import reverse
@@ -65,4 +66,17 @@ def edit_resource(request, group, resource_name,
     }, context_instance=RequestContext(request, current_app=current_app))
 
 
+
+@secure_resource(TgGroup)
+def view_resource(request, group, resource_name, template_name="plus_resources/view.html",
+                   current_app='plus_groups', **kwargs):
+    try:
+        obj = Resource.objects.plus_get(request.user, name=resource_name, in_agent=group.get_ref())
+    except Resource.DoesNotExist:
+        raise Http404
+    return render_to_response(template_name, {
+        'resource' : TemplateSecureWrapper(obj),
+        'page_title' : obj.title,
+        'created_by' : obj.get_inner().created_by.get_display_name(),
+    }, context_instance=RequestContext(request, current_app=current_app))
 

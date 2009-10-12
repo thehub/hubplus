@@ -10,7 +10,7 @@
   <dt>{% trans "Type" %}:</dt>
   <dd>{{group.get_group_type_display}}</dd>
   <dt>{% trans "Description" %}:</dt>
-  <dd>{{group.description|truncatewords:20}}</dd>
+  <dd>{% autoescape off %}{{group.description|truncatewords_html:20}}{% endautoescape %}</dd>
   <dt>{% trans "Members" %}:</dt>
   <dd>{% blocktrans %}{{no_of_members}} members{% endblocktrans %}</dd>  
 </dl>

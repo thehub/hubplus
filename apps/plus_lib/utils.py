@@ -103,3 +103,9 @@ def hub_name_plural() :
         return 'Regions'
     else :
         return 'Hubs'
+
+def main_hub_name() :
+    if settings.PROJECT_THEME=='psn' :
+        return "Main Region"
+    else :
+        return "Hub"

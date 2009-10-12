@@ -4,11 +4,12 @@ from django.db import transaction
 from django.utils import simplejson
 from models import *
 from django.http import HttpResponse, HttpResponseRedirect, HttpResponseForbidden, HttpResponseNotFound
-
+from django.core.urlresolvers import reverse
 # this collection must be kept up-to-date for each type of model which 
 # CHANGE THIS
 from apps.profiles.models import Profile
 from apps.plus_groups.models import TgGroup
+from apps.plus_tags.forms import AddTagForm
 from django.contrib.auth.models import User
 from django.contrib.contenttypes.models import ContentType
 from apps.plus_permissions.api import secure_resource
@@ -16,21 +17,31 @@ from apps.plus_permissions.api import secure_resource
 
 @login_required
 @secure_resource(obj_schema={'tagged':'any', 'tagged_for':[User, TgGroup]})
-def add_tag(request, tagged, tagged_for=None):
+def add_tag(request, tagged, tagged_for=None, tag_string=None):
     """ This is actually a way to add typed keywords (e.g. skills, interests, needs) as well as 'free tags'"""
     tagged_by = request.user
     if not tagged_for:
-        tagged_for = tagged_by
-    tag_type = request.POST['tag_type']
-    tag_value = request.POST['tag_value']
-    tag, added = tag_add(tagged, tag_type, tag_value, tagged_by)
-    data = simplejson.dumps({'keyword':tag.keyword, 'tag_type':tag.tag_type, 'tagged':'yourself', 'added':added}) #why yourself?
+        tagged_for = tagged_by.get_ref()
+    form = AddTagForm(request.POST)
+    if form.is_valid():
+        tag_type = form.cleaned_data['tag_type']
+        tag_value = form.cleaned_data['tag_value']
+        tag, added = tag_add(tagged, tag_type, tag_value, tagged_by, tagged_for)
+        tag_url = reverse('explore_filtered', args=[tag.keyword])
+        data = simplejson.dumps({'keyword':tag.keyword, 'tag_type':tag.tag_type, 'tagged':'yourself', 'added':added, 'tag_url':tag_url}) #why yourself?
+    else:
+        data = {}
+        for key, err in form.errors.items():
+            error_message = err[0].capitalize() # not sure how to get the exact string out here without doing a string op :-/
+        data['added'] = False
+        data['error_message'] = error_message
+        data = simplejson.dumps(data)
     return HttpResponse(data, mimetype='application/json')
 
 
 @login_required
 @secure_resource(obj_schema={'tagged':'any', 'tagged_for':[User, TgGroup]})
-def autocomplete_tag(request, tag_type, tagged=None, tagged_for=None):
+def autocomplete_tag(request, tag_type=None, tagged=None, tagged_for=None):
     """
       - autocomplete should look for a partial match in the following in order until it finds 10 results:
       1. the users tags, 
@@ -40,12 +51,9 @@ def autocomplete_tag(request, tag_type, tagged=None, tagged_for=None):
 
       for now its very basic and completes on the tag_type and the partial value, globally
       """
-    tagged_by = request.user
-    if not tagged_for:
-        tagged_for = tagged_by
     q = request.GET['q']
     limit = request.GET['limit']
-    options = tag_autocomplete(tagged_for, tagged, tag_type, q, limit)
+    options = tag_autocomplete(q, limit, tagged_for, tagged, tag_type)
     options = [op['keyword'] for op in options]
     options = '\n'.join(options)
     return HttpResponse(options)
@@ -55,18 +63,18 @@ def autocomplete_tag(request, tag_type, tagged=None, tagged_for=None):
 def delete_tag(request, tagged, tagged_for=None):
     tagged_by = request.user
     if not tagged_for:
-        tagged_for = tagged_by
+        tagged_for = tagged_by.get_ref()
     tag_type = request.POST['tag_type']
     tag_value = request.POST['tag_value']
 
-    tag, deleted = tag_delete(tagged, tag_type, tag_value, tagged_by)
+    tag, deleted = tag_delete(tagged, tag_type, tag_value, tagged_by, tagged_for)
     data = simplejson.dumps({'deleted':deleted})
     return HttpResponse(data, mimetype='application/json')
 
 
 def plot_tag(tag, depth=0):
     if depth:
-        children = [plot_resource(resource, depth=depth-1) for resource in get_tagged_resources(tag.tag_type, tag.keyword)]
+        children = [plot_resource(resource, depth=depth-1) for resource in get_resources_for_tag_intersection(tag.tag_type, tag.keyword)]
     else:
         children = []
 

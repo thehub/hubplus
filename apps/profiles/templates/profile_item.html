@@ -2,17 +2,17 @@
 {% load avatar_tags %}
 {% load plus_tags %}
 
-  <a href="{% url profile_detail user.username %}">
-  <div class="thumb medium">{% avatar user 80 %}</div>
+  <a href="{% url profile_detail profile.user.user_name %}">
+  <div class="thumb medium">{% avatar profile.user 80 %}</div>
   </a>
   <dl>
     <dt>{% trans "Name" %}</dt>
     <dd><a href="{% url profile_detail user.username %}">{{user.get_display_name}}</a></dd>
     <dt>{% trans "Organisation" %}:</dt>	      
     <dd>{{user.organisation}}</dd>
-    <dt>{% trans "Hub" %}:</dt>
+    <dt>{{main_hub_name}}:</dt>
     <dd><a href="{% url hubs:group homehub.id %}">{{homehub.display_name}}</a></dd>
-    {% view_plus_tag 'Interests' 'interests'  profile  user %}
+    {% view_plus_tag 'Interests' 'interests'  profile  profile.user %}
   </dl>
 
 

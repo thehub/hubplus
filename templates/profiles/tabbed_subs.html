@@ -1,11 +1,11 @@
-
+{% load i18n %}
 <div id="section_tab_navigation" class="tabbed section yui-navset">
 
   <ul class="tabbed_navigation yui-nav">
-    <li class="selected" ><a href="#about"><span>About</span></a></li>
-    <li><a href="#updates_feed"><span>Activity</span></a></li>
-    <li><a href="#tags"><span>Tags</span></a></li>
-    <li class="disabled"><a href="#news"><span>News</span></a></li>
+    <li class="selected" ><a href="#about"><span>{% trans "About" %}</span></a></li>
+    <li><a href="#updates_feed"><span>{% trans "Activity" %}</span></a></li>
+    <li><a href="#tags"><span>{% trans "Tags" %}</span></a></li>
+    <li class="disabled"><a href="#news"><span>{% trans "News" %}</span></a></li>
   </ul>
 
   <div class="tabbed_content yui-content">
@@ -17,3 +17,4 @@
 
 </div>
 
+<script type="text/javascript">new YAHOO.widget.TabView("section_tab_navigation");</script>

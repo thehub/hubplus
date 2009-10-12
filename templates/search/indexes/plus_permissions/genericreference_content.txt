@@ -1,0 +1,6 @@
+{{ object.obj.display_name }}
+
+{{ object.creator }}
+
+{{ object.obj.content }}
+
