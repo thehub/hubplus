@@ -4,22 +4,24 @@ from apps.plus_links.models import Link
 
 content_type = Link
 
-
 class LinkViewer :
     text = InterfaceReadProperty
     url = InterfaceReadProperty
     target = InterfaceReadProperty
     service = InterfaceReadProperty
 
+class LinkRemover :
+    remove_link = InterfaceCallProperty
+
 class LinkManager :
     delete = InterfaceCallProperty
 
 from apps.plus_permissions.models import add_type_to_interface_map
-LinkInterfaces = {'Viewer': LinkViewer,  'Manager' : LinkManager  }
+LinkInterfaces = {'Viewer' : LinkViewer, 'Remover' : LinkRemover, 'Manager' : LinkManager  }
 add_type_to_interface_map(Link, LinkInterfaces)
 
 
-SliderOptions = {'InterfaceOrder':['Viewer', 'Manager']}
+SliderOptions = {'InterfaceOrder':['Viewer', 'Remover', 'Manager']}
 SetSliderOptions(Link, SliderOptions)
 
 child_types = []
