@@ -9,7 +9,11 @@ register = template.Library()
 def show_profile(context, profile):
     if isinstance(profile, GenericReference):
         profile = profile.obj
-    homehub = profile.homeplace.tggroup_set.filter(level='member')[0]
+    try:
+        homehub = profile.homeplace.tggroup_set.filter(level='member')[0]
+    except:
+        homehub = TgGroup.objects.get(name="HubPlus")
+        
     #profile = TemplateSecureWrapper(secure_wrap(profile, context['request'].user, interface_names=['Viewer'], required_interfaces=['Viewer']))
     user = profile.user
     return {"homehub":homehub, "profile":profile, "user": user, "main_hub_name":main_hub_name()}
