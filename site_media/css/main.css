@@ -797,6 +797,13 @@ li.place div.editable {
 	color		: #fff;
 }
 
+/* Help */
+
+#help img {
+	border		: 1px solid #ddd;
+	display		: block;
+	margin		: 5px 0;
+}
 
 /* Content */
 

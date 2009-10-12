@@ -27,9 +27,12 @@ class Resource(models.Model):
 
     title = models.CharField(max_length=100)
     def display_name(self):
-        return self.title()
-    content = models.TextField()
-    
+        return self.title
+
+    description = models.TextField(default='')
+    def content(self) :
+        return self.description
+
     author = models.CharField(max_length=100)
     license = models.CharField(max_length=50)
 
