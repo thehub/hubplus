@@ -5,11 +5,19 @@
 
 {% load uni_form %}
 
+{% block page_title %}
+{% trans "Invite " %}{% if site_name %}{% trans "to " %}{{ site_name }}{% endif %}
+{% endblock %}
+
+
 {% block body %}
 
-<h2>Your key for signing up</h2>
-This is an approval, click on this key : <a href='{{url}}'>{{url}}</a> to create your account.
-
+<div class="block">
+	<!--<h2>Your key for signing up</h2>-->
+	<!--This is an approval, click on this key : <a href='{{url}}'>{{url}}</a> to create your account.-->
+	<p>Your invitation has been sent and should arrive in their inbox shortly.</p>	
+	<a href="{% url messages_all %}">Back to messages</a>
+</div>
 
 
 {% endblock %}
