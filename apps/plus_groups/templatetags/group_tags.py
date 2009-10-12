@@ -45,12 +45,14 @@ def show_resource(context, item):
         url_name = group_label + "s:"+ url_name
         url = reverse(url_name, args=[item.in_agent.obj.id, item.name])
     elif item.__class__.__name__ == "Resource":
-        url_name = context.current_app + ":view_Resource"
+        #url_name = context.current_app + ":view_Resource"
+        url_name = 'view_Resource'
+        url_name = group_label+"s:"+url_name
         url = reverse(url_name, args=[item.in_agent.obj.id, item.name])
         download_url = item.download_url()
 
     tags = get_tags(item)
-    item = TemplateSecureWrapper(item)
+    #item = TemplateSecureWrapper(item)
     return {'resource':item, 'resource_url':url, 'tags':tags}
 register.inclusion_tag("resource_item.html", takes_context=True)(show_resource)
 
