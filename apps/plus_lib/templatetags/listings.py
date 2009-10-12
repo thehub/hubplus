@@ -18,9 +18,9 @@ def tag_and_search(tag_filter, multiple_tags, search_terms, tag_intersection, or
 
     remove_tag_links = []
     for tag in tag_filter:
-        tag_filter = tag_string.split('+')
-        tag_filter.remove(tag)
-        remove_tag_links.append((tag, '+'.join(tag_filter)))
+        tag_tmp_filter = tag_string.split('+')
+        tag_tmp_filter.remove(tag)
+        remove_tag_links.append((tag, '+'.join(tag_tmp_filter)))
 
     for tag in tag_intersection:
         tag['tag_filter'] = tag_filter + [tag['keyword']]

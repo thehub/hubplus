@@ -1,4 +1,6 @@
-# tag add url
+# filter group resources properly
+# add/remove tag filter url
+# paginate tabs separately
 
 # -- side bar clouds and searches a) in group/hubs/members search groups/hubs/members only, b) in group search resources
 
@@ -11,11 +13,12 @@
 #                    - reindex
 # 
 # ordering
+# create a form to validate search term and order and current
+# permission based filtering - need to do this efficiently
+# re-write load_all to return a sqlQuery object + play nicely with pagination
 
-
-
-# -- create a form to validate search term and order
-# -- re-write load_all to return a sql query object
+# restructure all search stuff into plus_explore
+# index pdfs / Office docs
 
 # Later
 # search different sites from one index server using "site" attribute of SearchQuerySet 
