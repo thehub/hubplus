@@ -88,14 +88,7 @@
 
 {% block side_bar %}
 
-<div id="feature_search" class="site_block">
-    <h3>Search</h3>
-    <form>
-      <input name="search_term" type="text" class="text" /> <input class="button" type="submit" value="Search" /><br />
-      <input name="current_area" type="checkbox" checked="checked" /> Members only<br />      
-    </form>
-</div>
-
+{% include "plus_explore/side_search.html" %}
 <div id="feature_explore" class="site_block">
   <h3>Explore members</h3>
   <ol class="tag_list">

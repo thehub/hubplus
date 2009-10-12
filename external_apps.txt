@@ -29,7 +29,6 @@ django-wikiapp==0.1.2
 django-flag
 django-debug-toolbar
 django-db-log
-django-reversion
 
 # packages we create for release::
 http://django-tagging.googlecode.com/svn/trunk/
@@ -39,13 +38,12 @@ http://django-mptt.googlecode.com/svn/trunk/
 http://django-photologue.googlecode.com/files/photologue-2.1.zip
 
 -e git://github.com/brosner/django-openid.git#egg=django-openid
--e git://github.com/ericflo/django-sorting.git#egg=django-sorting
+#-e git://github.com/ericflo/django-sorting.git#egg=django-sorting
 -e svn+http://django-app-plugins.googlecode.com/svn/trunk#egg=django-app-plugins
 
 # hubplus dependency packages
 
-# django-versioning
-http://fullhistory.googlecode.com/svn/trunk/
+django-reversion
 -e git://github.com/toastdriven/django-haystack.git#egg=django-haystack
 
 

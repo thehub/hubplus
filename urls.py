@@ -43,6 +43,7 @@ urlpatterns = patterns('',
 
     (r'^plus_wiki/', include('plus_wiki.urls')),
     (r'^plus_comments/', include('plus_comments.urls')),
+    (r'^explore/', include('plus_explore.urls')),
 
     (r'^blog/', include('blog.urls')),
     (r'^tags/', include('tag_app.urls')),

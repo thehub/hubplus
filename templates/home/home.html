@@ -2,15 +2,16 @@
 
 {% load i18n %}
 
-{% block head_title %}{% trans "Welcome" %}{% endblock %}
-
 {% block tab_id %}id="home_tab"{% endblock %}
+
+{% block page_header %}
+  {% include INTRO_BAR %}
+{% endblock %}
 
 {% block body %}
 
   {% include WELCOME_PAGE %}
 
-    
   {% if user.is_authenticated %}
     {% url what_next as what_next_url %}
       <p class="what_next">{% blocktrans %}Wondering <a href="{{ what_next_url }}">What Next</a>?{% endblocktrans %}</p>
