@@ -178,8 +178,13 @@ INSTALLED_APPS = (
     'photos',
     'tag_app',
     'django.contrib.admin',
-
+    'haystack',
     )
+
+HAYSTACK_SITECONF = 'search_sites'
+HAYSTACK_SEARCH_ENGINE = 'solr'
+HAYSTACK_SOLR_URL = 'http://127.0.0.1:8983/solr'
+
 
 ABSOLUTE_URL_OVERRIDES = {
     "auth.user": lambda o: "/profiles/%s/" % o.username,

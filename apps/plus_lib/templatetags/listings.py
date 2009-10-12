@@ -23,7 +23,8 @@ def tag_and_search(tag_filter, multiple_tags, search_terms, tag_intersection, or
         remove_tag_links.append((tag, '+'.join(tag_filter)))
 
     for tag in tag_intersection:
-        tag['tag_filter'] = tag_string + '+' + tag['keyword']
+        tag['tag_filter'] = tag_filter + [tag['keyword']]
+        tag['tag_filter'] = '+'.join(tag['tag_filter'])
 
     return {'tag_filter':tag_filter,
             'remove_tag_links':remove_tag_links,
@@ -35,6 +36,7 @@ def tag_and_search(tag_filter, multiple_tags, search_terms, tag_intersection, or
 
 @register.inclusion_tag('plus_lib/listing.html', takes_context=True)
 def listing(context, items, results_label, order):
+
     return {'items':items,
             'results_label':results_label,
             'order':order,

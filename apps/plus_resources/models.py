@@ -23,7 +23,9 @@ class Resource(models.Model):
     in_agent = models.ForeignKey(GenericReference, related_name="resources")
 
     title = models.CharField(max_length=100)
-    description = models.TextField()
+    def display_name(self):
+        return self.title()
+    content = models.TextField()
     
     author = models.CharField(max_length=100)
     license = models.CharField(max_length=50)

@@ -1,4 +1,4 @@
-{% extends "site_base.html" %}
+{% extends base %}
 {% load i18n %}
 {% load plus_url %}
 {% load listings %}
@@ -7,17 +7,21 @@
 {% if tag_string %}
 <form method="GET" action="{% plus_url search_type tag_string %}" class="order_list">
   {% else %}
+  {% if not search_url %}
   <form method="GET" action="{% plus_url search_type %}" class="order_list">
-
+  {% else %}
+     <form method="GET" action="{{search_url}}" class="order_list">
+  {% endif %}
   {% endif %}
   {% tag_and_search tag_filter multiple_tags search_terms tag_intersection explicit_order %}
   {% if items %}
+  {% if multitabbed %}
   <div id="section_tab_navigation" class="tabbed section yui-navset">
     <ul class="tabbed_navigation yui-nav">
-      <li class="selected"><a href="#results_all"><span>{% trans "All" %}<span class="count">({{items.count}})</span></span></a></li>
-      {% for name, label, typ_items in search_types %}
-      {% if typ_items.count %}
-      <li><a href="#results_{{name}}s">{{label}}<span class="count">({{typ_items.count}})</span></a></li>
+      <li class="selected"><a href="#results_all"><span>{% trans "All" %}<span class="count">({{items_len}})</span></span></a></li>
+      {% for name, label, typ_items, items_len in search_types %}
+      {% if items_len %}
+      <li><a href="#results_{{name}}s">{{label}}<span class="count">({{items_len}})</span></a></li>
       {% endif %}
       {% endfor  %}
     </ul>
@@ -36,15 +40,32 @@
       <div id="results_all" class="page_content" >
 	{% listing items "All" order %}
       </div>
-      {% for name, label, typ_items in search_types %}
-      {% if typ_items.count %}
+      {% for name, label, typ_items, item_len in search_types %}
+      {% if item_len %}
       <div id="results_{{name}}" class="page_content" >
 	{% listing typ_items label order %}
       </div>
       {% endif %}
       {% endfor %}
     </div>
+
   </div>
+  {% else %}
+  <ul class="display_options">
+    <li class="sort"> 
+      <label>{% trans "Sort by" %}:</label>
+      <select size="1" name="order">
+	<!--<option value="relevance">Relevance</option>-->
+	<option value="date" {% ifequal order "date" %}selected="selected"{% endifequal %}>{% trans "Most recent" %}</option>
+	<!--<option value="view">Most views</option>-->
+	<option value="name" {% ifequal order "name" %}selected="selected"{% endifequal %}>{% trans "A-Z" %}</option>
+      </select>
+    </li>
+  </ul>
+  <div id="results_all" class="page_content" >
+    {% listing items "All" order %}
+  </div>
+  {% endif %}
   {% else %}
   <p>{% blocktrans  %}No results were found.{% endblocktrans %}</p>
   {% endif %}

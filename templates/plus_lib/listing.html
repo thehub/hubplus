@@ -19,7 +19,7 @@
     {% for item in items %}
     <li {% if forloop.first %}class="first"{% endif %} {% if forloop.last %}class="last"{% endif %}>
       {% ifequal item.obj.get_class 'Profile' %}
-         {% show_profile item %}
+         {% show_profile item.obj %}
       {% endifequal %}
       {% ifequal item.obj.get_class 'Resource' %}
          {% show_resource item.obj %}

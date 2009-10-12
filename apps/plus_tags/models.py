@@ -39,8 +39,9 @@ def tag_autocomplete(tag_value, limit, tagged_for=None, tagged=None, tag_type=No
 
 def get_resources_for_tag_intersection(keywords):
     items = GenericReference.objects
-    for keyword in keywords:
-        items = items.filter(tag__keyword=keyword)
+    if keywords:
+        for keyword in keywords:
+            items = items.filter(tag__keyword=keyword)
     return items
 
 def get_tags_for_object(tagged, user):
@@ -84,9 +85,12 @@ def top_tags(n=50, levels=9):
 def get_intersecting_tags(items, n=10):
     #get the tags on these items, these should not be distinct but one tag per intersection
     # may need to get all the "TagItems here"
-    total = items.count()
+    try:
+        total = items.count()
+    except TypeError:
+        total = len(items)
     keywords_count = Tag.objects.filter(items__in=items).values('keyword').annotate(num_keyword=Count('keyword')).exclude(num_keyword=total)
-    top_intersections = keywords_count.order_by('-num_keyword')[:10]
+    top_intersections = keywords_count.order_by('-num_keyword')[:n]
     return top_intersections
 
 def get_tags(tagged=None, tag_type=None, tag_value=None, tagged_for=None, tagged_by=None, partial_tag_value=None):

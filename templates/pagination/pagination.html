@@ -16,7 +16,7 @@
         {% endif %}
     {% endfor %}
 	<span>of</span>
-	<a href="?page={{no_pages}}">{{no_pages}}</a>
+	<a href="?page={{no_pages}}{{getvars}}">{{no_pages}}</a>
     {% if page_obj.has_next %}
 	<a href="?page={{page_obj.next_page_number}}{{getvars}}" class="next">{% trans "Next" %} </a>
     {% else %}

@@ -7,7 +7,7 @@
 </a>
 <dl>
   <dt>{% trans "Name" %}</dt>
-  <dd><a href="{{resource_url}}">{{resource.get_display_name}}</a></dd>
+  <dd><a href="{{resource_url}}">{{resource.display_name}}</a></dd>
   <dt>{% trans "Description" %}:</dt>
   <dd>{% autoescape off %}{{resource.content|truncatewords_html:20}}{% endautoescape %}</dd>
 </dl>

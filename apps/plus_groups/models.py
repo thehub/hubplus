@@ -218,6 +218,8 @@ try :
         title = models.CharField(max_length=60)
         description = models.TextField()
 
+        def content(self):
+            return self.body
         body = models.TextField()
         rights = models.TextField()
 
