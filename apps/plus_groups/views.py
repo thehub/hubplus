@@ -350,7 +350,7 @@ def create_group(request, site, template_name="plus_groups/create_group.html", c
     else :
         form = TgGroupForm()
     
-    if current_app == 'plus_groups' :
+    if current_app == 'groups' :
         name_of_created = "Group"
         is_hub = False
     else :
