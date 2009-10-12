@@ -3,6 +3,67 @@ HUB PLUS 2009
 */
 
 
+/* Intro Bar */
+
+#intro_bar {
+	border		: 1px solid #ddd;
+	padding		: 10px;
+}
+
+#intro_bar * {
+	color		: #fff;
+}
+
+#intro_bar *.button {
+	color		: #222;
+}
+
+#intro_bar #section_tab_navigation {
+	background	: #454545;
+	height		: 10em;
+	overflow	: hidden;
+	padding		: 10px;
+	position	: relative;
+}
+
+#intro_bar #section_tab_navigation .tabbed_navigation {
+	background	: none;
+	position	: absolute;
+	bottom		: 10px;
+}
+
+#intro_bar #section_tab_navigation .tabbed_navigation li {
+	background	: #888;
+	display		: block;
+	height		: 13px;
+	float		: left;
+	overflow	: hidden;
+	margin		: 0 10px 0 0;
+	padding		: 0;
+	width		: 13px;
+
+}
+
+#intro_bar #section_tab_navigation .tabbed_navigation li a {
+	text-indent	: -2000px;
+}
+
+#intro_bar #section_tab_navigation ul.tabbed_navigation li:hover,
+#intro_bar #section_tab_navigation ul.tabbed_navigation li.selected {
+	background	: #fff;
+}
+
+#intro_bar #section_tab_navigation .tabbed_content {
+	padding-bottom	: 30px
+}
+
+#intro_bar #intro_bar_login {
+	background	: #454545;
+	padding		: 10px;
+}
+
+
+
 /* Main Generic */
 /* Layout: Images & Thumbnails */
 /* Layout: Listings */
