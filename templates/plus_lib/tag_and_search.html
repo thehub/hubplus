@@ -1,4 +1,5 @@
 {% load i18n %}
+{% load plus_url %}
 
 <div id="search" class="block">
   <div id="current">
@@ -9,14 +10,14 @@
       {% for tag, remove_link in remove_tag_links %}
       <li>
 	<span class="tag">{{tag}}</span>
-	{% if remove_link %}<a href="{% url explore_filtered remove_link %}{{tag_extra}}" class="delete_tag">-</a>
-	{% else %}<a href="{% url explore %}{{tag_extra}}" class="delete_tag">-</a>
+	{% if remove_link %}<a href="{% plus_url tag_search_type remove_link %}{{tag_extra}}" class="delete_tag">-</a>
+	{% else %}<a href="{% plus_url search_type %}{{tag_extra}}" class="delete_tag">-</a>
 	{% endif %}
       </li>
       {% endfor %}
     </ul>
     {% if multiple_tags %}
-    <a class="clear_tag" href="{% url explore %}{{tag_extra}}">{% trans "Clear all tags" %}</a> 
+    <a class="clear_tag" href="{% plus_url search_type %}{{tag_extra}}">{% trans "Clear all tags" %}</a> 
     {% endif %}
     <!--|  <a href="#" class="bt_advance">More options</a> -->
   </div>
@@ -26,7 +27,9 @@
       <h3>{% trans "Refine by tag" %}</h3>
       <ol class="tag_list">
 	{% for tag in tag_intersection %}
-	<li><span class="tag pop5">{{tag.keyword}} ({{tag.num_keyword}})</span><a href="{% url explore_filtered tag.tag_filter %}{{tag_extra}}" class="add_tag">+</a></li> 	
+	<li><span class="tag pop5">{{tag.keyword}} ({{tag.num_keyword}})</span>
+	  <a href="{% plus_url tag_search_type tag.tag_filter %}{{tag_extra}}" class="add_tag">+</a>
+	</li> 	
 	{% endfor %}
       </ol>
     </div>

@@ -129,15 +129,7 @@
 
 
 {% block side_bar %}
-<div id="feature_search" class="site_block">
-  <h3>Search</h3>
-  <form>
-    <input name="search_term" type="text" class="text" /> <input type="submit" value="Search" class="button" /><br />
-    <input name="current_area" type="checkbox" checked="checked" /> Groups only<br />
-    <!--<input name="search_limit" type="radio" checked="checked" /> Groups only <input name="search_limit" type="radio" /> Hub+<br />-->
-  </form>
-</div>
-
+{% include 'plus_explore/side_search.html' %}
 <div id="feature_explore" class="site_block">
   <h3>Explore Groups</h3>
   <ol class="tag_list">
