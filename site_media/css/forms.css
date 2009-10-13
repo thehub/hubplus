@@ -29,6 +29,10 @@ form ul li {
 	margin-bottom	: 3px;
 }
 
+form ul li.last {
+	margin-bottom	: 0;
+}
+
 label .extra {
 	font-size	: 0.8181em;
 }

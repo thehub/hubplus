@@ -111,6 +111,7 @@ class TgGroupViewer:
     homeplace = InterfaceReadProperty
     get_group_type_display = InterfaceReadProperty
 
+
 class TgGroupEditor: 
     pk = InterfaceReadProperty
     description = InterfaceWriteProperty
@@ -118,6 +119,8 @@ class TgGroupEditor:
     website = InterfaceWriteProperty
     display_name = InterfaceWriteProperty    
     message_members = InterfaceCallProperty
+    add_link = InterfaceCallProperty
+
 
 class TgGroupJoin:
     pk = InterfaceReadProperty
@@ -135,11 +138,14 @@ class TgGroupComment:
 class TgGroupUploader:
     upload = InterfaceCallProperty
 
+
+
 class TgGroupManageMembers:
     pk = InterfaceReadProperty
     add_member = InterfaceCallProperty
     accept_member = InterfaceCallProperty
     remove_member = InterfaceCallProperty
+
 
 class SetManagePermissions:
     pass
