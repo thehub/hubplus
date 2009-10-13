@@ -10,6 +10,32 @@
 
 {% block body %}
 
+<div id="whats_next" class="block">
+
+	<h3>{% trans "What next?" %}</h3>
+	<ul>
+		<li class="first">
+			<dl>
+				<dt><a href="{% url plus_groups:add_content resource_id=0 %}">Add resources</a></dt>
+				<dd>Create wiki pages and upload documents to the site.</dd>
+			</dl>
+		</li>
+		<li>
+			<dl>
+				<dt><a href="{% url plus_groups:create_group %}">Create groups</a>
+				<dd>Bring together members by field, interest, project or organisation.</dd>
+			</dl>
+		</li>
+		<li class="last">
+			<dl>
+				<dt><a href="{% url hubs:groups %}">Join Regions</a>
+				<dd>Connect and stay up-to-date with the latest happenings in your area.</dd>
+			</dl>
+		</li>
+	</ul>
+
+</div>
+
 <div id="status" class="block">
 
 	<h3>{% trans "What's happening?" %}</h3>  
@@ -18,7 +44,11 @@
 	<form method="post" action="{% url home %}">
 		<textarea id="new_tweet" name="text" cols="50" rows="2"></textarea>
 		
-		<div class="buttons"><input type="submit" class="button" value="{% trans 'Share' %}" /> or <a href="#">Cancel</a></div>
+		<div class="buttons">
+			<input type="submit" class="button" value="{% trans 'Share' %}" />
+			<!-- or <a href="#">Cancel</a>-->
+		</div>
+
 	</form>
 
 </div>

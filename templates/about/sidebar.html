@@ -10,4 +10,6 @@
 </div>
 
 <!--{% include "plus_explore/side_search.html" %}-->
-{% include "add.html" %}
+{% if user.is_authenticated %}
+	{% include "add.html" %}
+{% endif %}
