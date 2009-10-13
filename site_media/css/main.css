@@ -3,45 +3,99 @@ HUB PLUS 2009
 */
 
 
+/* What's Next */
+
+#whats_next li {
+	float		: left;
+	list-style	: none;
+	width		: 192px;
+	margin		: 0 10px 20px 0;
+	padding		: 2px 10px 3px 0;
+	border-right: 1px solid #ddd;
+}
+
+#whats_next li.last {
+	margin-right: 0;
+	padding-right:	0;
+	border-right: 0;
+}
+
+#whats_next li dl {
+
+}
+
+#whats_next li dt {
+	font-size	: 1.4em;
+	padding-bottom	:	2px;
+}
+
+#whats_next li dd {
+	color		: #888;
+}
+
+
 /* Intro Bar */
 
 #intro_bar {
 	border		: 1px solid #ddd;
+	overflow	: hidden;
 	padding		: 10px;
+	margin-bottom	: 1.5em;
 }
 
 #intro_bar * {
-	color		: #fff;
+	color		: #eee;
 }
 
-#intro_bar *.button {
+#intro_bar input {
 	color		: #222;
+}
+
+#intro_bar label {
+	color		: #ccc;
 }
 
 #intro_bar #section_tab_navigation {
 	background	: #454545;
 	height		: 10em;
+	float		: left;
 	overflow	: hidden;
-	padding		: 10px;
+	padding		: 10px 15px 10px 10px;
 	position	: relative;
+	width		: 603px;
+}
+
+#intro_bar #intro_bar_login {
+	background	: #454545;
+	float		: left;
+	height		: 10em;
+	padding		: 10px;
+	width		: 227px;
+}
+
+#intro_bar #intro_bar_login ul {
+	padding-bottom	: 3px;
+}
+
+#intro_bar #intro_bar_login .label_extended {
+	width		: 200px;
 }
 
 #intro_bar #section_tab_navigation .tabbed_navigation {
 	background	: none;
 	position	: absolute;
-	bottom		: 10px;
+	bottom		: 0px;
 }
 
 #intro_bar #section_tab_navigation .tabbed_navigation li {
 	background	: #888;
 	display		: block;
-	height		: 13px;
+	height		: 12px;
 	float		: left;
 	overflow	: hidden;
 	margin		: 0 10px 0 0;
 	padding		: 0;
-	width		: 13px;
-
+	width		: 12px;
 }
 
 #intro_bar #section_tab_navigation .tabbed_navigation li a {
@@ -57,11 +111,9 @@ HUB PLUS 2009
 	padding-bottom	: 30px
 }
 
-#intro_bar #intro_bar_login {
-	background	: #454545;
-	padding		: 10px;
+#intro_bar #section_tab_navigation .tabbed_content p {
+	font-size		: 1.4em;
 }
-
 
 
 /* Main Generic */
@@ -180,13 +232,17 @@ th {
 	padding		: 0 0 1.5em 2em;
 }
 
+.copy ol ol {
+	list-style	: lower-roman;
+}
+
 
 /* Images & Thumbnails */
 
 #avatar_current,
 #avatar_add {
 	margin-bottom	: 20px;
-	overflow: hidden;
+	overflow	: hidden;
 }
 
 .avatar_choices ul {
