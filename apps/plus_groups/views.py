@@ -147,7 +147,10 @@ def group(request, group, template_name="plus_groups/group.html", current_app='p
 
     search_type = current_app + ':groups'
     search_url = reverse(search_type)
-
+    tag_search_type = current_app + ':groups_tag'
+    search_types = narrow_search_types('Group')
+    search_types_len = len(search_types)
+    search_type_label = search_types[0][1][2]
     # XXX replace when we slot permissions in
     # XXX replace when we have more sophisticated listings search
     #pages = get_pages_for(group.get_inner())
@@ -156,7 +159,7 @@ def group(request, group, template_name="plus_groups/group.html", current_app='p
     #objects = get_resources_and_pages_for(user, group)
 
     context = RequestContext(request, current_app=current_app)
-    all_results, search_types, tag_intersection = plus_search(tags, search, narrow_search_types('Resource'), order) #, extra_filter={'context':'TgGroup'})
+    all_results, search_types, tag_intersection = plus_search(tags, search,  narrow_search_types('Resource'), order) #, extra_filter={'context':'TgGroup'})
     return render_to_response(template_name, {
             "head_title" : "%s" % group.get_display_name(),
             "head_title_status" : dummy_status,
@@ -188,7 +191,9 @@ def group(request, group, template_name="plus_groups/group.html", current_app='p
             'tag_intersection':tag_intersection,
             'search_types':search_types,
             "search_type":search_type,
-            "search_types_len":len(search_types),
+            "tag_search_type":tag_search_type,
+            "search_types_len":search_types_len,
+            "search_type_label":search_type_label,
             "search_url":search_url,
             "group_id":group.id,
             'multitabbed':False,
@@ -204,8 +209,7 @@ def narrow_search_types(type_name):
     return ((type_name, types[type_name]),)
 
 @site_context
-def groups(request, site, type='other', template_name='plus_explore/explore_filtered.html', current_app='plus_groups'):
-    tag_string = ''
+def groups(request, site, tag_string='', type='other', template_name='plus_explore/explore_filtered.html', current_app='plus_groups'):
     tags = tag_string.split('+')
     search = request.GET.get('search', '')
     order = request.GET.get('order', '')
@@ -217,7 +221,7 @@ def groups(request, site, type='other', template_name='plus_explore/explore_filt
     except ValueError:
         pass
 
-    create = False
+    create_group = False
 
     if request.user.is_authenticated() :
         try :
@@ -225,7 +229,7 @@ def groups(request, site, type='other', template_name='plus_explore/explore_filt
                 site.create_virtual
             else :
                 site.create_hub
-            create = True
+            create_group = True
         except Exception, e:
             print "User can't create a group",e
 
@@ -240,9 +244,11 @@ def groups(request, site, type='other', template_name='plus_explore/explore_filt
     search_types = narrow_search_types(type_name)
     search_types_len = len(search_types)
     search_type_label = search_types[0][1][2]
-
     search_type = current_app + ':groups'
+    tag_search_type = current_app + ':groups_tag'
+
     all_results, search_types, tag_intersection  = plus_search(tags, search, search_types, order)
+
     return render_to_response(template_name, {'head_title':head_title, 
                                               'order':order,
                                               'explicit_order':order,
@@ -257,26 +263,15 @@ def groups(request, site, type='other', template_name='plus_explore/explore_filt
                                               "search_types_len":search_types_len,
                                               'search_type_label':search_type_label,
                                               'search_type':search_type,
+                                              'tag_search_type':tag_search_type,
                                               'multitabbed':False,
+                                              "create_group":create_group,
+                                              "obj_type": type_name,
                                               'base':"site_base.html"}, context_instance=RequestContext(request, current_app=current_app))
 
-    #return groups_list(request, site, groups, 
-    #                   template_name, head_title, '', type_name=type_name, current_app=current_app)
 
 
-#def groups_list(request, site, groups, template_name, head_title='', head_title_status='', type_name='Group', current_app=None) :
 
-#    return render_to_response(template_name, {
-#            "objects" : groups,
-#            "order" : order,
-#            "search_terms":search_terms,
-#            "search_type":'plus_groups:groups',
- #           "head_title":head_title,
-#            "obj_type": type_name,
-#            "results_label":head_title,
-#            "create":create,
-#            'base': "plus_lib/site_listing.html"
-#            }, context_instance=context)
 
 
 @login_required
@@ -357,7 +352,7 @@ def create_group(request, site, template_name="plus_groups/create_group.html", c
     else :
         form = TgGroupForm()
     
-    if current_app == 'plus_groups' :
+    if current_app == 'groups' :
         name_of_created = "Group"
         is_hub = False
     else :

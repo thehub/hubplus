@@ -16,6 +16,6 @@ urlpatterns = patterns('',
                        url(r'^(?P<resource_id>[\w\._-]+)/invite/$', 'plus_groups.views.invite', name='invite_to_group'),
                        url(r'^(?P<resource_id>[\w\._-]+)/message/$', 'plus_groups.views.message_members', name='message_members'),
                        url(r'^$', 'plus_groups.views.groups', name='groups'),
-
+                       url(r'^tags/(?P<tag_string>[\w\+\. _-]+)/$', 'plus_groups.views.groups', name='groups_tag'),
                        )
 

@@ -47,8 +47,7 @@ def narrow_search_types():
     types = dict(get_search_types())
     return (('Profile', types['Profile']),)
 
-def profiles(request, template_name="plus_explore/explore_filtered.html"):
-    tag_string = ''
+def profiles(request, tag_string='', template_name="plus_explore/explore_filtered.html"):
     tags = tag_string.split('+')
     search = request.GET.get('search', '')
     order = request.GET.get('order', '')
@@ -60,6 +59,7 @@ def profiles(request, template_name="plus_explore/explore_filtered.html"):
     except ValueError:
         pass
     search_type = 'profile_list'
+    tag_search_type = 'profile_list_tag'
     search_types = narrow_search_types()
     search_types_len = len(search_types)
     search_type_label = search_types[0][1][2]
@@ -80,6 +80,7 @@ def profiles(request, template_name="plus_explore/explore_filtered.html"):
                                               "search_types_len":search_types_len,
                                               'search_type_label':search_type_label,
                                               'search_type':search_type,
+                                              'tag_search_type':tag_search_type,
                                               'multitabbed':False,
                                               'base':"site_base.html"}, context_instance=RequestContext(request))
 
