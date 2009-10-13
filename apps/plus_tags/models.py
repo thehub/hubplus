@@ -57,8 +57,9 @@ def keyword_sort(A, B):
         return -1
     return 1
 
-def top_tags(n=50, levels=9):
+def top_tags(n=50, levels=11):
     tags = get_tags()
+
     n = min(n, tags.count())
     tag_counts = tags.values('keyword').annotate(count=Count('items')).order_by('count')[:n]
     level_boundaries = []
