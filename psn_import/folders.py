@@ -14,6 +14,8 @@ from apps.plus_tags.models import tag_add
 load_file('folders','mhpss_export/folders.pickle')
 load_file('users','mhpss_export/users.pickle')
 load_file('groups','mhpss_export/groups.pickle')
+load_file('hubs','mhpss_export/hubs.pickle')
+
 
 def get_for(cls, uid) :
     xs = cls.objects.filter(psn_id=uid)

@@ -17,7 +17,10 @@ def list_type(type,fields) :
     for x in maps[type] :
         for f in fields :
             if f != 'all' :
-                print x[f],
+                try:
+                    print x[f],
+                except :
+                    print "<<failed to print a %s>>" % f,
         print
 
         
