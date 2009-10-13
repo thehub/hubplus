@@ -57,11 +57,11 @@ def import_group(f_name, group_type, fn_place) :
         
         group.place = fn_place(g)
         
-        if group.place.id != get_or_create_root_location().id :
+        #if group.place.id != get_or_create_root_location().id :
  
-            admin = group.get_admin_group()
-            admin.place = group.place
-            admin.save()
+        #    admin = group.get_admin_group()
+        #    admin.place = group.place
+        #    admin.save()
         group.save()
 
 
