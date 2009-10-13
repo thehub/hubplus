@@ -25,7 +25,7 @@ def index(request, template_name="plus_explore/explore.html"):
     return render_to_response(template_name, {'head_title':_('Explore'), 'tags':top_tags()}, context_instance=RequestContext(request))
 
 def get_virtual_groups():
-    return TgGroup.objects.filter(place__name='HubPlus')
+    return TgGroup.objects.filter(place__name='HubPlus', level='member')
 
 from plus_lib.utils import hub_name, hub_name_plural
 
