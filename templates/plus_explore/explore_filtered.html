@@ -2,10 +2,14 @@
 {% load i18n %}
 {% load plus_url %}
 {% load listings %}
+
 {% block body %}
+{% if create_group %}
+<a class="button" href="{% url plus_groups:create_group %}">{% blocktrans %}Create New {{obj_type}}{% endblocktrans %}</a>
+{% endif %}
 
 {% if tag_string %}
-<form method="GET" action="{% plus_url search_type tag_string %}" class="order_list">
+<form method="GET" action="{% plus_url tag_search_type tag_string %}" class="order_list">
   {% else %}
   {% if not search_url %}
   <form method="GET" action="{% plus_url search_type %}" class="order_list">
@@ -13,7 +17,7 @@
      <form method="GET" action="{{search_url}}" class="order_list">
   {% endif %}
   {% endif %}
-  {% tag_and_search tag_filter multiple_tags search_terms tag_intersection explicit_order %}
+  {% tag_and_search tag_filter multiple_tags search_terms tag_intersection search_type tag_search_type explicit_order %}
   {% if items %}
   {% if multitabbed %}
   <div id="section_tab_navigation" class="tabbed section yui-navset">

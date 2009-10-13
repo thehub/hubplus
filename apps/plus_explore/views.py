@@ -67,10 +67,9 @@ def filter(request, tag_string, template_name='plus_explore/explore_filtered.htm
     
     all_results, search_types, tag_intersection  = plus_search(tags, search, get_search_types(), order)
 
-    if tag_string:
-        search_type = 'explore_filtered'
-    else:
-        search_type = 'explore'
+    
+    tag_search_type = 'explore_filtered'
+    search_type = 'explore'
     
     return render_to_response(template_name, {'head_title':_('Explore'), 
                                               'order':order,
@@ -85,6 +84,7 @@ def filter(request, tag_string, template_name='plus_explore/explore_filtered.htm
                                               'search_types':search_types,
                                               'search_types_len':len(search_types),
                                               'search_type':search_type,
+                                              'tag_search_type':tag_search_type,
                                               'multitabbed':True,
                                               'results_label':'items',
                                               'base':"site_base.html"}, context_instance=RequestContext(request))

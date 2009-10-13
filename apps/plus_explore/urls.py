@@ -1,16 +1,19 @@
-# -- side bar clouds and searches a) in group/hubs/members search groups/hubs/members only, b) in group search resources
+# resources_search + tag_filtering - design thoughts
 
-# filter group resources properly
-# add/remove tag filter url - current_application?
+#groups to change urls from ints to group_names
+# make multitab explore page work with tag filter only requests
+
+# side bar clouds 
+
 # paginate tabs separately
 
-
 # tag filtering on group, hub, member, resources
-# -- integrate explore_filtered with explore index 
 # -- if results set empty, include tag cloud
 # group search, hash tag position
 
 # ordering
+
+# keep results info even when there aren't enough items to need pagination e.g. results 6 of 6 for search "sdfs"
 
 # fulltext search b) - write template
 #                    - reindex
@@ -33,5 +36,5 @@ from django.conf.urls.defaults import *
 urlpatterns = patterns('',
                        url(r'^$', 'plus_explore.views.index', name='explore'),
                        url(r'^goto_tag/$', 'plus_explore.views.goto_tag', name='goto_tag'),
-                       url(r'^(?P<tag_string>[ \w\+\._-]*)/$', 'plus_explore.views.filter', name='explore_filtered'),  
+                       url(r'^tags/(?P<tag_string>[ \w\+\._-]*)/$', 'plus_explore.views.filter', name='explore_filtered'),  
 )
