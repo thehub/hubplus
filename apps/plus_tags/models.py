@@ -57,6 +57,7 @@ def keyword_sort(A, B):
         return -1
     return 1
 
+
 def top_tags(n=50, levels=11):
     tags = get_tags()
 
@@ -72,8 +73,12 @@ def top_tags(n=50, levels=11):
     tag_cloud_list = []
     for annot in tag_counts:
         tag_cloud_list.append(annot)
-        if annot['count'] > current_count and index>level_boundaries[current_level-1]:
-            current_level += 1
+        if current_level > len(level_boundaries) :
+            # what do we do here?
+            pass
+        else :
+            if annot['count'] > current_count and index>level_boundaries[current_level-1]:
+                current_level += 1
         current_count = annot['count']
         annot['level'] = current_level
         index += 1
