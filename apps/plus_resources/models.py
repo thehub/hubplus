@@ -30,8 +30,6 @@ class Resource(models.Model):
         return self.title
 
     description = models.TextField(default='')
-    def content(self) :
-        return self.description
 
     author = models.CharField(max_length=100)
     license = models.CharField(max_length=50)
@@ -48,6 +46,14 @@ class Resource(models.Model):
     def download_url(self) :
         return self.resource.url
 
+    def display_name(self) :
+        return self.title
+
+    def content(self) :
+        return """%s
+%s,
+%s,
+%s""" % (self.title, self.description, self.author, self.created_by.get_display_name())
    
 def get_or_create(user, owner, **kwargs) :
 
