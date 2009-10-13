@@ -58,7 +58,8 @@ def keyword_sort(A, B):
     return 1
 
 
-def top_tags(n=50, levels=11):
+def top_tags(n=50, levels=18):
+
     tags = get_tags()
 
     n = min(n, tags.count())
