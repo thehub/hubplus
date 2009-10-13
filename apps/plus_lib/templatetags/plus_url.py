@@ -13,8 +13,7 @@ class URLNode(Node):
 
     def render(self, context):
         from django.core.urlresolvers import reverse, NoReverseMatch
-        self.view_name = self.view_name.resolve(context)
-        
+        view_name = self.view_name.resolve(context)
         args = [arg.resolve(context) for arg in self.args]
         kwargs = dict([(smart_str(k,'ascii'), v.resolve(context))
                        for k, v in self.kwargs.items()])
@@ -26,12 +25,14 @@ class URLNode(Node):
 
         url = ''
         try:
-            url = reverse(self.view_name, args=args, kwargs=kwargs, current_app=context.current_app)
+            url = reverse(view_name, args=args, kwargs=kwargs, current_app=context.current_app)
         except NoReverseMatch, e:
+            import ipdb
+            ipdb.set_trace()
             if settings.SETTINGS_MODULE:
                 project_name = settings.SETTINGS_MODULE.split('.')[0]
                 try:
-                    url = reverse(project_name + '.' + self.view_name,
+                    url = reverse(project_name + '.' + view_name,
                               args=args, kwargs=kwargs, current_app=context.current_app)
                 except NoReverseMatch:
                     if self.asvar is None:
