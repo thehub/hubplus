@@ -75,7 +75,7 @@ def top_tags(n=50, levels=18):
     for annot in tag_counts:
         tag_cloud_list.append(annot)
         if current_level > len(level_boundaries) :
-            # what do we do here?
+            # XXX what do we do here?
             pass
         else :
             if annot['count'] > current_count and index>level_boundaries[current_level-1]:
@@ -175,6 +175,5 @@ def tag_delete(tagged, tag_type, tag_value, tagged_by, tagged_for=None):
 
     if not existing_tag.items.count():
         existing_tag.delete()
-    
-    
+
     return (None, True)
