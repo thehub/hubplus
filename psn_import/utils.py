@@ -43,3 +43,25 @@ def get_group_for(uid) :
 
 def get_user_for(uid):
     return get_obj_for(User,uid)
+
+
+# Tags
+def strip_out(s,bads) :
+    return ''.join([c for c in s if (c not in bads)])
+
+from apps.plus_tags.models import tag_add
+
+stop_words = ['of','the','and','in','-']
+
+def tag_with_folder_name(obj, creator, folder_name, tag_type='folder') :
+
+    tag_words = [s.lower() for s in folder_name.split(' ') if (s.lower() not in stop_words)]
+    for tw in tag_words:
+        tw = strip_out(tw,',')
+        tag_add(obj, tag_type, tw, creator)
+
+
+
+
+# Resources 
+

@@ -1,4 +1,4 @@
-from psn_import.utils import load_file, list_type, maps, reverse
+from psn_import.utils import load_file, list_type, maps, reverse, tag_with_folder_name
 
 from django.core.files.base import File
 from django.core.files.uploadedfile import SimpleUploadedFile
@@ -9,13 +9,13 @@ from apps.plus_resources.models import Resource, get_or_create
 
 from apps.plus_lib.utils import make_name
 
-from apps.plus_tags.models import tag_add
+
 
 load_file('folders','mhpss_export/folders.pickle')
 load_file('users','mhpss_export/users.pickle')
 load_file('groups','mhpss_export/groups.pickle')
 load_file('hubs','mhpss_export/hubs.pickle')
-load_files('files','mhpss_export/files/pickle')
+load_file('files','mhpss_export/files.pickle')
 
 def get_for(cls, uid) :
     xs = cls.objects.filter(psn_id=uid)
@@ -29,7 +29,6 @@ def get_group_for(uid) :
 def get_user_for(uid) :
     return get_for(User,uid)
 
-stop_words = ['of','the','and','in','-']
 
 def get_ultimate_container(uid) :
 
@@ -62,9 +61,6 @@ def get_creator(dict) :
 good = 0
 bad = 0
 
-
-def strip_out(s,bads) :
-    return ''.join([c for c in s if (c not in bads)])
 
 
 for group in maps['groups'] :
@@ -108,11 +104,8 @@ for folder in maps['folders'] :
                                                  license=license, author=author, stub=False)
                         resource.save()
 
-                        tag_words = [s.lower() for s in folder['title'].split(' ') if (s.lower() not in stop_words)]
                         
-                        for tw in tag_words:
-                            tw = rm(tw,',')
-                            tag_add(resource, 'folder', tw, creator)
+                        tag_with_folder_name(resource, creator, folder['title'], 'folder')
                         
 
                     except :
