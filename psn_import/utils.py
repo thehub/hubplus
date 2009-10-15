@@ -1,3 +1,5 @@
+from apps.plus_groups.models import TgGroup
+from django.contrib.auth.models import User
 
 import pickle
 
@@ -18,20 +20,26 @@ def list_type(type,fields) :
         for f in fields :
             if f != 'all' :
                 try:
-                    print x[f],
+                    print x[f]+' ',
                 except :
-                    print "<<failed to print a %s>>" % f,
+                    print "<<failed to print a %s>> " % f,
         print
 
+
+def get_for(uid) :
+    if reverse.has_key(uid) :
+        return reverse[uid]
+    else :
+        raise Exception("Nothing seems to have %s " %uid)
         
-def get_for(cls, uid) :
+def get_obj_for(cls, uid) :
     xs = cls.objects.filter(psn_id=uid)
     if xs.count() > 0 :
         return xs[0]
     raise Exception('not found')
 
 def get_group_for(uid) :
-    return get_for(TgGroup,uid)
+    return get_obj_for(TgGroup,uid)
 
 def get_user_for(uid):
-    return get_for(User,uid)
+    return get_obj_for(User,uid)

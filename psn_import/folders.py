@@ -15,7 +15,7 @@ load_file('folders','mhpss_export/folders.pickle')
 load_file('users','mhpss_export/users.pickle')
 load_file('groups','mhpss_export/groups.pickle')
 load_file('hubs','mhpss_export/hubs.pickle')
-
+load_files('files','mhpss_export/files/pickle')
 
 def get_for(cls, uid) :
     xs = cls.objects.filter(psn_id=uid)
@@ -62,6 +62,11 @@ def get_creator(dict) :
 good = 0
 bad = 0
 
+
+def strip_out(s,bads) :
+    return ''.join([c for c in s if (c not in bads)])
+
+
 for group in maps['groups'] :
     print group['groupname'],group['uid']
 
@@ -93,7 +98,7 @@ for folder in maps['folders'] :
                         name = make_name(title)
                         print "Title %s, name %s" % (title,name)
                         desc = ''
-                        license = 'copyright 2009, psychosocial network'
+                        license = 'Copyright 2009, Psychosocial Network'
                         author = '' 
 
                         f = File(open('mhpss_export/files/%s'%f_name,'rb'))
@@ -103,10 +108,10 @@ for folder in maps['folders'] :
                                                  license=license, author=author, stub=False)
                         resource.save()
 
-
                         tag_words = [s.lower() for s in folder['title'].split(' ') if (s.lower() not in stop_words)]
                         
                         for tw in tag_words:
+                            tw = rm(tw,',')
                             tag_add(resource, 'folder', tw, creator)
                         
 
