@@ -19,7 +19,8 @@ def configs(context):
             'HUB_NAME_PLURAL' : hub_name_plural(),
             "MAIN_HUB_NAME" : main_hub_name(),
             'PROJECT_NAME' : settings.PROJECT_NAME,
-            'current_area': get_area(context)
+            'current_area': get_area(context),
+            'support_email' : settings.SUPPORT_EMAIL,
             }
 
         return SETTINGS
