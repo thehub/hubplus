@@ -1,1 +1,63 @@
-Hello
+{% load i18n %}
+
+<div id="intro_bar">
+
+	<!--a class="bt_toggle" href="#">Hide Intro</a-->
+
+	<div id="section_tab_navigation" class="tabbed yui-navset">
+	
+		<ul class="tabbed_navigation yui-nav">
+			<li class="selected" ><a href="#welcome"><span>{% trans "Welcome" %}</span></a></li>
+			<li><a href="#create"><span>{% trans "Create" %}</span></a></li>
+			<li><a href="#explore"><span>{% trans "Explore" %}</span></a></li>
+		</ul>
+	
+		<div class="tabbed_content yui-content">
+			<div id="welcome">
+				<h2>Welcome to Hub+</h2>
+				<p>Hub Plus is a private network that gives you access to the people, resources and knowledge you need to inspire and make your idea come to life.</p>				
+			</div>
+			<div id="create">
+				<h2>Create</h2>
+				<p>Create a profile for you and your projects. Tell people about events, news and websites. Tag your content to allow you to share and organise your contributions. </p>
+			</div>
+			<div id="explore">
+				<h2>Explore</h2>
+				<p>Discover Members, Groups and resources from the Hub community worldwide. [learn more...] </p>
+			</div>
+		</div>
+
+	</div><!-- end intro_bar_tabs -->
+
+	<div id="intro_bar_login">
+		<form class="login uniForm" method="POST" action="{% url acct_login %}">
+			<h3>Already a member?</h3>
+			<fieldset>
+				<ul>
+					<li id="div_id_username" class="ctrlHolder ">
+						<input id="id_username" type="text" class="text" name="username" maxlength="30" />
+						{{ form.username.errors }}
+					</li>
+					<li id="div_id_password" class="ctrlHolder ">
+						<input type="password" name="password" type="text" class="text" id="id_password" />
+						{{ form.password.errors }}
+					</li>
+					<li id="div_id_remember" class="ctrlHolder checkboxes">
+						<label>&nbsp;</label>
+						<input type="checkbox" class="checkbox" name="remember" id="id_remember" />
+						<div class="label_extended">
+							<label for="id_remember">Remember me</label>
+						</div>
+					</li>
+				</ul>			
+				<ul>
+					<li class="form_block">
+						<input type="submit" class="submit button" value="{% trans "Log in" %}" />
+						<!--or <a href="{% url acct_apply %}">Apply to join</a>-->
+					</li>
+				</ul>
+			</fieldset>
+		</form>
+	</div><!-- end intro_bar_login -->
+
+</div><!-- end intro_bar -->
