@@ -49,7 +49,7 @@ def show_resource(context, item):
         url_name = 'view_Resource'
         url_name = group_label+"s:"+url_name
         url = reverse(url_name, args=[item.in_agent.obj.id, item.name])
-        download_url = item.download_url()
+        #download_url = item.download_url()
 
     tags = get_tags(item)
     #item = TemplateSecureWrapper(item)

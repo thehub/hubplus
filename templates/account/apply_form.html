@@ -69,8 +69,8 @@
 	  <input id="physical_hub" name="physical_hub_check" class="checkbox" type="checkbox">
 	  <div class="label_extended">
 	    {{ form.which_hub.errors }}
-	    <label for="which_hub">I'm interested in joining a {{HUB_NAME}}.</label>
-	    <select id="which_hub" name="group" class="disabled">
+	    <label for="physical_hub">I'm interested in joining a {{HUB_NAME}}.</label>
+	    <select id="which_hub" name="group" style="display: none;">
 	      <option value="" readonly="readonly" selected="selected">Please select a {{HUB_NAME}}...</option>
 	      {% for h in hubs %}
 	      <option value="{{h.group_name}}">{{h.display_name}}</option>

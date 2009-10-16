@@ -21,12 +21,15 @@
 	<a class="button" href="{% url site_invite %}">Invite</a>
 </div>
 
-<div id="feature_email_settings" class="block">
+<!--<div id="feature_email_settings" class="block">
     <h3>Email Notifications</h3>
 	<ul class="link_list">
 		<li><a href="{% url acct_email %}">Change your email address</a></li>
 		<li><a href="{% url notification_notices %}">Notification settings</a></li>
 	</ul>
-</div>
+</div>-->
+
+{% include "plus_explore/side_search.html" %}
+{% include "add.html" %}
 
 {% endblock %}
