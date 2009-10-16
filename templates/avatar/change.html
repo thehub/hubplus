@@ -1,0 +1,49 @@
+{% extends "account/base.html" %}
+
+{% load i18n %}
+{% load avatar_tags %}
+
+{% block head_title %}{% trans "Profile picture" %}{% endblock %}
+{% block page_title %}{% trans "Profile picture" %}{% endblock %}
+
+{% block body %}
+<div class="block">
+
+  {% if not avatars %}
+	<h4>Current picture</h4>
+	<p class="extra">Your profile picture is currently the {{ site_name }} default, upload a your own below.</p>
+	<div id="avatar_current" class="thumb medium">{% avatar user 80 %}</div>
+    {% else %}
+
+	<form id="avatar_current" method="POST" action="">
+		<h4>Current picture</h4>
+		<p>Choose which picture you would like to use or upload a new one below.</p>
+		<div class="avatar_choices">
+			{{ primary_avatar_form.choice }}
+		</div>
+		<input type="submit" class="button" value="Use this one" />
+		{% url avatar_delete as avatar_delete_url %}
+		{% blocktrans %} or <a href="{{ avatar_delete_url }}">Delete images...</a>.{% endblocktrans %}</p>
+	</form>
+    {% endif %}
+
+    <form id="avatar_add" enctype="multipart/form-data" method="POST" action="">
+    	<h4>{% trans "Upload a new one" %}</h4>
+        <fieldset>
+			<ul>
+				<li><input type="file" class="file" name="avatar" value="{% trans "Avatar Image" %}" /></li>
+			</ul>
+        </fieldset
+        <input type="submit" class="button" value="{% trans "Upload picture" %}" />
+    </form>
+	<a href="{% url profile_detail user.username %}">{% trans "Back to Profile" %}</a>
+</div>
+{% endblock %}
+
+{% block extra_body %}
+    {% load jquery_validation %}
+    {% include_validation %}
+    <script type="text/javascript">
+       <!-- nothing here -->
+    </script>
+{% endblock %}
