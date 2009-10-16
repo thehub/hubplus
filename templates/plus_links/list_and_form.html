@@ -8,6 +8,7 @@
     {% endfor %}
   </ul>
 
+  {% if target.add_link %}
   <form target="{% url add_link %}" class="link_form">
     <input name="target_class" class="target_class" value="{{target_class_name}}" type="hidden" />
     <input name="target_id" class="target_id" value="{{target_id}}" type="hidden" />
@@ -25,5 +26,5 @@
   </form>
 
   <input type="button" value="+" class="show_link_form button"/>
-  
+  {% endif %}
 </div>

@@ -2,8 +2,9 @@
 
 <div id="feature_search" class="site_block">
     <h3>{% trans "Search" %}</h3>
-    <form>
-      <input name="search_term" type="text" class="text" /> <input class="button" type="submit" value="{% trans 'Search'%}" /><br />
-      {% if "dsf" %}<input name="current_area" type="checkbox" checked="checked" /> {% trans "Members only" %}<br /> {% endif %}      
+    <form action="{% url explore %}">
+      <input name="search" type="text" class="text" value="" /> <input class="button" type="submit" value="{% trans 'Search'%}" /><br />
+      {% ifequal search_types_len 1 %}<input name="current_area" type="checkbox" checked="checked" value="{{search_type}}" />{% blocktrans %}{{search_type_label}} only{% endblocktrans %}<br /> {% endifequal %}
+
     </form>
 </div>

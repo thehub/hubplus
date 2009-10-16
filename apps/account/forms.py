@@ -369,9 +369,10 @@ class HubPlusApplicationForm(forms.Form):
     def clean_username(self):
         if not alnum_re.search(self.cleaned_data["username"]):
             raise forms.ValidationError(_("Usernames can only contain letters, numbers and underscores."))
-        try:
-            user = User.objects.get(username__iexact=self.cleaned_data["username"])
-        except User.DoesNotExist:
+        users = User.objects.filter(username__iexact=self.cleaned_data["username"])
+        if users :
+            user = users[0]
+        else :
             return self.cleaned_data["username"]
         raise forms.ValidationError(_("This username is already taken. Please choose another."))
 
@@ -379,9 +380,10 @@ class HubPlusApplicationForm(forms.Form):
     def clean_group(self) :
         if self.cleaned_data['group'] == '' :
             return None
-        try :
-            return TgGroup.objects.get(groupname=self.cleaned_data['group'])
-        except :
+        groups = TgGroup.objects.filter(group_name=self.cleaned_data['group'])
+        if groups :
+            return groups[0]
+        else :
             raise forms.ValidationError(_("There is no group called %s"%self.cleaned_data['group']))
                 
 
@@ -411,6 +413,7 @@ class HubPlusApplicationForm(forms.Form):
             contact.username = username
             contact.find_out = self.cleaned_data["find_out"]
             contact.email_address = email
+            contact.location = self.cleaned_data["location"]
             contact.save()
         else :
             contact = Contact.objects.get(email_address=email)

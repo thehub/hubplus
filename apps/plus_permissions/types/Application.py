@@ -28,6 +28,8 @@ class ApplicationViewer:
     is_site_application = InterfaceCallProperty
     requests_group = InterfaceCallProperty
 
+    has_group_request = InterfaceCallProperty
+
 class ApplicationEditor: 
     pk = InterfaceReadProperty
     applicant = InterfaceReadWriteProperty    

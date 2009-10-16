@@ -1,0 +1,21 @@
+{% extends "site_base.html" %}
+
+{% load i18n %}
+
+{% block head_title %}{% trans "Contact us" %}{% endblock %}
+{% block page_title %}{% trans "Contact us" %}{% endblock %}
+
+{% block body %}
+<div class="block copy">
+    {% blocktrans %}
+
+	<p><b>Contact details</b> goes here...</p>
+
+    {% endblocktrans %}
+
+</div>
+{% endblock %}
+
+{% block side_bar %}
+{% include "about/sidebar.html" %}
+{% endblock %}
