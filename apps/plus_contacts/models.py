@@ -161,7 +161,10 @@ class Application(models.Model) :
     def get_approvers(self):
         return [u for u in get_all_members_group().get_admin_group().get_users()]
 
-    
+
+    def __str__(self) :
+        return u"<Application from %s, %s, (group %s)" % ('%s %s'% (self.applicant.first_name,self.applicant.last_name),self.request,self.group) 
+
 def create_notifications(sender, instance, **kwargs):
     if instance is None :
         return

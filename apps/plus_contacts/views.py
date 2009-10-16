@@ -12,6 +12,7 @@ from django.utils.translation import ugettext, ugettext_lazy as _
 from django.core.urlresolvers import reverse
 from django.contrib.auth.decorators import login_required
 from django.db import models
+from django.db import transaction
 
 from django.template import RequestContext
 
@@ -33,6 +34,7 @@ def list_of_applications(request, template_name="plus_contacts/applicant_list.ht
 
 
 @login_required
+@transaction.commit_on_success
 def accept_application(request,id) :
     application = Application.objects.plus_get(request.user, id=id)
 
