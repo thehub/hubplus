@@ -19,7 +19,7 @@ from django.template import RequestContext
 from apps.plus_contacts.models import Application, Contact, PENDING, WAITING_USER_SIGNUP
 from apps.plus_contacts.forms import InviteForm
 
-from apps.plus_permissions.interfaces import PlusPermissionsNoAccessException
+from apps.plus_permissions.interfaces import PlusPermissionsNoAccessException, secure_wrap
 from apps.plus_permissions.api import site_context, secure_resource
 
 from apps.plus_groups.models import TgGroup
@@ -27,8 +27,27 @@ from django.db import transaction
 
 @login_required
 def list_of_applications(request, template_name="plus_contacts/applicant_list.html"):
-    applications= Application.objects.plus_filter(request.user, status=PENDING)        
-    print applications
+    applications= Application.objects.plus_filter(request.user, status=PENDING)
+
+
+    # filter the application so that if they're ALSO applications to groups, 
+    # I only see the ones where I have permission to accept them to their chosen group
+    # XXX there's probably a more efficient way of doing this filtering
+    groups = set([])
+    for application in applications :
+        if application.group :
+            group = secure_wrap(application.group, request.user)
+            try : 
+                group.add_member
+                groups.add(group)
+            except PlusPermissionsNoAccessException, e :
+                pass # can't add member to this group so we don't care about it
+    
+    # now set "groups" has wrapped groups for the applications, 
+    # so we strip out the applications with groups that we have no access to
+    applications = [a for a in applications if ((a.group is None) or
+                                                (a.group in groups))]
+
     return render_to_response(template_name, {
             'applications' : applications,
             }, context_instance=RequestContext(request))
@@ -46,14 +65,10 @@ def accept_application(request,id) :
 
         if application.is_site_application() :
             # contact is not a user 
-
             msg,url = application.accept(request.user, request.get_host())
-            print url
             return render_to_response('plus_contacts/dummy_email.html',
                                           {'url':url, 'message':msg},                                      
                                           context_instance=RequestContext(request))
-
-
 
         # here, this user already exists, now we're going to allow to become member of group,
         # if we have the right permissions
