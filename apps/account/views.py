@@ -332,7 +332,7 @@ def apply(request, form_class=HubPlusApplicationForm,
         user = get_anon_user()
         
     # XXX there's a dedicated function for this, replace
-    hubs = TgGroup.objects.filter(level='member').exclude(place__name='HubPlus')
+    hubs = TgGroup.objects.filter(level='member').exclude(place__name=settings.VIRTUAL_HUB_NAME)
 
     if request.method == "POST":
         form = form_class(request.POST)

@@ -175,6 +175,5 @@ def tag_delete(tagged, tag_type, tag_value, tagged_by, tagged_for=None):
 
     if not existing_tag.items.count():
         existing_tag.delete()
-    
-    
+
     return (None, True)

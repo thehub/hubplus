@@ -250,12 +250,6 @@ def groups(request, site, tag_string='', type='other', template_name='plus_explo
 
     all_results, search_types, tag_intersection  = plus_search(tags, search, search_types, order)
 
-    # XXX remove this ... it's just a fake because doesn't look like hub search is filtering out everything it should
-    #if type=='hub' :
-    #    all_results = [a for a in all_results if a.obj.place.name != 'HubPlus' and ('_hosts' not in a.obj.group_name)]
-
-        
-
     
     return render_to_response(template_name, {'head_title':head_title, 
                                               'order':order,
