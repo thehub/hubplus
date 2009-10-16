@@ -71,8 +71,6 @@ def proxied_signup(request, application, form_class=SignupForm,
     if success_url is None:
         success_url = get_default_redirect(request)
 
-    import ipdb
-    ipdb.set_trace()
 
     # because this is a signup request that has an application object, we expect the application
 

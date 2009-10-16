@@ -27,4 +27,6 @@ def configs(context):
         
     except Exception, e:
         import ipdb
-        ipdb.set_trace()
+        #ipdb.set_trace()
+        print e
+        raise e
