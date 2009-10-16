@@ -26,28 +26,32 @@
 	<li>
 	  {{ form.username.errors }}
 	  <label for="id_username"><span class="required">*</span> Name</label>
-	  <input  id="id_username" name="username" class="text" type="text" />
+	  <input  id="id_username" name="username" class="text" type="text" value="{{form.data.username}}"/>
 	</li>
 	<li>
 	  {{ form.email_address.errors}}
 	  <label for="id_email_address"><span class="required">*</span> Email</label>
-	  <input  id="email_address" name="email_address" class="text" type="text" />
+	  <input  id="email_address" name="email_address" class="text" type="text" value="{{form.data.email_address}}"/>
 	</li>
 	<li>
 	  {{ form.organisation.errors}}
 	  <label for="id_organisation"><span class="required">*</span> Organisation</label>
-	  <input  id="id_organisation" name="organisation" class="text" type="text" />
+	  <input  id="id_organisation" name="organisation" class="text" type="text" value="{{form.data.organisation}}"/>
 	</li>
 	<li>
 	  {{ form.location.errors}}
-	  <label for="id_location"><span class="required">*</span> Location <span class="extra">postcode, country</span></label>
-	  <input  id="id_location" name="location" class="text" type="text" />
+	  <label for="id_location"><span class="required">*</span> Location 
+	    <span class="extra">postcode, country</span>
+	  </label>
+	  <input  id="id_location" name="location" class="text" type="text" value="{{form.data.location}}"/>
 	  <br /><span style="color:red">(Use existing google maps here)</span>
 	</li>
 	<li>
 	  {{ form.about_and_why.errors}}
-	  <label for="id_about"><span class="required">*</span> Tell us a bit about yourself <span class="extra">what you do and why you're interested in {{ site_name }}?</span></label>
-	  <textarea id="id_about" name="about_and_why" rows="5"></textarea>
+	  <label for="id_about"><span class="required">*</span> Tell us a bit about yourself 
+	    <span class="extra">what you do and why you're interested in {{ site_name }}?</span>
+	  </label>
+	  <textarea id="id_about" name="about_and_why" rows="5">{{form.data.about_and_why}}</textarea>
 	</li>
 	<li  class='disabled'>
 
@@ -63,7 +67,7 @@
 	<li>
 	  {{form.find_out.errors}}
 	  <label for="id_referal"><span class="required">*</span> How did you find out about {{COPYRIGHT_HOLDER}}?</label>
-	  <textarea id="id_referal" name="find_out" rows="2"></textarea>
+	  <textarea id="id_referal" name="find_out" rows="2">{{form.data.find_out}}</textarea>
 	</li>
 	<li class="checkboxes">
 	  <label>&nbsp;</label>

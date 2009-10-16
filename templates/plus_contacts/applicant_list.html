@@ -30,7 +30,9 @@
     <p>{{app.request}}</p>
     <dl>
       <dt class="applicant_found">{% trans 'Found via' %}</dt><dd>{{app.applicant.find_out}}</dd>
-      <dt class="applicant_group">{% trans 'Group link' %}</dt><dd>{{app.group}}</dd>
+      {% if app.group %}
+      <dt class="applicant_group">{% trans 'Joining' %}</dt><dd>{{app.group.get_display_name}}</dd>
+      {% endif %}
     </dl>      
   </td>
   <td>{{app.date}}</td>
