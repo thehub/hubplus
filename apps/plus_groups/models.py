@@ -201,7 +201,7 @@ try :
         #  getting rid of "about" as there's no data in it from hubspace and we're using "description"
         #about = models.TextField('about', null=True, blank=True)
 
-        group_type = models.CharField('type', max_length=10, choices=settings.GROUP_TYPES)
+        group_type = models.CharField('type', max_length=20, choices=settings.GROUP_TYPES)
     
         title = models.CharField(max_length=60)
         description = models.TextField()
