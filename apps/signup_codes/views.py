@@ -11,14 +11,16 @@ from django.contrib.admin.views.decorators import staff_member_required
 from account.utils import get_default_redirect
 from signup_codes.models import check_signup_code
 
-
 from signup_codes.forms import SignupForm, InviteUserForm
 
 from apps.plus_permissions.default_agents import get_admin_user, get_anon_user, get_site
 
-from apps.plus_permissions.api import secure_resource
+from apps.plus_permissions.api import secure_resource, secure_wrap
 from apps.plus_permissions.proxy_hmac import hmac_proxy
 from apps.plus_contacts.models import Application
+
+from django.db import transaction
+
 
 def signup(request, form_class=SignupForm,
         template_name="account/signup.html", success_url=None):
@@ -60,6 +62,7 @@ def signup(request, form_class=SignupForm,
     }, context_instance=RequestContext(request))
 
 
+@transaction.commit_on_success
 @hmac_proxy
 @secure_resource(Application)
 def proxied_signup(request, application, form_class=SignupForm,
@@ -70,7 +73,6 @@ def proxied_signup(request, application, form_class=SignupForm,
 
     if success_url is None:
         success_url = get_default_redirect(request)
-
 
     # because this is a signup request that has an application object, we expect the application
 
