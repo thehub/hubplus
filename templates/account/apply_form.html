@@ -69,7 +69,7 @@
 	  <input id="physical_hub" name="physical_hub_check" class="checkbox" type="checkbox">
 	  <div class="label_extended">
 	    {{ form.which_hub.errors }}
-	    <label for="physical_hub">I'm interested in joining a {{HUB_NAME}}.</label>
+	    <label for="physical_hub">I'm interested in joining a {{HUB_NAME}}. <span class="extra">Connect and stay up-to-date with the latest happenings in your area.</span></label>
 	    <select id="which_hub" name="group" style="display: none;">
 	      <option value="" readonly="readonly" selected="selected">Please select a {{HUB_NAME}}...</option>
 	      {% for h in hubs %}

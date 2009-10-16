@@ -2,8 +2,11 @@
 
 {% load i18n %}
 
-{% block head_title %}{% trans "Not Found" %}{% endblock %}
+{% block head_title %}{% trans "Sorry, we can't find that page" %}{% endblock %}
+{% block page_title %}{% trans "Sorry, we can't find that page" %}{% endblock %}
 
 {% block body %}
-    <p>{% trans "We're sorry but that page could not be found." %}</p>
+<div class="block">
+	<p>{% trans "The page you are looking for could not be found." %}</p>
+</div>
 {% endblock %}
