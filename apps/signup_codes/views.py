@@ -77,6 +77,7 @@ def proxied_signup(request, application, form_class=SignupForm,
     # because this is a signup request that has an application object, we expect the application
 
     display_name = "Visitor"
+    sponsor = request.user # the actual user who authorized this acceptance
     if request.method == "POST":
         form = form_class(request.POST)
         
@@ -84,7 +85,7 @@ def proxied_signup(request, application, form_class=SignupForm,
             username = form.cleaned_data['username']
             password = form.cleaned_data['password1']
 
-            application.applicant.become_member(username, accepted_by=request.user, password = password)
+            application.applicant.become_member(username, accepted_by=sponsor, password = password)
             user = authenticate(username=username, password=password)
             display_name = application.applicant.get_display_name()
             
@@ -96,7 +97,7 @@ def proxied_signup(request, application, form_class=SignupForm,
 
             # Now, what happens if this application or invite came with a group?
             if application.group :
-                group = secure_wrap(application.group, request.user)
+                group = secure_wrap(application.group, sponsor)
                 group.add_member(user)                   
 
             #application.delete()
