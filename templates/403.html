@@ -1,0 +1,12 @@
+{% extends "site_base.html" %}
+
+{% load i18n %}
+
+{% block head_title %}{% trans "Sorry, you don't have permission to do this" %}{% endblock %}
+{% block page_title %}{% trans "Sorry, you don't have permission to do this" %}{% endblock %}
+
+{% block body %}
+<div class="block">
+	{% blocktrans %}<p>If you think you should be able to do this please <a href="mailto:{{ support_email }}">email us.</a></p>{% endblocktrans %}
+</div>
+{% endblock %}
