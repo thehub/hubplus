@@ -18,8 +18,9 @@
 
   <form class="full uniForm" id="apply_form" method="post" action="{% url acct_apply %}">
 
-    <h4>Your details</h4>
-    <p>Please enter your details below to request an account.</p>
+    <h4>{% trans "Your details" %}</h4>
+    <p>{% trans "Please enter your details below to request an account."%}</p>
+    {% if form.errors%}<p>{{form.errors}}</p>{% endif %}
     <fieldset>
       <ul>
 	<li>
