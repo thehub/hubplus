@@ -23,6 +23,7 @@ from apps.plus_permissions.interfaces import PlusPermissionsNoAccessException
 from apps.plus_permissions.api import site_context, secure_resource
 
 from apps.plus_groups.models import TgGroup
+from django.db import transaction
 
 @login_required
 def list_of_applications(request, template_name="plus_contacts/applicant_list.html"):
@@ -44,40 +45,42 @@ def accept_application(request,id) :
         # also, if the applicant already has an account, we can join him/her to a group
 
         if application.is_site_application() :
-
             # contact is not a user 
+
             msg,url = application.accept(request.user, request.get_host())
             print url
             return render_to_response('plus_contacts/dummy_email.html',
                                           {'url':url, 'message':msg},                                      
-                                          context_instance=RequestContext(request))                 
+                                          context_instance=RequestContext(request))
+
+
 
         # here, this user already exists, now we're going to allow to become member of group,
         # if we have the right permissions
         if application.has_group_request() :
-            # we're asking for a group 
+            # we're asking for a group
+
             try :
                 application.group.accept_member(application.get_user())
-
+            
                 return HttpResponseRedirect(reverse('list_open_applications'))
             except PlusPermissionsNoAccessException :
-
+            
                 return render_to_response('no_permission.html', {
-                        'msg' : "You don't have permission to accept this application into %" %application.group,
+                        'msg' : _("You don't have permission to accept this application into %" %application.group),
                         'user' : request.user,
                         'resource' : "an application you can't see"
                         }, context_instance=RequestContext(request))
-                
-            
+
         
         return HttpResponseRedirect(reverse('list_open_applications'))
     except PlusPermissionsNoAccessException :
         
         sc = application.get_inner().get_security_context()
         return render_to_response('no_permission.html', {
-            'msg' : "You don't have permission to accept this application",
+            'msg' : _("You don't have permission to accept this application"),
             'user' : request.user,
-            'resource' : "an application that you can't accept",
+            'resource' : _("an application that you can't accept"),
             'security_context' :sc.context_agent.obj,
             'tags' : sc.get_tags()
             }, context_instance=RequestContext(request))
