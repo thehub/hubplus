@@ -1,6 +1,7 @@
 {% extends "site_base.html" %}
 {% load i18n %}
 {% load plus_tags %}
+{% load listings %}
 
 {% block body %}
 <div id='body'>
@@ -17,6 +18,6 @@
 </div>
 {% endblock %}
 {% block side_bar %}
-{% include "plus_explore/side_search.html" %}
+{% side_search search_args %}
 {% include "add.html" %}
 {% endblock %}
