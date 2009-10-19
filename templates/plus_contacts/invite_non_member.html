@@ -19,14 +19,14 @@
     <fieldset>
       <ul>
 	<li>
-	  {{ form.username.errors }}
 	  <label for="id_username"><span class="required">*</span> {% trans "Name" %}</label>
 	  <input  id="id_username" name="username" class="text" type="text" />
+	  {{ form.username.errors }}
 	</li>
 	<li>
-	  {{ form.email_address.errors}} 
 	  <label for="id_email_address"><span class="required">*</span> {% trans "Email" %}</label>
 	  <input id="email_address" name="email_address" class="text" type="text" />
+	  {{ form.email_address.errors}}
  	</li>
 
 	<li class="checkboxes">
@@ -35,7 +35,7 @@
 	  <div class="label_extended">
 	    {{ form.which_hub.errors }}
 	    <label for="physical_hub">{% blocktrans %}Invite to a specific {{HUB_NAME}}{% endblocktrans %}.</label>
-	    <select style="display: none;" id="group" name="group">
+	    <select id="group" name="group">
 	      <option value="" readonly="readonly" selected="selected">Please select a {{HUB_NAME}}...</option>
 	      {% for h in hubs %}
 	      <option value="{{h.group_name}}">{{h.display_name}}</option>
