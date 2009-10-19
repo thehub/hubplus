@@ -5,10 +5,12 @@
 
 {% load uni_form %}
 
+{% block head_title %}{% trans "Create new Group" %}{% endblock %}
+{% block page_title %}{% trans "Create new Group" %}{% endblock %}
+
 {% block body %}
 
 <div id="intro" class="block">
-
 
 <form class="full" method="POST" action="{% url plus_groups:create_group %}">
   <h4>About your {{name_of_created}}</h4>

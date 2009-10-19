@@ -99,14 +99,14 @@ def psn_group_name(title) :
     # compresses MHPSS 
     mhps = 'Mental Health and Psychosocial'
     if mhps in title :
-        re.sub(mhps,'mhpss',title)
+        title = re.sub(mhps,'mhpss',title)
 
     r = re.compile('(.*?) Hosts$')
     m = r.match(title)
     if m :
-        print s
         host_flag = True
-        s = m.group(1) 
+        title = m.group(1) 
+
     else :
         host_flag = False
     
