@@ -41,17 +41,17 @@
       </li>
       {% endif %}
       <li>
-	{{form.description.errors}}
 	<label for="descripton"><span class="required">*</span> Description <span class="extra">what is this group about?</span></label>
 	<textarea id="description" name="description" rows="5">{{form.data.description}}</textarea>
-	
+	{{form.description.errors}}	
       </li>
       {% if is_hub %}
       <li>
-	{{form.location.errors}}
+
 	<label for="location">Location <span class="extra">postcode, country</span></label>
 	<input  id="location" class="text" name="location" type="text" />
-	<br /><span style="color:red">(Use existing google maps here)</span>
+	{{form.location.errors}}
+	<!--br /><span style="color:red">(Use existing google maps here)</span-->
       </li>
       {% endif %}
       <li class="disabled">
