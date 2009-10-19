@@ -21,7 +21,8 @@
     {% endif %}
     
     <form class="login uniForm full" method="POST" action="">
-	    <p>{% if message %}{{message}}{% else %}{% trans "Please enter your username and password."%}{% endif %}</p>
+	    <p>{% trans "Please enter your username and password."%}</p>
+		{% if message %}<p class="error_message_large">{{message}}</p>{% endif %}
         <fieldset>
 	  <ul>
 	    <li id="div_id_username" class="ctrlHolder ">

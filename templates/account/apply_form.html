@@ -20,7 +20,6 @@
 
     <h4>{% trans "Your details" %}</h4>
     <p>{% trans "Please enter your details below to request an account."%}</p>
-    {% if form.errors%}<p>{{form.errors}}</p>{% endif %}
     <fieldset>
       <ul>
 	<li>
@@ -35,16 +34,16 @@
 	</li>
 	<li>
 	  {{ form.organisation.errors}}
-	  <label for="id_organisation"><span class="required">*</span> Organisation</label>
+	  <label for="id_organisation">Organisation</label>
 	  <input  id="id_organisation" name="organisation" class="text" type="text" value="{{form.data.organisation}}"/>
 	</li>
 	<li>
 	  {{ form.location.errors}}
-	  <label for="id_location"><span class="required">*</span> Location 
+	  <label for="id_location">Location 
 	    <span class="extra">postcode, country</span>
 	  </label>
 	  <input  id="id_location" name="location" class="text" type="text" value="{{form.data.location}}"/>
-	  <br /><span style="color:red">(Use existing google maps here)</span>
+	  <!--<br /><span style="color:red">(Use existing google maps here)</span>-->
 	</li>
 	<li>
 	  {{ form.about_and_why.errors}}
