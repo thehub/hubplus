@@ -47,7 +47,7 @@
   </ul>
   <div class="tabbed_content yui-content">
     <div id="results_all" class="page_content" >
-      {% listing search.All "All" listing_args.order listing_args.search_terms, listing_args %}
+      {% listing search.All "All" listing_args.order listing_args.search_terms listing_args %}
     </div>
     {% for name, label, typ_items, item_len in search.search_types %}
     {% if item_len %}
