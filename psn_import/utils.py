@@ -2,6 +2,7 @@ from apps.plus_groups.models import TgGroup
 from django.contrib.auth.models import User
 from django.core.files.base import File
 
+import re
 import pickle
 
 maps = {}
@@ -88,11 +89,37 @@ def tag_with_folder_name(obj, creator, folder_name, tag_type='folder') :
         tag_add(obj, tag_type, tw, creator)
 
 
-
 # Resources 
 
 from apps.plus_resources.models import get_or_create
 from apps.plus_lib.utils import make_name
+
+def psn_group_name(title) :
+    # a special group_name maker algorithm for psn
+    # compresses MHPSS 
+    mhps = 'Mental Health and Psychosocial'
+    if mhps in title :
+        re.sub(mhps,'mhpss',title)
+
+    r = re.compile('(.*?) Hosts$')
+    m = r.match(title)
+    if m :
+        print s
+        host_flag = True
+        s = m.group(1) 
+    else :
+        host_flag = False
+    
+    s = make_name(title)
+    if len(s) > 30 :
+        s = s[:30]
+
+    if host_flag :
+        s = s + "_hosts"
+
+    return s
+
+
 
 def get_creator(dict) :
     return get_user_for(dict['creatoruid'])
@@ -122,3 +149,11 @@ def create_resource(top_container, creator, val, f_name, folder) :
         print "******%s",e
         return False
     
+
+def load_all() :
+    load_file('folders','mhpss_export/folders.pickle')
+    load_file('users','mhpss_export/users.pickle')
+    load_file('groups','mhpss_export/groups.pickle')
+    load_file('hubs','mhpss_export/hubs.pickle')
+    load_file('files','mhpss_export/files.pickle')
+

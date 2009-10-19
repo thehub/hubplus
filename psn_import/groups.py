@@ -13,8 +13,9 @@ def import_group(f_name, group_type, fn_place) :
     admin = get_admin_user()
     site = get_site(admin)
     for g in groups:
-        print g.keys()
-    #print g['groupname'], g['body'], g['description'],g['joinpolicy']
+        #print g.keys()
+        print g['groupname'], g['body'], g['description'],g['joinpolicy']
+
         if g['joinpolicy']== 'open' :
             permission_prototype='public'
         else :
@@ -28,10 +29,10 @@ def import_group(f_name, group_type, fn_place) :
         if description == "" :
             description = 'About this group'
 
-        group_name = make_name(g['groupname'])
-        if len(group_name)>30 :
-            group_name = group_name[30]
         display_name = g['groupname']
+        group_name = make_name(display_name)
+        if len(group_name)>30 :
+            group_name = group_name[:30]
         psn_id = g['uid']
 
         keywords = g['keywords']
@@ -54,7 +55,9 @@ def import_group(f_name, group_type, fn_place) :
                 permission_prototype = permission_prototype,
                 )
             group = group.get_inner()
+
         group.psn_id = psn_id
+        group.group_name = group_name
         
         group.place = fn_place(g)
         
