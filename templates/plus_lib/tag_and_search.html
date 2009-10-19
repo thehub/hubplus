@@ -1,23 +1,37 @@
 {% load i18n %}
 {% load plus_url %}
 
-<div id="search" class="block">
+<div id="search" {% ifequal listing_args.template_base 'site_base.html' %}class="block"{% endifequal %}>
   <div id="current">
     <h3>{% trans "Search" %}</h3>
-    <input type="text" class="text" name="search" value="{{search_terms}}" />
-    <input type="submit" class="button" value="{% trans 'Search' %}" />
+    <input type="text" class="text" name="search" value="{{listing_args.search_terms}}" />
+    <input type="submit" class="button" id="submit_search" value="{% trans 'Search' %}" />
     <ul class="tag_list large">
       {% for tag, remove_link in remove_tag_links %}
       <li>
 	<span class="tag">{{tag}}</span>
-	{% if remove_link %}<a href="{% plus_url tag_search_type remove_link %}{{tag_extra}}" class="delete_tag">-</a>
-	{% else %}<a href="{% plus_url search_type %}{{tag_extra}}" class="delete_tag">-</a>
+	{% if remove_link %}
+            {% if listing_args.group_id %}
+               <a href="{% plus_url listing_args.tagged_url listing_args.group_id remove_link %}{{tag_extra}}" class="delete_tag">-</a>
+            {% else %}
+               <a href="{% plus_url listing_args.tagged_url remove_link %}{{tag_extra}}" class="delete_tag">-</a>
+            {% endif %}
+	{% else %}
+            {% if listing_args.group_id %} 
+               <a href="{% plus_url listing_args.search_url listing_args.group_id %}{{tag_extra}}" class="delete_tag">-</a>
+	    {% else %}   
+               <a href="{% plus_url listing_args.search_url %}{{tag_extra}}" class="delete_tag">-</a>
+            {% endif %}
 	{% endif %}
       </li>
       {% endfor %}
     </ul>
-    {% if multiple_tags %}
-    <a class="clear_tag" href="{% plus_url search_type %}{{tag_extra}}">{% trans "Clear all tags" %}</a> 
+    {% if listing_args.multiple_tags %}
+        {% if listing_args.group_id %}  
+            <a class="clear_tag" href="{% plus_url listing_args.search_url listing_args.group_id %}{{tag_extra}}">{% trans "Clear all tags" %}</a> 
+        {% else %}
+            <a class="clear_tag" href="{% plus_url listing_args.search_url %}{{tag_extra}}">{% trans "Clear all tags" %}</a> 
+        {% endif %}
     {% endif %}
     <!--|  <a href="#" class="bt_advance">More options</a> -->
   </div>
@@ -28,7 +42,11 @@
       <ol class="tag_list">
 	{% for tag in tag_intersection %}
 	<li><span class="tag pop5">{{tag.keyword}} ({{tag.num_keyword}})</span>
-	  <a href="{% plus_url tag_search_type tag.tag_filter %}{{tag_extra}}" class="add_tag">+</a>
+	  {% if listing_args.group_id %}
+	  <a href="{% plus_url listing_args.tagged_url listing_args.group_id tag.tag_filter %}{{tag_extra}}" class="add_tag">+</a> 
+          {% else %}
+	  <a href="{% plus_url listing_args.tagged_url tag.tag_filter %}{{tag_extra}}" class="add_tag">+</a> 
+	  {% endif %}
 	</li> 	
 	{% endfor %}
       </ol>

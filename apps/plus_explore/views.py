@@ -7,6 +7,11 @@ from apps.plus_groups.models import TgGroup
 from django.core.urlresolvers import reverse
 from haystack.query import RelatedSearchQuerySet, EmptySearchQuerySet
 from apps.plus_permissions.models import GenericReference
+from apps.plus_wiki.models import WikiPage
+from apps.plus_resources.models import Resource
+from apps.plus_lib.search import side_search_args, listing_args
+
+
 from django.db.models import Q
 import settings
 
@@ -21,8 +26,10 @@ def index(request, template_name="plus_explore/explore.html"):
 
     if search:
         return filter(request, tag_string='')
+
+    side_search = side_search_args('', '')
     
-    return render_to_response(template_name, {'head_title':_('Explore'), 'tags':top_tags()}, context_instance=RequestContext(request))
+    return render_to_response(template_name, {'head_title':_('Explore'), 'tags':top_tags(), 'search_args':side_search}, context_instance=RequestContext(request))
 
 def get_virtual_groups():
     return TgGroup.objects.filter(place__name='HubPlus', level='member')
@@ -53,43 +60,22 @@ def goto_tag(request):
 def filter(request, tag_string, template_name='plus_explore/explore_filtered.html'):
     """ this should be integrated with index into a single method - probably
     """
-    tags = tag_string.split('+')
     search = request.GET.get('search', '')
     order = request.GET.get('order', '')
-    explicit_order = ''
-    if order:
-        explicit_order = order
-        
-    try:
-        tags.remove('')
-    except ValueError:
-        pass
-    
-    all_results, search_types, tag_intersection  = plus_search(tags, search, get_search_types(), order)
 
-    
-    tag_search_type = 'explore_filtered'
-    search_type = 'explore'
+    side_search = side_search_args('', '')
+    search_types = get_search_types()
+
+    listing_args_dict = listing_args('explore', 'explore_filtered', tag_string=tag_string, search_terms=search, multitabbed=True, order=order, template_base="site_base.html")
+    search_dict = plus_search(listing_args_dict['tag_filter'], search, search_types, order)
     
     return render_to_response(template_name, {'head_title':_('Explore'), 
-                                              'order':order,
-                                              'explicit_order':order,
-                                              'search_terms':search,
-                                              'items': all_results,
-                                              'items_len': len(all_results),
-                                              'tag_filter':tags,
-                                              'tag_string':tag_string,
-                                              'multiple_tags':len(tags)>1,
-                                              'tag_intersection':tag_intersection,
-                                              'search_types':search_types,
-                                              'search_types_len':len(search_types),
-                                              'search_type':search_type,
-                                              'tag_search_type':tag_search_type,
-                                              'multitabbed':True,
-                                              'results_label':'items',
-                                              'base':"site_base.html"}, context_instance=RequestContext(request))
+                                              'listing_args':listing_args_dict,
+                                              'search':search_dict,
+                                              'search_args':side_search}, context_instance=RequestContext(request))
 
-def plus_search(tags, search, search_types, order, extra_filter=None):
+
+def plus_search(tags, search, search_types, order, in_group=None, extra_filter=None):
     items = get_resources_for_tag_intersection(tags)
     q = None
     for typ, info in search_types:
@@ -107,7 +93,18 @@ def plus_search(tags, search, search_types, order, extra_filter=None):
         q = q & Q(**extra_filter)
     if q:
         items = items.filter(q)
-    
+
+    if in_group:
+        page_ids = WikiPage.objects.filter(in_agent=in_group)
+        wikipages = Q(**{'content_type__model':'wikipage',
+                         'object_id__in':page_ids})
+        resource_ids = Resource.objects.filter(in_agent=in_group)
+        resources = Q(**{'content_type__model':'resource',
+                         'object_id__in':resource_ids})
+
+        q = resources | wikipages
+        items = items.filter(q)
+                   
     results_map = {}
     tag_intersection = []
     if search:
@@ -124,7 +121,7 @@ def plus_search(tags, search, search_types, order, extra_filter=None):
             results_map['All'] = items.all()
 
     if 'All' in results_map:
-        tag_intersection = get_intersecting_tags(results_map['All'], n=15)    
+        tag_intersection = get_intersecting_tags(results_map['All'], n=15)
         if len(search_types) > 1:
             for typ, info in search_types:
                 if info[0]:
@@ -136,9 +133,10 @@ def plus_search(tags, search, search_types, order, extra_filter=None):
                 if search and results:
                     typ_items = all_results.load_all_queryset(GenericReference, typ_items)
                     typ_items = [item.object for item in typ_items] #we really really shouldn't do this
+                if typ_items:
                     results_map[typ] = typ_items
     else:
         results_map = {'All':EmptySearchQuerySet()}
 
     search_types = [(typ, data[2], results_map[typ], len(results_map[typ])) for typ, data in search_types if results_map.has_key(typ)]
-    return (results_map['All'], search_types, tag_intersection)
+    return {'All':results_map['All'], 'items_len':len(results_map['All']), 'search_types':search_types, 'tag_intersection':tag_intersection}

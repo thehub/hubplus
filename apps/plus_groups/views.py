@@ -19,6 +19,7 @@ from microblogging.models import Tweet, TweetInstance, Following
 
 from apps.plus_lib.models import DisplayStatus, add_edit_key
 from apps.plus_lib.parse_json import json_view
+from apps.plus_lib.search import side_search_args, listing_args
 from apps.plus_permissions.models import SecurityTag, GenericReference
 from apps.plus_permissions.interfaces import PlusPermissionsNoAccessException, SecureWrapper, secure_wrap, TemplateSecureWrapper
 from apps.plus_permissions.types.TgGroup import *
@@ -36,35 +37,32 @@ from django.contrib.contenttypes.models import ContentType
 from apps.plus_resources.models import get_permissioned_resources_for
 import itertools
 
-
-#XXX Temporarily here. If this becomes a long term way of listing wiki pages for groups' 
-# this should be moved into plus_wiki app
-def get_pages_for(group) :
-    content_type = ContentType.objects.get_for_model(group)
-    return WikiPage.objects.filter(in_agent__content_type=content_type, in_agent__object_id=group.id)
-
-def get_resources_and_pages_for(user, group):
-    #objects = GenericReference.objects.filter(object_id=group.get_ref().id, content_type)
-    objects = []
-    q1 = get_pages_for(group)
-    q2 = get_permissioned_resources_for(user, group)
-    for thing in itertools.chain(q1,q2):
-        objects.append(thing) 
-    return objects
+#separate params for searches
 
 @secure_resource(TgGroup)
-def group(request, group, template_name="plus_groups/group.html", current_app='plus_groups', **kwargs):
-    tag_string = ''
+def group_resources(request, group, tag_string='', template_name='plus_explore/explore_filtered.html', current_app='plus_groups'):
     tags = tag_string.split('+')
     search = request.GET.get('search', '')
     order = request.GET.get('order', '')
-    explicit_order = ''
-    if order:
-        explicit_order = order
-    try:
-        tags.remove('')
-    except ValueError:
-        pass
+
+    resource_listing_args = listing_args(current_app + ':group_resources', current_app + ':group_resources_tag', tag_string=tag_string, search_terms=search, multitabbed=False, order=order, template_base='plus_lib/listing_frag.html')
+    resource_listing_args['group_id'] = group.id
+    resources_dict = resources(group, resource_listing_args['tag_filter'], order, search)
+
+    return render_to_response(template_name, {'search':resources_dict,
+                                              'listing_args':resource_listing_args}, context_instance=RequestContext(request, current_app=current_app))
+
+
+
+
+
+def resources(group, tags=[], order=None, search=''):
+    search_types = narrow_search_types('Resource')
+    return plus_search(tags, search, search_types, order, in_group=group.get_ref())
+
+
+@secure_resource(TgGroup)
+def group(request, group, template_name="plus_groups/group.html", current_app='plus_groups', **kwargs):
 
     user = request.user
     if not user.is_authenticated():
@@ -136,7 +134,7 @@ def group(request, group, template_name="plus_groups/group.html", current_app='p
         dummy_status = DisplayStatus(
             defaultfilters.safe( defaultfilters.urlize(latest_status.html())),
                                  defaultfilters.timesince(latest_status.sent) )
-    else :
+    else:
         dummy_status = DisplayStatus('No status', '')
 
     try:
@@ -145,21 +143,14 @@ def group(request, group, template_name="plus_groups/group.html", current_app='p
     except PlusPermissionsNoAccessException:
         perms_bool = False
 
-    search_type = current_app + ':groups'
-    search_url = reverse(search_type)
-    tag_search_type = current_app + ':groups_tag'
-    search_types = narrow_search_types('Group')
-    search_types_len = len(search_types)
-    search_type_label = search_types[0][1][2]
-    # XXX replace when we slot permissions in
-    # XXX replace when we have more sophisticated listings search
-    #pages = get_pages_for(group.get_inner())
-    #resources = get_resources_for(group.get_inner())
-    #objects = get_resources_and_pages_for(group)
-    #objects = get_resources_and_pages_for(user, group)
+    side_search = side_search_args(current_app + ':groups', narrow_search_types('Group')[0][1][2])
 
-    context = RequestContext(request, current_app=current_app)
-    all_results, search_types, tag_intersection = plus_search(tags, search,  narrow_search_types('Resource'), order) #, extra_filter={'context':'TgGroup'})
+    search = request.GET.get('search', '')
+    order = request.GET.get('order', '')
+    resource_search = resources(group=group, search=search, order=order)
+    resource_listing_args = listing_args(current_app + ':group_resources', current_app + ':group_resources_tag', tag_string='', search_terms=search, multitabbed=False, order=order, template_base='plus_lib/listing_frag.html')
+    resource_listing_args['group_id'] = group.id
+
     return render_to_response(template_name, {
             "head_title" : "%s" % group.get_display_name(),
             "head_title_status" : dummy_status,
@@ -180,26 +171,12 @@ def group(request, group, template_name="plus_groups/group.html", current_app='p
             "host_count": host_count,
             "tweets" : tweets,
             "permissions": perms_bool,
-            'order':order,
-            'explicit_order':order,
-            'search_terms':search,
-            'items': all_results,
-            'items_len': len(all_results),
-            'tag_filter':tags,
-            'tag_string':tag_string,
-            'multiple_tags':len(tags)>1,
-            'tag_intersection':tag_intersection,
-            'search_types':search_types,
-            "search_type":search_type,
-            "tag_search_type":tag_search_type,
-            "search_types_len":search_types_len,
-            "search_type_label":search_type_label,
-            "search_url":search_url,
-            "group_id":group.id,
-            'multitabbed':False,
-            "base":"plus_lib/listing_frag.html",
-            }, context_instance=context)
-
+            'side_search_args':side_search,
+            'resource_search':resource_search,
+            'resource_listing_args':resource_listing_args,
+            'group_id':group.id
+            }, context_instance=RequestContext(request, current_app=current_app)
+    )
 
 from apps.plus_lib.utils import hub_name_plural, hub_name
 from apps.plus_explore.views import plus_search, get_search_types
@@ -210,22 +187,12 @@ def narrow_search_types(type_name):
 
 @site_context
 def groups(request, site, tag_string='', type='other', template_name='plus_explore/explore_filtered.html', current_app='plus_groups'):
-    tags = tag_string.split('+')
     search = request.GET.get('search', '')
     order = request.GET.get('order', '')
-    explicit_order = ''
-    if order:
-        explicit_order = order
-    try:
-        tags.remove('')
-    except ValueError:
-        pass
-
     create_group = False
-
-    if request.user.is_authenticated() :
-        try :
-            if current_app == 'groups' :
+    if request.user.is_authenticated():
+        try:
+            if current_app == 'groups':
                 site.create_virtual
             else :
                 site.create_hub
@@ -234,40 +201,25 @@ def groups(request, site, tag_string='', type='other', template_name='plus_explo
             print "User can't create a group",e
 
 
-    if type == 'hub' :
+    if type == 'hub':
         head_title = _(hub_name_plural())
         type_name = hub_name()
     else:
         head_title = _('Groups')
         type_name = "Group"
         
-    search_types = narrow_search_types(type_name)
-    search_types_len = len(search_types)
-    search_type_label = search_types[0][1][2]
-    search_type = current_app + ':groups'
-    tag_search_type = current_app + ':groups_tag'
+    search_types = narrow_search_types(type_name) 
+    side_search = side_search_args(current_app + ':groups', search_types[0][1][2])
 
-    all_results, search_types, tag_intersection  = plus_search(tags, search, search_types, order)
+    listing_args_dict = listing_args(current_app + ':groups', current_app + ':groups_tag', tag_string=tag_string, search_terms=search, multitabbed=False, order=order, template_base="site_base.html")
+    search_dict = plus_search(listing_args_dict['tag_filter'], search, search_types, order)
 
-    return render_to_response(template_name, {'head_title':head_title, 
-                                              'order':order,
-                                              'explicit_order':order,
-                                              'search_terms':search,
-                                              'items': all_results,
-                                              'items_len': len(all_results),
-                                              'tag_filter':tags,
-                                              'tag_string':tag_string,
-                                              'multiple_tags':len(tags)>1,
-                                              'tag_intersection':tag_intersection,
-                                              'search_types':search_types,
-                                              "search_types_len":search_types_len,
-                                              'search_type_label':search_type_label,
-                                              'search_type':search_type,
-                                              'tag_search_type':tag_search_type,
-                                              'multitabbed':False,
+    return render_to_response(template_name, {'head_title':head_title,
+                                              'search':search_dict,
+                                              'listing_args':listing_args_dict,
+                                              'search_args':side_search,
                                               "create_group":create_group,
-                                              "obj_type": type_name,
-                                              'base':"site_base.html"}, context_instance=RequestContext(request, current_app=current_app))
+                                              "obj_type": type_name}, context_instance=RequestContext(request, current_app=current_app))
 
 
 

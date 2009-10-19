@@ -1,5 +1,3 @@
-#create button
-#resources_search
 
 from django.conf.urls.defaults import *
 

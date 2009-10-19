@@ -1,4 +1,5 @@
 {% load i18n %}
+{% load listings %}
 <div id="section_tab_navigation" class="tabbed section yui-navset">
 
   <ul class="tabbed_navigation yui-nav">
@@ -10,7 +11,7 @@
   </ul>
 
   <div class="tabbed_content yui-content">
-	{% include "plus_explore/explore_filtered.html" %}
+	{% included_listing resource_search resource_listing_args %}
 	{% include "plus_groups/activity.html" %}
 	{% include "plus_groups/resources.html" %}
 	{% include "plus_groups/news.html" %}

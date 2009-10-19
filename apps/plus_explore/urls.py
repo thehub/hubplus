@@ -1,19 +1,13 @@
-# resources_search + tag_filtering - design thoughts
-
-#groups to change urls from ints to group_names
-# make multitab explore page work with tag filter only requests
+# group search, hash tag position
+# groups to change urls from ints to group_names
 
 # side bar clouds 
 
 # paginate tabs separately
-
-# tag filtering on group, hub, member, resources
 # -- if results set empty, include tag cloud
-# group search, hash tag position
+
 
 # ordering
-
-# keep results info even when there aren't enough items to need pagination e.g. results 6 of 6 for search "sdfs"
 
 # fulltext search b) - write template
 #                    - reindex
@@ -21,8 +15,9 @@
 # create a form to validate search term and order and current
 # permission based filtering - need to do this efficiently
 # re-write load_all to return a sqlQuery object + play nicely with pagination
+# show tab pagination - even if less that X results
 
-# restructure all search stuff into plus_explore
+
 # index pdfs / Office docs
 
 # Later

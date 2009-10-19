@@ -5,7 +5,7 @@ var widget_map = {
 	       'place': 'gmap'
     },
     'TgGroup':{'description':'text_wysiwyg'},
-    'Resource':{'description':'text_wysiwyg'},
+    'Resource':{'description':'text_wysiwyg'}
 };
 
 var editing = function () {
@@ -212,6 +212,15 @@ var profile_ready = function () {
     wiki_edit();
     editing();
     setup_tag_lists();
+    jq('#resources .add_tag, #resources .delete_tag, #resources .clear_tag, .pagination a').live('click', function () {
+	jq('.tabbed_content #resources').load(jq(this).attr('href') + ' form');
+	return false;
+    });
+    jq('.tabbed_content #resources #submit_search').live('click', function () {
+	var form = jq(this).closest('form');
+	jq('.tabbed_content #resources').load(form.attr('action') + ' form', form.serialize());
+	return false;
+    });
     if (jq('li.place .editable').length) {
 	jq.getScript("http://maps.google.com/maps?file=api&v=2.x&key=ABQIAAAAiA7tLHdzZr8yhGAEbo5FGxS_srkAJTD0j5T3EF3o06M_52NTAhQM2w0ugG9dZdoyPl3s9RqydGrzpQ&async=2&callback=setup_maps");
     }
