@@ -8,7 +8,7 @@
 {% load plus_links %}
 {% load editable_attribute %}
 {% load threadedcommentstags %}
-
+{% load listings %}
 {% block body_id %}{% trans "group" %}{% endblock %}
 
 {% block body %}
@@ -41,7 +41,7 @@
     {% plus_links target_class target_id %}
     
     
-    <h3>Skills and Needs</h3>
+    <h3>{% trans "Skills and Needs" %}</h3>
     <ul>
       <li>
 	<dl>
@@ -129,9 +129,9 @@
 
 
 {% block side_bar %}
-{% include 'plus_explore/side_search.html' %}
+{% side_search side_search_args %}
 <div id="feature_explore" class="site_block">
-  <h3>Explore Groups</h3>
+  <h3>{% trans "Explore Groups" %}</h3>
   <ol class="tag_list">
     <li><a href="#" class="tag pop7">activism</a></li>
     <li><a href="#" class="tag pop8">architecture</a></li>

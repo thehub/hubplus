@@ -27,13 +27,11 @@ class URLNode(Node):
         try:
             url = reverse(view_name, args=args, kwargs=kwargs, current_app=context.current_app)
         except NoReverseMatch, e:
-            import ipdb
-            ipdb.set_trace()
             if settings.SETTINGS_MODULE:
                 project_name = settings.SETTINGS_MODULE.split('.')[0]
                 try:
                     url = reverse(project_name + '.' + view_name,
-                              args=args, kwargs=kwargs, current_app=context.current_app)
+                                  args=args, kwargs=kwargs, current_app=context.current_app)
                 except NoReverseMatch:
                     if self.asvar is None:
                         # Re-raise the original exception, not the one with

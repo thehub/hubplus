@@ -1,4 +1,4 @@
-{% extends base %}
+{% extends listing_args.template_base %}
 {% load i18n %}
 {% load plus_url %}
 {% load listings %}
@@ -8,77 +8,79 @@
 <a class="button" href="{% url plus_groups:create_group %}">{% blocktrans %}Create New {{obj_type}}{% endblocktrans %}</a>
 {% endif %}
 
-{% if tag_string %}
-<form method="GET" action="{% plus_url tag_search_type tag_string %}" class="order_list">
-  {% else %}
-  {% if not search_url %}
-  <form method="GET" action="{% plus_url search_type %}" class="order_list">
-  {% else %}
-     <form method="GET" action="{{search_url}}" class="order_list">
-  {% endif %}
-  {% endif %}
-  {% tag_and_search tag_filter multiple_tags search_terms tag_intersection search_type tag_search_type explicit_order %}
-  {% if items %}
-  {% if multitabbed %}
-  <div id="section_tab_navigation" class="tabbed section yui-navset">
-    <ul class="tabbed_navigation yui-nav">
-      <li class="selected"><a href="#results_all"><span>{% trans "All" %}<span class="count">({{items_len}})</span></span></a></li>
-      {% for name, label, typ_items, items_len in search_types %}
-      {% if items_len %}
-      <li><a href="#results_{{name}}s">{{label}}<span class="count">({{items_len}})</span></a></li>
-      {% endif %}
-      {% endfor  %}
-    </ul>
-    <ul class="display_options">
-      <li class="sort"> 
-	<label>{% trans "Sort by" %}:</label>
-	<select size="1" name="order">
-	  <!--<option value="relevance">Relevance</option>-->
-	  <option value="date" {% ifequal order "date" %}selected="selected"{% endifequal %}>{% trans "Most recent" %}</option>
-	  <!--<option value="view">Most views</option>-->
-	  <option value="name" {% ifequal order "name" %}selected="selected"{% endifequal %}>{% trans "A-Z" %}</option>
-	</select>
-      </li>
-    </ul>
-    <div class="tabbed_content yui-content">
-      <div id="results_all" class="page_content" >
-	{% listing items "All" order %}
-      </div>
-      {% for name, label, typ_items, item_len in search_types %}
-      {% if item_len %}
-      <div id="results_{{name}}" class="page_content" >
-	{% listing typ_items label order %}
-      </div>
-      {% endif %}
-      {% endfor %}
-    </div>
+{% if listing_args.tag_string %}
+   {% if listing_args.group_id %}
+      <form method="GET" action="{% plus_url listing_args.tagged_url listing_args.group_id listing_args.tag_string %}" class="order_list">
+   {% else %}
+      <form method="GET" action="{% plus_url listing_args.tagged_url listing_args.tag_string %}" class="order_list">
+   {% endif %}
+{% else %}
+   {% if listing_args.group_id %}
+      <form method="GET" action="{% plus_url listing_args.search_url listing_args.group_id %}" class="order_list">
+   {% else %}
+      <form method="GET" action="{% plus_url listing_args.search_url %}" class="order_list">
+   {% endif %}
+{% endif %}
 
-  </div>
-  {% else %}
+{% tag_and_search listing_args search.tag_intersection %}
+{% if search.All %}
+{% if listing_args.multitabbed %}
+<div id="section_tab_navigation" class="tabbed section yui-navset">
+  <ul class="tabbed_navigation yui-nav">
+    <li class="selected"><a href="#results_all"><span>{% trans "All" %}<span class="count">({{search.items_len}})</span></span></a></li>
+    {% for name, label, typ_items, items_len in search.search_types %}
+    {% if items_len %}
+    <li><a href="#results_{{name}}s">{{label}}<span class="count">({{items_len}})</span></a></li>
+    {% endif %}
+    {% endfor %}
+  </ul>
   <ul class="display_options">
     <li class="sort"> 
       <label>{% trans "Sort by" %}:</label>
       <select size="1" name="order">
 	<!--<option value="relevance">Relevance</option>-->
-	<option value="date" {% ifequal order "date" %}selected="selected"{% endifequal %}>{% trans "Most recent" %}</option>
+	<option value="date" {% ifequal listing_args.order "date" %}selected="selected"{% endifequal %}>{% trans "Most recent" %}</option>
 	<!--<option value="view">Most views</option>-->
-	<option value="name" {% ifequal order "name" %}selected="selected"{% endifequal %}>{% trans "A-Z" %}</option>
+	<option value="name" {% ifequal listing_args.order "name" %}selected="selected"{% endifequal %}>{% trans "A-Z" %}</option>
       </select>
     </li>
   </ul>
-  <div id="results_all" class="page_content" >
-    {% listing items "All" order %}
+  <div class="tabbed_content yui-content">
+    <div id="results_all" class="page_content" >
+      {% listing search.All "All" listing_args.order listing_args.search_terms, listing_args %}
+    </div>
+    {% for name, label, typ_items, item_len in search.search_types %}
+    {% if item_len %}
+    <div id="results_{{name}}" class="page_content" >
+      {% listing typ_items label listing_args.order listing_args.search_terms listing_args %}
+    </div>
+    {% endif %}
+    {% endfor %}
   </div>
-  {% endif %}
-  {% else %}
-  <p>{% blocktrans  %}No results were found.{% endblocktrans %}</p>
-  {% endif %}
+  
+</div>
+{% else %}
+<ul class="display_options">
+  <li class="sort"> 
+    <label>{% trans "Sort by" %}:</label>
+    <select size="1" name="order">
+      <!--<option value="relevance">Relevance</option>-->
+      <option value="date" {% ifequal listing_args.order "date" %}selected="selected"{% endifequal %}>{% trans "Most recent" %}</option>
+      <!--<option value="view">Most views</option>-->
+      <option value="name" {% ifequal listing_args.order "name" %}selected="selected"{% endifequal %}>{% trans "A-Z" %}</option>
+    </select>
+  </li>
+  </ul>
+<div id="results_all" class="page_content" >
+  {% listing search.All "All" listing_args.order listing_args.search_terms listing_args %}
+</div>
+{% endif %}
+{% else %}
+<p>{% blocktrans %}No results were found.{% endblocktrans %}</p>
+{% endif %}
 </form>
-
-
-
 {% endblock %}
 {% block side_bar %}
-	{% include "plus_explore/side_search.html" %}
-	{% include "add.html" %}
+{% side_search search_args %}
+{% include "add.html" %}
 {% endblock %}

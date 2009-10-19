@@ -17,5 +17,7 @@ urlpatterns = patterns('',
                        url(r'^(?P<resource_id>[\w\._-]+)/message/$', 'plus_groups.views.message_members', name='message_members'),
                        url(r'^$', 'plus_groups.views.groups', name='groups'),
                        url(r'^tags/(?P<tag_string>[\w\+\. _-]+)/$', 'plus_groups.views.groups', name='groups_tag'),
+                       url(r'^(?P<resource_id>[\d]+)/resources/$', 'plus_groups.views.group_resources', name='group_resources'),
+                       url(r'^(?P<resource_id>[\d]+)/resources/tag/(?P<tag_string>[\w\+\. _-]+)/$', 'plus_groups.views.group_resources', name='group_resources_tag'),
                        )
 

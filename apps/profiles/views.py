@@ -43,60 +43,29 @@ else:
     notification = None
 
 from apps.plus_explore.views import plus_search, get_search_types
+from apps.plus_lib.search import side_search_args, listing_args
+
 def narrow_search_types():
     types = dict(get_search_types())
     return (('Profile', types['Profile']),)
 
 def profiles(request, tag_string='', template_name="plus_explore/explore_filtered.html"):
-    tags = tag_string.split('+')
     search = request.GET.get('search', '')
     order = request.GET.get('order', '')
-    explicit_order = ''
-    if order:
-        explicit_order = order
-    try:
-        tags.remove('')
-    except ValueError:
-        pass
-    search_type = 'profile_list'
-    tag_search_type = 'profile_list_tag'
+
     search_types = narrow_search_types()
-    search_types_len = len(search_types)
-    search_type_label = search_types[0][1][2]
-    all_results, search_types, tag_intersection  = plus_search(tags, search, search_types, order)
+    side_search = side_search_args('profile_list', search_types[0][1][2])
+
+    listing_args_dict = listing_args('profile_list', 'profile_list_tag', tag_string=tag_string, search_terms=search, multitabbed=False, order=order, template_base="site_base.html")
+    search_dict = plus_search(listing_args_dict['tag_filter'], search, search_types, order)
     head_title = _('Members')
     #users = users.filter(~Q(username='admin')).filter(~Q(username='anon')).filter(~Q(username='webapi'))
     return render_to_response(template_name, {'head_title':head_title, 
-                                              'order':order,
-                                              'explicit_order':order,
-                                              'search_terms':search,
-                                              'items': all_results,
-                                              'items_len': len(all_results),
-                                              'tag_filter':tags,
-                                              'tag_string':tag_string,
-                                              'multiple_tags':len(tags)>1,
-                                              'tag_intersection':tag_intersection,
-                                              'search_types':search_types,
-                                              "search_types_len":search_types_len,
-                                              'search_type_label':search_type_label,
-                                              'search_type':search_type,
-                                              'tag_search_type':tag_search_type,
-                                              'multitabbed':False,
-                                              'base':"site_base.html"}, context_instance=RequestContext(request))
+                                              'listing_args':listing_args_dict,
+                                              'search_args':side_search,
+                                              'search':search_dict}, context_instance=RequestContext(request))
 
-    #if order == 'date':
-    #    users = users.order_by("-date_joined")
-    #elif order == 'name':
-    #    users = users.order_by("username")
-    #return render_to_response(template_name, {
-    #    'objects':users,
-    #    'order' : order,
-    #    'search_terms' : search_terms,
-    #    'head_title' : 'Members',
-    #    'results_label': 'Profiles',
-    #    'search_type':'profile_list',
-    #    'base': "plus_lib/site_listing.html"
-    #}, context_instance=RequestContext(request))
+
 
 
 def profile(request, username, template_name="profiles/profile.html"):
