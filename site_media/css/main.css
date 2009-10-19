@@ -207,6 +207,13 @@ th {
 	color		: #FF0000;
 }
 
+.error_message_large {
+	background	: #eee;
+	color		: #222;
+	margin-bottom	: 15px;
+	padding		: 10px 20px;
+}
+
 .untruncated {
 	display		: none;
 }
