@@ -22,8 +22,8 @@
 
     <fieldset>
       <ul>
-	<li>
-          <label for="name"><span class="required">*</span>Document Name</label>
+	<li class="hidden">
+          <label for="name"><span class="required">*</span> Document Name</label>
           <input  id="name" name="name" class="text" type="hidden" value="{{form.data.name}}" />
 	  {{form.data.name}}
           {{form.name.errors}}
@@ -39,14 +39,14 @@
 	  {{form.description.errors}}
 	</li>
 	<li>
-	  <label for="author"><span class="required">*</span> Author</label>
+	  <label for="author">Author</label>
 	  <input  id="author" name="author" class="text" type="text" value='{{form.data.author}}'/>
 	  {{form.author.errors}}
 	</li>
 	<!--li>
-	  <label for="tags"><span class="required">*</span> Tags</label>
-	  <!-- <input  id="tags" class="text" type="text" /> -->
-	  <!--span style="color:red">(Use existing tag functionality profiles here)</span>
+	  <label for="tags"><span class="required">*</span> Tags</label> 
+	  <input  id="tags" class="text" type="text" />
+	  span style="color:red">(Use existing tag functionality profiles here)</span>
 	</li-->
       </ul>
       <ul>
