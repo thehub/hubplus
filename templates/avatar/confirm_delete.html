@@ -1,0 +1,35 @@
+{% extends "account/base.html" %}
+
+{% load i18n %}
+
+{% block head_title %}{% trans "Profile picture" %}{% endblock %}
+{% block page_title %}{% trans "Profile picture" %}{% endblock %}
+
+{% block body %}
+	<div class="block">
+  		{% if not avatars %}
+		<p class="extra">You have no pictures to delete. Please <a href="{% url avatar_change %}">upload one</a> now.</p>
+    	{% else %}
+		<h4>Delete pictures</h4>
+        <p class="extra">Select the pictures you would like to delete.</p>
+        <form id="avatar_current" method="POST" action="">
+            <div class="avatar_choices">
+                {{ delete_avatar_form.choices }}
+            </div>
+            <input type="hidden" name="next" value="{% url avatar_change %}" />
+            <input type="submit" class="button" value="Delete selected" />
+			{% url avatar_change as avatar_change_url %}
+			{% blocktrans %} or <a href="{{ avatar_change_url }}">Go back</a>{% endblocktrans %}</p>
+        </form>
+    	{% endif %}
+		<a href="{% url profile_detail user.username %}">{% trans "Back to Profile" %}</a>
+	</div>
+{% endblock %}
+
+{% block extra_body %}
+    {% load jquery_validation %}
+    {% include_validation %}
+    <script type="text/javascript">
+       <!-- nothing here -->
+    </script>
+{% endblock %}

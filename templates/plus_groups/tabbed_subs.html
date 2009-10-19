@@ -5,18 +5,13 @@
   <ul class="tabbed_navigation yui-nav">
     <li class="selected" ><a href="#resources"><span>{% trans "Resources" %}</span></a></li>
     <li><a href="#activity"><span>{% trans "Activity" %}</span></a></li>
-    <li class="disabled"><a href="#news"><span>{% trans "News" %}</span></a></li>
-    <li class="disabled"><a href="#events"><span>{% trans "Events" %}</span></a></li>
     <li><a href="#comments"><span>{% trans "Comments" %}</span></a></li>
   </ul>
 
   <div class="tabbed_content yui-content">
 	{% included_listing resource_search resource_listing_args %}
 	{% include "plus_groups/activity.html" %}
-	{% include "plus_groups/resources.html" %}
-	{% include "plus_groups/news.html" %}
-	{% include "plus_groups/events.html" %}
-
+	{% include "plus_groups/comments.html" %}
   </div>
 
 </div>

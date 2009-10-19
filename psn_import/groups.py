@@ -6,6 +6,7 @@ from apps.plus_groups.models import TgGroup, Location
 from apps.plus_lib.utils import make_name
 from apps.plus_permissions.default_agents import get_admin_user, get_site, get_or_create_root_location
 
+root = get_or_create_root_location()
 
 def import_group(f_name, group_type, fn_place) :
     groups = pickle.load(open(f_name))
@@ -57,11 +58,6 @@ def import_group(f_name, group_type, fn_place) :
         
         group.place = fn_place(g)
         
-        if group.place.id != get_or_create_root_location().id :
- 
-            admin = group.get_admin_group()
-            admin.place = group.place
-            admin.save()
         group.save()
 
 
@@ -80,6 +76,14 @@ def region_place(dict) :
     l = Location(name=name)
     l.save()
     return l
-    
 
 import_group('mhpss_export/hubs.pickle', 'Hub',region_place)
+
+
+for g in TgGroup.objects.all() :
+    if g.place.id != root.id and g.level == 'member' :
+
+        admin = g.get_admin_group()
+        admin.place = g.place
+        admin.save()
+

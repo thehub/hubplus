@@ -6,7 +6,7 @@ from apps.plus_lib.utils import hub_name
 from apps.plus_groups.models import Location
 
 from apps.plus_tags.models import get_tags
-
+from django.conf import settings
 
 register = template.Library()
 
@@ -14,7 +14,7 @@ def show_group(context, group):
     #group = TemplateSecureWrapper(group)
     no_of_members = group.get_no_members()
     try:
-        if group.place.name == 'HubPlus':
+        if group.place.name == settings.VIRTUAL_HUB_NAME:
             group_label = "group"
         else:
             group_label = hub_name().lower()
@@ -31,7 +31,7 @@ register.inclusion_tag("group_item.html", takes_context=True)(show_group)
 
 
 def show_resource(context, item):
-    if item.in_agent.obj.place.name == 'HubPlus':
+    if item.in_agent.obj.place.name == settings.VIRTUAL_HUB_NAME :
         group_label = "group"
     else:
         group_label = hub_name().lower()
@@ -49,7 +49,7 @@ def show_resource(context, item):
         url_name = 'view_Resource'
         url_name = group_label+"s:"+url_name
         url = reverse(url_name, args=[item.in_agent.obj.id, item.name])
-        download_url = item.download_url()
+        #download_url = item.download_url()
 
     tags = get_tags(item)
     #item = TemplateSecureWrapper(item)

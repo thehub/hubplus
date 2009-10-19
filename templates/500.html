@@ -2,8 +2,11 @@
 
 {% load i18n %}
 
-{% block head_title %}{% trans "Server Error" %}{% endblock %}
+{% block head_title %}{% trans "Sorry, there's a problem on our servers" %}{% endblock %}
+{% block page_title %}{% trans "Sorry, there's a problem on our servers" %}{% endblock %}
 
 {% block body %}
-    <p>{% trans "We're sorry but a server error has occurred. We've been notified and will look into it as soon as possible." %}</p>
+<div class="block">
+	<p>{% trans "We've been notified of this and will look into it as soon as possible." %}</p>
+</div>
 {% endblock %}

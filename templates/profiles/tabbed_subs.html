@@ -5,14 +5,12 @@
     <li class="selected" ><a href="#about"><span>{% trans "About" %}</span></a></li>
     <li><a href="#updates_feed"><span>{% trans "Activity" %}</span></a></li>
     <li><a href="#tags"><span>{% trans "Tags" %}</span></a></li>
-    <li class="disabled"><a href="#news"><span>{% trans "News" %}</span></a></li>
   </ul>
 
   <div class="tabbed_content yui-content">
 	{% include "profiles/about.html" %}
 	{% include "profiles/update.html" %}
 	{% include "profiles/tags.html" %}
-	{% include "profiles/news.html" %}
   </div>
 
 </div>

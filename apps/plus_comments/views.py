@@ -24,7 +24,8 @@ def our_comment(request, content_type, content_id, target_id, template_name="plu
         except Exception, e :
             print e
             import ipdb
-            ipdb.set_trace()
+            raise e
+            #ipdb.set_trace()
     else :
 
         return render_to_response(template_name, {

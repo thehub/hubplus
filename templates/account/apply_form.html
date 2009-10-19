@@ -18,35 +18,39 @@
 
   <form class="full uniForm" id="apply_form" method="post" action="{% url acct_apply %}">
 
-    <h4>Your details</h4>
-    <p>Please enter your details below to request an account.</p>
+    <h4>{% trans "Your details" %}</h4>
+    <p>{% trans "Please enter your details below to request an account."%}</p>
     <fieldset>
       <ul>
 	<li>
 	  {{ form.username.errors }}
 	  <label for="id_username"><span class="required">*</span> Name</label>
-	  <input  id="id_username" name="username" class="text" type="text" />
+	  <input  id="id_username" name="username" class="text" type="text" value="{{form.data.username}}"/>
 	</li>
 	<li>
 	  {{ form.email_address.errors}}
 	  <label for="id_email_address"><span class="required">*</span> Email</label>
-	  <input  id="email_address" name="email_address" class="text" type="text" />
+	  <input  id="email_address" name="email_address" class="text" type="text" value="{{form.data.email_address}}"/>
 	</li>
 	<li>
 	  {{ form.organisation.errors}}
-	  <label for="id_organisation"><span class="required">*</span> Organisation</label>
-	  <input  id="id_organisation" name="organisation" class="text" type="text" />
+	  <label for="id_organisation">Organisation</label>
+	  <input  id="id_organisation" name="organisation" class="text" type="text" value="{{form.data.organisation}}"/>
 	</li>
 	<li>
 	  {{ form.location.errors}}
-	  <label for="id_location"><span class="required">*</span> Location <span class="extra">postcode, country</span></label>
-	  <input  id="id_location" name="location" class="text" type="text" />
-	  <br /><span style="color:red">(Use existing google maps here)</span>
+	  <label for="id_location">Location 
+	    <span class="extra">postcode, country</span>
+	  </label>
+	  <input  id="id_location" name="location" class="text" type="text" value="{{form.data.location}}"/>
+	  <!--<br /><span style="color:red">(Use existing google maps here)</span>-->
 	</li>
 	<li>
 	  {{ form.about_and_why.errors}}
-	  <label for="id_about"><span class="required">*</span> Tell us a bit about yourself <span class="extra">what you do and why you're interested in {{ site_name }}?</span></label>
-	  <textarea id="id_about" name="about_and_why" rows="5"></textarea>
+	  <label for="id_about"><span class="required">*</span> Tell us a bit about yourself 
+	    <span class="extra">what you do and why you're interested in {{ site_name }}?</span>
+	  </label>
+	  <textarea id="id_about" name="about_and_why" rows="5">{{form.data.about_and_why}}</textarea>
 	</li>
 	<li  class='disabled'>
 
@@ -62,14 +66,14 @@
 	<li>
 	  {{form.find_out.errors}}
 	  <label for="id_referal"><span class="required">*</span> How did you find out about {{COPYRIGHT_HOLDER}}?</label>
-	  <textarea id="id_referal" name="find_out" rows="2"></textarea>
+	  <textarea id="id_referal" name="find_out" rows="2">{{form.data.find_out}}</textarea>
 	</li>
 	<li class="checkboxes">
 	  <label>&nbsp;</label>
 	  <input id="physical_hub" name="physical_hub_check" class="checkbox" type="checkbox">
 	  <div class="label_extended">
 	    {{ form.which_hub.errors }}
-	    <label for="which_hub">I'm interested in joining a {{HUB_NAME}}.</label>
+	    <label for="physical_hub">I'm interested in joining a {{HUB_NAME}}. <span class="extra">Connect and stay up-to-date with the latest happenings in your area.</span></label>
 	    <select id="which_hub" name="group" style="display: none;">
 	      <option value="" readonly="readonly" selected="selected">Please select a {{HUB_NAME}}...</option>
 	      {% for h in hubs %}

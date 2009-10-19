@@ -207,6 +207,13 @@ th {
 	color		: #FF0000;
 }
 
+.error_message_large {
+	background	: #eee;
+	color		: #222;
+	margin-bottom	: 15px;
+	padding		: 10px 20px;
+}
+
 .untruncated {
 	display		: none;
 }
@@ -218,6 +225,8 @@ th {
 .disabled {
 	display		: none !important;
 }
+
+
 
 
 /* Copy */
@@ -681,13 +690,34 @@ table td {
 
 /* Applications */
 
-.list_of_applications th.name    { width: 20%; }
-.list_of_applications th.message { width: 33%; }
-.list_of_applications th.found   { width: 20%; }
+.list_of_applications th.name    { width: 18%; }
+.list_of_applications th.message { width: 50%; }
 .list_of_applications th.date    { width: 6%; }
 .list_of_applications th.group   { width: 6%; }
-.list_of_applications th.action  { width: 5%; }
+.list_of_applications th.action  { width: 10%; }
 
+.list_of_applications th,
+.list_of_applications td {
+	padding-right: 10px;
+}
+
+.list_of_applications dl {
+	overflow	: hidden;
+	width		: 300px;
+}
+
+.list_of_applications dt {
+	clear		: left;
+	color		: #888;
+	float		: left;
+	padding-right	: 10px;
+	width		: 100px;
+}
+
+.list_of_applications dd {
+	float		: left;
+	width		: 190px;
+}
 
 /* Messages */
 

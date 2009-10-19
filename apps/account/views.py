@@ -29,6 +29,8 @@ from apps.microblogging.forms import TweetForm
 from apps.microblogging.views import TweetInstance
 from microblogging.utils import twitter_account_for_user, twitter_verify_credentials
 
+from django.utils.translation import ugettext_lazy as _
+
 
 def home(request, success_url=None):
     """
@@ -76,11 +78,11 @@ def login(request, form_class=LoginForm,
     if success_url is None:
         success_url = get_default_redirect(request)
 
+    message = ""
     if request.method == "POST" and not url_required:
 
         form = form_class(request.POST)
         if form.login(request):
-            print "DDD"
             if associate_openid and association_model is not None:
                 for openid in request.session.get('openids', []):
                     assoc, created = UserOpenidAssociation.objects.get_or_create(
@@ -88,16 +90,16 @@ def login(request, form_class=LoginForm,
                     )
                 success_url = openid_success_url or success_url
             return HttpResponseRedirect(success_url)
-    else:
-
-
-        form = form_class()
-
+        else:
+            message = _('The email address or password you provided does not match our records.')
+    
+    form = form_class()
 
     return render_to_response(template_name, {
 
         "form": form,
         "url_required": url_required,
+        "message" : message,
     }, context_instance=RequestContext(request))
 
 
@@ -332,7 +334,7 @@ def apply(request, form_class=HubPlusApplicationForm,
         user = get_anon_user()
         
     # XXX there's a dedicated function for this, replace
-    hubs = TgGroup.objects.filter(level='member').exclude(place__name='HubPlus')
+    hubs = TgGroup.objects.filter(level='member').exclude(place__name=settings.VIRTUAL_HUB_NAME)
 
     if request.method == "POST":
         form = form_class(request.POST)

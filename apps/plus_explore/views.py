@@ -32,16 +32,21 @@ def index(request, template_name="plus_explore/explore.html"):
     return render_to_response(template_name, {'head_title':_('Explore'), 'tags':top_tags(), 'search_args':side_search}, context_instance=RequestContext(request))
 
 def get_virtual_groups():
-    return TgGroup.objects.filter(place__name='HubPlus', level='member')
+    return TgGroup.objects.filter(place__name=settings.VIRTUAL_HUB_NAME, level='member')
+
+def get_hubs() :
+    return TgGroup.objects.filter(level='member').exclude(place__name=settings.VIRTUAL_HUB_NAME)
 
 from plus_lib.utils import hub_name, hub_name_plural
 
 def get_search_types():
     v_groups = get_virtual_groups()
+    hubs = get_hubs()
     #('All', (None, None, _('All')))
     return (('Profile', ({'content_type__model':'profile'}, None, _('Members'))), 
             ('Group', ({'content_type__model':'tggroup', 'object_id__in':v_groups}, None, _('Groups'))), 
-            (hub_name(),({'content_type__model':'tggroup'}, {'object_id__in':v_groups}, _(hub_name_plural()))), 
+            #(hub_name(),({'content_type__model':'tggroup'}, {'object_id__in':v_groups}, _(hub_name_plural()))), 
+            (hub_name(),({'content_type__model':'tggroup','object_id__in':hubs},None,_(hub_name_plural()))),
             ('Resource', ({'content_type__model__in':['resource', 'wikipage']}, None, _('Resources'))), 
             )
 

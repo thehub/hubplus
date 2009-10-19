@@ -5,8 +5,8 @@
 
 {% load uni_form %}
 
-{% block head_title %}{% trans "Site Applications" %}{% endblock %}
-{% block page_title %}{% trans "Site Applications" %}{% endblock %}
+{% block head_title %}{% trans 'Site Applications' %}{% endblock %}
+{% block page_title %}{% trans 'Site Applications' %}{% endblock %}
 
 {% block body %}
 
@@ -15,12 +15,10 @@
 <table class="list_of_applications">
   
 <tr>
-	<th class="name">Name & Email</th>
-	<th class="message">Message</th>
-	<th class="found">{% trans "Found"%}</th>
-	<th class="date">Date</th>
-	<th class="group">Group</th>
-	<th class="action">Action</th>
+	<th class='name'>{% trans 'Name' %}</th>
+	<th class='message'>{% trans 'Message' %}</th>
+	<th class='date'>{% trans 'Date' %}</th>
+	<th class='action'>{% trans 'Action' %}</th>
 </tr>
 {% for app in applications %}
 <tr>
@@ -28,14 +26,20 @@
   	{%if app.applicant.last_name %}{{app.applicant.first_name}} {{app.applicant.last_name}}{% else %}{{app.applicant.first_name}}{% endif %}
 	<span class="extra">{{app.applicant.email_address}}</span>
   </td>
-  <td>{{app.request}}</td>
-  <td>{{app.applicant.find_out}}
+  <td>
+    <p>{{app.request}}</p>
+    <dl>
+      <dt class="applicant_found">{% trans 'Found via' %}</dt><dd>{{app.applicant.find_out}}</dd>
+      {% if app.group %}
+      <dt class="applicant_group">{% trans 'Joining' %}</dt><dd>{{app.group.get_display_name}}</dd>
+      {% endif %}
+    </dl>      
+  </td>
   <td>{{app.date}}</td>
-  <td>{{app.group}}</td>
   <td>
     <form class="authorize" method="POST" action="/contacts/accept_application/{{app.id}}/">
-      <input type="submit" class="button" value="accept"/>
-      or <a href="#">Decline</a>
+      <input type="submit" class="button" value="{% trans 'accept' %}"/>
+      <a href="#">{% trans 'Decline' %}</a>
     </form>
   </td>
 
