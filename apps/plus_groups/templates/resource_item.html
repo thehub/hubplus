@@ -1,7 +1,7 @@
 {% load i18n %}
 {% load avatar_tags %}
-{% load plus_url %}
-{% load group_tags %}
+{% load plus_tags %}
+
 <a href="{{resource_url}}">
     <div class="thumb medium"><img src="/site_media/images/resource.jpg" /></div>
 </a>
@@ -10,8 +10,5 @@
   <dd><a href="{{resource_url}}">{{resource.display_name}}</a></dd>
   <dt>{% trans "Description" %}:</dt>
   <dd>{% autoescape off %}{{resource.content|truncatewords_html:20}}{% endautoescape %}</dd>
-  {% if tags %}
-  <dt>{% trans "Tags" %}:</dt>
-  <dd>{% for tag in tags %}{{tag.keyword}}{% endfor %}</dd>
-  {% endif %}
+  {% view_plus_tag 'Tags' ''  resource  '' %}
 </dl>
