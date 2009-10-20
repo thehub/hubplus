@@ -111,11 +111,23 @@ def strip_out(s,bads) :
 
 from apps.plus_tags.models import tag_add
 
-stop_words = ['of','the','and','in','-','a','at','for','&','after','le','la','dans','les']
+stop_words = ['of','the','and','in','-','a','at','for','&','after','le','la','dans','les','with','to','de']
+
+def flatten(build,s,sep) :
+    reg = re.compile('[%s]'%sep)
+    if not reg.search(s) :
+        build.add(s)
+    else :
+        for p in reg.split(s) :
+            build.add(p)
 
 def tag_words(s) :
-    return [strip_out(x.lower(),',-') for x in s.split(' ') if (x.lower() not in stop_words)]
-    
+    build = set([])
+    for t in s.split(' ') :
+        t = strip_out(t,'/,"')
+        flatten(build,t,'._')
+    return [tag.lower() for tag in build if not (tag.lower() in stop_words)]
+
 def tag_with_folder_name(obj, creator, folder_name, tag_type='folder') :
     tag_with(obj, creator, tag_words(folder_name), tag_type)
 
@@ -146,8 +158,8 @@ def psn_group_name(title) :
         host_flag = False
     
     s = make_name(title)
-    if len(s) > 30 :
-        s = s[:30]
+    if len(s) > 33 :
+        s = s[:33]
 
     if host_flag :
         s = s + "_hosts"
@@ -174,32 +186,51 @@ def title(uid) :
 def get_creator(dict) :
     return get_user_for(dict['creatoruid'])
 
+from django.db import transaction
 
+@transaction.commit_on_success
 def create_resource(top_container, creator, title_and_type, f_name, folder, tags=[]) :
+    if ( folder['uid'] == 'b4f5dc9f7ed346670ea45a9e071035ba' or 
+         folder['uid'] == '113840727ead372ec7907f9be03045cf' or 
+         folder['uid'] == '4436a8e6ae234a651e9ed9f5e262a5b7' or 
+         folder['uid'] == 'a3f1a031ca3fc3230b38e385b2a9a952' or 
+         folder['uid'] == 'ef7a83affae2c383ad47e054be20cc00') :
+        return False
     try :
         title = title_and_type.split('/')[-1]
         title = title.split('.',1)[0]
         name = make_name(title)
-        print "Title %s, name %s, created by" % (title,name,creator.username)
+        print "Title %s, name %s, created by %s" % (title,name,creator.username)
         desc = ''
         license = 'Copyright 2009, Psychosocial Network'
         author = ''
     
         f = File(open('mhpss_export/files/%s'%f_name,'rb'))
+
+        if folder['uid'] == 'a3f1a031ca3fc3230b38e385b2a9a952' :
+            import ipdb
+            ipdb.set_trace()
         try :
             resource = get_or_create(creator, top_container,
                              resource=f, title=title, name=name, description=desc,
                              license=license, author=author, stub=False)
-        except Exception, e :
-            print e
+       
+            resource.save()
+        except :
+            import ipdb
             ipdb.set_trace()
-        resource.save()
+            resource = get_or_create(creator, top_container,
+                                     resource=f, title=title, name=name, description=desc,
+                                     license=license, author=author, stub=False)
+            resource.save()
         f.close()
         tag_with(resource, creator, tags, 'folder')
         return True
     
     except Exception, e:
         print "******%s",e
+        import ipdb 
+        ipdb.set_trace()
         return False
     
 

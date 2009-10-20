@@ -63,26 +63,23 @@ def import_all(all) :
             main = get_top_container(folder['uid'],path,tags)
             print (','.join(path)).encode('utf-8')
             print (','.join(['%s'% t for t in tags])).encode('utf-8')
+
+
             if main.__class__ == User :
                 container = TgGroup.objects.get(group_name='resources')
                 creator = main
                 f_name=make_file_name(folder['id'],folder['uid']) 
-                try :
-                    create_resource(container, creator, folder['id'], f_name, folder, tags)
-                except Exception, e :
-                    import ipdb
-                    ipdb.set_trace()
+
+                create_resource(container, creator, folder['id'], f_name, folder, tags)
+
 
             elif main.__class__ == TgGroup :
                 print "((()))",tags
                 container = main
                 creator = get_user_for(folder['creatoruid'])
                 f_name = make_file_name(folder['id'],folder['uid'])
-                try :
-                    create_resource(container, creator, folder['id'], f_name, folder, tags)
-                except Exception, e :
-                    import ipdb
-                    ipdb.set_trace()
+                create_resource(container, creator, folder['id'], f_name, folder, tags)
+                
         if reverse.has_key(folder['parentuid']) :
             par = folder['parentuid']
             print ("parent: (%s,%s)" % (e_type(par),title(par))).encode('utf-8')
