@@ -41,7 +41,10 @@ def import_group(f_name, group_type, fn_place) :
         print description
         print keywords
 
-        groups = TgGroup.objects.filter(group_name=group_name)
+        if "Mental" in display_name :
+            import ipdb
+            ipdb.set_trace()
+        groups = TgGroup.objects.filter(psn_id=psn_id)
         if groups : 
             group = groups[0]
         else :
@@ -62,7 +65,7 @@ def import_group(f_name, group_type, fn_place) :
         group.place = fn_place(g)
         
         group.save()
-
+        print "XX ", group.display_name
 
 def group_place(dict) :
     return get_or_create_root_location()
