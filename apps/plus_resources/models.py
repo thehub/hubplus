@@ -16,6 +16,8 @@ def get_permissioned_resources_for(user, owner) :
     return Resource.objects.plus_filter(user, in_agent=owner.get_ref(), required_interfaces=['Viewer'])
 
 def upload_to(instance, file_name) :
+    if '/' in file_name :
+        file_name = file_name.split('/')[-1]
     owner = instance.in_agent.obj
     owner_class = ContentType.objects.get_for_model(owner)
     owner_id = owner.id
