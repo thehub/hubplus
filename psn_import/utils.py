@@ -114,8 +114,8 @@ from apps.plus_tags.models import tag_add
 stop_words = ['of','the','and','in','-','a','at','for','&','after','le','la','dans','les']
 
 def tag_words(s) :
-    return [strip_out(x.lower(),',') for x in s.split(' ') if (x.lower() not in stop_words)]
-
+    return [strip_out(x.lower(),',-') for x in s.split(' ') if (x.lower() not in stop_words)]
+    
 def tag_with_folder_name(obj, creator, folder_name, tag_type='folder') :
     tag_with(obj, creator, tag_words(folder_name), tag_type)
 
@@ -177,19 +177,22 @@ def get_creator(dict) :
 
 def create_resource(top_container, creator, title_and_type, f_name, folder, tags=[]) :
     try :
-        print "Created by %s" % creator
-        title = title_and_type.split('.',1)[0]
+        title = title_and_type.split('/')[-1]
+        title = title.split('.',1)[0]
         name = make_name(title)
-        print "Title %s, name %s" % (title,name)
+        print "Title %s, name %s, created by" % (title,name,creator.username)
         desc = ''
         license = 'Copyright 2009, Psychosocial Network'
         author = ''
     
         f = File(open('mhpss_export/files/%s'%f_name,'rb'))
-    
-        resource = get_or_create(creator, top_container,
+        try :
+            resource = get_or_create(creator, top_container,
                              resource=f, title=title, name=name, description=desc,
                              license=license, author=author, stub=False)
+        except Exception, e :
+            print e
+            ipdb.set_trace()
         resource.save()
         f.close()
         tag_with(resource, creator, tags, 'folder')

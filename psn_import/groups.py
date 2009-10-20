@@ -41,9 +41,6 @@ def import_group(f_name, group_type, fn_place) :
         print description
         print keywords
 
-        if "Mental" in display_name :
-            import ipdb
-            ipdb.set_trace()
         groups = TgGroup.objects.filter(psn_id=psn_id)
         if groups : 
             group = groups[0]
