@@ -46,30 +46,62 @@ def get_group_for(uid) :
 def get_user_for(uid):
     return get_obj_for(User,uid)
 
-
 # Calculate Container
 # call get_top_container(uid,[],[])
 
+import ipdb
+    
 def get_top_container(uid, path, tags) :
-
-    try :
-        g = get_group_for(uid)
-        path = [reverse(uid)['title']]+path
-        return g
-    except Exception, e:
-        try :
-            u = get_user_for(uid)
-            return u
-        except :
-            dict = reverse[uid]
-            if dict.has_key('parentuid') :
-                i = dict['parentuid']
-                return get_top_container(i)
-            elif dict.has_key['mainparentuid'] :
-                i = dict['mainparentuid']
-                return get_ultimate_container(i)
+ 
+    if reverse.has_key(uid) :
+        e = entity(uid)
+        et = e_type(uid)
+        if et == 'Group' or et == 'Hub' :
+            gs = TgGroup.objects.filter(psn_id=uid)
+            if gs :
+                return gs[0]
             else :
-                raise Exception("""%s is neither a group or user and has no parentuid or mainparentuid. It's type is a %s""" % (uid,dict['type']))
+                print "%s seems to be a group but wasn't created as a TgGroup".encode('utf-8')
+                ipdb.set_trace()
+                return None
+
+        elif et == 'User' :
+            us = User.objects.filter(username=e['username'])
+            if us :
+                u = us[0]
+                tag_s = tag_words(u.get_display_name())
+                tag_s.append(u.username)
+                for tw in tag_s :
+                    tags.append(tw)
+                return u
+            else :
+                print "%s seems to be a user, but we don't have in Users"
+                ipdb.set_trace()
+                return None
+            
+        else :
+            typ, dict = reverse[uid]
+            if dict.has_key('parentuid') :
+                
+                i = dict['parentuid']
+                path.append(title(uid))
+                tag_s = tag_words(title(uid))
+                for tw in tag_s :
+                    tags.append(tw)
+                return get_top_container(i,path,tags)
+            elif dict.has_key('mainparentuid'):
+                i = dict['mainparentuid']
+                path.append(title(uid))
+                tag_s = tag_words(title(uid))
+                for tw in tag_s :
+                    tags.append(tw)
+                return get_ultimate_container(i,path,tags)
+            else :
+                print dict
+                
+                ipdb.set_trace()
+    else :
+        raise Exception("""We don't know about %s which is neither a group or user and has no parentuid or mainparentuid. It's type is a %s""" % (uid,e_type(uid)))
 
 
 
@@ -79,13 +111,28 @@ def strip_out(s,bads) :
 
 from apps.plus_tags.models import tag_add
 
-stop_words = ['of','the','and','in','-']
+stop_words = ['of','the','and','in','-','a','at','for','&','after','le','la','dans','les','with','to','de']
+
+def flatten(build,s,sep) :
+    reg = re.compile('[%s]'%sep)
+    if not reg.search(s) :
+        build.add(s)
+    else :
+        for p in reg.split(s) :
+            build.add(p)
 
 def tag_words(s) :
-    return [strip_out(x.lower(),',') for x in s.split(' ') if (x.lower() not in stop_words)]
+    build = set([])
+    for t in s.split(' ') :
+        t = strip_out(t,'/,"')
+        flatten(build,t,'._')
+    return [tag.lower() for tag in build if not (tag.lower() in stop_words)]
 
 def tag_with_folder_name(obj, creator, folder_name, tag_type='folder') :
-    for tw in tag_words(folder_name):
+    tag_with(obj, creator, tag_words(folder_name), tag_type)
+
+def tag_with(obj, creator, tags, tag_type='folder') :
+    for tw in tags :
         tag_add(obj, tag_type, tw, creator)
 
 
@@ -106,12 +153,13 @@ def psn_group_name(title) :
     if m :
         host_flag = True
         title = m.group(1) 
+
     else :
         host_flag = False
     
     s = make_name(title)
-    if len(s) > 30 :
-        s = s[:30]
+    if len(s) > 33 :
+        s = s[:33]
 
     if host_flag :
         s = s + "_hosts"
@@ -119,40 +167,81 @@ def psn_group_name(title) :
     return s
 
 
+def entity(uid) :
+    return reverse[uid][1]
+
+def e_type(uid) :
+    return reverse[uid][0]
+
+def title(uid) :
+    if entity(uid).has_key('title') :
+        return entity(uid)['title']
+    elif e_type(uid) == 'Group' or e_type(uid) == 'Hub' :
+        return entity(uid)['groupname']
+    elif e_type(uid) == 'User' :
+        return entity(uid)['fullname']
+    else :
+        return "<<entity of type %s has no title>>" % e_type(uid)
 
 def get_creator(dict) :
     return get_user_for(dict['creatoruid'])
 
+from django.db import transaction
 
-def create_resource(top_container, creator, val, f_name, folder) :
+@transaction.commit_on_success
+def create_resource(top_container, creator, title_and_type, f_name, folder, tags=[]) :
+    if ( folder['uid'] == 'b4f5dc9f7ed346670ea45a9e071035ba' or 
+         folder['uid'] == '113840727ead372ec7907f9be03045cf' or 
+         folder['uid'] == '4436a8e6ae234a651e9ed9f5e262a5b7' or 
+         folder['uid'] == 'a3f1a031ca3fc3230b38e385b2a9a952' or 
+         folder['uid'] == 'ef7a83affae2c383ad47e054be20cc00' or 
+         folder['uid'] == '0ca440331febc48b9ceaad5c64c8f518' or
+         folder['uid'] == 'ab1ad411218ba8905749630c1da13d88' or
+         'Training' in folder['title'] or
+         folder['uid'] == '27d915bf664b73b2beadea9becce89e9'):
+        return False
     try :
-        print "Created by %s" % creator
-        title = val.split('.',1)[0]
+        title = title_and_type.split('/')[-1]
+        title = title.split('.',1)[0]
         name = make_name(title)
-        print "Title %s, name %s" % (title,name)
+        print "Title %s, name %s, created by %s" % (title,name,creator.username)
         desc = ''
         license = 'Copyright 2009, Psychosocial Network'
         author = ''
     
         f = File(open('mhpss_export/files/%s'%f_name,'rb'))
-    
-        resource = get_or_create(creator, top_container,
-                             resource=f, title=val, name=name, description=desc,
+
+        if folder['uid'] == 'a3f1a031ca3fc3230b38e385b2a9a952' :
+            import ipdb
+            ipdb.set_trace()
+        try :
+            resource = get_or_create(creator, top_container,
+                             resource=f, title=title, name=name, description=desc,
                              license=license, author=author, stub=False)
-        resource.save()
+       
+            resource.save()
+        except :
+            import ipdb
+            ipdb.set_trace()
+            resource = get_or_create(creator, top_container,
+                                     resource=f, title=title, name=name, description=desc,
+                                     license=license, author=author, stub=False)
+            resource.save()
         f.close()
-        tag_with_folder_name(resource, creator, folder['title'], 'folder')
+        tag_with(resource, creator, tags, 'folder')
         return True
     
     except Exception, e:
         print "******%s",e
+        import ipdb 
+        ipdb.set_trace()
         return False
     
 
 def load_all() :
-    load_file('folders','mhpss_export/folders.pickle')
-    load_file('users','mhpss_export/users.pickle')
-    load_file('groups','mhpss_export/groups.pickle')
-    load_file('hubs','mhpss_export/hubs.pickle')
-    load_file('files','mhpss_export/files.pickle')
+    load_file('Folder','mhpss_export/folders.pickle')
+    load_file('User','mhpss_export/users.pickle')
+    load_file('Group','mhpss_export/groups.pickle')
+    load_file('Hub','mhpss_export/hubs.pickle')
+    load_file('File','mhpss_export/files.pickle')
 
