@@ -198,7 +198,7 @@ dangerous_groups = [
 
 @transaction.commit_on_success
 def create_resource(top_container, creator, title_and_type, f_name, folder, tags=[]) :
-    if 'iasc' not in tags : return False  # XXX temporary ... to focus on iasc
+    #if 'iasc' not in tags : return False  # XXX temporary ... to focus on iasc
 
     if folder['uid'] in dangerous_groups :
         import ipdb
