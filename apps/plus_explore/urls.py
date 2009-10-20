@@ -1,17 +1,19 @@
-# group search, hash tag position
-# groups to change urls from ints to group_names
-
+# tags and shading/scaling
 # side bar clouds 
+
+# ordering
+# fulltext search b) - write template
+#                    - reindex
+
 
 # paginate tabs separately
 # -- if results set empty, include tag cloud
 
 
-# ordering
+# groups to change urls from ints to group_names
 
-# fulltext search b) - write template
-#                    - reindex
-# 
+
+ 
 # create a form to validate search term and order and current
 # permission based filtering - need to do this efficiently
 # re-write load_all to return a sqlQuery object + play nicely with pagination
