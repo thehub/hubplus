@@ -194,7 +194,11 @@ def create_resource(top_container, creator, title_and_type, f_name, folder, tags
          folder['uid'] == '113840727ead372ec7907f9be03045cf' or 
          folder['uid'] == '4436a8e6ae234a651e9ed9f5e262a5b7' or 
          folder['uid'] == 'a3f1a031ca3fc3230b38e385b2a9a952' or 
-         folder['uid'] == 'ef7a83affae2c383ad47e054be20cc00') :
+         folder['uid'] == 'ef7a83affae2c383ad47e054be20cc00' or 
+         folder['uid'] == '0ca440331febc48b9ceaad5c64c8f518' or
+         folder['uid'] == 'ab1ad411218ba8905749630c1da13d88' or
+         'Training' in folder['title'] or
+         folder['uid'] == '27d915bf664b73b2beadea9becce89e9'):
         return False
     try :
         title = title_and_type.split('/')[-1]
