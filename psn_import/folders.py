@@ -1,4 +1,4 @@
-from psn_import.utils import load_file, list_type, maps, reverse, tag_with_folder_name, create_resource, get_creator, get_top_container
+from psn_import.utils import load_file, list_type, maps, reverse, tag_with_folder_name, create_resource, get_creator, get_top_container, load_all
 
 from django.core.files.base import File
 from django.core.files.uploadedfile import SimpleUploadedFile
@@ -9,13 +9,7 @@ from apps.plus_resources.models import Resource, get_or_create
 
 from apps.plus_lib.utils import make_name
 
-
-load_file('folders','mhpss_export/folders.pickle')
-load_file('users','mhpss_export/users.pickle')
-load_file('groups','mhpss_export/groups.pickle')
-load_file('hubs','mhpss_export/hubs.pickle')
-load_file('files','mhpss_export/files.pickle')
-
+load_all()
 
 good = []
 bad = []

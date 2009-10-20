@@ -1,76 +1,53 @@
-from psn_import.utils import load_file, list_type, maps, reverse, get_for, get_group_for
-
-from django.core.files.base import File
-from django.core.files.uploadedfile import SimpleUploadedFile
-from apps.plus_groups.models import TgGroup
+from psn_import.utils import load_all, maps, reverse, title, e_type, get_top_container, get_user_for, create_resource
 from django.contrib.auth.models import User
+from apps.plus_groups.models import TgGroup
 
-from apps.plus_resources.models import Resource, get_or_create
+load_all()
 
-from apps.plus_lib.utils import make_name, tag_with_folder_name
+def list_all(all) :
+    for folder in all :
+        print
 
-from apps.plus_tags.models import tag_add
-
-from apps.plus_resources.models import Resource
-
-load_file('folders','mhpss_export/folders.pickle')
-load_file('users','mhpss_export/users.pickle')
-load_file('groups','mhpss_export/groups.pickle')
-load_file('hubs','mhpss_export/hubs.pickle')
-load_file('files','mhpss_export/files.pickle')
+        print ('%s, %s, %s, %s, %s' % (folder['title'], folder['mainparentuid'], folder['mainparenttype'], folder['parentuid'], folder['parenttype'])).encode('utf-8')
+        if reverse.has_key(folder['mainparentuid']) :
+            mainpar = folder['mainparentuid']
+            print ("main parent: (%s,%s)" % (e_type(mainpar),title(mainpar))).encode('utf-8')
+            if title(mainpar) != 'RESOURCES' :
+                print title(mainpar).encode('utf-8')
 
 
-def show(f) :
-    print "*",f['mainparenttype'],f['mainparentuid'],f['id'],f['mainparentpath'],f['parenttype'],f['parentuid']
+            path  = []
+            tags = []
+            main = get_top_container(folder['uid'],path,tags)
+            print (','.join(path)).encode('utf-8')
+            print (','.join(['%s'% t for t in tags])).encode('utf-8')
+            if main.__class__ == User :
+                print folder
+                import ipdb
+                ipdb.set_trace()
+                container = TgGroup.objects.get(group_name='resources')
+                creator = main
+                f_name = '%s.%s'%(folder['uid'],folder['id'].split('.')[1])
+                create_resource(container, creator, folder['id'], f_name, folder, tags)
+                
 
-def test_resource(title) :
-    rs = Resource.objects.filter(title=title)
-    if len(rs) > 1 :
-        raise Exception('two resources with same title : %s'%title)
-    if rs :
-        print "exists %s (%s)" % (rs[0].title, rs[0].id)
-        return True
-    else :
-        print "no resource called %s" % title
-        return False
 
-for f in maps['files'] :
-    #print f.keys()
-
-    flag = True
+        if reverse.has_key(folder['parentuid']) :
+            par = folder['parentuid']
+            print ("parent: (%s,%s)" % (e_type(par),title(par))).encode('utf-8')
+            
     
-    title = f['title']
-    print
-    if not test_resource(title) :
-        show(f)
-        import ipdb
-        ipdb.set_trace()
-        if f['mainparenttype'] == 'Group' :
-            print  "main group %s" % get_group_for(f['mainparentuid'])
-            flag = False
-        
-        if f['parenttype'] == 'Group' :
-            print "parent group %s" % get_group_for(f['parentuid'])
-            flag = False
-        else :
-            print 'parent is ',f['parenttype']
-            parent = reverse[f['parentuid']][1]
-            
-            if f['parenttype']== 'Group' :
-                title  = parent['title']
 
-            elif f['parenttype']=='Folder' :
-                title = parent['title']
+#print "Folders"
+#list_all(maps['Folder'])
 
-            elif f['parenttype']=='HubUser' :
-                title = parent['username']
-            else :
-                title = "<<<name>>> from %s" % parent.keys()
+print "_________________________________________________"
+print "Files"
+try :
+    list_all(maps['File'])
+except Exception, e:
+    print e
+    import ipdb
+    ipdb.set_trace()
 
-            print title
-            
-
-        
-
-        if flag:
-            print "***"
+print len(maps['File'])

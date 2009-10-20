@@ -6,6 +6,7 @@ from psn_import.utils import psn_group_name
 
 for g in TgGroup.objects.filter(level='member') :
     print g.id, g.display_name, g.group_name
+
     group_name = psn_group_name(g.display_name)
 
     a = g.get_admin_group()
