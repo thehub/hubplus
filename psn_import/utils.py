@@ -43,6 +43,7 @@ def get_obj_for(cls, uid) :
 def get_group_for(uid) :
     return get_obj_for(TgGroup,uid)
 
+
 def get_user_for(uid):
     return get_obj_for(User,uid)
 
@@ -201,16 +202,16 @@ dangerous_groups = [
 def create_resource(top_container, creator, title_and_type, f_name, folder, tags=[]) :
     #if 'iasc' not in tags : return False  # XXX temporary ... to focus on iasc
 
-    if folder['uid'] in dangerous_groups :
-        import ipdb
-        ipdb.set_trace()
+    #if folder['uid'] in dangerous_groups :
+    #    import ipdb
+    #    ipdb.set_trace()
 
     title = title_and_type.split('/')[-1]
     title = title.split('.',1)[0]
     name = make_name(title)
     print "Title %s, name %s, created by %s" % (title,name,creator.username)
     desc = ''
-    license = 'Copyright 2009, Psychosocial Network'
+    license = 'not specified'
     author = ''
     
     f = File(open('mhpss_export/files/%s'%f_name,'rb'))
