@@ -21,7 +21,7 @@ def upload_to(instance, file_name) :
     owner = instance.in_agent.obj
     owner_class = ContentType.objects.get_for_model(owner)
     owner_id = owner.id
-    return "member_resources/%s/%s/%s/%s" % (owner_class, owner_id, instance.id, file_name)
+    return "member_res/%s/%s/%s/%s" % (owner_class, owner_id, instance.id, file_name)
 
 class Resource(models.Model):
 

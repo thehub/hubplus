@@ -7,4 +7,6 @@ for t in Tag.objects.all() :
     print t.keyword.encode('utf-8')
     #t.save()
     if t.keyword in stop_words :
-        print "***"
+        import ipdb
+        ipdb.set_trace()
+        t.delete()
