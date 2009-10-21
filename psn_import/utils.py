@@ -106,12 +106,13 @@ def get_top_container(uid, path, tags) :
 
 
 # Tags
-def strip_out(s,bads) :
+def strip_out(s,bads="""/,"':()[]*\%\\;""") :
     return ''.join([c for c in s if (c not in bads)])
+
 
 from apps.plus_tags.models import tag_add
 
-stop_words = ['of','the','and','in','-','a','at','for','&','after','le','la','dans','les','with','to','de']
+stop_words = ['of','the','and','in','-','a','at','for','&','after','le','la','dans','les','with','to','de','against','all']
 
 def flatten(build,s,sep) :
     reg = re.compile('[%s]'%sep)
@@ -124,7 +125,7 @@ def flatten(build,s,sep) :
 def tag_words(s) :
     build = set([])
     for t in s.split(' ') :
-        t = strip_out(t,'/,":()[]*\%\\')
+        t = strip_out(t)
         flatten(build,t,'._')
     return [tag.lower() for tag in build if not (tag.lower() in stop_words)]
 
