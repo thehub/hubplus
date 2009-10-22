@@ -31,6 +31,10 @@ def plus_tag(label, tag_type, tagged, tagged_for) :
         tagged = tagged.obj()
     if tagged_for.__class__ == TemplateSecureWrapper:
         tagged_for == tagged_for.obj()
+    if tagged_for == '' :
+        tagged_for = None
+    if tag_type == '' :
+        tag_type = None
     tags = get_tags(tagged=tagged, tagged_for=tagged_for, tag_type=tag_type)
 
     return {'label':label,
