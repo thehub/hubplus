@@ -12,7 +12,7 @@ def view_plus_tag(label, tag_type, tagged, tagged_for) :
         tag_type = None
     if not tagged_for:
         tagged_for = None
-    if not tagged:
+    if tagged == '' :
         tagged = None
     tags = get_tags(tagged=tagged, tagged_for=tagged_for, tag_type=tag_type)
     return {'label':label,
