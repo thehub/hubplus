@@ -5,7 +5,7 @@
 {% load ifsetting_tag %}
 
 {% block head_title %}{% trans "Log in" %}{% endblock %}
-{% block page_title %}{% trans "Log in to " %}{% if site_name %}{{ site_name }}{% else %}Site{% endif %} {% endblock %}
+{% block page_title %}{% trans "Log in to " %}{% if SITE_NAME %}{{ SITE_NAME }}{% else %}Site{% endif %} {% endblock %}
 
 {% block body %}
 

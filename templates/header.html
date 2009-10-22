@@ -3,7 +3,7 @@
 
 	<div id="header">
 
-		<h1><a href="{% url home %}">{{ site_name }}</a></h1>
+		<h1><a href="{% url home %}">{{ SITE_NAME }}</a></h1>
 
 		{% block login %}
 		<ul id="account_navigation" style="">
@@ -38,7 +38,7 @@
 
 		<ul id="main_navigation">
 			<li class="first"><a href="{% url home %}">{% trans "Home" %}</a></li>
-			<li><a href="{% url explore %}">{% trans "Explore" %}</a></li>	
+			<li><a href="{% url explore %}">{% trans EXPLORE_NAME %}</a></li>	
 			<li><a href="{% url profile_list %}">{% trans "Members" %}</a></li>
 			<li><a href="{% url groups:groups %}">{% trans "Groups" %}</a></li>
 			<li class="last"><a href="{% url hubs:groups %}">{{HUB_NAME_PLURAL}}</a></li>
