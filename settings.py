@@ -302,6 +302,7 @@ EMAIL_USE_TLS=False
 HMAC_KEY = "XXXXXXXXX"
 
 VIRTUAL_HUB_NAME = 'HubPlus'
+EXPLORE_NAME = 'Explore'
 
 # This is the list of group types we currently know about                                                                    
 GROUP_TYPES = (
