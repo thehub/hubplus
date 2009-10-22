@@ -58,4 +58,5 @@ def patch_in_profiles():
     print "patched %s users to have profiles" % str(no_of_users)
 
 
+patch_in_groups()
 patch_in_profiles()
