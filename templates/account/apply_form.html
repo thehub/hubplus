@@ -47,7 +47,7 @@
 	</li>
 	<li>
 	  <label for="id_about"><span class="required">*</span> Tell us a bit about yourself 
-	    <span class="extra">what you do and why you're interested in {{ site_name }}?</span>
+	    <span class="extra">what you do and why you're interested in {{ SITE_NAME }}?</span>
 	  </label>
 	  <textarea id="id_about" name="about_and_why" rows="5">{{form.data.about_and_why}}</textarea>
 	  {{ form.about_and_why.errors}}
@@ -63,7 +63,7 @@
 	  <span style="color:red">(Use existing tag functionality from profiles here)</span>
 	</li>
 	<li>
-	  <label for="id_referal"><span class="required">*</span> How did you find out about {{ site_name }}?</label>
+	  <label for="id_referal"><span class="required">*</span> How did you find out about {{ SITE_NAME }}?</label>
 	  <textarea id="id_referal" name="find_out" rows="2">{{form.data.find_out}}</textarea>
 	  {{form.find_out.errors}}
 	</li>

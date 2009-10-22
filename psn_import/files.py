@@ -1,6 +1,7 @@
 from psn_import.utils import load_all, maps, reverse, title, e_type, get_top_container, get_user_for, create_resource
 from django.contrib.auth.models import User
 from apps.plus_groups.models import TgGroup
+from apps.plus_permissions.default_agents import get_all_members_group
 
 load_all()
 
@@ -47,7 +48,9 @@ def make_file_name(id,uid) :
     
     return "nofile"
 
+log = []
 def import_all(all) :
+  
     for folder in all :
         print
 
@@ -70,28 +73,58 @@ def import_all(all) :
                 creator = main
                 f_name=make_file_name(folder['id'],folder['uid']) 
 
-                create_resource(container, creator, folder['id'], f_name, folder, tags)
-
+                try :
+                    create_resource(container, creator, folder['id'], f_name, folder, tags)
+                except Exception, e:
+                    print e
+                    import ipdb
+                    ipdb.set_trace()
+                    log.append(folder['uid'])
 
             elif main.__class__ == TgGroup :
                 print "((()))",tags
                 container = main
                 creator = get_user_for(folder['creatoruid'])
+                site_hosts = get_all_members_group().get_admin_group()
+                if not creator.is_member_of(site_hosts) :
+                    site_hosts.add_member(creator)
+                    flag = True
+                else :
+                    flag = False
+
                 f_name = make_file_name(folder['id'],folder['uid'])
-                create_resource(container, creator, folder['id'], f_name, folder, tags)
-                
+                try :
+                    create_resource(container, creator, folder['id'], f_name, folder, tags)
+                except Exception, e :
+                    print e
+                    import ipdb
+                    ipdb.set_trace()
+                    log.append(folder['uid'])
+
+                if flag :
+                    site_hosts.remove_member(creator)
+
+
+
         if reverse.has_key(folder['parentuid']) :
             par = folder['parentuid']
             print ("parent: (%s,%s)" % (e_type(par),title(par))).encode('utf-8')
             
     
-
+        print "Errors"
+        print log
 #print "Folders"
 #list_all(maps['Folder'])
 
 print "_________________________________________________"
 print "Files"
 try :
+    
+    # this is still our problem 
+    print reverse['d5e427e5a91bf09b160cb4d4254c094f'] 
+    import ipdb
+    ipdb.set_trace()
+    # now do it
     import_all(maps['File'])
 except Exception, e:
     print e
@@ -99,3 +132,4 @@ except Exception, e:
     ipdb.set_trace()
 
 print len(maps['File'])
+print log

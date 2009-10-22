@@ -4,6 +4,6 @@
     <h3>{% trans "Search" %}</h3>
     <form action="{% url explore %}">
       <input name="search" type="text" class="text" value="" /> <input class="button" type="submit" value="{% trans 'Search'%}" /><br />
-      {% if search_type %}<input name="current_area" type="checkbox" checked="checked" value="{{search_type}}" />{{search_type_label}} only<br /> {% endif %}
+      {% if search_type %}<input id="current_area" name="current_area" type="checkbox" class="checkbox" checked="checked" value="{{search_type}}" /> <label for="current_area">{{search_type_label}} only</label>{% endif %}
     </form>
 </div>

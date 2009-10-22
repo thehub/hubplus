@@ -43,6 +43,7 @@ def get_obj_for(cls, uid) :
 def get_group_for(uid) :
     return get_obj_for(TgGroup,uid)
 
+
 def get_user_for(uid):
     return get_obj_for(User,uid)
 
@@ -106,12 +107,17 @@ def get_top_container(uid, path, tags) :
 
 
 # Tags
-def strip_out(s,bads) :
+def strip_out(s,bads="""/,"':()[]*\%\\;""") :
     return ''.join([c for c in s if (c not in bads)])
+
 
 from apps.plus_tags.models import tag_add
 
-stop_words = ['of','the','and','in','-','a','at','for','&','after','le','la','dans','les','with','to','de']
+stop_words = ['of','the','and','in','-','a','at','for','&','after','le','la','dans','les','with','to','de','against','all','or','set','up','lets','are']
+
+substitutes = {
+  'set' : 'setup',
+}
 
 def flatten(build,s,sep) :
     reg = re.compile('[%s]'%sep)
@@ -124,7 +130,7 @@ def flatten(build,s,sep) :
 def tag_words(s) :
     build = set([])
     for t in s.split(' ') :
-        t = strip_out(t,'/,"')
+        t = strip_out(t)
         flatten(build,t,'._')
     return [tag.lower() for tag in build if not (tag.lower() in stop_words)]
 
@@ -188,55 +194,43 @@ def get_creator(dict) :
 
 from django.db import transaction
 
+dangerous_groups = [
+    '4b07ac6578c646b8137093c3af28af40', 'b4f5dc9f7ed346670ea45a9e071035ba', '113840727ead372ec7907f9be03045cf',
+    '4436a8e6ae234a651e9ed9f5e262a5b7', 'a3f1a031ca3fc3230b38e385b2a9a952', 'ef7a83affae2c383ad47e054be20cc00', 
+    '0ca440331febc48b9ceaad5c64c8f518', 'ab1ad411218ba8905749630c1da13d88', '27d915bf664b73b2beadea9becce89e9', 
+    'c73bfd9875c8efcd3da090bf52ceb356', '514bc9de0fb24c2192cbc9a35286796e',
+
+]
+
 @transaction.commit_on_success
 def create_resource(top_container, creator, title_and_type, f_name, folder, tags=[]) :
-    if ( folder['uid'] == 'b4f5dc9f7ed346670ea45a9e071035ba' or 
-         folder['uid'] == '113840727ead372ec7907f9be03045cf' or 
-         folder['uid'] == '4436a8e6ae234a651e9ed9f5e262a5b7' or 
-         folder['uid'] == 'a3f1a031ca3fc3230b38e385b2a9a952' or 
-         folder['uid'] == 'ef7a83affae2c383ad47e054be20cc00' or 
-         folder['uid'] == '0ca440331febc48b9ceaad5c64c8f518' or
-         folder['uid'] == 'ab1ad411218ba8905749630c1da13d88' or
-         'Training' in folder['title'] or
-         folder['uid'] == '27d915bf664b73b2beadea9becce89e9'):
-        return False
-    try :
-        title = title_and_type.split('/')[-1]
-        title = title.split('.',1)[0]
-        name = make_name(title)
-        print "Title %s, name %s, created by %s" % (title,name,creator.username)
-        desc = ''
-        license = 'Copyright 2009, Psychosocial Network'
-        author = ''
-    
-        f = File(open('mhpss_export/files/%s'%f_name,'rb'))
+    #if 'iasc' not in tags : return False  # XXX temporary ... to focus on iasc
 
-        if folder['uid'] == 'a3f1a031ca3fc3230b38e385b2a9a952' :
-            import ipdb
-            ipdb.set_trace()
-        try :
-            resource = get_or_create(creator, top_container,
-                             resource=f, title=title, name=name, description=desc,
-                             license=license, author=author, stub=False)
+    #if folder['uid'] in dangerous_groups :
+    #    import ipdb
+    #    ipdb.set_trace()
+
+    title = title_and_type.split('/')[-1]
+    title = title.split('.',1)[0]
+    name = make_name(title)
+    print "Title %s, name %s, created by %s" % (title,name,creator.username)
+    desc = ''
+    license = 'not specified'
+    author = ''
+    
+    f = File(open('mhpss_export/files/%s'%f_name,'rb'))
+
+    resource = get_or_create(creator, top_container,
+                                 resource=f, title=title, name=name, description=desc,
+                                 license=license, author=author, stub=False)
        
-            resource.save()
-        except :
-            import ipdb
-            ipdb.set_trace()
-            resource = get_or_create(creator, top_container,
-                                     resource=f, title=title, name=name, description=desc,
-                                     license=license, author=author, stub=False)
-            resource.save()
-        f.close()
-        tag_with(resource, creator, tags, 'folder')
-        return True
+    resource.save()
     
-    except Exception, e:
-        print "******%s",e
-        import ipdb 
-        ipdb.set_trace()
-        return False
+    f.close()
+    tag_with(resource, creator, tags, 'folder')
+    return True
     
+        
 
 def load_all() :
     load_file('Folder','mhpss_export/folders.pickle')

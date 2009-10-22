@@ -32,18 +32,18 @@
 </div>
 
 <div id="content_extra">
-  <ul id="meta">
+  <ul id="meta"  class="yui-skin-sam">
     <li>
-      <dt>{% trans "Title" %}:</dt>
-      <dd>{{resource.title}}</dd>
+      {% editable "Title" resource 'title' 'Title' %}
     </li>
     
     <li>
+      {% autoescape off %}
       {% editable "Description" resource 'description' 'About this document'%}
+      {% endautoescape %}
     </li>
     <li>
-      
-      <dl>   {% plus_tag 'Tags' 'folder_name'  resource  request.user %}</dl>
+      <dl>   {% plus_tag 'Tags' ''  resource  '' %}</dl>
     </li>
     <li>
       {% editable "License" resource 'license' 'License'%}
