@@ -113,7 +113,11 @@ def strip_out(s,bads="""/,"':()[]*\%\\;""") :
 
 from apps.plus_tags.models import tag_add
 
-stop_words = ['of','the','and','in','-','a','at','for','&','after','le','la','dans','les','with','to','de','against','all']
+stop_words = ['of','the','and','in','-','a','at','for','&','after','le','la','dans','les','with','to','de','against','all','or','set','up','lets','are']
+
+substitutes = {
+  'set' : 'setup',
+}
 
 def flatten(build,s,sep) :
     reg = re.compile('[%s]'%sep)
