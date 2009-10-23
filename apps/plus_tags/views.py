@@ -15,6 +15,7 @@ from django.contrib.contenttypes.models import ContentType
 from apps.plus_permissions.api import secure_resource
 
 
+
 @login_required
 @secure_resource(obj_schema={'tagged':'any', 'tagged_for':[User, TgGroup]})
 def add_tag(request, tagged, tagged_for=None, tag_string=None):

@@ -2,7 +2,7 @@ from django.http import HttpResponse, HttpResponseRedirect, HttpResponseForbidde
 from django.template import RequestContext
 from django.shortcuts import render_to_response, get_object_or_404
 from django.utils.translation import ugettext_lazy as _
-from apps.plus_tags.models import top_tags, get_resources_for_tag_intersection, get_intersecting_tags
+from apps.plus_tags.models import get_resources_for_tag_intersection, get_intersecting_tags, scale_tag_weights
 from apps.plus_groups.models import TgGroup
 from django.core.urlresolvers import reverse
 from haystack.query import RelatedSearchQuerySet, EmptySearchQuerySet
@@ -29,7 +29,7 @@ def index(request, template_name="plus_explore/explore.html"):
 
     side_search = side_search_args('', '')
     
-    return render_to_response(template_name, {'head_title':_('Explore'), 'tags':top_tags(), 'search_args':side_search}, context_instance=RequestContext(request))
+    return render_to_response(template_name, {'head_title':_('Explore'), 'search_args':side_search}, context_instance=RequestContext(request))
 
 def get_virtual_groups():
     return TgGroup.objects.filter(place__name=settings.VIRTUAL_HUB_NAME, level='member')
@@ -127,6 +127,7 @@ def plus_search(tags, search, search_types, order, in_group=None, extra_filter=N
 
     if 'All' in results_map:
         tag_intersection = get_intersecting_tags(results_map['All'], n=15)
+
         if len(search_types) > 1:
             for typ, info in search_types:
                 if info[0]:

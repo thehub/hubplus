@@ -40,7 +40,7 @@ import itertools
 #separate params for searches
 
 @secure_resource(TgGroup)
-def group_resources(request, group, tag_string='', template_name='plus_explore/explore_filtered.html', current_app='plus_groups'):
+def group_resources(request, group, tag_string='', template_name='plus_explore/explore_filtered.html', current_app='plus_groups', **kwargs):
     tags = tag_string.split('+')
     search = request.GET.get('search', '')
     order = request.GET.get('order', '')

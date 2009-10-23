@@ -1,28 +1,23 @@
-# tags and shading/scaling
+# tag intersection shading
 # side bar clouds 
+
+# paginate tabs separately
+# -- if results set empty, include tag cloud
+
 
 # ordering
 # fulltext search b) - write template
 #                    - reindex
 
 
-# paginate tabs separately
-# -- if results set empty, include tag cloud
-
-
 # groups to change urls from ints to group_names
-
-
- 
 # create a form to validate search term and order and current
 # permission based filtering - need to do this efficiently
-# re-write load_all to return a sqlQuery object + play nicely with pagination
-# show tab pagination - even if less that X results
-
-
 # index pdfs / Office docs
 
+
 # Later
+# re-write load_all to return a sqlQuery object + play nicely with pagination
 # search different sites from one index server using "site" attribute of SearchQuerySet 
 # -- listing of members / hosts of a group 
 # -- Optimisation - Implement an indexing queuing/batching, to avoid solr "merging" churn when there are a lot of writes
