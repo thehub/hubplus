@@ -6,7 +6,7 @@
 {% load uni_form %}
 
 {% block page_title %}
-{% trans "Invite " %}{% if site_name %}{% trans "to " %}{{ site_name }}{% endif %}
+{% trans "Invite " %}{% if SITE_NAME %}{% trans "to " %}{{ SITE_NAME }}{% endif %}
 {% endblock %}
 
 {% block body %}
@@ -15,18 +15,18 @@
 	
   <form class="full uniForm" id="invite_non_member_form" method="post" action="{% url site_invite %}">
 
-    <p>{% blocktrans %}Please enter the name and email of someone to invite to {% endblocktrans %}{% if site_name %}{{ site_name }}{% else %}site{% endif %}</p>
+    <p>{% blocktrans %}Please enter the name and email of someone to invite to {% endblocktrans %}{% if SITE_NAME %}{{ SITE_NAME }}{% else %}site{% endif %}</p>
     <fieldset>
       <ul>
 	<li>
-	  {{ form.username.errors }}
 	  <label for="id_username"><span class="required">*</span> {% trans "Name" %}</label>
 	  <input  id="id_username" name="username" class="text" type="text" />
+	  {{ form.username.errors }}
 	</li>
 	<li>
-	  {{ form.email_address.errors}} 
 	  <label for="id_email_address"><span class="required">*</span> {% trans "Email" %}</label>
 	  <input id="email_address" name="email_address" class="text" type="text" />
+	  {{ form.email_address.errors}}
  	</li>
 
 	<li class="checkboxes">
@@ -35,7 +35,7 @@
 	  <div class="label_extended">
 	    {{ form.which_hub.errors }}
 	    <label for="physical_hub">{% blocktrans %}Invite to a specific {{HUB_NAME}}{% endblocktrans %}.</label>
-	    <select style="display: none;" id="group" name="group">
+	    <select id="group" name="group">
 	      <option value="" readonly="readonly" selected="selected">Please select a {{HUB_NAME}}...</option>
 	      {% for h in hubs %}
 	      <option value="{{h.group_name}}">{{h.display_name}}</option>
@@ -46,7 +46,7 @@
 	</li>
       </ul>
     </fieldset>
-    <input class="submit button" type="submit" value="{% trans "Invite to" %} {% if site_name %}{{ site_name }}{% else %}site{% endif %}" />
+    <input class="submit button" type="submit" value="{% trans "Invite to" %} {% if SITE_NAME %}{{ SITE_NAME }}{% else %}site{% endif %}" />
     
   </form>
 

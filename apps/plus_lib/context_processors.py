@@ -14,13 +14,14 @@ def configs(context):
             'PROJECT_THEME': settings.PROJECT_THEME,
             'WELCOME_PAGE' : 'clients/%s/welcome.html' % settings.PROJECT_THEME,
             'INTRO_BAR' : 'clients/%s/intro_bar.html' % settings.PROJECT_THEME,
-            'site_name' : settings.PROJECT_NAME,
+            'SITE_NAME' : settings.PROJECT_NAME,
             'HUB_NAME' : hub_name(),
             'HUB_NAME_PLURAL' : hub_name_plural(),
             "MAIN_HUB_NAME" : main_hub_name(),
             'PROJECT_NAME' : settings.PROJECT_NAME,
             'current_area': get_area(context),
-            'support_email' : settings.SUPPORT_EMAIL,
+            'SUPPORT_EMAIL' : settings.SUPPORT_EMAIL,
+            'EXPLORE_NAME' : settings.EXPLORE_NAME, 
             }
 
         return SETTINGS

@@ -1,7 +1,7 @@
 {% load i18n %}
 
 <h2>{% trans "Permissions" %}</h2>
-<p>{% blocktrans %}Change permissions on this {{current_label}} {% endblocktrans %}</p>
+<p>{% blocktrans %}Change permissions on this {{current_label}}. {% endblocktrans %}</p>
 
 {% if is_agent %}{% else %}
 <form id="customize_permissions" action="{% url customize %}">
@@ -72,6 +72,7 @@
   {% endfor %}
   </div>
 </div>
+<p class="extra">{% blocktrans %}Drag the sliders up and down to the desired group to change your settings. Your changes will be saved automatically.{% endblocktrans %}</p>
 <script type="text/javascript">new YAHOO.widget.TabView("permissions_tabs");</script>
 <!-- end permissions_tabs -->
 

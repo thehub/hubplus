@@ -9,13 +9,18 @@
 				<li>
 					<dl>
 						<dt><label for="message_recipient"><span class="required">*</span> {% trans 'To' %}</label></dt>
-						<dd><input type="text" id="message_recipient" name="recipient"/></dd>
+						<dd><input type="text" id="message_recipient" name="recipient"/>
+						<!-- error here -->
+						</dd>
 					</dl>
 				</li>
 				<li>
 					<dl>
 						<dt><label for="message_subject"><span class="required">*</span> {% trans 'Subject' %}</label></dt>
-						<dd><input type="text" id="message_subject" name="subject"/></dd>
+						<dd>
+							<input type="text" id="message_subject" name="subject"/>
+							<!-- error here -->
+						</dd>
 					</dl>
 				</li>
 			</ul>

@@ -33,6 +33,11 @@ form ul li.last {
 	margin-bottom	: 0;
 }
 
+.extra {
+	font-size	: 0.9em;
+	padding-bottom	: 3px;
+}
+
 label .extra {
 	font-size	: 0.8181em;
 }
@@ -185,6 +190,26 @@ form.full .custom_labels .label_extended {
 
 form.full .custom_labels .label_extended input.text {
 	width		: 190px;
+}
+
+
+/* Forms: Errors */
+
+.error_message,
+.errorlist,
+.error_message_large {
+	display		: block;
+	color		: #a30000;
+}
+
+.error_message_large {
+	background	: #eee;
+	margin-bottom	: 15px;
+	padding		: 10px 20px;
+}
+
+form.full ul.errorlist {
+	margin-left	: 240px;
 }
 
 

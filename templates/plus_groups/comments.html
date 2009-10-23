@@ -38,7 +38,7 @@
         {% if request.user.is_authenticated %}
 		You do not have permissions to comment on this group.
     	{% else %}
-		<p class="extra">You must be logged in to comment on {{site_name}}. Group Hosts may set who can comment. <!--a href="{% url acct_login %}">{% trans "Log in" %}</a--></p>
+		<p class="extra">You must be logged in to comment on {{SITE_NAME}}. Group Hosts may set who can comment. <!--a href="{% url acct_login %}">{% trans "Log in" %}</a--></p>
     	{% endif %}
     {% endif %}
 
