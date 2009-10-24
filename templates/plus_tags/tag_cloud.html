@@ -1,0 +1,5 @@
+<ol class="tag_list large">
+  {% for tag in tags %}
+  <li><a href="{% url explore_filtered tag.keyword %}" class="tag pop{{tag.level}}">{{tag.keyword}}</a></li>
+  {% endfor %}
+</ol>

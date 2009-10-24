@@ -10,7 +10,6 @@ def make_file_name(id,uid) :
     if '.' in id :
         fids = id.split('.')
         ext = fids[-1]
-        #'.'.join(fids[1:])
         
         if ext == 'doc' or ext == 'DOC':
             ext = 'msword'
@@ -113,19 +112,11 @@ b                try :
     
         print "Errors"
         print log
-#print "Folders"
-#list_all(maps['Folder'])
 
 print "_________________________________________________"
 print "Files"
 try :
-    
-    # this is still our problem 
-    print reverse['d5e427e5a91bf09b160cb4d4254c094f'] 
-    import ipdb
-    ipdb.set_trace()
-    # now do it
-    import_all(maps['File'])
+        import_all(maps['File'])
 except Exception, e:
     print e
     import ipdb
