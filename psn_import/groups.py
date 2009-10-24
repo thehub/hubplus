@@ -5,6 +5,7 @@ import pickle
 from apps.plus_groups.models import TgGroup, Location
 from apps.plus_lib.utils import make_name
 from apps.plus_permissions.default_agents import get_admin_user, get_site, get_or_create_root_location
+from psn_import.utils import psn_group_name
 
 root = get_or_create_root_location()
 
@@ -30,9 +31,7 @@ def import_group(f_name, group_type, fn_place) :
             description = 'About this group'
 
         display_name = g['groupname']
-        group_name = make_name(display_name)
-        if len(group_name)>30 :
-            group_name = group_name[:30]
+        group_name = psn_group_name(display_name)
         psn_id = g['uid']
 
         keywords = g['keywords']

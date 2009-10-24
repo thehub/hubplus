@@ -11,5 +11,10 @@ for t in Tag.objects.all() :
     elif t.keyword in stop_words :
         print "deleting %s"%t.keyword, 
         t.delete()
+    elif not t.keyword :
+        print 'deleting empty tag %s , %s' % (t.id, t.keyword)
+    if t.tag_type == 'folder' :
+        t.tag_type = ''
+        t.save()
         
 
