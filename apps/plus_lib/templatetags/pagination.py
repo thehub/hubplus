@@ -72,12 +72,12 @@ def plus_paginate(context, listing_args, window=DEFAULT_WINDOW):
         high = page_obj.number + window
         pages = set(page_range[low:high])
         if listing_args['tag_string']:
-            if listing_args['group_id']:
+            if listing_args.get('group_id', False):
                 url = reverse(listing_args['tagged_url'], args=[listing_args['group_id'], listing_args['tag_string']])
             else:
                 url = reverse(listing_args['tagged_url'], args=[listing_args['tag_string']])
         else:
-            if listing_args['group_id']:            
+            if listing_args.get('group_id', False):
                 url = reverse(listing_args['search_url'], args=[listing_args['group_id']])
             else:
                 url = reverse(listing_args['search_url'])

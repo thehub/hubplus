@@ -212,7 +212,7 @@ var profile_ready = function () {
     wiki_edit();
     editing();
     setup_tag_lists();
-    jq('#resources .add_tag, #resources .delete_tag, #resources .clear_tag, .pagination a').live('click', function () {
+    jq('#resources .add_tag, #resources .delete_tag, #resources .clear_tag, #resources .pagination a').live('click', function () {
 	jq('.tabbed_content #resources').load(jq(this).attr('href') + ' form');
 	return false;
     });
