@@ -315,7 +315,12 @@ try :
             TgGroup and then we'd end up with a create_Comment method on TgGroup which would wrap the call to the 
             comment library."""
             pass
-            
+
+        def is_hub_type(self) :
+            from apps.plus_permissions.default_agents import get_all_members_group
+            if self.place.name != get_all_members_group() :
+                return True
+            return False
 
         def get_extras(self) :
             # if there are extras for this class, return them

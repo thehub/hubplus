@@ -11,6 +11,7 @@ from django.utils.translation import ugettext as _
 from apps.plus_permissions.models import GenericReference
 from apps.plus_groups.models import TgGroup
 
+from apps.plus_lib.utils import hub_name
 def _get_next(request):
     """
     The part that's the least straightforward about views in this module is how they 
@@ -41,9 +42,13 @@ def change(request, extra_context={}, next_override=None, group_id=None):
     target = target_obj.get_ref()
     if isinstance(target_obj,TgGroup) :
         target_type = 'group'
+        if target_obj.is_hub_type() :
+            from_name = hub_name()
+        else :
+            from_name = "Group"
     else :
         target_type = 'user'
-
+        from_name = "Profile"
 
     avatars = Avatar.objects.filter(target=target).order_by('-primary')
     if avatars.count() > 0:
@@ -86,6 +91,7 @@ def change(request, extra_context={}, next_override=None, group_id=None):
               'next': next_override or _get_next(request),
               'target' : target_obj,
               'target_type' : target_type,
+              'from_name' : from_name,
               }
         )
     )
