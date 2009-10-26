@@ -39,6 +39,11 @@ def change(request, extra_context={}, next_override=None, group_id=None):
 
 
     target = target_obj.get_ref()
+    if isinstance(target_obj,TgGroup) :
+        target_type = 'group'
+    else :
+        target_type = 'user'
+
 
     avatars = Avatar.objects.filter(target=target).order_by('-primary')
     if avatars.count() > 0:
@@ -80,6 +85,7 @@ def change(request, extra_context={}, next_override=None, group_id=None):
               'primary_avatar_form': primary_avatar_form,
               'next': next_override or _get_next(request),
               'target' : target_obj,
+              'target_type' : target_type,
               }
         )
     )
