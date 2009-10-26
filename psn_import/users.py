@@ -68,16 +68,15 @@ for u in users:
 
     f = ImageFile(open('mhpss_export/user_images/%s'%portrait),'rb')
     if f.size == 1357 :
-        continue
+        continue # image is plone default ... we don't want it
 
-    path = avatar_file_path(user=user, filename=portrait)
+    path = avatar_file_path(target=user, filename=portrait)
  
     avatar = Avatar(
-        user = user,
+        target = user.get_ref(),
         primary = True,
         avatar = path,
         )
-
 
     avatar.save()
 

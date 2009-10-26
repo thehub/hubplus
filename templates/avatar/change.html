@@ -12,7 +12,7 @@
   {% if not avatars %}
 	<h4>Current picture</h4>
 	<p class="extra">Your profile picture is currently the {{ SITE_NAME }} default, upload a your own below.</p>
-	<div id="avatar_current" class="thumb medium">{% avatar user 80 %}</div>
+	<div id="avatar_current" class="thumb medium">{% avatar target 80 %}</div>
     {% else %}
 
 	<form id="avatar_current" method="POST" action="">
@@ -36,10 +36,15 @@
         </fieldset
         <input type="submit" class="button" value="{% trans "Upload picture" %}" />
     </form>
-	<a href="{% url profile_detail user.username %}">{% trans "Back to Profile" %}</a>
+
+    {% ifequal target_type 'group' %}
+       <a href="{% url plus_groups:group target.id %}">{% trans "Back to "%}{{HUB_NAME}}</a>
+    {% else %}
+       <a href="{% url profile_detail target.username %}">{% trans "Back to Profile" %}</a>
+    {% endifequal %}
 </div>
 {% endblock %}
-
+ 
 {% block extra_body %}
     {% load jquery_validation %}
     {% include_validation %}

@@ -16,6 +16,7 @@ def load_file(type,f_name) :
 
 
 def list_type(type,fields) :
+    # list some fields from a particular type
     if 'all' in fields :
         print maps[type][0].keys()
     for x in maps[type] :
@@ -113,7 +114,7 @@ def strip_out(s,bads="""/,"':()[]*\%\\;""") :
 
 from apps.plus_tags.models import tag_add
 
-stop_words = ['of','the','and','in','-','a','at','for','&','after','le','la','dans','les','with','to','de','against','all','or','set','up','lets','are']
+stop_words = ['of','the','and','in','-','a','at','for','&','after','le','la','dans','les','with','to','de','against','all','or','set','up','lets','are','from','']
 
 substitutes = {
   'set' : 'setup',
@@ -134,10 +135,10 @@ def tag_words(s) :
         flatten(build,t,'._')
     return [tag.lower() for tag in build if not (tag.lower() in stop_words)]
 
-def tag_with_folder_name(obj, creator, folder_name, tag_type='folder') :
+def tag_with_folder_name(obj, creator, folder_name, tag_type='') :
     tag_with(obj, creator, tag_words(folder_name), tag_type)
 
-def tag_with(obj, creator, tags, tag_type='folder') :
+def tag_with(obj, creator, tags, tag_type='') :
     for tw in tags :
         tag_add(obj, tag_type, tw, creator)
 
@@ -192,6 +193,12 @@ def title(uid) :
 def get_creator(dict) :
     return get_user_for(dict['creatoruid'])
 
+def swap_extension(old_file_name, new_ext) :
+    parts = old_file_name.split('.')
+    parts[-1] = new_ext
+    return '.'.join(parts)
+
+
 from django.db import transaction
 
 dangerous_groups = [
@@ -199,12 +206,10 @@ dangerous_groups = [
     '4436a8e6ae234a651e9ed9f5e262a5b7', 'a3f1a031ca3fc3230b38e385b2a9a952', 'ef7a83affae2c383ad47e054be20cc00', 
     '0ca440331febc48b9ceaad5c64c8f518', 'ab1ad411218ba8905749630c1da13d88', '27d915bf664b73b2beadea9becce89e9', 
     'c73bfd9875c8efcd3da090bf52ceb356', '514bc9de0fb24c2192cbc9a35286796e',
-
 ]
 
 @transaction.commit_on_success
 def create_resource(top_container, creator, title_and_type, f_name, folder, tags=[]) :
-    #if 'iasc' not in tags : return False  # XXX temporary ... to focus on iasc
 
     #if folder['uid'] in dangerous_groups :
     #    import ipdb
@@ -218,7 +223,12 @@ def create_resource(top_container, creator, title_and_type, f_name, folder, tags
     license = 'not specified'
     author = ''
     
-    f = File(open('mhpss_export/files/%s'%f_name,'rb'))
+    try :
+        f = File(open('mhpss_export/files/%s'%f_name,'rb'))
+    except Exception, e:
+        # in at least one case we seem to have a zip file instead of the file refered in the data
+        f_name = swap_extension(f_name,'zip')
+        f = File(open('mhpss_export/files/%s'%f_name,'rb'))
 
     resource = get_or_create(creator, top_container,
                                  resource=f, title=title, name=name, description=desc,
@@ -227,7 +237,7 @@ def create_resource(top_container, creator, title_and_type, f_name, folder, tags
     resource.save()
     
     f.close()
-    tag_with(resource, creator, tags, 'folder')
+    tag_with(resource, creator, tags, '')
     return True
     
         
@@ -238,4 +248,4 @@ def load_all() :
     load_file('Group','mhpss_export/groups.pickle')
     load_file('Hub','mhpss_export/hubs.pickle')
     load_file('File','mhpss_export/files.pickle')
-
+    load_file('Document','mhpss_export/documents.pickle')

@@ -23,6 +23,7 @@ class TagItem(models.Model):
     tag = models.ForeignKey(Tag)
     ref = models.ForeignKey(GenericReference)
     tagged_by = models.ForeignKey(User, related_name="tags_created")
+    keyword = models.TextField(max_length=50, null=True) # duplicated here for quick querying purposes
     def obj(self):
         return self.ref.obj
 
@@ -41,7 +42,7 @@ def get_resources_for_tag_intersection(keywords):
     items = GenericReference.objects
     if keywords:
         for keyword in keywords:
-            items = items.filter(tag__keyword=keyword)
+            items = items.filter(tag__keyword=keyword).distinct()
     return items
 
 def get_tags_for_object(tagged, user):
@@ -52,52 +53,89 @@ def get_tags_for_object(tagged, user):
 
 from django.db.models import Count
 
+
+def scale_tag_weights(tag_counts, levels=8):
+    n = tag_counts.count()
+    start_index = 0
+    weighted_tags = []
+    for level in range(1, levels+1):
+        end_index = n/levels*level
+        #deal with any remainder by putting them on the top level - otherwise we could use floats and rounding here
+        if level == levels:
+            end_index = n
+        previous_max_count = tag_counts[max(start_index-1, 0)]['count']
+        for annot in tag_counts[start_index:end_index]:
+            if annot['count'] == previous_max_count:
+                annot['level'] = max(level - 1, 1)  
+            else:
+                annot['level'] = level
+            weighted_tags.append(annot)
+        start_index = end_index
+    
+    return weighted_tags
+
 def keyword_sort(A, B):
     if A['keyword']<B['keyword']:
         return -1
     return 1
 
-
-def top_tags(n=50, levels=18):
-
-    tags = get_tags()
-
-    n = min(n, tags.count())
-    tag_counts = tags.values('keyword').annotate(count=Count('items')).order_by('count')[:n]
-    level_boundaries = []
-    for level in range(1, levels+1):
-        level_boundaries.append((n/levels)*level)
-
-    current_count = 1 
-    current_level = 1
-    index = 0
-    tag_cloud_list = []
-    for annot in tag_counts:
-        tag_cloud_list.append(annot)
-        if current_level > len(level_boundaries) :
-            # XXX what do we do here?
-            pass
-        else :
-            if annot['count'] > current_count and index>level_boundaries[current_level-1]:
-                current_level += 1
-        current_count = annot['count']
-        annot['level'] = current_level
-        index += 1
-
-    tag_cloud_list.sort(keyword_sort)
-    
-    return tag_cloud_list
+def tag_counts(n=50, tag_set=None):
+    counts = tag_set.values('keyword').annotate(count=Count('items')).order_by('count')
+    count = counts.count()
+    min_count = max(count-n, 0)
+    return counts[min_count:count]
 
 
-def get_intersecting_tags(items, n=10):
+from django.db.models.query import QuerySet
+
+def counts_sort(a, b):
+    if a['count'] > b['count']:
+        return -1
+    return 1
+
+def get_intersecting_tags(items, n=10, levels=8):
     #get the tags on these items, these should not be distinct but one tag per intersection
     # may need to get all the "TagItems here"
     try:
         total = items.count()
     except TypeError:
         total = len(items)
-    keywords_count = Tag.objects.filter(items__in=items).values('keyword').annotate(num_keyword=Count('keyword')).exclude(num_keyword=total)
-    top_intersections = keywords_count.order_by('-num_keyword')[:n]
+
+    # the problem with below is that when you have a single item that is tagged more than once with the same keyword - inflating the count
+    # i.e. with different tag_type, or tagged_for different users
+
+    # keywords_count = Tag.objects.filter(items__in=items).values('keyword').annotate(count=Count('keyword')).exclude(count=total)
+
+    # solution a) immediate -- add keyword to each tag_item and count tag_items by distinct (ref, keyword) combinations
+    #          b) 'a)' will not work when we need to count only items in a user's tagspace or of a particular type. 
+    #             This could be rectified by filtering tag_items by certain tag types 
+    #             OR creating a join/view of tag_items with tag_types which can then be queried.  The former is preferable if practical within the ORM constraints 
+
+    #if not isinstance(items, QuerySet):
+    #    items = GenericReference.objects.filter(id__in=items)
+
+    keywords_count = TagItem.objects.filter(ref__in=items).values('keyword', 'ref').distinct()  #keywords_count.annotate(count=Count('keyword')).exclude(count=total)
+    counts = {}
+    # not how I wanted to do it. -- maybe very inefficient with large datasets
+    for entry in keywords_count:
+        counts.setdefault(entry['keyword'], {'keyword':entry['keyword'], 'count':0})
+        counts[entry['keyword']]['count'] += 1
+        if counts[entry['keyword']]['count'] == total:
+            del counts[entry['keyword']]
+            
+
+    #top_intersections = keywords_count.order_by('-count')[:n]
+    counts = counts.values()
+    counts.sort(counts_sort)
+    top_intersections = counts[:n]
+
+    if top_intersections:
+        max_level = top_intersections[0]['count']
+
+        for tag in top_intersections:
+            level = int(round((tag['count']/float(max_level)*levels)))
+            tag['level'] = level and level or 1 
+
     return top_intersections
 
 def get_tags(tagged=None, tag_type=None, tag_value=None, tagged_for=None, tagged_by=None, partial_tag_value=None):
@@ -137,10 +175,11 @@ def tag_add(tagged, tag_type, tag_value, tagged_by, tagged_for=None):
     if not tagged_for:
         tagged_for = tagged_by.get_ref()
 
+    keyword = tag_value.lower()
     #does the tag already exist?
     try:
         tag = Tag.objects.get(tag_type=tag_type,
-                              keyword=tag_value.lower(),
+                              keyword=keyword,
                               tagged_for=tagged_for)
     except Tag.DoesNotExist:
         #create it!
@@ -156,6 +195,7 @@ def tag_add(tagged, tag_type, tag_value, tagged_by, tagged_for=None):
     except GenericReference.DoesNotExist:
         tag_item = TagItem(ref=tagged.get_ref(),
                            tag=tag,
+                           keyword=keyword,
                            tagged_by=tagged_by)
         tag_item.save()
         return (tag, True) 
