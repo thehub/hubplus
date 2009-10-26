@@ -83,6 +83,7 @@ def group(request, group, template_name="plus_groups/group.html", current_app='p
     message = False
     add_link = False
     can_tag = False
+    can_change_avatar = False
 
     if user.is_authenticated():
         if user.is_direct_member_of(group.get_inner()):
@@ -127,6 +128,12 @@ def group(request, group, template_name="plus_groups/group.html", current_app='p
             print e
             pass
 
+        try :
+            group.change_avatar
+            can_change_avatar  = True
+        except Exception, e:
+            pass
+
 
     tweets = TweetInstance.objects.tweets_from(group).order_by("-sent") 
     if tweets :
@@ -167,6 +174,7 @@ def group(request, group, template_name="plus_groups/group.html", current_app='p
             "message" : message,
             "add_link" : add_link,
             "can_tag" : can_tag,
+            "can_change_avatar" : can_change_avatar,
             "hosts": hosts,
             "host_count": host_count,
             "tweets" : tweets,
