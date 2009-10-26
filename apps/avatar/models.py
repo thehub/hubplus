@@ -6,6 +6,8 @@ from django.contrib.auth.models import User
 from django.core.files.base import ContentFile
 from django.utils.translation import ugettext as _
 
+from apps.plus_permissions.models import GenericReference
+
 try:
     from cStringIO import StringIO
 except ImportError:
@@ -22,25 +24,44 @@ except ImportError:
 
 from avatar import AVATAR_STORAGE_DIR, AVATAR_RESIZE_METHOD
 
-def avatar_file_path(instance=None, filename=None, user=None):
-    user = user or instance.user
-    return os.path.join(AVATAR_STORAGE_DIR, user.username, filename)
+def avatar_file_path(instance=None, target=None, filename=''):
+    if target :
+        name= target_name(target)
+    else :
+        name = instance.target_name()
+    return os.path.join(AVATAR_STORAGE_DIR, name, filename)
+
+def target_name(target) :
+    if target.__class__.__name__ == 'GenericReference' :
+        target = target.obj
+    if target.__class__.__name__ == 'User' :
+        return '%s'% target.username
+    elif target.__class__.__name__ == 'TgGroup' :
+        return '%s'% target.group_name
+    else :
+        raise Exception("An avatar is attached to something (%s,%s), but can't get a name for it."%(target.__class__.__name__,target.id))
+
 
 class Avatar(models.Model):
-    email_hash = models.CharField(max_length=128, blank=True)
-    user = models.ForeignKey(User)
+
+    # XXX we want to get rid of user, but leave it here until we've moved data across
+    user = models.ForeignKey(User,null=True)
+    target = models.ForeignKey(GenericReference, null=True)
+
     primary = models.BooleanField(default=False)
     avatar = models.ImageField(max_length=1024, upload_to=avatar_file_path, blank=True)
     date_uploaded = models.DateTimeField(default=datetime.datetime.now)
     
+    def target_name(self) :
+        target = self.target.obj
+        return target_name(target)
+
     def __unicode__(self):
-        return _(u'Avatar for %s') % self.user
+        return _(u'Avatar for %s') % self.target_name()
     
     def save(self, force_insert=False, force_update=False):
-        self.email_hash = md5(self.user.email).hexdigest().lower()
         if self.primary:
-            avatars = Avatar.objects.filter(user=self.user, primary=True)\
-                .exclude(id=self.id)
+            avatars = Avatar.objects.filter(target=self.target, primary=True).exclude(id=self.id)
             avatars.update(primary=False)
         super(Avatar, self).save(force_insert, force_update)
     
@@ -75,5 +96,5 @@ class Avatar(models.Model):
         return self.avatar.storage.url(self.avatar_name(size))
     
     def avatar_name(self, size):
-        return os.path.join(AVATAR_STORAGE_DIR, self.user.username,
+        return os.path.join(AVATAR_STORAGE_DIR, self.target_name(),
             'resized', str(size), self.avatar.name)

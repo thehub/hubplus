@@ -8,6 +8,9 @@ from django.template import RequestContext
 from django.contrib.auth.decorators import login_required
 from django.utils.translation import ugettext as _
 
+from apps.plus_permissions.models import GenericReference
+from apps.plus_groups.models import TgGroup
+
 def _get_next(request):
     """
     The part that's the least straightforward about views in this module is how they 
@@ -27,21 +30,31 @@ def _get_next(request):
         next = request.path
     return next
 
-def change(request, extra_context={}, next_override=None):
-    avatars = Avatar.objects.filter(user=request.user).order_by('-primary')
+
+def change(request, extra_context={}, next_override=None, group_id=None):
+    if not group_id :
+        target_obj = request.user
+    else :
+        target_obj = TgGroup.objects.get(id=group_id)
+
+
+    target = target_obj.get_ref()
+
+    avatars = Avatar.objects.filter(target=target).order_by('-primary')
     if avatars.count() > 0:
         avatar = avatars[0]
         kwargs = {'initial': {'choice': avatar.id}}
     else:
         avatar = None
         kwargs = {}
-    primary_avatar_form = PrimaryAvatarForm(request.POST or None, user=request.user, **kwargs)
+    # XXX this only works for user
+    primary_avatar_form = PrimaryAvatarForm(request.POST or None, target=target, **kwargs)
     if request.method == "POST":
         if 'avatar' in request.FILES:
-            path = avatar_file_path(user=request.user, 
+            path = avatar_file_path(target=target, 
                 filename=request.FILES['avatar'].name)
             avatar = Avatar(
-                user = request.user,
+                target = target,
                 primary = True,
                 avatar = path,
             )
@@ -52,7 +65,7 @@ def change(request, extra_context={}, next_override=None):
         if 'choice' in request.POST and primary_avatar_form.is_valid():
             avatar = Avatar.objects.get(id=
                 primary_avatar_form.cleaned_data['choice'])
-            avatar.primary = True
+            avatar.primary = True 
             avatar.save()
             request.user.message_set.create(
                 message=_("Successfully updated your avatar."))
@@ -65,13 +78,15 @@ def change(request, extra_context={}, next_override=None):
             { 'avatar': avatar, 
               'avatars': avatars,
               'primary_avatar_form': primary_avatar_form,
-              'next': next_override or _get_next(request), }
+              'next': next_override or _get_next(request),
+              'target' : target_obj,
+              }
         )
     )
 change = login_required(change)
 
 def delete(request, extra_context={}, next_override=None):
-    avatars = Avatar.objects.filter(user=request.user).order_by('-primary')
+    avatars = Avatar.objects.filter(target=request.user.get_ref()).order_by('-primary')
     if avatars.count() > 0:
         avatar = avatars[0]
     else:

@@ -72,7 +72,7 @@ def import_all(all) :
                 creator = main
                 f_name=make_file_name(folder['id'],folder['uid']) 
 
-                try :
+b                try :
                     create_resource(container, creator, folder['id'], f_name, folder, tags)
                 except Exception, e:
                     print e

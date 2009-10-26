@@ -234,6 +234,9 @@ try :
         def apply(self, user):
             pass
 
+        def change_avatar(self) :
+            pass
+
         def leave(self, user):
             return self.remove_member(user)
 
