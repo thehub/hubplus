@@ -3,15 +3,22 @@
 {% load i18n %}
 {% load avatar_tags %}
 
-{% block head_title %}{% trans "Profile picture" %}{% endblock %}
-{% block page_title %}{% trans "Profile picture" %}{% endblock %}
 
-{% block body %}
-<div class="block">
+{% block page_title %}
+{{from_name}} {% trans "Picture" %}
+{% endblock %}
 
-  {% if not avatars %}
-	<h4>Current picture</h4>
-	<p class="extra">Your profile picture is currently the {{ SITE_NAME }} default, upload a your own below.</p>
+ {% block body %}
+ <div class="block">
+
+   {% if not avatars %}
+   <h4>Current picture</h4>
+	   {% ifequal target_type 'group' %}
+	      <p class="extra">{% trans "The picture is currently the {{SITE_NAME}} default, upload a new one below"%}.</p>
+          {% else %}
+             <p class="extra">{% trans "Your profile picture is currently the {{ SITE_NAME }} default, upload a your own below" %}.</p>
+          {% endifequal %}
+
 	<div id="avatar_current" class="thumb medium">{% avatar target 80 %}</div>
     {% else %}
 
@@ -38,7 +45,7 @@
     </form>
 
     {% ifequal target_type 'group' %}
-       <a href="{% url plus_groups:group target.id %}">{% trans "Back to "%}{{HUB_NAME}}</a>
+       <a href="{% url plus_groups:group target.id %}">{% trans "Back to " %}{{from_name}}</a>
     {% else %}
        <a href="{% url profile_detail target.username %}">{% trans "Back to Profile" %}</a>
     {% endifequal %}
