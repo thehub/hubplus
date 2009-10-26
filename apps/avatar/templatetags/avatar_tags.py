@@ -6,7 +6,7 @@ from django.contrib.auth.models import User
 from apps.plus_groups.models import TgGroup
 from django.utils.translation import ugettext as _
 
-from avatar import AVATAR_DEFAULT_URL, AVATAR_GRAVATAR_BACKUP
+from avatar import AVATAR_DEFAULT_URL, AVATAR_DEFAULT_GROUP_URL, AVATAR_DEFAULT_HUB_URL, AVATAR_GRAVATAR_BACKUP
 
 register = template.Library()
 
@@ -29,11 +29,11 @@ def get_true_target(target_obj) :
     return target_obj.get_ref()
 
 
-def avatar_url(target_obj, size=80):
+def avatar_url(target_obj, size=80, default_url=AVATAR_DEFAULT_URL):
     try :
         target = get_true_target(target_obj)
     except TargetFromNameNotFound, e:
-        return AVATAR_DEFAULT_URL
+        return default_url
 
     avatars = target.avatar_set.order_by('-date_uploaded')
 
@@ -58,10 +58,16 @@ def avatar_url(target_obj, size=80):
 register.simple_tag(avatar_url)
 
 
+def avatar(target_obj, size=80, type='group'):
+    if type in ['hub','region'] :
+        default = AVATAR_DEFAULT_HUB_URL
+    elif type == 'group' :
+        default = AVATAR_DEFAULT_GROUP_URL
+    else :
+        default = AVATAR_DEFAULT_URL        
+    url = avatar_url(target_obj, size, default)
 
-def avatar(target_obj, size=80):
-    url = avatar_url(target_obj, size)
-    if url == AVATAR_DEFAULT_URL :
+    if url == default :
         alt = _('Avatar Default')
     else :
         alt = target_obj.get_display_name()

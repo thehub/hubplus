@@ -33,12 +33,11 @@ def _get_next(request):
 
 def change(request, extra_context={}, next_override=None, group_id=None):
     if not group_id :
-        target_obj = request.user.get_ref()
+        target_obj = request.user
     else :
         target_obj = TgGroup.objects.get(id=group_id)
 
-    import ipdb
-    ipdb.set_trace()
+
     target = target_obj.get_ref()
 
     avatars = Avatar.objects.filter(target=target).order_by('-primary')
