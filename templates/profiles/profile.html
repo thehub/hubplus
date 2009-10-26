@@ -27,11 +27,11 @@
 
     
     <div id="page_image" class="image member">
-		{% avatar other_user 180 %}
-	    {% if is_me %}
-	    <a href="{% url avatar_change %}" id="avatar_replace" class="bt_edit icon_button">(replace)</a>
-	    {% endif %}
-	</div>
+      {% avatar other_user 180 %}
+      {% if is_me %}
+      <a href="{% url avatar_change %}" id="avatar_replace" class="bt_edit icon_button">(replace)</a>
+      {% endif %}
+    </div>
     
     <ul id="actions" class="link_list">
       <li class="first"><a href="/tweets/toggle_follow/{{other_user.username}}/">{% if is_following %}Unfollow {% else %}Follow {% endif %}{{other_user.get_display_name}}</a></li>
