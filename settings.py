@@ -268,7 +268,8 @@ WIKI_REQUIRES_LOGIN = True
 # See if we can over-ride the default GRAVATAR
 AVATAR_GRAVATAR_BACKUP = False
 AVATAR_DEFAULT_URL = "/site_media/images/member.jpg"
-AVATAR_DEFAULT_GROUP_URL = "/site_media/group.jpg"
+AVATAR_DEFAULT_GROUP_URL = "/site_media/images/group.jpg"
+AVATAR_DEFAULT_HUB_URL = "/site_media/images/hub.jpg"
 
 # local_settings.py can be used to override environment-specific settings
 # like database and email that differ between development and production.
