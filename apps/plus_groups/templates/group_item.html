@@ -2,7 +2,7 @@
 {% load avatar_tags %}
 {% load plus_url %}
 <a href="{{group_url}}">
-    <div class="thumb medium"><img src="/site_media/images/{{group_label}}.jpg" /></div>
+    <div class="thumb medium">{% avatar group 80 %}</div>
 </a>
 <dl>
   <dt>{% trans "Name" %}</dt>
