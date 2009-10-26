@@ -7,7 +7,7 @@ from apps.plus_groups.models import TgGroup
 load_all()
 
 for t in TgGroup.objects.all() :
-    print t.description.encode('utf-8')
+    #print t.description.encode('utf-8')
     if "Nutr" in t.get_display_name() :
         print 
         print t.id, t.group_name
@@ -19,9 +19,11 @@ for t in TgGroup.objects.all() :
 
 for g in maps['Group'] :
     if "Nutr" in g['groupname'] :
+        print
         print g['groupname']
         print g
     if "etwork" in g['groupname'] :
+        print 
         print g['groupname']
         print g
 
