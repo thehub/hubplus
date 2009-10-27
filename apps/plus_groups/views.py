@@ -143,7 +143,13 @@ def group(request, group, template_name="plus_groups/group.html", current_app='p
     except PlusPermissionsNoAccessException:
         perms_bool = False
 
-    side_search = side_search_args(current_app + ':groups', narrow_search_types('Group')[0][1][2])
+    if kwargs['type'] == 'hub':
+        type_name = hub_name()
+    else:
+        type_name = "Group"
+
+    search_types = narrow_search_types(type_name)
+    side_search = side_search_args(current_app + ':groups', search_types[0][1][2])
 
     search = request.GET.get('search', '')
     order = request.GET.get('order', '')
@@ -174,7 +180,9 @@ def group(request, group, template_name="plus_groups/group.html", current_app='p
             'side_search_args':side_search,
             'resource_search':resource_search,
             'resource_listing_args':resource_listing_args,
-            'group_id':group.id
+            'group_id':group.id,
+            'search_types':search_types,
+            'tagged_url':current_app + ':groups_tag'
             }, context_instance=RequestContext(request, current_app=current_app)
     )
 
@@ -199,15 +207,15 @@ def groups(request, site, tag_string='', type='other', template_name='plus_explo
             create_group = True
         except Exception, e:
             print "User can't create a group",e
-
-
+ 
     if type == 'hub':
         head_title = _(hub_name_plural())
         type_name = hub_name()
     else:
         head_title = _('Groups')
         type_name = "Group"
-        
+
+    # hmm shouldn't we just use current app to determine search_types?        
     search_types = narrow_search_types(type_name) 
     side_search = side_search_args(current_app + ':groups', search_types[0][1][2])
 

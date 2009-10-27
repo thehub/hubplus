@@ -192,6 +192,7 @@ def profile(request, username, template_name="profiles/profile.html"):
             "other_user_tweets" : other_user_tweets,
             "permissions":perms_bool,
             "search_type":search_type,
+            "search_types":search_types,
             "search_type_label":search_type_label,
             "search_types_len":search_types_len
             }, context_instance=RequestContext(request))

@@ -131,36 +131,8 @@
 {% block side_bar %}
 {% side_search side_search_args %}
 <div id="feature_explore" class="site_block">
-  <h3>{% trans "Explore Groups" %}</h3>
-  <ol class="tag_list">
-    <li><a href="#" class="tag pop7">activism</a></li>
-    <li><a href="#" class="tag pop8">architecture</a></li>
-    <li><a href="#" class="tag pop6">better</a></li>
-    <li><a href="#" class="tag pop3">big</a></li>
-    <li><a href="#" class="tag pop5">climatechange</a></li>
-    <li><a href="#" class="tag pop2">clothing</a></li>
-    <li><a href="#" class="tag pop8">design</a></li>
-    <li><a href="#" class="tag pop8">dip</a></li>
-    <li><a href="#" class="tag pop7">developement</a></li>
-    <li><a href="#" class="tag pop3">energy</a></li>
-    
-    <li><a href="#" class="tag pop6">environment</a></li> 
-    <li><a href="#" class="tag pop8">fairtrade</a></li>
-    <li><a href="#" class="tag pop1">gender</a></li>
-    <li><a href="#" class="tag pop8">green</a></li>
-    <li><a href="#" class="tag pop7">hub</a></li>
-    <li><a href="#" class="tag pop4">innovation</a></li>
-    <li><a href="#" class="tag pop2">living</a></li>
-    <li><a href="#" class="tag pop6">product</a></li>
-    <li><a href="#" class="tag pop8">reference</a></li> 
-    <li><a href="#" class="tag pop5">salad</a></li>
-    <li><a href="#" class="tag pop5">org</a></li>
-    
-    <li><a href="#" class="tag pop8">science</a></li>
-    <li><a href="#" class="tag pop2">shopping</a></li>
-    <li><a href="#" class="tag pop6">sustainability</a></li>
-    <li><a href="#" class="tag pop1">web</a></li>
-  </ol>
+  <h3>{% blocktrans %}Explore {% endblocktrans %}{{side_search_args.search_type_label}}</h3>
+  {% tag_cloud 25 '' search_types tagged_url %}
 </div>
 
 {% include "add.html" %}

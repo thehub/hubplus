@@ -56,9 +56,6 @@ def goto_tag(request):
         return HttpResponseRedirect(reverse('explore_filtered', args=[tag_string]))
     return HttpResponseRedirect(reverse('explore'))
 
-
-
-
 # XXX pagination - separated per tab
 
 
@@ -80,7 +77,7 @@ def filter(request, tag_string, template_name='plus_explore/explore_filtered.htm
                                               'search_args':side_search}, context_instance=RequestContext(request))
 
 
-def plus_search(tags, search, search_types, order, in_group=None, extra_filter=None):
+def plus_search(tags, search, search_types, order=None, in_group=None, extra_filter=None):
     items = get_resources_for_tag_intersection(tags)
     q = None
     for typ, info in search_types:
