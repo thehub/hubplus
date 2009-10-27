@@ -7,23 +7,38 @@
 	<div id="section_tab_navigation" class="tabbed yui-navset">
 	
 		<ul class="tabbed_navigation yui-nav">
-			<li class="selected" ><a href="#welcome"><span>{% trans "Welcome" %}</span></a></li>
-			<li><a href="#create"><span>{% trans "Create" %}</span></a></li>
-			<li><a href="#explore"><span>{% trans "Explore" %}</span></a></li>
+			<li class="selected" ><a href="#intro_welcome"><span>{% trans "Welcome" %}</span></a></li>
+			<li><a href="#intro_join"><span>{% trans "Create" %}</span></a></li>
+			<li><a href="#intro_create"><span>{% trans "Create" %}</span></a></li>
+			<li><a href="#intro_share"><span>{% trans "Explore" %}</span></a></li>
+			<li><a href="#intro_interact"><span>{% trans "Create" %}</span></a></li>
+			<li><a href="#intro_explore"><span>{% trans "Explore" %}</span></a></li>
 		</ul>
 	
 		<div class="tabbed_content yui-content">
-			<div id="welcome">
-				<h2>Welcome to {{ SITE_NAME }}</h2>
-				<p>{{ SITE_NAME }} is a private network that gives you access to the people, resources and knowledge you need to inspire and make your idea come to life.</p>				
+			<div id="intro_welcome">
+				<h2>Welcome</h2>
+				<p>{{ SITE_NAME }} gives you access to people, resources and knowledge related to work in emergencies and situations of adversity.</p>
 			</div>
-			<div id="create">
+			<div id="intro_join">
+				<h2>Join</h2>
+				<p>Sign up and enter a worldwide community of people and organizations concerned with mental health & psychosocial support.</p>
+			</div>
+			<div id="intro_create">
 				<h2>Create</h2>
-				<p>Create a profile for you and your projects. Tell people about events, news and websites. Tag your content to share and organise your contributions. </p>
+				<p>Create a profile for you and your projects. Tell people about events, news and websites. Tag your resources to share and organise your contributions.</p>
 			</div>
-			<div id="explore">
+			<div id="intro_share">
+				<h2>Share</h2>
+				<p>Upload and exchange resources.  Recommend useful tools, articles and approaches.</p>
+			</div>
+			<div id="intro_interact">
+				<h2>Interact</h2>
+				<p>Send and receive messages from other network members.  Leave comments and join discussions and groups.</p>
+			</div>
+			<div id="intro_explore">
 				<h2>Explore</h2>
-				<p>Discover Members, Groups and resources from the Hub community worldwide.</p>
+				<p>Discover and learn about new Resources, Members, Groups and Regions from the worldwide network.</p>
 			</div>
 		</div>
 
@@ -43,6 +58,7 @@
 						{{ form.password.errors }}
 					</li>
 					<li id="div_id_remember" class="ctrlHolder checkboxes">
+						<label>&nbsp;</label>
 						<input type="checkbox" class="checkbox" name="remember" id="id_remember" />
 						<div class="label_extended">
 							<label for="id_remember">Remember me</label>
@@ -60,3 +76,4 @@
 	</div><!-- end intro_bar_login -->
 
 </div><!-- end intro_bar -->
+
