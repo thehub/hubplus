@@ -1,4 +1,6 @@
-class PlusPermissionsNoAccessException(Exception):
+from django.core.exceptions import PermissionDenied
+
+class PlusPermissionsNoAccessException(PermissionDenied):
     def __init__(self,cls,id,msg) :
         self.cls=cls
         self.id=id
@@ -6,7 +8,7 @@ class PlusPermissionsNoAccessException(Exception):
         self.silent_variable_failure = True
         self.message = msg
 
-class PlusPermissionsReadOnlyException(Exception) : 
+class PlusPermissionsReadOnlyException(PermissionDenied) : 
     def __init__(self,cls,msg) :
         self.cls = cls
         self.msg = msg
