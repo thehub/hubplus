@@ -7,12 +7,14 @@ register = template.Library()
 
 
 @register.inclusion_tag('plus_tags/tag_cloud.html')
-def tag_cloud(**kwargs):
-    tags = get_tags(**kwargs)
-    counts = tag_counts(n=50, tag_set=tags)
+def tag_cloud(n, size, search_types, tag_search_url='explore_filtered'):
+    if not search_types:
+        search_types = None
+    tags = get_tags(tagged=search_types)
+    counts = tag_counts(n=n, tag_set=tags)
     tag_levels = scale_tag_weights(counts)
     tag_levels.sort(keyword_sort)
-    return {'tags':tag_levels}
+    return {'tags':tag_levels, 'size':size, 'tag_search_url':tag_search_url}
 
 
 @register.inclusion_tag('plus_tags/list.html')

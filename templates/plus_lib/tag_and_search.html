@@ -41,7 +41,7 @@
       <h3>{% trans "Refine by tag" %}</h3>
       <ol class="tag_list">
 	{% for tag in tag_intersection %}
-	<li><span class="tag pop{{tag.level}}">{{tag.keyword}} ({{tag.count}})</span>
+	<li class="pop{{tag.level}}"><span class="tag">{{tag.keyword}} ({{tag.count}})</span>
 	  {% if listing_args.group_id %}
 	  <a href="{% plus_url listing_args.tagged_url listing_args.group_id tag.tag_filter %}{{tag_extra}}" class="add_tag">+</a> 
           {% else %}
