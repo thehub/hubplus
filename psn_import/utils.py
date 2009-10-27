@@ -253,3 +253,6 @@ def load_all() :
     load_file('Hub','mhpss_export/hubs.pickle')
     load_file('File','mhpss_export/files.pickle')
     load_file('Document','mhpss_export/documents.pickle')
+
+def get_resources_group() :
+    return TgGroup.objects.get(group_name='resources')
