@@ -7,6 +7,7 @@ HUB PLUS 2009
 
 #highlights p {
 	color		: #888;
+	padding		: 0;
 }
 
 #highlights .image {
@@ -17,6 +18,7 @@ HUB PLUS 2009
 #highlights .image img {
 	height		: 174px;
 }
+
 
 /* What's Next */
 
@@ -58,6 +60,11 @@ HUB PLUS 2009
 	margin-bottom	: 1.5em;
 }
 
+#intro_bar_content {
+	background	: #454545;
+	overflow	: hidden;
+}
+
 #intro_bar * {
 	color		: #eee;
 }
@@ -71,8 +78,6 @@ HUB PLUS 2009
 }
 
 #intro_bar #section_tab_navigation {
-	background	: #454545;
-	height		: 10em;
 	float		: left;
 	overflow	: hidden;
 	padding		: 10px 15px 10px 10px;
@@ -81,9 +86,7 @@ HUB PLUS 2009
 }
 
 #intro_bar #intro_bar_login {
-	background	: #454545;
 	float		: left;
-	height		: 10em;
 	padding		: 10px;
 	width		: 227px;
 }
@@ -127,9 +130,15 @@ HUB PLUS 2009
 }
 
 #intro_bar #section_tab_navigation .tabbed_content p {
-	font-size		: 1.4em;
+	color		: #ccc;
+	font-size	: 1.3em;
+	line-height		: 1.4em;
+	padding-bottom	: 0;
 }
 
+#intro_bar #section_tab_navigation .tabbed_content p a {
+	text-decoration	: underline;
+}
 
 /* Main Generic */
 /* Layout: Images & Thumbnails */
