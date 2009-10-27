@@ -120,6 +120,7 @@ class TgGroupEditor:
     display_name = InterfaceWriteProperty    
     message_members = InterfaceCallProperty
     add_link = InterfaceCallProperty
+    change_avatar = InterfaceCallProperty
 
 
 class TgGroupJoin:

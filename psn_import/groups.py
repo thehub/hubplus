@@ -5,8 +5,36 @@ import pickle
 from apps.plus_groups.models import TgGroup, Location
 from apps.plus_lib.utils import make_name
 from apps.plus_permissions.default_agents import get_admin_user, get_site, get_or_create_root_location
+from psn_import.utils import psn_group_name
+
+from django.core.files.images import ImageFile
+from avatar.models import Avatar, avatar_file_path
+
 
 root = get_or_create_root_location()
+
+def add_avatar(group, image_dir, image_file_name) :
+    if image_file_name == '' : 
+        return
+
+    f = ImageFile(open('mhpss_export/%s/%s'%(image_dir,image_file_name)),'rb')
+    if f.size == 1357 :
+        return   # image is plone default ... we don't want it
+          
+    path = avatar_file_path(target=group, filename=image_file_name)
+
+    avatar = Avatar(
+        target = group.get_ref(),
+        primary = True,
+        avatar = path,
+        )
+
+    avatar.save()
+    new_file = avatar.avatar.storage.save(path, f)
+    avatar.save()
+
+
+
 
 def import_group(f_name, group_type, fn_place) :
     groups = pickle.load(open(f_name))
@@ -14,7 +42,10 @@ def import_group(f_name, group_type, fn_place) :
     site = get_site(admin)
     for g in groups:
         #print g.keys()
-        print g['groupname'], g['body'], g['description'],g['joinpolicy']
+ 
+        if 'Nutri' in g['groupname'] :
+            continue
+        print g['groupname'], g['body'], g['description'],g['joinpolicy'],g['imagefilename']
 
         if g['joinpolicy']== 'open' :
             permission_prototype='public'
@@ -30,14 +61,14 @@ def import_group(f_name, group_type, fn_place) :
             description = 'About this group'
 
         display_name = g['groupname']
-        group_name = make_name(display_name)
-        if len(group_name)>30 :
-            group_name = group_name[:30]
+        group_name = psn_group_name(display_name)
         psn_id = g['uid']
 
         keywords = g['keywords']
 
-        print group_name, display_name, psn_id, permission_prototype
+        image_file = g['imagefilename'].split('/')[-1]
+
+        print group_name, display_name, psn_id, permission_prototype,image_file
         print description
         print keywords
 
@@ -58,11 +89,15 @@ def import_group(f_name, group_type, fn_place) :
 
         group.psn_id = psn_id
         group.group_name = group_name
-        
-        group.place = fn_place(g)
-        
+
+        group.place = fn_place(g)        
         group.save()
-        print "XX ", group.display_name
+
+        print "XX ", group.display_name, group.group_type
+        if group.group_type != 'Hub' :
+            add_avatar(group,"group_images",image_file)
+        else :
+            add_avatar(group,"hub_images",image_file)
 
 def group_place(dict) :
     return get_or_create_root_location()
