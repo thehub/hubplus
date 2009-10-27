@@ -317,8 +317,8 @@ try :
             pass
 
         def is_hub_type(self) :
-            from apps.plus_permissions.default_agents import get_all_members_group
-            if self.place.name != get_all_members_group() :
+            from apps.plus_permissions.default_agents import get_or_create_root_location
+            if self.place.name != get_or_create_root_location().name :
                 return True
             return False
 

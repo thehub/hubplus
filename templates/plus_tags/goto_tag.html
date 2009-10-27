@@ -1,6 +1,6 @@
 {% load i18n %}
 
-<h3>{% trans "Jump to tag" %}</h3>
+<h3>{% trans "Find a tag" %}</h3>
 <form class="large" action="{% url goto_tag %}" method="GET">
   <input name="tag" type="text" id="{% url autocomplete_all_tags %}" class="text goto_tag" /> <input class="button" type="submit" value="Go" />
 </form>

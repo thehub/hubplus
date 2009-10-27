@@ -29,7 +29,16 @@ def get_true_target(target_obj) :
     return target_obj.get_ref()
 
 
+def get_default_avatar_url(target_obj) :
+    if target_obj.__class__.__name__ == 'User':
+        return AVATAR_DEFAULT_URL
+    if target_obj.is_hub_type() :
+        return AVATAR_DEFAULT_HUB_URL
+    return AVATAR_DEFAULT_GROUP_URL
+
+
 def avatar_url(target_obj, size=80, default_url=AVATAR_DEFAULT_URL):
+
     try :
         target = get_true_target(target_obj)
     except TargetFromNameNotFound, e:
@@ -54,11 +63,12 @@ def avatar_url(target_obj, size=80, default_url=AVATAR_DEFAULT_URL):
                 hashlib.md5(user.email).hexdigest(),
                 urllib.urlencode({'s': str(size)}),)
         else:
-            return AVATAR_DEFAULT_URL
+            return get_default_avatar_url(target_obj)
 register.simple_tag(avatar_url)
 
 
 def avatar(target_obj, size=80, type='group'):
+
     if type in ['hub','region'] :
         default = AVATAR_DEFAULT_HUB_URL
     elif type == 'group' :
