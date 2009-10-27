@@ -1,7 +1,7 @@
 {% load i18n %}
 
 <div id="feature_search" class="site_block">
-    <h3>{% trans "Search" %}</h3>
+    <h3>{% trans "New Search" %}</h3>
     <form action="{% url explore %}">
       <input name="search" type="text" class="text" value="" /> <input class="button" type="submit" value="{% trans 'Search'%}" /><br />
       {% if search_type %}<input id="current_area" name="current_area" type="checkbox" class="checkbox" checked="checked" value="{{search_type}}" /> <label for="current_area">{{search_type_label}} only</label>{% endif %}
