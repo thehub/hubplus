@@ -66,12 +66,30 @@ body {
 	width		: 250px;
 }
 
+.blocks li,
 .block,
 .section.tabbed {
 	border-top	: 12px solid #e5e5e5;
 	clear		: both;
 	margin-bottom	: 10px;
 	padding		: 10px 0 10px;
+}
+
+.blocks {
+	overflow	: hidden;
+	width		: 620px;
+}
+
+.blocks li {
+	clear		: none;
+	display		: block;
+	float		: left;
+	margin-right: 15px;
+	width		: 196px;
+}
+
+.blocks li.last {
+	margin-right: 0;
 }
 
 .site_block {
