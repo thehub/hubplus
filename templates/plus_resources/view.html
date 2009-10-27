@@ -31,39 +31,36 @@
   </ul>
 </div>
 
-<div id="content_extra">
-  <ul id="meta"  class="yui-skin-sam">
-    <li>
-      {% editable "Title" resource 'title' 'Title' %}
-    </li>
-    
-    <li>
-      {% autoescape off %}
-      {% editable "Description" resource 'description' 'About this document'%}
-      {% endautoescape %}
-    </li>
-    <li>
-      <dl>   {% plus_tag 'Tags' ''  resource  '' %}</dl>
-    </li>
-    <li>
-      {% editable "License" resource 'license' 'License'%}
-    </li>
-    
-    <li>
-      {% editable "Author" resource 'author' 'Author'%}
-    </li>
-
-    <li>
-      <dt>{% trans "Uploaded by" %}</dt>
-      <dd>{{created_by}}</dd>
-    
-    <li>
-      <dt>{% trans "Download"%}</dt>
-      <dd><a href="{{resource.download_url}}">Download</a></dd>
-    </li>
-    
-  </ul>
-</div>
+<div id="upload_viewer">
+	<ul class="yui-skin-sam">
+		<li>
+		{% editable "Title" resource 'title' 'Title' %}
+		</li>
+		<li>
+		{% autoescape off %}
+		{% editable "Description" resource 'description' 'About this document'%}
+		{% endautoescape %}
+		</li>
+		<li>
+			<dl>{% plus_tag 'Tags' ''  resource  '' %}</dl>
+		</li>
+		<li>
+			<dl>
+				<dt>{% trans "Uploaded by" %}</dt>
+				<dd>{{created_by}}</dd>
+			</dl>
+		</li>
+		<li>
+			{% editable "License" resource 'license' 'License'%}
+		</li>
+		<li>
+			{% editable "Author" resource 'author' 'Author'%}
+		</li>
+		<li class="download_button">
+			<a class="button" href="{{resource.download_url}}">Download</a>
+		</li>
+	</ul>
+	</div>
 
 
 <div id="section_tab_navigation" class="tabbed section yui-navset">
