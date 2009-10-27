@@ -29,7 +29,7 @@ def index(request, template_name="plus_explore/explore.html"):
 
     side_search = side_search_args('', '')
     
-    return render_to_response(template_name, {'head_title':_('Explore'), 'search_args':side_search}, context_instance=RequestContext(request))
+    return render_to_response(template_name, {'head_title':settings.EXPLORE_NAME, 'search_args':side_search}, context_instance=RequestContext(request))
 
 def get_virtual_groups():
     return TgGroup.objects.filter(place__name=settings.VIRTUAL_HUB_NAME, level='member')
@@ -74,7 +74,7 @@ def filter(request, tag_string, template_name='plus_explore/explore_filtered.htm
     listing_args_dict = listing_args('explore', 'explore_filtered', tag_string=tag_string, search_terms=search, multitabbed=True, order=order, template_base="site_base.html")
     search_dict = plus_search(listing_args_dict['tag_filter'], search, search_types, order)
     
-    return render_to_response(template_name, {'head_title':_('Explore'), 
+    return render_to_response(template_name, {'head_title':settings.EXPLORE_NAME, 
                                               'listing_args':listing_args_dict,
                                               'search':search_dict,
                                               'search_args':side_search}, context_instance=RequestContext(request))
