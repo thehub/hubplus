@@ -1,5 +1,7 @@
-<ol class="tag_list large">
+{% load plus_url %}
+
+<ol class="tag_list {{size}}">
   {% for tag in tags %}
-  <li><a href="{% url explore_filtered tag.keyword %}" class="tag pop{{tag.level}}">{{tag.keyword}}</a></li>
+  <li><a href="{% plus_url tag_search_url tag.keyword %}" class="tag pop{{tag.level}}">{{tag.keyword}}</a></li>
   {% endfor %}
 </ol>
