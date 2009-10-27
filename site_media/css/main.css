@@ -3,6 +3,13 @@ HUB PLUS 2009
 */
 
 
+/* Highlights */
+
+#highlights p {
+	color		: #888;
+}
+
+
 /* What's Next */
 
 #whats_next li {
