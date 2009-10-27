@@ -8,46 +8,48 @@ import ipdb
 
 load_all()
 
-for t in TgGroup.objects.all() :
-    #print t.description.encode('utf-8')
-    if "Nutr" in t.get_display_name() :
+nut_d = reverse['f25a270c720819a2fede04e760499808'][1]
+print
+print nut_d['groupname'],nut_d['uid']
+print nut_d
 
-        print 
-        print t.id, t.group_name
-        print t.description
-        print t.psn_id, t.get_display_name()
-        for m in t.get_members() :
-            print m
-
-
-for g in maps['Group'] :
-    if "Nutr" in g['groupname'] :
-        print
-        print g['groupname'],g['uid']
-        print g
-    if "etwork" in g['groupname'] :
-
-        print 
-        print g['groupname'],g['uid']
-        print g
-
-
+net_d = reverse['712ffffffffffffffffffffffffffffff'][1]
+print
+print net_d['groupname'],net_d['uid']
+print net_d 
 
 def update(obj, d): 
-    obj.title = d['groupname']
-    obj.group_name = psn_group_name(obj.title)
+    obj.display_name = d['groupname']
+    obj.group_name = psn_group_name(obj.display_name)
     obj.psn_id = d['uid']
     obj.description = d['body']
 
     print "--"
     print obj.id, obj.title, obj.group_name, obj.psn_id
     print obj.description
-    #obj.save()
+    obj.save()
     print "++"
 
 
+print
 nut = TgGroup.objects.get(id=76)
-print nut.id, nut.psn_id, nut.title, nut.group_name
+print "++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
+update(nut,nut_d)
 
 net = TgGroup.objects.get(id=4)
-print net.id, net.psn_id, net.title, net.group_name
+update(net,net_d)
+
+from apps.plus_tags.models import TagItem
+nut_tags = TagItem.objects.filter(ref=nut.get_ref())
+net_tags = TagItem.objects.filter(ref=net.get_ref())
+
+print "nut_tags"
+print [(n.ref.obj, n.keyword) for n in nut_tags]
+
+print "net_tags"
+for n in net_tags :
+    print n.ref.obj, n.keyword
+    n.ref = nut.get_ref()
+    print "*",n.ref.obj, n.keyword
+    n.save()
+
