@@ -155,6 +155,10 @@ def psn_group_name(title) :
     if mhps in title :
         title = re.sub(mhps,'mhpss',title)
 
+    mhps = "Mental health and psychosocial"
+    if mhps in title :
+        title = re.sub(mhps,'mhpss',title)
+    
     r = re.compile('(.*?) Hosts$')
     m = r.match(title)
     if m :
