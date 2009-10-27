@@ -56,9 +56,10 @@ def profiles(request, tag_string='', template_name="plus_explore/explore_filtere
     search_types = narrow_search_types()
     side_search = side_search_args('profile_list', search_types[0][1][2])
 
-    listing_args_dict = listing_args('profile_list', 'profile_list_tag', tag_string=tag_string, search_terms=search, multitabbed=False, order=order, template_base="site_base.html")
-    search_dict = plus_search(listing_args_dict['tag_filter'], search, search_types, order)
     head_title = _('Members')
+    listing_args_dict = listing_args('profile_list', 'profile_list_tag', tag_string=tag_string, search_terms=search, multitabbed=False, order=order, template_base="site_base.html", search_type_label=head_title)
+    search_dict = plus_search(listing_args_dict['tag_filter'], search, search_types, order)
+
     #users = users.filter(~Q(username='admin')).filter(~Q(username='anon')).filter(~Q(username='webapi'))
     return render_to_response(template_name, {'head_title':head_title, 
                                               'listing_args':listing_args_dict,

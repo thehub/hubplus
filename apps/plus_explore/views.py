@@ -67,11 +67,12 @@ def filter(request, tag_string, template_name='plus_explore/explore_filtered.htm
 
     side_search = side_search_args('', '')
     search_types = get_search_types()
-
-    listing_args_dict = listing_args('explore', 'explore_filtered', tag_string=tag_string, search_terms=search, multitabbed=True, order=order, template_base="site_base.html")
+    
+    head_title = settings.EXPLORE_NAME
+    listing_args_dict = listing_args('explore', 'explore_filtered', tag_string=tag_string, search_terms=search, multitabbed=True, order=order, template_base="site_base.html", search_type_label=head_title)
     search_dict = plus_search(listing_args_dict['tag_filter'], search, search_types, order)
     
-    return render_to_response(template_name, {'head_title':settings.EXPLORE_NAME, 
+    return render_to_response(template_name, {'head_title':head_title, 
                                               'listing_args':listing_args_dict,
                                               'search':search_dict,
                                               'search_args':side_search}, context_instance=RequestContext(request))

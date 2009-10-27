@@ -3,7 +3,7 @@
 
 <div id="search" {% ifequal listing_args.template_base 'site_base.html' %}class="block"{% endifequal %}>
   <div id="current">
-    <h3>{% trans "Search" %}</h3>
+    <h3>{% blocktrans %}Search for{% endblocktrans %} {{listing_args.search_type_label}} </h3>
     <input type="text" class="text" name="search" value="{{listing_args.search_terms}}" />
     <input type="submit" class="button" id="submit_search" value="{% trans 'Search' %}" />
     <ul class="tag_list large">

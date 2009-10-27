@@ -6,5 +6,7 @@ jq(document).ready(function () {
     jq(".accordion").accordion({ autoHeight: false });
     plus_links_ready();
     listing_ready();
-    home();
+    if (jq('#intro_bar_tabs').length) {
+	home();
+    }
 });

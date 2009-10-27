@@ -161,7 +161,7 @@ def group(request, group, template_name="plus_groups/group.html", current_app='p
     search = request.GET.get('search', '')
     order = request.GET.get('order', '')
     resource_search = resources(group=group, search=search, order=order)
-    resource_listing_args = listing_args(current_app + ':group_resources', current_app + ':group_resources_tag', tag_string='', search_terms=search, multitabbed=False, order=order, template_base='plus_lib/listing_frag.html')
+    resource_listing_args = listing_args(current_app + ':group_resources', current_app + ':group_resources_tag', tag_string='', search_terms=search, multitabbed=False, order=order, template_base='plus_lib/listing_frag.html', search_type_label='resources')
     resource_listing_args['group_id'] = group.id
 
     return render_to_response(template_name, {
@@ -227,7 +227,7 @@ def groups(request, site, tag_string='', type='other', template_name='plus_explo
     search_types = narrow_search_types(type_name) 
     side_search = side_search_args(current_app + ':groups', search_types[0][1][2])
 
-    listing_args_dict = listing_args(current_app + ':groups', current_app + ':groups_tag', tag_string=tag_string, search_terms=search, multitabbed=False, order=order, template_base="site_base.html")
+    listing_args_dict = listing_args(current_app + ':groups', current_app + ':groups_tag', tag_string=tag_string, search_terms=search, multitabbed=False, order=order, template_base="site_base.html", search_type_label=head_title)
     search_dict = plus_search(listing_args_dict['tag_filter'], search, search_types, order)
 
     return render_to_response(template_name, {'head_title':head_title,
