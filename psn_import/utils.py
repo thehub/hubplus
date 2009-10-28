@@ -243,7 +243,20 @@ def create_resource(top_container, creator, title_and_type, f_name, folder, tags
     f.close()
     tag_with(resource, creator, tags, '')
     return True
-    
+
+from reversion import revision
+
+@transaction.commit_on_success 
+@revision.create_on_success
+def create_page(container, user, tags, **kwargs) :
+    page = container.create_WikiPage(user,**kwargs)
+    revision.comment='Import'
+    revision.user = user
+
+    tag_with(page, user, tags, tag_type='')
+
+    return page
+   
         
 
 def load_all() :
