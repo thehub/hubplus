@@ -126,6 +126,7 @@ HUB PLUS 2009
 }
 
 #intro_bar .tabbed .tabbed_content {
+	height		: 7.5em;
 	padding-bottom	: 30px
 }
 
