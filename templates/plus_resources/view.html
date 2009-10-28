@@ -31,52 +31,51 @@
   </ul>
 </div>
 
-<div id="content_extra">
-  <ul id="meta"  class="yui-skin-sam">
-    <li>
-      {% editable "Title" resource 'title' 'Title' %}
-    </li>
-    
-    <li>
-      {% autoescape off %}
-      {% editable "Description" resource 'description' 'About this document'%}
-      {% endautoescape %}
-    </li>
-    <li>
-      <dl>   {% plus_tag 'Tags' ''  resource  '' %}</dl>
-    </li>
-    <li>
-      {% editable "License" resource 'license' 'License'%}
-    </li>
-    
-    <li>
-      {% editable "Author" resource 'author' 'Author'%}
-    </li>
-
-    <li>
-      <dt>{% trans "Uploaded by" %}</dt>
-      <dd>{{created_by}}</dd>
-    
-    <li>
-      <dt>{% trans "Download"%}</dt>
-      <dd><a href="{{resource.download_url}}">Download</a></dd>
-    </li>
-    
-  </ul>
-</div>
+<div id="upload_viewer">
+	<ul class="yui-skin-sam">
+		<li>
+		{% editable "Title" resource 'title' 'Title' %}
+		</li>
+		<li>
+		{% autoescape off %}
+		{% editable "Description" resource 'description' 'About this document'%}
+		{% endautoescape %}
+		</li>
+		<li>
+			<dl>{% plus_tag 'Tags' ''  resource  '' %}</dl>
+		</li>
+		<li>
+			<dl>
+				<dt>{% trans "Uploaded by" %}</dt>
+				<dd>{{created_by}}</dd>
+			</dl>
+		</li>
+		<li>
+			{% editable "License" resource 'license' 'License'%}
+		</li>
+		<li>
+			{% editable "Author" resource 'author' 'Author'%}
+		</li>
+		<li class="download_button">
+			<a class="button" href="{{resource.download_url}}">Download</a>
+		</li>
+	</ul>
+	</div>
 
 
-<div id="section_tab_navigation" class="tabbed section yui-navset">
+<!--<div id="section_tab_navigation" class="tabbed section yui-navset">
   <ul class="tabbed_navigation yui-nav">
     {% get_comment_count for resource as comment_count %}
-    <li class="selected"><a href="#comments"><span>{% trans "Comments" %}({{comment_count}})</span></a></li>
+    <li class="selected"><a href="#comments"><span>{% trans "Comments" %}({{comment_count}})</span></a></li>-->
+    
     <!--li><a href="#attachments"><span>{% trans "Attachments" %} (0)</span></a></li>
     <li><a href="#history"><span>{% trans "History" %} ({{version_list.count}} {% trans "revisions" %})</span></a></li-->
-  </ul>
+
+<!--  </ul>
   <div class="tabbed_content yui-content">
     <div id="comments">
       {% include "plus_resources/comments.html" %}
     </div>
   </div>
-</div>
+</div>-->
 {% endblock %}

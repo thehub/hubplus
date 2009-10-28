@@ -14,9 +14,9 @@
    {% if not avatars %}
    <h4>Current picture</h4>
 	   {% ifequal target_type 'group' %}
-	      <p class="extra">{% trans "The picture is currently the {{SITE_NAME}} default, upload a new one below"%}.</p>
+	      <p class="extra">{% trans "The picture is currently the" %} {{SITE_NAME}} {% trans "default, upload a new one below"%}.</p>
           {% else %}
-             <p class="extra">{% trans "Your profile picture is currently the {{ SITE_NAME }} default, upload a your own below" %}.</p>
+             <p class="extra">{% trans "Your profile picture is currently the" %} {{ SITE_NAME }} {% trans "default, upload a new one of your own below" %}.</p>
           {% endifequal %}
 
 	<div id="avatar_current" class="thumb medium">{% avatar target 80 %}</div>

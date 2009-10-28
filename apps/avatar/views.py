@@ -32,7 +32,7 @@ def _get_next(request):
     return next
 
 
-def change(request, extra_context={}, next_override=None, group_id=None):
+def change(request, extra_context={}, next_override=None, group_id=None, current_app='plus_groups',namespace='groups'):
     if not group_id :
         target_obj = request.user
     else :
@@ -57,7 +57,7 @@ def change(request, extra_context={}, next_override=None, group_id=None):
     else:
         avatar = None
         kwargs = {}
-    # XXX this only works for user
+
     primary_avatar_form = PrimaryAvatarForm(request.POST or None, target=target, **kwargs)
     if request.method == "POST":
         if 'avatar' in request.FILES:
@@ -80,6 +80,7 @@ def change(request, extra_context={}, next_override=None, group_id=None):
             request.user.message_set.create(
                 message=_("Successfully updated your avatar."))
         return HttpResponseRedirect(next_override or _get_next(request))
+
     return render_to_response(
         'avatar/change.html',
         extra_context,

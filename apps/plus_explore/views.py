@@ -29,7 +29,7 @@ def index(request, template_name="plus_explore/explore.html"):
 
     side_search = side_search_args('', '')
     
-    return render_to_response(template_name, {'head_title':_('Explore'), 'search_args':side_search}, context_instance=RequestContext(request))
+    return render_to_response(template_name, {'head_title':settings.EXPLORE_NAME, 'search_args':side_search}, context_instance=RequestContext(request))
 
 def get_virtual_groups():
     return TgGroup.objects.filter(place__name=settings.VIRTUAL_HUB_NAME, level='member')
@@ -56,9 +56,6 @@ def goto_tag(request):
         return HttpResponseRedirect(reverse('explore_filtered', args=[tag_string]))
     return HttpResponseRedirect(reverse('explore'))
 
-
-
-
 # XXX pagination - separated per tab
 
 
@@ -70,17 +67,18 @@ def filter(request, tag_string, template_name='plus_explore/explore_filtered.htm
 
     side_search = side_search_args('', '')
     search_types = get_search_types()
-
-    listing_args_dict = listing_args('explore', 'explore_filtered', tag_string=tag_string, search_terms=search, multitabbed=True, order=order, template_base="site_base.html")
+    
+    head_title = settings.EXPLORE_NAME
+    listing_args_dict = listing_args('explore', 'explore_filtered', tag_string=tag_string, search_terms=search, multitabbed=True, order=order, template_base="site_base.html", search_type_label=head_title)
     search_dict = plus_search(listing_args_dict['tag_filter'], search, search_types, order)
     
-    return render_to_response(template_name, {'head_title':_('Explore'), 
+    return render_to_response(template_name, {'head_title':head_title, 
                                               'listing_args':listing_args_dict,
                                               'search':search_dict,
                                               'search_args':side_search}, context_instance=RequestContext(request))
 
 
-def plus_search(tags, search, search_types, order, in_group=None, extra_filter=None):
+def plus_search(tags, search, search_types, order=None, in_group=None, extra_filter=None):
     items = get_resources_for_tag_intersection(tags)
     q = None
     for typ, info in search_types:

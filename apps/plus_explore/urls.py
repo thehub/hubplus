@@ -1,4 +1,3 @@
-# tag intersection shading
 # side bar clouds 
 
 # paginate tabs separately

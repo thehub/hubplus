@@ -25,8 +25,8 @@
       <li><a class="icon_text_button bt_pdf" href="#">Download PDF</a></li>
     </ul> -->
     <ul id="meta">      
-      <li>{% trans "Created by" %}<a href="{% url profile_detail page.created_by.username %}">{{page.created_by}}</a> {% trans "at" %} {{page.creation_time|time}} {% trans "on" %} {{page.creation_time|date}} {% trans "and last edited by" %} <a href="{% url profile_detail version.revision.user.username %}">{{version.revision.user}}</a> {{version.revision.date_created|timesince}} {% trans "ago" %}. </li>
-      <li>{% trans "Licensed under" %} <a href="#">{{page.license}}</a>.</li>	
+      <li>{% trans "Created by" %} <a href="{% url profile_detail page.created_by.username %}">{{page.created_by}}</a> {% trans "at" %} {{page.creation_time|time}} {% trans "on" %} {{page.creation_time|date}} {% trans "and last edited by" %} <a href="{% url profile_detail version.revision.user.username %}">{{version.revision.user}}</a> {{version.revision.date_created|timesince}} {% trans "ago" %}. </li>
+      <li>{% trans "Licensed under" %} {{page.license}}.</li>	
     </ul>
   </div>
   
@@ -62,7 +62,7 @@
 	      <input type="radio" class="radio second" name="second" {% ifequal forloop.counter 2 %}checked="checked"{% endifequal %} />
 	    </td>
 	    <td>
-	      <h4>{{ver.revision.comment}}</h4> <span>{% trans "by" %} <a href="{% url profile_detail user.user_name %}">{{ver.revision.user.display_name}}</a></span>
+	      <h4>{{ver.revision.comment}}</h4> <span>{% trans "by" %} <a href="{% url profile_detail ver.revision.user.user_name %}">{{ver.revision.user.display_name}}</a></span>
 	      <span class="label_time">{% trans "on" %} {{ ver.revision.date_created|date }} {% trans "at" %} {{ver.revision.date_created|time}}</span>
 	    </td>
 	    <td>

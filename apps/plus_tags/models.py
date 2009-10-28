@@ -56,10 +56,11 @@ from django.db.models import Count
 
 def scale_tag_weights(tag_counts, levels=8):
     n = tag_counts.count()
+    tag_counts = [tag for tag in tag_counts] #slicing of an already sliced query set yield incorrect results
     start_index = 0
     weighted_tags = []
     for level in range(1, levels+1):
-        end_index = n/levels*level
+        end_index = int(round(float(n)/levels*level))
         #deal with any remainder by putting them on the top level - otherwise we could use floats and rounding here
         if level == levels:
             end_index = n
@@ -71,7 +72,6 @@ def scale_tag_weights(tag_counts, levels=8):
                 annot['level'] = level
             weighted_tags.append(annot)
         start_index = end_index
-    
     return weighted_tags
 
 def keyword_sort(A, B):
@@ -138,9 +138,11 @@ def get_intersecting_tags(items, n=10, levels=8):
 
     return top_intersections
 
+
 def get_tags(tagged=None, tag_type=None, tag_value=None, tagged_for=None, tagged_by=None, partial_tag_value=None):
     """XXX Should only get viewable tags here, further should only get viewable items within those tags, and only viewable items within a tag which count towards its weight
     """
+
     tag_filter = {}
 
     if tag_type != None:
@@ -157,7 +159,12 @@ def get_tags(tagged=None, tag_type=None, tag_value=None, tagged_for=None, tagged
 
     if tagged != None:
         require_distinct = True
-        tag_filter['items__in'] = [tagged.get_ref().id]
+        if isinstance(tagged, tuple):
+            from apps.plus_explore.views import plus_search
+            tagged = plus_search([], '', tagged)['All'] #GenericReference.objects.filter(**tagged)
+        else:
+            tagged = [tagged.get_ref().id]
+        tag_filter['items__in'] = tagged
         
     if tagged_by != None:
         require_distinct = True

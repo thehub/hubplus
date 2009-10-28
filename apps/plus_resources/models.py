@@ -54,10 +54,11 @@ class Resource(models.Model):
         return self.title
 
     def content(self) :
-        return """%s
-%s,
-%s,
-%s""" % (self.title, self.description, self.author, self.created_by.get_display_name())
+        return self.description
+#        return """%s
+#%s,
+#%s,
+#%s""" % (self.title, self.description, self.author, self.created_by.get_display_name())
         
 
 

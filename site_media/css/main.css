@@ -77,7 +77,7 @@ HUB PLUS 2009
 	color		: #ccc;
 }
 
-#intro_bar #section_tab_navigation {
+#intro_bar .tabbed {
 	float		: left;
 	overflow	: hidden;
 	padding		: 10px 15px 10px 10px;
@@ -99,13 +99,13 @@ HUB PLUS 2009
 	width		: 200px;
 }
 
-#intro_bar #section_tab_navigation .tabbed_navigation {
+#intro_bar .tabbed .tabbed_navigation {
 	background	: none;
 	position	: absolute;
 	bottom		: 0px;
 }
 
-#intro_bar #section_tab_navigation .tabbed_navigation li {
+#intro_bar .tabbed .tabbed_navigation li {
 	background	: #888;
 	display		: block;
 	height		: 12px;
@@ -116,27 +116,28 @@ HUB PLUS 2009
 	width		: 12px;
 }
 
-#intro_bar #section_tab_navigation .tabbed_navigation li a {
+#intro_bar .tabbed .tabbed_navigation li a {
 	text-indent	: -2000px;
 }
 
-#intro_bar #section_tab_navigation ul.tabbed_navigation li:hover,
-#intro_bar #section_tab_navigation ul.tabbed_navigation li.selected {
+#intro_bar .tabbed ul.tabbed_navigation li:hover,
+#intro_bar .tabbed ul.tabbed_navigation li.selected {
 	background	: #fff;
 }
 
-#intro_bar #section_tab_navigation .tabbed_content {
+#intro_bar .tabbed .tabbed_content {
+	height		: 7.5em;
 	padding-bottom	: 30px
 }
 
-#intro_bar #section_tab_navigation .tabbed_content p {
+#intro_bar .tabbed .tabbed_content p {
 	color		: #ccc;
 	font-size	: 1.3em;
 	line-height		: 1.4em;
 	padding-bottom	: 0;
 }
 
-#intro_bar #section_tab_navigation .tabbed_content p a {
+#intro_bar .tabbed .tabbed_content p a {
 	text-decoration	: underline;
 }
 
@@ -861,35 +862,43 @@ li.place div.editable {
 }
 
 #intro dl,
-#group_intro dl {
+#group_intro dl,
+#upload_viewer dl {
 	overflow	: hidden;
 }
 
 #intro dt,
-#group_intro dt {
+#group_intro dt,
+#upload_viewer dt {
 	float		: left;
 	width		: 30%;
 }
 
 #intro dd,
-#group_intro dd {
+#group_intro dd,
+#upload_viewer dd {
 	float		: left;
 	width		: 70%;
 }
 
 #intro #info ul,
-#group_intro #info ul {
+#group_intro #info ul,
+#upload_viewer ul{
 	clear		: both;
 	list-style	: none;
 	padding-bottom	: 1em;
 }
 
 #intro #info ul li ul,
-#group_intro #info ul li ul {
+#group_intro #info ul li ul
+#upload_viewer ul li ul {
 	list-style	: none;
 	padding-bottom	: 0;
 }
 
+#upload_viewer .download_button {
+	margin		: 1em 0 1.5em 30%;
+}
 
 /* Block: About */
 
