@@ -34,7 +34,7 @@ for doc in docs :
                 user = get_admin_user()
 
         print doc['creators'],creator_id,user
-        print doc['body']
+        print doc['body'].encode('utf-8')
         keywords = doc['keywords']
         if keywords  :
             print "found keywords"
@@ -66,7 +66,7 @@ for doc in docs :
         title = doc['title']
         if len(title) > 80 :
             title = title[:80]
-            print "shortened %s" % title
+            print "shortened %s" % title.encode('utf-8')
         name = name_from_title(title)
 
         pages = WikiPage.objects.filter(name=name)
@@ -82,7 +82,7 @@ for doc in docs :
         if flag :
             container.remove_member(user)
 
-        print "made %s (%s) belonging to %s" % (page.title, page.id, page.in_agent.obj)
+        print "made %s (%s) belonging to %s" % (page.title.encode('utf-8'), page.id, page.in_agent.obj)
 
     except Exception, e :
         print e
