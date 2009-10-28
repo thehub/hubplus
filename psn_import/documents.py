@@ -2,55 +2,52 @@ import ipdb
 
 from apps.plus_groups.models import TgGroup
 from apps.plus_wiki.models import WikiPage
-from psn_import.utils import load_all,maps, reverse, get_top_container, get_user_for, e_type, get_resources_group,tag_with
+from psn_import.utils import load_all,maps, reverse, get_top_container, get_user_for, e_type, get_resources_group,tag_with, create_page
 from apps.plus_permissions.default_agents import get_admin_user
 from apps.plus_groups.models import name_from_title
-from reversion import revision
 
-@revision.create_on_success
-def create_page(user,**kwargs) :
-    page = container.create_WikiPage(user,**kwargs)
-    revision.comment='Import'
-    revision.user = user
-    return page
+
 
 load_all()
 
 docs = maps['Document']
 print docs[0].keys()
 
-ipdb.set_trace()
-for d in docs :
+log= []
+related_dict = {}
+for doc in docs :
     path, tags = [],[]
     try :
-        container = get_top_container(d['uid'],path,tags)
- 
+        container = get_top_container(doc['uid'],path,tags)
         print
-        
-        print d['title'].encode('utf-8'), container.get_display_name()
-        creator_id = d['creatoruid']
-        print creator_id,e_type(creator_id)
-        try :
-            user = get_user_for(creator_id)
-        except Exception, e:
-            print e
+        print doc['title'].encode('utf-8'), container.get_display_name()
+        creator_id = doc['creatoruid']
+        if creator_id == -1 or creator_id == '-1' :
             user = get_admin_user()
+        else :
+            print creator_id,e_type(creator_id)
 
-        print d['creators'],creator_id,e_type(creator_id),user
-        print d['body']
-        keywords = d['keywords']
+            try :
+                user = get_user_for(creator_id)
+            except Exception, e:
+                print e
+                user = get_admin_user()
+
+        print doc['creators'],creator_id,user
+        print doc['body']
+        keywords = doc['keywords']
         if keywords  :
             print "found keywords"
             ipdb.set_trace()
             for k in keywords :
                 tags.append(k)
-        print 'keywords',d['keywords']
-        print 'related',d['related'],':' 
-        for k,v in d['related'].iteritems() :
+        print 'keywords',doc['keywords']
+        print 'related',doc['related'],':' 
+        for k,v in doc['related'].iteritems() :
             rel = reverse[k]
             print rel[0],rel[1]['groupname']
             
-        state = d['state']
+        state = doc['state']
         print "state",state
 
         flag = False
@@ -66,17 +63,22 @@ for d in docs :
             container.add_member(user)
             flag = True
 
+        title = doc['title']
+        if len(title) > 80 :
+            title = title[:80]
+            print "shortened %s" % title
+        name = name_from_title(title)
 
-        page = create_page(user,title=d['title'],stub=False,license='not specified',
-                           content=d['body'],in_agent=container.get_ref(),
-                           name=name_from_title(d['title']),created_by=user)
-
-
-        print page
-        print tags
-        ipdb.set_trace()
-        tag_with(page, user, tags, tag_type='') 
-
+        pages = WikiPage.objects.filter(name=name)
+        if not pages :
+            page = create_page(container, user, tags, 
+                           title=title, stub=False, license='not specified',
+                           content=doc['body'], in_agent=container.get_ref(),
+                           name=name, created_by=user)
+        else : 
+            page = pages[0]
+            
+        related_dict[page.id] = (doc['uid'],doc['related'])
         if flag :
             container.remove_member(user)
 
@@ -84,5 +86,11 @@ for d in docs :
 
     except Exception, e :
         print e
+        log.append(doc['uid'])
         ipdb.set_trace()
  
+
+print "Finished"
+print log
+for k,v in related_dict.itervalues() :
+    print k,v
