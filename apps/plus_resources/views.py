@@ -21,6 +21,8 @@ from django.core.urlresolvers import reverse
 from django.contrib.contenttypes.models import ContentType
 from django.core.files import File
 
+from apps.plus_permissions.exceptions import PlusPermissionsNoAccessException
+
 import os
     
 
@@ -74,9 +76,18 @@ def view_resource(request, group, resource_name, template_name="plus_resources/v
         obj = Resource.objects.plus_get(request.user, name=resource_name, in_agent=group.get_ref())
     except Resource.DoesNotExist:
         raise Http404
+
+    try:
+        obj.get_all_sliders
+        perms_bool = True
+    except PlusPermissionsNoAccessException:
+        perms_bool = False
+
+
     return render_to_response(template_name, {
         'resource' : TemplateSecureWrapper(obj),
         'page_title' : obj.title,
         'created_by' : obj.get_inner().created_by.get_display_name(),
+        'permissions' : perms_bool,
     }, context_instance=RequestContext(request, current_app=current_app))
 
