@@ -6,6 +6,9 @@ import pinax
 
 from django.utils.translation import ugettext_lazy as _
 
+PROJECT_THEME = 'plus'  
+# PROJECT_THEME should be over-ridden in local_settings for an alternative theme, 
+# and should correspond to one of the directories in theme_settings etc.
 
 PINAX_ROOT = os.path.abspath(os.path.dirname(pinax.__file__))
 PROJECT_ROOT = os.path.abspath(os.path.dirname(__file__))
@@ -86,7 +89,7 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.transaction.TransactionMiddleware',
 )
 
-ROOT_URLCONF = 'hubplus.urls'
+ROOT_URLCONF = 'hubplus.urls' # should be over-ridden in local_settings
 
 TEMPLATE_DIRS = (
     os.path.join(os.path.dirname(__file__), "templates"),
@@ -186,7 +189,7 @@ INSTALLED_APPS = (
 
 HAYSTACK_SITECONF = 'search_sites'
 HAYSTACK_SEARCH_ENGINE = 'solr'
-HAYSTACK_SOLR_URL = 'http://127.0.0.1:8983/solr'
+HAYSTACK_SOLR_URL = 'http://127.0.0.1:8983/solr' # override in local_settings
 
 
 ABSOLUTE_URL_OVERRIDES = {
@@ -195,16 +198,11 @@ ABSOLUTE_URL_OVERRIDES = {
 
 AUTH_PROFILE_MODULE = 'profiles.Profile'
 
-
 NOTIFICATION_LANGUAGE_MODULE = 'account.Account'
 
 EMAIL_CONFIRMATION_DAYS = 2
 EMAIL_DEBUG = DEBUG
 
-CONTACT_EMAIL = "world.tech.plus@the-hub.net"
-SUPPORT_EMAIL = "world.tech.plus@the-hub.net"
-
-SITE_NAME = "Hub+"
 LOGIN_URL = "/account/login"
 LOGIN_REDIRECT_URLNAME = "home"
 
@@ -237,8 +235,6 @@ MARKUP_CHOICES = (
 	('html', 'Plain HMTL'),
 	('plain', 'Plain Text'),
 )
-
-
 
 class NullStream(object):
     def write(*args, **kw):
@@ -290,10 +286,6 @@ SESSION_COOKIE_DODMAIN = ".XXX.net"
 HUBSPACE_COMPATIBLE = True # is this running against a HUBSPACE database?
 ROOT_URLCONF = 'XXX.urls'
 
-PROJECT_NAME="Hub+"
-PROJECT_THEME='plus'
-COPYRIGHT_HOLDER='Hub World Ltd'
-
 EMAIL_HOST= 'XXX'
 EMAIL_HOST_PASSWORD='XXX_EMAIL_PASSWORD'
 EMAIL_HOST_USER=''
@@ -301,19 +293,6 @@ EMAIL_PORT='25'
 EMAIL_USE_TLS=False
 
 HMAC_KEY = "XXXXXXXXX"
-
-VIRTUAL_HUB_NAME = 'HubPlus'
-EXPLORE_NAME = 'Explore'
-
-# This is the list of group types we currently know about                                                                    
-GROUP_TYPES = (
-    (u'interest', u'Interest'),
-    (u'organisation', u'Organisation'),
-    (u'project', u'Project'),
-    (u'internal', u'Internal'),
-    (u'hub', u'Hub'),
-)
-
 
 # a local_settings file can over-ride the above
 try:
@@ -323,6 +302,16 @@ except ImportError:
     pass
 
 
+# use theme_settings for psn / plus distinctions etc.
+theme_config= __import__('theme_settings.%s.theme' % PROJECT_THEME, globals(), locals(), PROJECT_THEME)
+
+# load the theme_settings
+for setting in dir(theme_config):
+    if setting == setting.upper():
+        locals()[setting] = getattr(theme_config, setting)
+
+
+# Now setup patches etc.
 try:
     from apps.plus_user.models import patch_user_class
     patch_user_class()
