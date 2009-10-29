@@ -114,7 +114,7 @@ def strip_out(s,bads="""/,"':()[]*\%\\;""") :
 
 from apps.plus_tags.models import tag_add
 
-stop_words = ['of','the','and','in','-','a','at','for','&','after','le','la','dans','les','with','to','de','against','all','or','set','up','lets','are','from','']
+stop_words = ['of','the','and','in','-','a','at','for','&','after','le','la','dans','les','with','to','de','against','all','or','set','up','lets','are','from','','1', '2', '3 - 30' , 'about', 'info', 'advisory', 'including', 'inform', 'global', 'materials', 'seminars']
 
 substitutes = {
   'set' : 'setup',

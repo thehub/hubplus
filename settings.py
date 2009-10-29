@@ -13,8 +13,8 @@ PROJECT_ROOT = os.path.abspath(os.path.dirname(__file__))
 # tells Pinax to use the default theme
 PINAX_THEME = 'default'
 
-DEBUG = True
-TEMPLATE_DEBUG = True # DEBUG
+DEBUG = False
+TEMPLATE_DEBUG = False # DEBUG
 
 # tells Pinax to serve media through django.views.static.serve.
 SERVE_MEDIA = True # DEBUG

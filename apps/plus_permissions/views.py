@@ -136,6 +136,7 @@ def get_json_slider_group(request, current):
     is_agent = False
     if current._inner.__class__ in [User, TgGroup]:
         is_agent = True
+
     slider_sets = sec_context.get_all_sliders(current._inner.__class__, request.user)
     slider_agents = sec_context.get_slider_agents()
     slider_data = []

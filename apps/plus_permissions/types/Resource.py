@@ -1,5 +1,5 @@
 from apps.plus_permissions.interfaces import InterfaceReadProperty, InterfaceWriteProperty, InterfaceCallProperty, InterfaceReadWriteProperty
-from apps.plus_permissions.models import SetSliderOptions, SetAgentDefaults, SetPossibleTypes, SetSliderAgents, SetSliderOptions, SliderOptions, SetTypeLabels
+from apps.plus_permissions.models import SetSliderOptions, SetAgentDefaults, SetPossibleTypes, SetSliderAgents, SetSliderOptions, SliderOptions, SetTypeLabels, SetVisibleTypes
 from apps.plus_resources.models import Resource
 
 content_type = Resource
@@ -37,9 +37,9 @@ ResourceInterfaces = {
 add_type_to_interface_map(Resource, ResourceInterfaces)
 
 if not SliderOptions.get(Resource, False):
-    SetSliderOptions(Resource, {'InterfaceOrder':['Viewer', 'Editor', 'Manager'], 'InterfaceLabels':{}})
+    SetSliderOptions(Resource, {'InterfaceOrder':['Viewer', 'Editor', 'Manager'], 'InterfaceLabels':{'Viewer':'View', 'Editor':'Edit', 'Commentor':'Comment', 'ManagePermissions':'Change Permissions'}})
 
 child_types = []
 SetPossibleTypes(Resource, child_types)
 SetTypeLabels(content_type, 'Upload')
-
+SetVisibleTypes(content_type,[Resource])
