@@ -25,7 +25,7 @@ for doc in docs :
         if creator_id == -1 or creator_id == '-1' :
             user = get_admin_user()
         else :
-            print creator_id,e_type(creator_id)
+            #print creator_id,e_type(creator_id)
 
             try :
                 user = get_user_for(creator_id)
@@ -33,19 +33,19 @@ for doc in docs :
                 print e
                 user = get_admin_user()
 
-        print doc['creators'],creator_id,user
-        print doc['body'].encode('utf-8')
+        #print doc['creators'],creator_id,user
+        #print doc['body'].encode('utf-8')
         keywords = doc['keywords']
         if keywords  :
             print "found keywords"
             ipdb.set_trace()
             for k in keywords :
                 tags.append(k)
-        print 'keywords',doc['keywords']
-        print 'related',doc['related'],':' 
+        #print 'keywords',doc['keywords']
+        #print 'related',doc['related'],':' 
         for k,v in doc['related'].iteritems() :
             rel = reverse[k]
-            print rel[0],rel[1]['groupname']
+            #print rel[0],rel[1]['groupname']
             
         state = doc['state']
         print "state",state
@@ -66,7 +66,7 @@ for doc in docs :
         title = doc['title']
         if len(title) > 80 :
             title = title[:80]
-            print "shortened %s" % title.encode('utf-8')
+            #print "shortened %s" % title.encode('utf-8')
         name = name_from_title(title)
 
         pages = WikiPage.objects.filter(name=name)
@@ -82,7 +82,7 @@ for doc in docs :
         if flag :
             container.remove_member(user)
 
-        print "made %s (%s) belonging to %s" % (page.title.encode('utf-8'), page.id, page.in_agent.obj)
+        #print "made %s (%s) belonging to %s" % (page.title.encode('utf-8'), page.id, page.in_agent.obj)
 
     except Exception, e :
         print e
