@@ -29,7 +29,10 @@ def index(request, template_name="plus_explore/explore.html"):
 
     side_search = side_search_args('', '')
     
-    return render_to_response(template_name, {'head_title':settings.EXPLORE_NAME, 'search_args':side_search}, context_instance=RequestContext(request))
+    return render_to_response(template_name, 
+                              {'head_title':settings.EXPLORE_NAME, 
+                               'search_args':side_search,
+                               'intro_box_override':True,}, context_instance=RequestContext(request))
 
 def get_virtual_groups():
     return TgGroup.objects.filter(place__name=settings.VIRTUAL_HUB_NAME, level='member')
