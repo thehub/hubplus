@@ -235,7 +235,8 @@ def groups(request, site, tag_string='', type='other', template_name='plus_explo
                                               'listing_args':listing_args_dict,
                                               'search_args':side_search,
                                               "create_group":create_group,
-                                              "obj_type": type_name}, context_instance=RequestContext(request, current_app=current_app))
+                                              "obj_type": type_name,
+                                              'intro_box_override':True}, context_instance=RequestContext(request, current_app=current_app))
 
 
 

@@ -1,4 +1,6 @@
 {% load i18n %}
+{% load intro_box %}
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" dir="{% if LANGUAGE_BIDI %}rtl{% else %}ltr{% endif %}" xml:lang="{{ LANGUAGE_CODE }}" lang="{{ LANGUAGE_CODE }}">
 
@@ -108,11 +110,10 @@
 	<!-- wrapper -->
 	<div id='wrapper'>
 
-
 		<!-- header -->
 		{% block header %}{% endblock %}
 		<!-- end header -->
-			
+
 		<!-- main -->
 		<div id='main'>
 			{% block main %}
@@ -137,6 +138,10 @@
 			<!-- page_header -->
 			<div id="page_header">
 			  {% block page_header %}
+
+			     {% if intro_box_override %}
+			        {% intro_box %}
+			     {% else %}
 			        <h2 id="page_title">{% block page_title %}{{head_title}}{% endblock %}</h2>
 				<div id="head_title_status">
 				{% if head_title_status %}
@@ -144,7 +149,9 @@
 <span id="new_status"></span></p>
 				{% endif %}
 				</div>
+			     {% endif %}
 			  {% endblock %}
+
 			</div>
 			<!-- end page_header -->
  
