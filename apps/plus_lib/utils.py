@@ -92,22 +92,14 @@ def overlay(d, d2) :
     return nd
 
 from django.conf import settings
-# Not clever, but keeps a bit of fiddly logic out of the way of everyone else while we decide 
-# the right way to handle it
+# XXX : these now moved to the the theme_settings files ... 
+# should replace these function calls with the settings constants directly
+
 def hub_name() :
-    if settings.PROJECT_THEME=='psn' :
-        return 'Region'
-    else :
-        return 'Hub'
+    return settings.HUB_NAME
 
 def hub_name_plural() :
-    if settings.PROJECT_THEME=='psn' :
-        return 'Regions'
-    else :
-        return 'Hubs'
+    return settings.HUB_NAME_PLURAL
 
 def main_hub_name() :
-    if settings.PROJECT_THEME=='psn' :
-        return "Main Region"
-    else :
-        return "Hub"
+    return settings.MAIN_HUB_NAME
