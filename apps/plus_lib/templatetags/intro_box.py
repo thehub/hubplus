@@ -12,7 +12,7 @@ def intro_box(context) :
     elif 'hub' in path or 'region' in path :
         box = 'plus_groups/clients/%s/hubs/intro_box.html' % (settings.PROJECT_THEME)
     elif 'explore' in path or 'resources' in path :
-        box = '%sclients/%s/intro_box.html' % (path,settings.PROJECT_THEME)
-    else :
+        box = 'plus_explore/clients/%s/intro_box.html' % (settings.PROJECT_THEME)
+    else : 
         box = '' 
     return {'relative_intro_box' : box, 'path' : path}
