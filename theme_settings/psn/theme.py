@@ -1,14 +1,16 @@
 # selected by PROJECT_THEME
 
+from django.utils.translation import ugettext_lazy as _
+
 print "in psn/theme.py"
 
 PROJECT_NAME="Mental Health and Psychosocial Support Network"
 COPYRIGHT_HOLDER='Psychosocial Support Network'
 
-VIRTUAL_HUB_NAME = 'MHPSS Network'
-EXPLORE_NAME = 'Resources'
+VIRTUAL_HUB_NAME = _('MHPSS Network')
+EXPLORE_NAME = _('Resources')
 
-SITE_NAME = "Psychosocial Support Network"
+SITE_NAME = _("Psychosocial Support Network")
 
 GROUP_TYPES = (
     (u'interest', u'Interest'),
@@ -25,13 +27,13 @@ HUB_NAME = 'Region'
 HUB_NAME_PLURAL = 'Regions'
 MAIN_HUB_NAME = 'Main Region'
 
-EXPLORE_SEARCH_TITLE = 'explore search title'
-MEMBER_SEARCH_TITLE = 'member search title'
-GROUP_SEARCH_TITLE = 'group search title'
-HUB_SEARCH_TITLE = 'hub search title'
+EXPLORE_SEARCH_TITLE = _('explore search title')
+MEMBER_SEARCH_TITLE = _('Search Members')
+GROUP_SEARCH_TITLE = _('Search Groups')
+HUB_SEARCH_TITLE = _('Search Regions')
 
-TAG_SEARCH_TITLE = 'tag search title'
+TAG_SEARCH_TITLE = _('Find a Tag')
+SIDE_SEARCH_TITLE = _('side search title')
 
-SIDE_SEARCH_TITLE = 'side search title'
+STATUS_COPY = _('STATUS_COPY')
 
-STATUS_COPY = 'STATUS_COPY'
