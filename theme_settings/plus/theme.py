@@ -1,7 +1,7 @@
 # selected by PROJECT_THEME
 print "in plus/theme.py"
 
-PROJECT_NAME="Mental Health and Psychosocial Support Network"
+PROJECT_NAME="Hub+"
 COPYRIGHT_HOLDER='Hub World Ltd'
 
 VIRTUAL_HUB_NAME = 'HubPlus'
