@@ -140,12 +140,16 @@
 			  {% block page_header %}
 
 			  <h2 id="page_title">{% block page_title %}{{head_title}}{% endblock %}</h2>
+                            {% if intro_box_override %}
+                               {% intro_box %}
+                            {% else %}
 				<div id="head_title_status">
 				{% if head_title_status %}
 			           <p>{% autoescape off %}{{head_title_status}}{% endautoescape %} - <span class="label_time">{{head_title_status.time}}</span>
 <span id="new_status"></span></p>
 				{% endif %}
 				</div>
+		            {% endif %}
 			  {% endblock %}
 
 			</div>
@@ -153,9 +157,6 @@
  
 			<!-- body -->
 			<div id='body'>
-                            {% if intro_box_override %}
-			       {% intro_box %}
-                            {% endif %}
   			    {% block body %}{% endblock %}
 			</div>
 			<!-- end body -->
