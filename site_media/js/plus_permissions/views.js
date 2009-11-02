@@ -192,8 +192,6 @@ var setup_sliders = function(resource_id, resource_class, json){
 		heights.each(function (i, row) {
 		    if (offsetFromStart >= row.top && offsetFromStart < row.bottom) {
 			if (offsetFromStart != row.middle) {
-			    console.log(row.middle);
-			    console.log(offsetFromStart);
 			    slider.setValue(row.middle);
 			} else {
 			    if (initialising == 0) {
