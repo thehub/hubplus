@@ -194,7 +194,7 @@ def group(request, group, template_name="plus_groups/group.html", current_app='p
             }, context_instance=RequestContext(request, current_app=current_app)
     )
 
-from apps.plus_lib.utils import hub_name_plural, hub_name, search_caption_for_current_app
+from apps.plus_lib.utils import hub_name_plural, hub_name
 from apps.plus_explore.views import plus_search, get_search_types
 
 def narrow_search_types(type_name):
@@ -230,9 +230,6 @@ def groups(request, site, tag_string='', type='other', template_name='plus_explo
     listing_args_dict = listing_args(current_app + ':groups', current_app + ':groups_tag', tag_string=tag_string, search_terms=search, multitabbed=False, order=order, template_base="site_base.html", search_type_label=head_title)
     search_dict = plus_search(listing_args_dict['tag_filter'], search, search_types, order)
 
-    search_caption = search_caption_for_current_app(current_app)
-    print search_caption_for_current_app(current_app)
-
     return render_to_response(template_name, 
                               {'head_title':head_title,
                                'search':search_dict,
@@ -241,7 +238,7 @@ def groups(request, site, tag_string='', type='other', template_name='plus_explo
                                "create_group":create_group,
                                "obj_type": type_name,
                                'intro_box_override':True}, 
-                             context_instance=RequestContext(request, {'search_caption':search_caption},
+                             context_instance=RequestContext(request,
                                                              current_app=current_app,
                                                              ))
 
