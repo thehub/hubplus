@@ -59,18 +59,32 @@ class UserNameField(models.CharField) :
 
 
 # ______
-def encrypt_password(password) :
-    return hashlib.md5(password).hexdigest()
+from hashlib import sha1
+import hmac as create_hmac
+
+def psn_encrypt(hmac_key, password):
+    """bizarely we use a field containing the fullname of the user as an hmac key for the hash of passwords from Plone
+    """
+    return create_hmac.new(str(hmac_key), password, sha1).hexdigest()
+
+
+def encrypt_password(password):
+   """We need to change this to start using SHA1 or higher for new passwords
+   """
+   return hashlib.md5(password).hexdigest()
 
 # The following will be patched into the User object in hubspace_compatibility.py
 
-def set_password(self,raw) :
+def set_password(self, raw):
     self.password = encrypt_password(raw)
 
-def check_password(self,raw) :
-    return self.password == encrypt_password(raw)
+def check_password(self, raw):
+    if self.password.startswith('hmac_sha'):
+        return self.password.split('hmac_sha:')[1] == psn_encrypt(self.psn_password_hmac_key, raw)
+    else:
+        return self.password == encrypt_password(raw)
+    
 
-# 
 class HubspaceCompatibilityNotToBeSavedException(Exception) : 
     def __init__(self,cls,extra) :
         self.cls = cls
@@ -88,14 +102,13 @@ class HubspaceAuthenticationBackend :
 
         try:
             if User.objects.filter(username=username).count() < 1 :
-                print "there is no hubspace user called '%s'" % username
                 return None # Doesn't exist in Hubspace database
 
             user = User.objects.get(username=username)
-            print "user password %s :: encrypt %s" % (user.password,encrypt_password(password))
-            if not (user.password == encrypt_password(password)) : return None # Password doesn't match
-            print "got %s" % user
-            return user
+            if user.check_password(password):
+               return user
+            return None
+
         except Exception, e:
             print 'Error3 %s' % e
             # What went wrong here? Needs handling
@@ -141,6 +154,7 @@ def patch_user_class():
     User.add_to_class('homeplace', models.ForeignKey(Location, null=True))
 
     User.add_to_class('psn_id', models.CharField(max_length=50,null=True))
+    User.add_to_class('psn_password_hmac_key', models.CharField(max_length=50, null=True)) #this is just for the bizare hmacing of psn passwords by a field formly known as "fullname"
     
     User.email = AliasOf('email_address')
     User.set_password = set_password
