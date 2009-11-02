@@ -103,3 +103,38 @@ def hub_name_plural() :
 
 def main_hub_name() :
     return settings.MAIN_HUB_NAME
+
+def search_caption_for_current_app(current_app) :
+    return "SEARCH OPTION FOR CURRENT APP"
+
+def area_from_path(path) :
+    # this function takes the path from
+    lookup = {'member':'member',
+              'group':'group',
+              'hub':'hub',
+              'region':'hub',
+              'explore':'explore',
+              'resource':'explore'}
+
+    for k,v in lookup.iteritems() :
+        if k in path :
+            return v
+    return 'unknown'
+
+
+def search_caption_from_path(path) :
+    area = area_from_path(path)
+    if area == 'member' :
+        caption = settings.MEMBER_SEARCH_TITLE
+    elif area == 'group' :
+        caption = settings.GROUP_SEARCH_TITLE
+    elif area == 'hub' :
+        caption = settings.HUB_SEARCH_TITLE
+    elif area == 'explore' :
+        caption= settings.EXPLORE_SEARCH_TITLE
+    else :
+        caption = ''
+    return caption
+
+
+

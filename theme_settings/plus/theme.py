@@ -1,9 +1,7 @@
 # selected by PROJECT_THEME
 print "in plus/theme.py"
-
 from django.utils.translation import ugettext_lazy as _
-
-PROJECT_NAME="Mental Health and Psychosocial Support Network"
+PROJECT_NAME="Hub+"
 COPYRIGHT_HOLDER='Hub World Ltd'
 
 VIRTUAL_HUB_NAME = _('HubPlus')
@@ -25,7 +23,6 @@ SUPPORT_EMAIL = "world.tech.plus@the-hub.net"
 HUB_NAME = 'Hub'
 HUB_NAME_PLURAL = 'Hubs'
 MAIN_HUB_NAME = 'Main Hub'
-
 
 EXPLORE_SEARCH_TITLE = _('explore search title')
 MEMBER_SEARCH_TITLE = _('Search Members')

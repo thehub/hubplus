@@ -78,7 +78,7 @@ def filter(request, tag_string, template_name='plus_explore/explore_filtered.htm
     return render_to_response(template_name, {'head_title':head_title, 
                                               'listing_args':listing_args_dict,
                                               'search':search_dict,
-                                              'search_args':side_search}, context_instance=RequestContext(request))
+                                              'search_args':side_search,}, context_instance=RequestContext(request))
 
 
 def plus_search(tags, search, search_types, order=None, in_group=None, extra_filter=None):
