@@ -15,7 +15,7 @@ def get_resource(cls, resource_id):
     return resource
 
 def secure(request, cls, resource_id, required_interfaces=None, with_interfaces=None, all_or_any='ALL'):
-    """all_or_any refers to whether the object must have 'ALL' or 'ANY' 
+    """all_or_any refers to whether the object must have 'ALL' or 'ANY' of the required interfaces
     """
     resource = get_resource(cls, resource_id)
     if not resource:
@@ -38,7 +38,7 @@ def check_interfaces(sec_resource, cls, required_interfaces, all_or_any='ALL'):
     if count <= 1 and all_or_any == 'ANY':
         raise PlusPermissionsNoAccessException(cls, sec_resource.id, "You can't call that function")
 
-def secure_resource(cls=None, with_interfaces=None, required_interfaces=None, obj_schema=None) :
+def secure_resource(cls=None, with_interfaces=None, required_interfaces=None, obj_schema=None):
     def decorator(f):
         if cls:
             def g(request, resource_id, *args, **kwargs):
@@ -63,7 +63,6 @@ def secure_resource(cls=None, with_interfaces=None, required_interfaces=None, ob
                         cls = obj_types[0]
                     elif obj_types == 'any' or isinstance(obj_types, list):
                         classname = data.get(obj_key + '_class', None)
-                        
                         if classname:
                             cls = ContentType.objects.get(model=classname.lower()).model_class()
                             if isinstance(obj_types, list):
@@ -73,7 +72,13 @@ def secure_resource(cls=None, with_interfaces=None, required_interfaces=None, ob
                             continue
 
                     id = data.get(obj_key, None) or data.get(obj_key +'_id', None)
-                    sec_resource = secure(request, cls, id)
+                    required = None
+                    with_ifaces = None
+                    if isinstance(required_interfaces, dict):
+                        required = required_interfaces.get(obj_key, None)
+                    if isinstance(with_interfaces, dict):
+                        with_ifaces = with_interfaces.get(obj_key, None)
+                    sec_resource = secure(request, cls, id, required, with_ifaces)
                     #would be better to introspect the view functions signature here, thus allowing us to use args or kwargs
                     kwargs[obj_key] = sec_resource
 
