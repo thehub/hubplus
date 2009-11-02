@@ -10,7 +10,7 @@ def intro_box(context) :
     path = context['request'].path
 
     area = area_from_path(path)
-    if area == 'members': 
+    if area == 'member': 
         box = 'profiles/clients/%s/intro_box.html' % (settings.PROJECT_THEME)
     elif area == 'group' :
         box = 'plus_groups/clients/%s/groups/intro_box.html' % (settings.PROJECT_THEME)
