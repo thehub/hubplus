@@ -34,3 +34,5 @@ TAG_SEARCH_TITLE = _('tag search title')
 SIDE_SEARCH_TITLE = _('side search title')
 
 STATUS_COPY = 'STATUS_COPY'
+
+

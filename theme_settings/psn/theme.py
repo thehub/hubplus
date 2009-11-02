@@ -2,8 +2,6 @@
 
 from django.utils.translation import ugettext_lazy as _
 
-
-
 PROJECT_NAME=_("Mental Health and Psychosocial Support Network")
 COPYRIGHT_HOLDER=_('Psychosocial Support Network')
 
@@ -30,7 +28,7 @@ MAIN_HUB_NAME = _('Main Region')
 EXPLORE_SEARCH_TITLE = _('explore search title')
 MEMBER_SEARCH_TITLE = _('Search Members')
 GROUP_SEARCH_TITLE = _('Search Groups')
-HUB_SEARCH_TITLE = _('Search Regions')
+HUB_SEARCH_TITLE = _('Searich Regions')
 
 TAG_SEARCH_TITLE = _('Find a Tag')
 SIDE_SEARCH_TITLE = _('side search title')
