@@ -10,34 +10,36 @@ from avatar.models import Avatar, avatar_file_path
 from django.core.files.images import ImageFile
 from apps.plus_groups.models import Location
 
-def user_exists(username, email) :
+def user_exists(username, email):
     if User.objects.filter(username=username) : return True
-    if User.objects.filter(email_address=email) : return True
     return False
 
 
-users = pickle.load(open('mhpss_export/users.pickle'))
-for u in users:    
-    print u
+from psn_import.utils import load_all, maps
+
+load_all()
+
+def import_users():
+    for u in maps['User']:
+        import_user(u)
+
+def import_user(u):
+    print u['uid'], u['username']
     username = u['username']
     description = u['description']
     roles = u['roles']
-    fullname = u['fullname'].strip()
+    fullname = u['fullname'].strip() 
     biography = u['biography']
     email = u['email']
     portrait = u['portraitfile'].split('/')[-1]
     psn_id = u['uid']
     location = u['location']
     
-    print username, description, fullname, email, biography, roles, portrait, psn_id
 
-    if not user_exists(username, email) :
+    if not user_exists(username, email):
         user = create_user(username, email_address=email, password='password')
-    else :
-        try :
-            user = User.objects.get(username=username)
-        except :
-            user = User.objects.get(email_address=email)
+    else:
+        user = User.objects.get(username=username)
     
     user.set_password('password')
     if description : 
@@ -63,12 +65,12 @@ for u in users:
     user.first_name = first[:30]
     user.last_name = last[:30]
     user.psn_id = psn_id
-
+    user.email = email
     user.save()
 
     f = ImageFile(open('mhpss_export/user_images/%s'%portrait),'rb')
     if f.size == 1357 :
-        continue # image is plone default ... we don't want it
+        return # image is plone default ... we don't want it
 
     path = avatar_file_path(target=user, filename=portrait)
  
@@ -79,8 +81,9 @@ for u in users:
         )
 
     avatar.save()
-
     new_file = avatar.avatar.storage.save(path, f)
     avatar.save()
    
 
+if __name__=='__main__':
+    import_users()
