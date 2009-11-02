@@ -17,7 +17,9 @@ from apps.plus_permissions.api import secure_resource
 
 
 @login_required
-@secure_resource(obj_schema={'tagged':'any', 'tagged_for':[User, TgGroup]})
+@secure_resource(obj_schema={'tagged':'any', 'tagged_for':[User, TgGroup]}, 
+                 required_interfaces={'tagged':['Viewer'], 'tagged_for':['Editor']},
+                 with_interfaces={'tagged':['Viewer'], 'tagged_for':['Editor', 'Viewer']})
 def add_tag(request, tagged, tagged_for=None, tag_string=None):
     """ This is actually a way to add typed keywords (e.g. skills, interests, needs) as well as 'free tags'"""
     tagged_by = request.user
@@ -41,7 +43,9 @@ def add_tag(request, tagged, tagged_for=None, tag_string=None):
 
 
 @login_required
-@secure_resource(obj_schema={'tagged':'any', 'tagged_for':[User, TgGroup]})
+@secure_resource(obj_schema={'tagged':'any', 'tagged_for':[User, TgGroup]}, 
+                 required_interfaces={'tagged':['Viewer'], 'tagged_for':['Editor']},
+                 with_interfaces={'tagged':['Viewer'], 'tagged_for':['Editor', 'Viewer']})
 def autocomplete_tag(request, tag_type=None, tagged=None, tagged_for=None):
     """
       - autocomplete should look for a partial match in the following in order until it finds 10 results:
@@ -59,8 +63,11 @@ def autocomplete_tag(request, tag_type=None, tagged=None, tagged_for=None):
     options = '\n'.join(options)
     return HttpResponse(options)
 
+
 @login_required
-@secure_resource(obj_schema={'tagged':'any', 'tagged_for':[User, TgGroup]})
+@secure_resource(obj_schema={'tagged':'any', 'tagged_for':[User, TgGroup]}, 
+                 required_interfaces={'tagged':['Viewer'], 'tagged_for':['Editor']},
+                 with_interfaces={'tagged':['Viewer'], 'tagged_for':['Editor', 'Viewer']})
 def delete_tag(request, tagged, tagged_for=None):
     tagged_by = request.user
     if not tagged_for:

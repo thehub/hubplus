@@ -99,6 +99,7 @@ def move_sliders(request, json, current):
     type_name = request.POST['type_name']
     sec_context = current._inner.get_security_context()
     slider_levels = {}
+
     for interface, agent_tuple in json.iteritems():
         cls = ContentType.objects.get(model=agent_tuple[0].lower()).model_class()
         agent = cls.objects.get(id=agent_tuple[1])

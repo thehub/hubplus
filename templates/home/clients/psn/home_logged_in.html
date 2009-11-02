@@ -1,0 +1,69 @@
+{% extends "site_base.html" %}
+
+{% load i18n %}
+{% load listings %}
+{% load microblogging_tags %}
+
+{% block head_title %}{% trans "Home" %}{% endblock %}
+
+{% block tab_id %}id="home_tab"{% endblock %}
+
+{% block body %}
+
+<div id="whats_next" class="block">
+
+	<h3>{% trans "What next?" %}</h3>
+	<ul>
+		<li class="first">
+			<dl>
+				<dt><a href="{% url explore %}" class="add_content" rel="#overlay" >Share Resources</a></dt>
+				<dd>Create pages and upload documents to the site. Browse, search or tag materials already online</dd>
+			</dl>
+		</li>
+		<li>
+			<dl>
+				<dt><a href="{% url groups:groups %}">Explore Groups</a>
+				<dd>Visit or join existing groups. Create a new group to bring together members with a shared purpose or interest.</dd>
+			</dl>
+		</li>
+		<li class="last">
+			<dl>
+				<dt><a href="{% url hubs:groups %}">Visit Regions</a>
+				<dd>Join a region of interest and stay informed about relevant people, resources and activities.</dd>
+			</dl>
+		</li>
+	</ul>
+
+</div>
+
+<div id="status" class="block">
+
+	<h3>{{STATUS_COPY}}</h3>  
+	<div class="thumb tiny"><img src="../../site_media/images/member.jpg"/></div>
+
+	<form method="post" action="{% url home %}">
+		<textarea id="new_tweet" name="text" cols="50" rows="2"></textarea>
+		
+		<div class="buttons">
+			<input type="submit" class="button" value="{% trans 'Share' %}" />
+			<!-- or <a href="#">Cancel</a>-->
+		</div>
+
+	</form>
+
+</div>
+
+{% include "id.html" %}
+{% include "home/clients/{{PROJECT_THEME}}/tabbed_subs.html" %}
+
+{% endblock %}
+
+{% block side_bar %}
+
+	{% include "plus_explore/side_search.html" %}
+	{% include "add.html" %}
+	<ul>
+		<li><a href="{% url list_open_applications %}">View recent applicants to the site</a></li>
+	</ul>
+
+{% endblock %}

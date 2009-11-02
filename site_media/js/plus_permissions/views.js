@@ -41,7 +41,7 @@ var setup_sliders = function(resource_id, resource_class, json){
 	    var heights = rows.map(function (i, row) {
 		var row = jq(row);
 		var row_top = row.offset().top - top_row;
-		var row_data = {'agent_id':row.attr('id').split('-')[2],'agent_class':row.attr('id').split('-')[1], middle:row_top + row.height()/2 - 6.5, 'top':row_top - 6.5, 'bottom':row_top + row.height() - 6.5};
+				       var row_data = {'agent_id':row.attr('id').split('-')[2],'agent_class':row.attr('id').split('-')[1], middle:Math.round(row_top + row.height()/2 - 6.5), 'top':Math.round(row_top - 6.5), 'bottom':Math.round(row_top + row.height() - 6.5)};
 		row.data('slider', row_data);
 		return row_data;
 	    });
@@ -190,8 +190,10 @@ var setup_sliders = function(resource_id, resource_class, json){
 		    return false;
 		}
 		heights.each(function (i, row) {
-		    if (offsetFromStart > row.top && offsetFromStart < row.bottom) {
+		    if (offsetFromStart >= row.top && offsetFromStart < row.bottom) {
 			if (offsetFromStart != row.middle) {
+			    console.log(row.middle);
+			    console.log(offsetFromStart);
 			    slider.setValue(row.middle);
 			} else {
 			    if (initialising == 0) {

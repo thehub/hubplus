@@ -64,7 +64,8 @@ def profiles(request, tag_string='', template_name="plus_explore/explore_filtere
     return render_to_response(template_name, {'head_title':head_title, 
                                               'listing_args':listing_args_dict,
                                               'search_args':side_search,
-                                              'search':search_dict}, context_instance=RequestContext(request))
+                                              'search':search_dict,
+                                              'intro_box_override':True}, context_instance=RequestContext(request))
 
 
 

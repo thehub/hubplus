@@ -16,20 +16,20 @@
 	<ul>
 		<li class="first">
 			<dl>
-				<dt><a href="{% url groups:add_content resource_id=0 %}" class="add_content" rel="#overlay" >Add Resources</a></dt>
-				<dd>Create wiki pages and upload documents to the site.</dd>
+				<dt><a href="{% url profile_list %}">Find members</a>
+				<dd>With shared interests or skills you are looking for.</dd>
 			</dl>
 		</li>
 		<li>
 			<dl>
-				<dt><a href="{% url groups:create_group %}">Create Groups</a>
-				<dd>Bring together members by field, interest, project or organisation.</dd>
+				<dt><a href="{% url groups:groups %}">Create Groups</a>
+				<dd>Bring together members through interest, project or organisation.</dd>
 			</dl>
 		</li>
 		<li class="last">
 			<dl>
-				<dt><a href="{% url hubs:groups %}">Join Regions</a>
-				<dd>Connect and stay up-to-date with the latest happenings in your area.</dd>
+				<dt><a href="{% url explore %}" class="add_content" rel="#overlay" >Add Resources</a></dt>
+				<dd>Create wiki pages and upload documents to the site.</dd>
 			</dl>
 		</li>
 	</ul>
@@ -38,7 +38,7 @@
 
 <div id="status" class="block">
 
-	<h3>{% trans "What's happening?" %}</h3>  
+	<h3>{{STATUS_COPY}}</h3>  
 	<div class="thumb tiny"><img src="../../site_media/images/member.jpg"/></div>
 
 	<form method="post" action="{% url home %}">
@@ -53,7 +53,7 @@
 
 </div>
 
-{% include "home/tabbed_subs.html" %}
+{% include HOME_TABS %}
 
 {% endblock %}
 
