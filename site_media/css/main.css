@@ -37,16 +37,16 @@ HUB PLUS 2009
 	border-right	: 0;
 }
 
-#whats_next li dl {
+#whats_next dl {
 
 }
 
-#whats_next li dt {
+#whats_next dt {
 	font-size	: 1.4em;
 	padding-bottom	:	2px;
 }
 
-#whats_next li dd {
+#whats_next dd {
 	color		: #888;
 }
 
@@ -387,17 +387,17 @@ th {
 	width		: 100%;
 }
 
-table th {
+#body table th {
 	font-weight	: bold;
 	padding		: 4px 0 5px 0;
 	text-transform	: uppercase;
 }
 
-table tr {
+#body table tr {
 	border-bottom	: 1px solid #ddd;
 }
 
-table td {
+#body table td {
 	padding		: 3px 0;
 }
 
