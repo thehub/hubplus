@@ -1,13 +1,13 @@
 # selected by PROJECT_THEME
-print "in plus/theme.py"
-from django.utils.translation import ugettext_lazy as _
-PROJECT_NAME="Hub+"
-COPYRIGHT_HOLDER='Hub World Ltd'
 
-VIRTUAL_HUB_NAME = _('HubPlus')
+from django.utils.translation import ugettext_lazy as _
+PROJECT_NAME=_("Hub+")
+COPYRIGHT_HOLDER=_('Hub World Ltd')
+
+VIRTUAL_HUB_NAME = 'HubPlus'
 EXPLORE_NAME = _('Explore')
 
-SITE_NAME = "Hub+"
+SITE_NAME = _("Hub+")
 
 GROUP_TYPES = (
     (u'interest', u'Interest'),
