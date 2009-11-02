@@ -104,9 +104,6 @@ def hub_name_plural() :
 def main_hub_name() :
     return settings.MAIN_HUB_NAME
 
-def search_caption_for_current_app(current_app) :
-    return "SEARCH OPTION FOR CURRENT APP"
-
 def area_from_path(path) :
     # this function takes the path from
     lookup = {'member':'member',
