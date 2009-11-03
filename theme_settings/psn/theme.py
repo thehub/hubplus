@@ -28,10 +28,10 @@ MAIN_HUB_NAME = _('Main Region')
 EXPLORE_SEARCH_TITLE = _('explore search title')
 MEMBER_SEARCH_TITLE = _('Search Members')
 GROUP_SEARCH_TITLE = _('Search Groups')
-HUB_SEARCH_TITLE = _('Searich Regions')
+HUB_SEARCH_TITLE = _('Search Regions')
 
 TAG_SEARCH_TITLE = _('Find a Tag')
 SIDE_SEARCH_TITLE = _('side search title')
 
-STATUS_COPY = _('STATUS_COPY')
+STATUS_COPY = _('Update the Network, what are you doing right now ?')
 
