@@ -71,6 +71,7 @@ def proxied_signup(request, application, form_class=SignupForm,
     # with request.user as the agent who's inviting / authorizing this new member
     # so we don't need to explicitly test.
 
+
     if success_url is None:
         success_url = get_default_redirect(request)
 
@@ -108,12 +109,16 @@ def proxied_signup(request, application, form_class=SignupForm,
     else:
 
         form = form_class()
-        try :
-            applicant = application.get_inner().applicant
-            form.email_address = applicant.email_address
-            form.username = "%s %s" % (applicant.first_name, applicant.last_name)
-            display_name = form.username
-        except :
+
+        applicant = application.get_inner().applicant
+        if applicant :
+            form.data['email_address'] = applicant.email_address
+            form.data['username'] = applicant.first_name
+            if applicant.last_name :
+                form.username = form.username + '.' + applicant.last_name
+            
+            display_name = form.data['username']
+        else :
             form.email_address = ''
             form.username = ''
             
