@@ -90,7 +90,10 @@ def patch_in_profiles(request):
     
     return HttpResponse("patched %s users to have profiles" % str(no_of_users))
 
-@secure_resource(obj_schema={'current':'any'})
+
+@secure_resource(obj_schema={'current':'any'},
+                 required_interfaces={'current':['ManagePermissions']},
+                 with_interfaces={'current':['ManagePermissions']})
 @json_view
 def move_sliders(request, json, current):
     """json is of the form, {interface:[agent_class, agent_id]}
@@ -121,7 +124,9 @@ def toggle_custom_permissions(request, current):
     json = get_json_slider_group(request, current)
     return HttpResponse(json, mimetype='application/json')
 
-@secure_resource(obj_schema={'current':'any'})
+@secure_resource(obj_schema={'current':'any'},
+                 required_interfaces={'current':['Viewer']},
+                 with_interfaces={'current':['Viewer']})
 def json_slider_group(request, current):
     """This should be properly secured by doing everything through permissionable objects on the current resource. i.e. without getting the security context.
     """
