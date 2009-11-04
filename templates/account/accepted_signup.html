@@ -16,32 +16,32 @@
 <div id="intro" class="block">
 
 <form class="full" action="{{submit_url}}" method="POST">
-	<h4>Your details</h4>
-	<p>Please enter your details below to finish creating your account.</p>
+	<h4>{% trans "Your details" %}</h4>
+	<p>{% trans "Please enter your details below to finish creating your account." %}</p>
 	<fieldset>
 		<ul>
-			<li>
-				<label for="name">Name</label>
-				<!-- <input  id="name" class="text" type="text" /> -->
-				{{display_name}}
-				
-			</li>
-			<li>
-				<label for="username"><span class="required">*</span> Username</label>
-				<input  id="username" name="username" class="text" type="text" value="{{form.data.username}}"/>
-				{{form.username.errors}}
-
-			</li>
-			<li>
-				<label for="password1"><span class="required">*</span> Password</label>
-				<input  id="password1" name="password1" class="text" type="password" />
-				{{form.password1.errors}}
-			</li>
-			<li>
-				<label for="password2"><span class="required">*</span> Re-enter password</label>
-				<input  id="password2" name="password2" class="text" type="password" />
-				{{form.password2.errors}}
-			</li>
+		  <li>
+		    <label for="name">Name</label>
+		    <!-- <input  id="name" class="text" type="text" /> -->
+		    {{display_name}}
+		    
+		  </li>
+		  <li>
+		    <label for="username"><span class="required">*</span> Username</label>
+		    <input  id="username" name="username" class="text" type="text" value="{{form.data.username}}"/>
+		    {{form.username.errors}}
+		    
+		  </li>
+		  <li>
+		    <label for="password1"><span class="required">*</span> Password</label>
+		    <input  id="password1" name="password1" class="text" type="password" />
+		    {{form.password1.errors}}
+		  </li>
+		  <li>
+		    <label for="password2"><span class="required">*</span> Re-enter password</label>
+		    <input  id="password2" name="password2" class="text" type="password" />
+		    {{form.password2.errors}}
+		  </li>
 		</ul>
 	</fieldset>
 	<input class="submit button" type="Submit" value="Create account" />

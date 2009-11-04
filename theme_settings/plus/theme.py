@@ -33,6 +33,7 @@ TAG_SEARCH_TITLE = _('tag search title')
 
 SIDE_SEARCH_TITLE = _('side search title')
 
-STATUS_COPY = 'STATUS_COPY'
+STATUS_COPY = _('What are you thinking about?')
+
 
 
