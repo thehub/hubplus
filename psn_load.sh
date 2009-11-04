@@ -13,3 +13,4 @@ python manage.py execfile psn_import/make_admins.py
 python manage.py execfile psn_import/patch_tags.py
 python manage.py execfile psn_import/documents.py
 python manage.py execfile psn_import/strip_stop_tags.py
+python manage.py execfile psn_import/group_permissions.py
