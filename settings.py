@@ -80,6 +80,7 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
 
+    'apps.django403.middleware.Django403Middleware',
     'django_openid.consumer.SessionConsumer',
     'account.middleware.LocaleMiddleware',
     'django.middleware.doc.XViewMiddleware',
@@ -185,6 +186,7 @@ INSTALLED_APPS = (
     'tag_app',
     'django.contrib.admin',
     'haystack',
+    'django403',
     )
 
 HAYSTACK_SITECONF = 'search_sites'
