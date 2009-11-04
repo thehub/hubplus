@@ -43,8 +43,6 @@ def import_group(f_name, group_type, fn_place) :
     for g in groups:
         #print g.keys()
  
-        if 'Nutri' in g['groupname'] :
-            continue
         print g['groupname'], g['body'], g['description'],g['joinpolicy'],g['imagefilename']
 
         if g['joinpolicy']== 'open' :
