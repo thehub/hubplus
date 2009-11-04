@@ -14,6 +14,9 @@ def user_exists(username, email):
     if User.objects.filter(username=username) : return True
     return False
 
+def email_exists(email):
+    if User.objects.filter(email_address=email) : return True
+    return False
 
 from psn_import.utils import load_all, maps
 
@@ -35,7 +38,6 @@ def import_user(u):
     psn_id = u['uid']
     location = u['location']
     
-
     if not user_exists(username, email):
         user = create_user(username, email_address=email, password='password')
     else:
@@ -65,7 +67,13 @@ def import_user(u):
     user.first_name = first[:30]
     user.last_name = last[:30]
     user.psn_id = psn_id
-    user.email = email
+    c = 1
+    email2 = email
+    while (email_exists(email2)) :
+        print email2
+        email2 = '%s%s'%(c,email)
+        c=c+1
+    user.email = email2
     user.save()
 
     f = ImageFile(open('mhpss_export/user_images/%s'%portrait),'rb')
