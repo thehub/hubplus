@@ -206,7 +206,8 @@ SetVisibleAgents(TgGroup, visible_agents())
 
 #constraints - note that "higher" means wider access. Therefore if "anonymous can't edit" we must set that Editor<$anonymous OR if Editor functionality can't be given to a wider group than Viewer then we must set Editor < Viewer.
 
-public_defaults = {'TgGroup':
+def setup_defaults() :
+    public_defaults = {'TgGroup':
                        {'defaults':
                             {'Viewer':'anonymous_group', 
                              'Editor':'creator',
@@ -310,150 +311,35 @@ public_defaults = {'TgGroup':
                    }
 
 
-# start by cloning the public, then we'll over-ride the differences using plus_lib/utils/overlay
-private_defaults = deepcopy(public_defaults)
-open_defaults = deepcopy(public_defaults)
-invite_defaults = deepcopy(public_defaults)
+    # start by cloning the public, then we'll over-ride the differences using plus_lib/utils/overlay
+    # XXX don't need to keep doing this ... make sure its called only once
 
-AgentDefaults = {'public':public_defaults,
+    from apps.plus_lib.dict_tools import overlay
+
+    open_defaults = deepcopy(public_defaults)
+    open_defaults = overlay(open_defaults,{'TgGroup':{'defaults':{'Viewer':'all_members_group'}}})
+    open_defaults = overlay(open_defaults,{'WikiPage':{'defaults':{'Viewer':'all_members_group'}}})
+    open_defaults = overlay(open_defaults,{'Resource':{'defaults':{'Viewer':'all_members_group'}}})
+
+    invite_defaults = deepcopy(open_defaults)
+    invite_defaults = overlay(invite_defaults,{'TgGroup':{'defaults':{'Join':'context_agent'}}})
+
+    private_defaults = deepcopy(invite_defaults)
+    private_defaults = overlay(private_defaults,{'TgGroup':{'defaults':{'Viewer':'context_agent'}}})
+    private_defaults = overlay(private_defaults,{'TgGroup':{'defaults':{'Invite':'context_admin'}}})
+    private_defaults = overlay(private_defaults,{'WikiPage':{'defaults':{'Viewer':'context_agent'}}})
+    private_defaults = overlay(private_defaults,{'Resource':{'defaults':{'Viewer':'context_agent'}}})
+    
+
+    AgentDefaults = {'public':public_defaults,
                  'private':private_defaults,
                  'open' : open_defaults,
                  'invite' : invite_defaults}
 
+    return AgentDefaults
 
-#AgentDefaults = {'public':
-#                     {'TgGroup':
-#                          {'defaults':
-#                               {'Viewer':'anonymous_group', 
-#                                'Editor':'creator',
-#                                'Invite':'context_agent',
-#                                'ManageMembers':'creator',
-#                                'Join':'all_members_group',
-#                                'Unknown': 'context_agent'
-#                                },                           
-#                           'constraints':
-#                               ['Viewer>=Editor', 'Invite>=ManageMembers', 'Join>=ManageMembers', 'ManageMembers<=$anonymous']
-#                           },
-#                      'WikiPage':
-#                          {'defaults':
-#                               {'Viewer':'anonymous_group',
-#                                'Editor':'context_agent',
-#                                'Delete':'context_admin',
-#                                'Unknown':'context_agent'},
-#                           'constraints': ['Viewer>=Editor', 'Editor<$anonymous_group']
-#                           },
-#                      'OurPost':
-#                          { 'defaults' : {'Viewer':'all_members_group',
-#                                          'Editor':'creator',
-#                                          'Commentor':'context_agent',
-#                                          'Unknown': 'context_agent'},
-#                            'constraints':['Viewer>=Editor', 'Editor<$anonymous_group']
-#                            },
-#                      'Site' : 
-#                          {'defaults':
-#                                {'create_Application':'anonymous_group',
-#                                'Unknown': 'context_agent'},
-#                           'constraints':
-#                               [] 
-#                           },
-#                      'Application':
-#                          { 'defaults' : {'Viewer':'all_members_group',
-#                                          'Editor':'creator',
-#                                          'Accept':'all_members_group',
-#                                          'Unknown': 'context_agent'
-#                                          },
-#                            'constraints':['Viewer>=Editor', 'Editor<$anonymous_group']
-#                            },                      
-#                      'Contact':
-#                          { 'defaults' : {'ContactAdmin':'context_admin',
-#                                          'ContactInvite':'all_members_group',
-#                                          'Unknown': 'context_agent'
-#                                          },
-#                            'constraints':[]
-#                           },
-#                      'Profile':
-#                          { 'defaults': {'Viewer': 'anonymous_group',
-#                                         'Editor': 'creator',
-#                                         'EmailAddressViewer' : 'context_agent',
-#                                         'HomeViewer' : 'context_agent',
-#                                         'WorkViewer' : 'context_agent',
-#                                         'MobileViewer' : 'context_agent',
-#                                         'FaxViewer' : 'context_agent',
-#                                         'AddressViewer' : 'context_agent',
-#                                         'SkypeViewer' : 'context_agent',
-#                                         'SipViewer' : 'context_agent',
-#                                         'Unknown' : 'creator',
-#                                         
-#                                         },
-#                           'constraints':[]
-#                           }
-#                      },
-#                 
-#
-#                 'private':
-#                    {'TgGroup':
-#                          {'defaults':
-#                               {'Viewer':'context_agent', 
-#                                'Editor':'creator',
-#                                'Invite':'context_agent',
-#                                'ManageMembers':'creator',
-#                                'Join':'context_agent',
-#                                'Unknown': 'context_admin'
-#                               },
-#                           'constraints':
-#                               ['Viewer>=Editor', 'Invite>=ManageMembers', 'Join>=ManageMembers', 'ManageMembers<=$anonymous']
-#                           },
-#                      'OurPost': 
-#                          {'defaults' : 
-#                               {'Viewer':'all_members_group',
-#                                'Editor':'creator',
-#                                'Commentor':'context_agent',
-#                                'Unknown': 'context_agent'},
-#                           'constraints':['Viewer>=Editor']
-#                           },
-#                      'Site' : 
-#                          {'defaults':
-#                               {'Manager':'context_admin',
-#                                'Unknown': 'context_agent'},
-#                           'constraints':
-#                               [] 
-#                           },
-#                      'Application':
-#                          { 'defaults' : {'Viewer':'all_members_group',
-#                                          'Editor':'creator',
-#                                          'Accept':'context_agent',
-#                                          'Unknown': 'context_agent',
-#                                          },
-#                            'constraints':['Viewer>=Editor', 'Editor<$anonymous_group']
-#                            },                      
-#                      'Contact':
-#                          { 'defaults' : {'ContactAdmin':'context_admin',
-#                                          'ContactInvite':'all_members_group',
-#                                          'Unknown': 'context_agent',
-#                                          },
-#                            'constraints':[]
-#                            },
-#                      'Profile':
-#                          { 'defaults': {'Viewer': 'anonymous_group',
-#                                         'Editor': 'creator',
-#                                         'EmailAddressViewer' : 'context_agent',
-#                                         'HomeViewer' : 'context_agent',
-#                                         'WorkViewer' : 'context_agent',
-#                                         'MobileViewer' : 'context_agent',
-#                                         'FaxViewer' : 'context_agent',
-#                                         'AddressViewer' : 'context_agent',
-#                                         'SkypeViewer' : 'context_agent',
-#                                         'SipViewer' : 'context_agent',
-#                                        'Unknown' : 'creator',
-#                                        
-#                                         },
-#                            'constraints':[]
-#                            }
-#
-#
-#                      }
-#                 }
 
+AgentDefaults = setup_defaults()
 SetAgentDefaults(TgGroup, AgentDefaults)
 
 

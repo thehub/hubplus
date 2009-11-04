@@ -62,7 +62,7 @@ def get_top_container(uid, path, tags) :
             if gs :
                 return gs[0]
             else :
-                print "%s seems to be a group but wasn't created as a TgGroup".encode('utf-8')
+                print "%s seems to be a group but wasn't created as a TgGroup" % uid.encode('utf-8')
                 ipdb.set_trace()
                 return None
 

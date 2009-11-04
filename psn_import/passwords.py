@@ -8,7 +8,6 @@ def get_user_from_psn_import(username):
 
 
 
-
 def patch_broken_user():
     from psn_import.users import import_user
     u1 = get_user_from_psn_import('vanommerenm')
@@ -116,9 +115,16 @@ def set_password(u):
     user_obj.save()
 
 if __name__=='__main__':
+    
     patch_broken_user()
+    
+    import ipdb
 
     for u in maps['User']:
-        set_password(u)
+        try :
+            set_password(u)
+        except Exception, e:
+            print u
+            ipdb.set_trace()
 
 
