@@ -184,7 +184,12 @@ h2,
 	font-weight	: normal;
 	line-height	: 1.1em;
 	margin-bottom	: 10px;
-	width		: 100%;
+	width		: 620px;
+}
+
+#page_header #section_intro,
+#page_header #head_title_status {
+	width		: 620px;
 }
 
 h3 {
