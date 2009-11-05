@@ -76,7 +76,7 @@ def accept_application(request,id) :
             # we're asking for a group
 
             try :
-                application.group.accept_member(application.get_user())
+                application.group.join(application.get_user())
             
                 return HttpResponseRedirect(reverse('list_open_applications'))
             except PlusPermissionsNoAccessException :
