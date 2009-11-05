@@ -127,17 +127,20 @@ class SecurityContext(models.Model):
 
      def switch_permission_prototype(self, permission_prototype) :
          # XXX refactor to eliminate redundancy with set_up
-
          my_type = self.get_my_type()
          self.context_agent.permission_prototype = permission_prototype
          agent_defaults = AgentDefaults[self.context_agent.obj.__class__][permission_prototype]
 
          sad = self.get_slider_agent_dictionary()
-
          types = [my_type] + PossibleTypes[my_type]
          for typ in types:
              for interface_name in get_interface_map(typ.__name__):
                  interface_str = '%s.%s' %(typ.__name__, interface_name)
+
+                 # seems to create missing sliders (if new interfaces are added)
+                 self.get_slider_level(interface_str)
+
+                 
                  type_name, interface_name = interface_str.split('.')
                  selected_agent = get_selected_agent(sad, agent_defaults, type_name, interface_name)
                  self.move_slider(selected_agent, interface_str, skip_validation=True, no_user=True)
