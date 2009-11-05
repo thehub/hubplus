@@ -170,6 +170,7 @@ INSTALLED_APPS = (
     'plus_permissions',
     'analytics',
     'plus_tags',
+    'plus_comments',
     'profiles',
     'plus_groups',
     'plus_links',
