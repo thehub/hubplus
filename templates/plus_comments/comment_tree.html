@@ -1,0 +1,47 @@
+{% load threadedcommentstags %}
+{% load i18n %}
+{% load avatar_tags %}
+
+<div id="comments" class="page_content">
+
+    {% get_threaded_comment_tree for target as tree %}
+        {% if tree %}<ul class="content_list">{% endif %}
+    {% for comment in tree %}
+      <li class='one_comment'>
+	<div style="margin-left: {{ comment.depth }}em;" class="comment">
+          <div class="thumb small">{% avatar comment.user 40 %}</div>
+          <a href="{% url profile_detail comment.user.username%}">{{ comment.user.get_display_name }}</a> said:<br/>
+          {% auto_transform_markup comment %}
+	</div>
+	{% if can_comment %}<a id="c{{comment.id }}" href="javascript:show_reply_form('c{{ comment.id }}','{% get_comment_url target comment %}','{{ comment.name }}')">Reply</a>{% endif %}
+      </li>
+    {% endfor %}
+      {% if tree %}</ul>{% endif %}
+    
+    {% if can_comment %}
+    <h3>{% trans "Comment on this"%} {{target_type}}</h3>
+    <div class="thumb small">
+      <img src="{{SITE_MEDIA}}images/member.jpg"/>
+    </div>
+    <form method="POST" action="{% get_comment_url target %}">
+      <ul>
+        <li>
+          <!--label for="id_name">Name: {{request.user.get_display_name}}</label-->
+          <input id="id_name" type="hidden" name="name" value="{{request.user.username}}"/>
+        </li>
+        <li>
+          <!--label for="id_email">E-mail address: {{request.user.email_address}}</label-->
+          <input id="id_email" type="hidden" name="email" value="{{request.user.email_address}}"/>
+        </li>
+        <li>
+          <textarea id="id_comment" name="comment" cols="40" rows="10"></textarea>
+        </li>
+	
+        <li><input class="button" type="submit" value="Post comment" /></li>
+      </ul>
+    </form>
+    {% else %}
+        {% trans "You don't have permission to comment here" %}
+    {% endif %}
+    
+</div>

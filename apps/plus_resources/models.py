@@ -105,6 +105,10 @@ class Resource(models.Model):
         except Exception, e :
             print e
 
+    def comment(self) :
+        pass
+        # dummy, for testing
+
 def get_or_create(user, owner, **kwargs) :
     resources = Resource.objects.filter(in_agent=owner.get_ref(),name=kwargs['name'])
 
