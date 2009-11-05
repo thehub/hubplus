@@ -227,7 +227,7 @@ def setup_defaults() :
                              'Editor':'context_agent',
                              'Creator':'creator',
                              'Delete':'context_admin',
-                             'Commentor':'context_agent',
+                             'Commentor':'all_members_group',
                              'Unknown':'context_agent',
                              'ManagePermissions':'creator'},
                         'constraints': ['Viewer>=Editor', 'Editor<$anonymous_group', 'Viewer>=Commentor']
@@ -283,6 +283,7 @@ def setup_defaults() :
                        {'defaults' :
                           { 'Viewer': 'all_members_group',
                             'Editor':  'context_agent',
+                            'Commentor': 'all_members_group',
                             'Manager': 'context_agent',
                             'ManagePermissions':'context_admin',
                             'Unknown': 'context_agent',
@@ -320,6 +321,8 @@ def setup_defaults() :
     open_defaults = overlay(open_defaults,{'TgGroup':{'defaults':{'Viewer':'all_members_group'}}})
     open_defaults = overlay(open_defaults,{'WikiPage':{'defaults':{'Viewer':'all_members_group'}}})
     open_defaults = overlay(open_defaults,{'Resource':{'defaults':{'Viewer':'all_members_group'}}})
+    open_defaults = overlay(open_defaults,{'WikiPage':{'defaults':{'Commentor':'context_agent'}}})
+    open_defatuls = overlay(open_defaults,{'Resource':{'defaults':{'Commentor':'context_agent'}}})
 
     invite_defaults = deepcopy(open_defaults)
     invite_defaults = overlay(invite_defaults,{'TgGroup':{'defaults':{'Join':'context_agent'}}})
