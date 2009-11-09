@@ -2,6 +2,6 @@
 
 <ol class="tag_list {{size}}">
   {% for tag in tags %}
-  <li><a href="{% plus_url tag_search_url tag.keyword %}" class="tag pop{{tag.level}}">{{tag.keyword}}</a></li>
+  <li class="pop{{tag.level}}"><a href="{% plus_url tag_search_url tag.keyword %}" class="tag">{{tag.keyword}}</a></li>
   {% endfor %}
 </ol>
