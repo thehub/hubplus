@@ -9,6 +9,7 @@ VIRTUAL_HUB_NAME = 'MHPSS Network'
 EXPLORE_NAME = _('Resources')
 
 SITE_NAME = _("Psychosocial Support Network")
+SITE_NAME_SHORT = _("MHPSS Network")
 
 GROUP_TYPES = (
     (u'interest', u'Interest'),
