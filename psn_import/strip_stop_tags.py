@@ -1,6 +1,7 @@
 from psn_import.utils import stop_words, substitutes 
 
 from apps.plus_tags.models import Tag
+import ipdb
 
 for t in Tag.objects.all() :
     
@@ -13,8 +14,10 @@ for t in Tag.objects.all() :
         t.delete()
     elif not t.keyword :
         print 'deleting empty tag %s , %s' % (t.id, t.keyword)
+
+
     if t.tag_type == 'folder' :
         t.tag_type = ''
         t.save()
-        
+    
 
