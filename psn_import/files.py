@@ -132,11 +132,11 @@ def import_all(all) :
         print log
 
 
-print "_________________________________________________"
-print "Files"
-ipdb.set_trace()
-import_all(maps['File'])
+if __name__ == '__main__' :
+    
+    print "_________________________________________________"
+    print "Files"
+    import_all(maps['File'])
 
-
-print len(maps['File'])
-print log
+    print len(maps['File'])
+    print log
