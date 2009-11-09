@@ -2,11 +2,13 @@
 
 from django.utils.translation import ugettext_lazy as _
 PROJECT_NAME=_("Hub+")
+
 COPYRIGHT_HOLDER=_('Hub World Ltd')
 
 VIRTUAL_HUB_NAME = 'HubPlus'
 EXPLORE_NAME = _('Explore')
 
+SITE_NAME = _("Hub+")
 SITE_NAME = _("Hub+")
 
 GROUP_TYPES = (
