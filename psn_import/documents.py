@@ -6,8 +6,6 @@ from psn_import.utils import load_all,maps, reverse, get_top_container, get_user
 from apps.plus_permissions.default_agents import get_admin_user
 from apps.plus_groups.models import name_from_title
 
-
-
 load_all()
 
 docs = maps['Document']
