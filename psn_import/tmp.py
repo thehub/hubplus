@@ -2,10 +2,12 @@ from apps.plus_resources.models import Resource
 from apps.plus_groups.models import TgGroup
 from apps.plus_tags.models import Tag, get_tags
 
-gs = TgGroup.objects.filter(group_name__startswith='stewarding')
-for g in gs :
-    print g
+import ipdb
+res = Resource.objects.all()[0]
 
-    for m in g.get_members() :
-        print m
+ipdb.set_trace()
 
+res =  Resource.objects.all()
+print res
+for r in res : 
+    print r, r.title.encode('utf-8'), r.created_by
