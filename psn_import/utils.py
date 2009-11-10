@@ -231,7 +231,8 @@ def create_resource(top_container, creator, title_and_type, f_name, folder, tags
                                  resource=f, title=title, name=name, description=desc,
                                  license=license, author=author, stub=False)
        
-    resource.save()
+
+    resource.save()    
     f.close()
 
     try :
@@ -250,12 +251,8 @@ def create_page(container, user, tags, **kwargs) :
     page = container.create_WikiPage(user,**kwargs)
     revision.comment='Import'
     revision.user = user
-
     tag_with(page, user, tags, tag_type='')
-
     return page
-   
-        
 
 def load_all() :
     load_file('Folder','mhpss_export/folders.pickle')
