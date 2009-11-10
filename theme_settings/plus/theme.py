@@ -9,7 +9,7 @@ VIRTUAL_HUB_NAME = 'HubPlus'
 EXPLORE_NAME = _('Explore')
 
 SITE_NAME = _("Hub+")
-SITE_NAME = _("Hub+")
+SITE_NAME_SHORT = _("Hub+")
 
 GROUP_TYPES = (
     (u'interest', u'Interest'),
