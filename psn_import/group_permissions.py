@@ -23,7 +23,7 @@ if __name__ == '__main__' :
         print group
         print g['groupname'],g['joinpolicy']
         if g['joinpolicy'] == 'open' :
-            change(group,'open')
+            change(group,'public')
         elif g['joinpolicy'] == 'closed' :
             change(group,'private')
         else :
