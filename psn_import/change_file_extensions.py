@@ -6,7 +6,7 @@ import ipdb
 ex = set([])
 for rs in Resource.objects.all() :
     try :
-        print rs.title, rs.in_agent.obj, rs.id
+        print rs.title.encode('utf-8'), rs.in_agent.obj, rs.id
         if not rs.resource :
             print "no resource associated with this"
             continue
@@ -16,7 +16,7 @@ for rs in Resource.objects.all() :
         print e
         if e == 'msword' :
             rs.change_extension('doc')
-    #ms-excel', 'rtf', 'zip', 'doc', 'msword', 'html', 'ms-powerpoint', 'pdf'
+        #ms-excel', 'rtf', 'zip', 'doc', 'msword', 'html', 'ms-powerpoint', 'pdf'
         elif e == 'ms-excel' :
             rs.change_extension('xls')
             
