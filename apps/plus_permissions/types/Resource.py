@@ -29,11 +29,17 @@ class ResourceEditor :
 class ResourceManager :
     delete = InterfaceCallProperty
 
+class ResourceCommentor:
+    comment = InterfaceCallProperty
+
+
 from apps.plus_permissions.models import add_type_to_interface_map
 ResourceInterfaces = {
     'Viewer': ResourceViewer,
     'Editor': ResourceEditor,
-    'Manager' : ResourceManager  }
+    'Commentor' : ResourceCommentor,
+    'Manager' : ResourceManager,
+  }
 add_type_to_interface_map(Resource, ResourceInterfaces)
 
 if not SliderOptions.get(Resource, False):

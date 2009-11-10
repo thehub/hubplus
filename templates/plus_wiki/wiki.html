@@ -4,7 +4,7 @@
 {% load threadedcommentstags %}
 
 {% block page_header %}
-<a id="parent" href="{% url plus_groups:group page.in_agent.obj.id %}">{{page.in_agent.obj.display_name}}</a>
+<a id="parent" href="{% url plus_groups:group group_id %}">{{group_display_name}}</a>
 <h2 id="page_title">{{page.title}}</h2>
 {% endblock %}
 
@@ -12,7 +12,7 @@
 <div id="main_content" class="block">
 
   <ul class="icon_text_button_set">
-    {% if can_edit %}<li><a class="icon_text_button bt_edit" href="{% url plus_groups:edit_WikiPage page.in_agent.obj.id page.name %}">{% trans "Edit page"%}</a></li>{% endif %}
+    {% if can_edit %}<li><a class="icon_text_button bt_edit" href="{% url plus_groups:edit_WikiPage group_id page.name %}">{% trans "Edit page"%}</a></li>{% endif %}
     {% if permissions %}<li><a class="icon_text_button bt_permissions" href="#overlay" rel="#overlay" id="{{page.edit_key}}permissionedit">{% trans "Permissions" %}</a></li>{% endif %}
   </ul>
   <div id="content">
@@ -25,7 +25,7 @@
       <li><a class="icon_text_button bt_pdf" href="#">Download PDF</a></li>
     </ul> -->
     <ul id="meta">      
-      <li>{% trans "Created by" %} <a href="{% url profile_detail page.created_by.username %}">{{page.created_by}}</a> {% trans "at" %} {{page.creation_time|time}} {% trans "on" %} {{page.creation_time|date}} {% trans "and last edited by" %} <a href="{% url profile_detail version.revision.user.username %}">{{version.revision.user}}</a> {{version.revision.date_created|timesince}} {% trans "ago" %}. </li>
+      <li>{% trans "Created by" %} <a href="{% url profile_detail created_by.username %}">{{page.created_by}}</a> {% trans "at" %} {{page.creation_time|time}} {% trans "on" %} {{page.creation_time|date}} {% trans "and last edited by" %} <a href="{% url profile_detail version.revision.user.username %}">{{version.revision.user}}</a> {{version.revision.date_created|timesince}} {% trans "ago" %}. </li>
       <li>{% trans "Licensed under" %} {{page.license}}.</li>	
     </ul>
   </div>
@@ -46,7 +46,7 @@
       Attachments go here
     </div>
     <div id="history">
-      <form id="page_id-{{page.id}}" action="{% url plus_groups:compareversions_WikiPage page.in_agent.obj.id page.name %}">
+      <form id="page_id-{{page.id}}" action="{% url plus_groups:compareversions_WikiPage group_id page.name %}">
 	<table>
 	  {% if comparable %}
 	  <tr class="head">
@@ -66,7 +66,7 @@
 	      <span class="label_time">{% trans "on" %} {{ ver.revision.date_created|date }} {% trans "at" %} {{ver.revision.date_created|time}}</span>
 	    </td>
 	    <td>
-	      <div class="actions"><a class="view_old" href="{% url plus_groups:viewversion_WikiPage page.in_agent.obj.id page.name  %}">{% trans "View" %}</a> <!--| <a href="#">{% trans "Changes" %}</a>--> | <a href="{% url plus_groups:revert_WikiPage page.in_agent.obj.id page.name %}?ver_id={{ver.id}}">{% trans "Make current" %}</a></div>
+	      <div class="actions"><a class="view_old" href="{% url plus_groups:viewversion_WikiPage group_id page.name  %}">{% trans "View" %}</a> <!--| <a href="#">{% trans "Changes" %}</a>--> | <a href="{% url plus_groups:revert_WikiPage group_id page.name %}?ver_id={{ver.id}}">{% trans "Make current" %}</a></div>
 	    </td>  
 	  </tr>
 	  {% endfor %}
