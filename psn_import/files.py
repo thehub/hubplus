@@ -126,7 +126,7 @@ def import_all(all) :
                 print "trouble with %s" % file['title']
             except :
                 print "trouble with %s (unicode)" % file['title'].encode('utf-8')
-            ipdb.set_trace()
+            #ipdb.set_trace()
             try :
                 print
                 import_one(file)

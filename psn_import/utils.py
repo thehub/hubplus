@@ -4,6 +4,7 @@ from django.core.files.base import File
 
 import re
 import pickle
+import ipdb
 
 maps = {}
 reverse = {}
@@ -229,7 +230,11 @@ def create_resource(top_container, creator, title_and_type, f_name, folder, tags
     resource.save()
     
     f.close()
-    tag_with(resource, creator, tags, '')
+    try :
+        tag_with(resource, creator, tags, '')
+    except Exception, e :
+        print e
+        ipdb.set_trace()
     return True
 
 from reversion import revision
