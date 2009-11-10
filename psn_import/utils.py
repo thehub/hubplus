@@ -231,11 +231,14 @@ def create_resource(top_container, creator, title_and_type, f_name, folder, tags
                                  resource=f, title=title, name=name, description=desc,
                                  license=license, author=author, stub=False)
        
-    resource.save()
-    
+    resource.save()    
     f.close()
+    try :
+        tag_with(resource, creator, tags, '')
+    except Exception, e :
+        print e
+        ipdb.set_trace()
 
-    tag_with(resource, creator, tags, '')
     return True
 
 from reversion import revision
@@ -246,12 +249,8 @@ def create_page(container, user, tags, **kwargs) :
     page = container.create_WikiPage(user,**kwargs)
     revision.comment='Import'
     revision.user = user
-
     tag_with(page, user, tags, tag_type='')
-
     return page
-   
-        
 
 def load_all() :
     load_file('Folder','mhpss_export/folders.pickle')
