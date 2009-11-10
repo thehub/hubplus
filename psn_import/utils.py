@@ -4,6 +4,7 @@ from django.core.files.base import File
 
 import re
 import pickle
+import ipdb
 
 maps = {}
 reverse = {}
@@ -139,8 +140,12 @@ def tag_with_folder_name(obj, creator, folder_name, tag_type='') :
 
 def tag_with(obj, creator, tags, tag_type='') :
     for tw in tags :
-        tag_add(obj, tag_type, tw, creator)
-
+        try :
+            tag_add(obj, tag_type, tw, creator)
+        except Exception, e:
+            print e
+            ipdb.set_trace()
+            
 
 # Resources 
 
@@ -229,6 +234,7 @@ def create_resource(top_container, creator, title_and_type, f_name, folder, tags
     resource.save()
     
     f.close()
+
     tag_with(resource, creator, tags, '')
     return True
 
