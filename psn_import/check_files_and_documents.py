@@ -37,7 +37,7 @@ def check_files(lst) :
             real_container = match.in_agent.obj
             if real_container != container :
                 print real_container, container
-                misplaced.append({'upload':match,'in':real_container,'ought':container})
+                misplaced.append({'upload':match,'owner':match.created_by, 'in':real_container,'ought':container})
             else :
                 well_placed = well_placed + 1
 
