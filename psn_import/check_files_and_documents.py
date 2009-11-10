@@ -1,4 +1,6 @@
 from psn_import.utils import load_all, reverse, maps, get_group_for, get_top_container, title as e_title
+from psn_import.utils import get_matching_id
+
 from psn_import.files import make_file_name
 
 from apps.plus_resources.models import Resource
@@ -9,19 +11,6 @@ from apps.plus_groups.models import name_from_title
 import ipdb
 
 load_all()
-
-def extract_psn_id(name) :
-    name = name.split('/')[-1]
-    name = name.split('.')[0]
-    return name.strip('_')
-
-def get_matching_id(file) :
-    for res in Resource.objects.all() :
-        res_id = extract_psn_id(res.resource.name)
-        if res_id == file['uid'] : 
-            return res
-        
-    return None
 
 
 def check_files(lst) :

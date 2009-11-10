@@ -1,4 +1,4 @@
-from psn_import.utils import load_all, maps, reverse, title, e_type, get_top_container, get_user_for, create_resource
+from psn_import.utils import load_all, maps, reverse, title, e_type, get_top_container, get_user_for, create_resource, get_matching_id
 from django.contrib.auth.models import User
 from apps.plus_groups.models import TgGroup
 from apps.plus_permissions.default_agents import get_all_members_group
@@ -111,32 +111,40 @@ def import_one(folder) :
             if flag :
                 site_hosts.remove_member(creator)
 
+        else :
+            print "parent neither group nor user"
+            ipdb.set_trace()
 
 def import_all(all) :
     for file in all :
-        print
+        match = get_matching_id(file)
 
-        try :
-            import_one(file)
-
-            if reverse.has_key(file['parentuid']) :
-                par = file['parentuid']
-                print ("parent: (%s,%s)" % (e_type(par),title(par))).encode('utf-8')
-
-        except Exception, e:
-            print e
+        if match :
+            print "found %s " % file['title'].encode('utf-8')
+        else :
+            try:
+                print "trouble with %s" % file['title']
+            except :
+                print "trouble with %s (unicode)" % file['title'].encode('utf-8')
             ipdb.set_trace()
-            log.append('%s, %s, %s'%(file['uid'],file['title'],e))
+            try :
+                print
+                import_one(file)
+                if reverse.has_key(file['parentuid']) :
+                    par = file['parentuid']
+                    print ("parent: (%s,%s)" % (e_type(par),title(par))).encode('utf-8')
+            except Exception, e:
+                print e
+                ipdb.set_trace()
+                log.append('%s, %s, %s'%(file['uid'],file['title'],e))
 
-        print "Errors"
-        print log
+    print "Errors"
+    print log
 
 
 if __name__ == '__main__' :
     print "_________________________________________________"
     print "Files"
-
-    ipdb.set_trace()
 
     import_all(maps['File'])
 
