@@ -107,7 +107,7 @@ def get_top_container(uid, path, tags) :
 
 
 # Tags
-def strip_out(s,bads="""/,"':()[]*\%\\;""") :
+def strip_out(s,bads="""/,"':()[]*\%\\?;""") :
     return ''.join([c for c in s if (c not in bads)])
 
 
