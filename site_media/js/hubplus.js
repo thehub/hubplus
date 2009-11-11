@@ -1,3 +1,13 @@
+/* var set_ajax_globals = function () {
+    jq('#body').ajaxStart(function () {
+        console.log(jq(this));
+    }).ajaxStop(function () {
+		    console.log(jq(this));
+    }).ajaxError(function () {
+		     		    console.log(jq(this));
+    });
+}; */
+
 var widget_map = {
     'Profile':{'about':'text_wysiwyg',
                'find_out':'text_wysiwyg',

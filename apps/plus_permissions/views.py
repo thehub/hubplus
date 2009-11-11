@@ -86,7 +86,6 @@ def patch_in_profiles(request):
         setup_user_security(user)
         profile = user.create_Profile(user, user=user)
         profile.save()
-        print `profile`
     
     return HttpResponse("patched %s users to have profiles" % str(no_of_users))
 
@@ -99,22 +98,27 @@ def move_sliders(request, json, current):
     """json is of the form, {interface:[agent_class, agent_id]}
     This should be properly secured by doing everything through permissionable objects on the current resource. i.e. without getting the security context.
     """
-    type_name = request.POST['type_name']
-    sec_context = current._inner.get_security_context()
-    slider_levels = {}
+    try:
+        type_name = request.POST['type_name']
+        sec_context = current._inner.get_security_context()
+        slider_levels = {}
 
-    for interface, agent_tuple in json.iteritems():
-        cls = ContentType.objects.get(model=agent_tuple[0].lower()).model_class()
-        agent = cls.objects.get(id=agent_tuple[1])
-        slider_levels[interface] = agent
+        for interface, agent_tuple in json.iteritems():
+            cls = ContentType.objects.get(model=agent_tuple[0].lower()).model_class()
+            agent = cls.objects.get(id=agent_tuple[1])
+            slider_levels[interface] = agent
 
-    sec_context.move_sliders(slider_levels, type_name, request.user)
-
-    json = {'message':'success'}
+        sec_context.move_sliders(slider_levels, type_name, request.user)
+            
+        json = {'message':'success'}
+    except:
+        json = {'message':'error'}
     return json
 
 
-@secure_resource(obj_schema={'current':'any'})
+@secure_resource(obj_schema={'current':'any'},
+                 required_interfaces={'current':['ManagePermissions']},
+                 with_interfaces={'current':['ManagePermissions']})
 def toggle_custom_permissions(request, current):
     custom = int(request.POST['custom'])
     if custom:
@@ -127,6 +131,7 @@ def toggle_custom_permissions(request, current):
 @secure_resource(obj_schema={'current':'any'},
                  required_interfaces={'current':['Viewer']},
                  with_interfaces={'current':['Viewer']})
+
 def json_slider_group(request, current):
     """This should be properly secured by doing everything through permissionable objects on the current resource. i.e. without getting the security context.
     """
