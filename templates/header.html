@@ -6,6 +6,7 @@
 		<h1><a href="{% url home %}">{{ SITE_NAME }}</a></h1>
 
 		{% block login %}
+		<h1>{{CURRENT_AREA}}</h1>
 		<ul id="account_navigation" style="">
 			{% if user.is_authenticated %}
 				<li class="first"><span>{% openid_icon openid user %}{% trans "Welcome" %} <a href="{% url profile_detail user.username %}">{{ user.get_display_name }}</a></span></li>
@@ -13,7 +14,7 @@
 				<li><a href="{% url messages_all %}">{% trans "Inbox" %}</a></li>
 				<li class="disabled"><a href="{% url acct_email %}">{% trans "Settings" %}</a></li>
 				<li class="last"><a href="/openid/logout/?next={% url acct_logout %}">{% trans "Logout" %}</a></li>
-				{% else %}
+				{% else %} 
 				<li class="first"><a href="{% url acct_apply %}">{% trans "Apply to join" %}</a></li>
 				<li><span>{% trans "or" %}</span></li>
 				<li class="last"><a href="{% url acct_login %}">{% trans "Log in" %}</a></li>
@@ -37,12 +38,12 @@
 		-->
 
 		<ul id="main_navigation">
-			<li class="first"><a href="{% url home %}">{% trans "Home" %}</a></li>
-			<li><a href="{% url explore %}">{% trans EXPLORE_NAME %}</a></li>
+			<li class="first{% ifequal CURRENT_AREA ''%} active{% endifequal %}"><a href="{% url home %}">{% trans "Home" %}</a></li>
+			<li {% ifequal CURRENT_AREA 'explore'%}class="active"{% endifequal %}><a href="{% url explore %}">{% trans EXPLORE_NAME %}</a></li>
 			<!--li><a href="{% url explore %}">Explore</a></li-->
-			<li><a href="{% url profile_list %}">{% trans "Members" %}</a></li>
-			<li><a href="{% url groups:groups %}">{% trans "Groups" %}</a></li>
-			<li class="last"><a href="{% url hubs:groups %}">{{HUB_NAME_PLURAL}}</a></li>
+			<li {% ifequal CURRENT_AREA 'members'%}class="active"{% endifequal %}><a href="{% url profile_list %}">{% trans "Members" %}</a></li>
+			<li {% ifequal CURRENT_AREA 'groups'%}class="active"{% endifequal %}><a href="{% url groups:groups %}">{% trans "Groups" %}</a></li>
+			<li class="last{% ifequal CURRENT_AREA 'hubs'%} active{% endifequal %}"><a href="{% url hubs:groups %}">{{HUB_NAME_PLURAL}}</a></li>
 		</ul>
 
 	</div>
