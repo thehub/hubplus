@@ -5,7 +5,7 @@ from apps.plus_tags.models import Tag, get_tags
 import ipdb
 res = Resource.objects.all()[0]
 
-ipdb.set_trace()
+
 
 res =  Resource.objects.all()
 print res
