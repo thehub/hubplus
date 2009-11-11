@@ -74,40 +74,47 @@ def message_user(sender, recipient, subject, body) :
     m.save()
 
 
-from copy import deepcopy
-def overlay(d, d2) :
-    """ Recursively overlay one dictionary with another
-    Rules : if d2 has things not in d, add them
-            if d and d2 have value which *isn't* a dictionary, d2 over-rides d
-            if d and d2 have item which is a dictionary, 
-                        recursively overlay value from d with d2"""
-    nd = deepcopy(d)
-    for k,v in d2.iteritems() :
-        if not nd.has_key(k) :
-            nd[k] = v
-        elif nd[k].__class__ == dict and d2.__class__ == dict :
-            nd[k] = overlay(nd[k],d2[k])
-        else :
-            nd[k] = d2[k]
-    return nd
-
 from django.conf import settings
-# Not clever, but keeps a bit of fiddly logic out of the way of everyone else while we decide 
-# the right way to handle it
+# XXX : these now moved to the the theme_settings files ... 
+# should replace these function calls with the settings constants directly
+
 def hub_name() :
-    if settings.PROJECT_THEME=='psn' :
-        return 'Region'
-    else :
-        return 'Hub'
+    return settings.HUB_NAME
 
 def hub_name_plural() :
-    if settings.PROJECT_THEME=='psn' :
-        return 'Regions'
-    else :
-        return 'Hubs'
+    return settings.HUB_NAME_PLURAL
 
 def main_hub_name() :
-    if settings.PROJECT_THEME=='psn' :
-        return "Main Region"
+    return settings.MAIN_HUB_NAME
+
+def area_from_path(path) :
+    # this function takes the path from
+    lookup = {'member':'member',
+              'group':'group',
+              'hub':'hub',
+              'region':'hub',
+              'explore':'explore',
+              'resource':'explore'}
+
+    for k,v in lookup.iteritems() :
+        if k in path :
+            return v
+    return 'unknown'
+
+
+def search_caption_from_path(path) :
+    area = area_from_path(path)
+    if area == 'member' :
+        caption = settings.MEMBER_SEARCH_TITLE
+    elif area == 'group' :
+        caption = settings.GROUP_SEARCH_TITLE
+    elif area == 'hub' :
+        caption = settings.HUB_SEARCH_TITLE
+    elif area == 'explore' :
+        caption= settings.EXPLORE_SEARCH_TITLE
     else :
-        return "Hub"
+        caption = ''
+    return caption
+
+
+

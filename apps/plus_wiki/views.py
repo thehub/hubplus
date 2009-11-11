@@ -16,7 +16,7 @@ from django.db import models
 
 from django.template import RequestContext
 from apps.plus_groups.models import TgGroup
-from apps.plus_permissions.api import secure_resource, TemplateSecureWrapper, PlusPermissionsNoAccessException, has_access
+from apps.plus_permissions.api import secure_resource, TemplateSecureWrapper, PlusPermissionsNoAccessException, has_access, get_anon_user
 from apps.plus_wiki.models import WikiPage, VersionDelta
 from apps.plus_wiki.forms import EditWikiForm
 from apps.plus_lib.parse_json import json_view
@@ -138,6 +138,11 @@ def view_wiki_page(request, group, page_name, template_name="plus_wiki/wiki.html
         obj = WikiPage.objects.plus_get(request.user, name=page_name, in_agent=group.get_ref())
     except WikiPage.DoesNotExist:
         raise Http404
+
+    if not request.user.is_authenticated():
+        user = get_anon_user()
+        request.user = user
+
     version_list = Version.objects.get_for_object(obj._inner)
     version = Version.objects.get_for_date(obj._inner, datetime.now())
     contributors = get_contributors(request.user, obj)
@@ -154,10 +159,21 @@ def view_wiki_page(request, group, page_name, template_name="plus_wiki/wiki.html
     except PlusPermissionsNoAccessException:
         perms_bool = False
         
+        
     edit = has_access(request.user, obj, 'WikiPage.Editor')
-    
+
+    group_id = obj.get_inner().in_agent.obj.id 
+    group_display_name = obj.get_inner().in_agent.obj.get_display_name()
+    created_by = obj.get_inner().created_by
+    # get this here because if we find ourselves on a page without access to group,
+    # getting the obj.in_agent.id in the template blows up
+
+
     return render_to_response(template_name, {
             'page':TemplateSecureWrapper(obj), 
+            'group_id':group_id,
+            'group_display_name':group_display_name,
+            'created_by':created_by,
             'version':version, 
             'contributors':contributors,
             'can_comment':can_comment,

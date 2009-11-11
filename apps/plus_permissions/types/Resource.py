@@ -29,15 +29,21 @@ class ResourceEditor :
 class ResourceManager :
     delete = InterfaceCallProperty
 
+class ResourceCommentor:
+    comment = InterfaceCallProperty
+
+
 from apps.plus_permissions.models import add_type_to_interface_map
 ResourceInterfaces = {
     'Viewer': ResourceViewer,
     'Editor': ResourceEditor,
-    'Manager' : ResourceManager  }
+    'Commentor' : ResourceCommentor,
+    'Manager' : ResourceManager,
+  }
 add_type_to_interface_map(Resource, ResourceInterfaces)
 
 if not SliderOptions.get(Resource, False):
-    SetSliderOptions(Resource, {'InterfaceOrder':['Viewer', 'Editor', 'Manager'], 'InterfaceLabels':{'Viewer':'View', 'Editor':'Edit', 'Commentor':'Comment', 'ManagePermissions':'Change Permissions'}})
+    SetSliderOptions(Resource, {'InterfaceOrder':['Viewer', 'Editor', 'Commentor', 'Manager'], 'InterfaceLabels':{'Viewer':'View', 'Editor':'Edit', 'Commentor':'Comment', 'ManagePermissions':'Change Permissions'}})
 
 child_types = []
 SetPossibleTypes(Resource, child_types)

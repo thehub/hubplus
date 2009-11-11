@@ -3,188 +3,21 @@ HUB PLUS 2009
 */
 
 
-/* Highlights */
-
-#highlights p {
-	color		: #888;
-	padding		: 0;
-}
-
-#highlights .image {
-	margin-bottom	: 10px;
-	width		: 174px;
-}
-
-#highlights .image img {
-	height		: 174px;
-}
-
-
-/* What's Next */
-
-#whats_next li {
-	float		: left;
-	list-style	: none;
-	width		: 192px;
-	margin		: 0 10px 20px 0;
-	padding		: 2px 10px 3px 0;
-	border-right: 1px solid #ddd;
-}
-
-#whats_next li.last {
-	margin-right	: 0;
-	padding-right	:	0;
-	border-right	: 0;
-}
-
-#whats_next li dl {
-
-}
-
-#whats_next li dt {
-	font-size	: 1.4em;
-	padding-bottom	:	2px;
-}
-
-#whats_next li dd {
-	color		: #888;
-}
-
-
-/* Intro Bar */
-
-#intro_bar {
-	border		: 1px solid #ddd;
-	overflow	: hidden;
-	padding		: 10px;
-	margin-bottom	: 1.5em;
-}
-
-#intro_bar_content {
-	background	: #454545;
-	overflow	: hidden;
-}
-
-#intro_bar * {
-	color		: #eee;
-}
-
-#intro_bar input {
-	color		: #222;
-}
-
-#intro_bar label {
-	color		: #ccc;
-}
-
-#intro_bar .tabbed {
-	float		: left;
-	overflow	: hidden;
-	padding		: 10px 15px 10px 10px;
-	position	: relative;
-	width		: 603px;
-}
-
-#intro_bar #intro_bar_login {
-	float		: left;
-	padding		: 10px;
-	width		: 227px;
-}
-
-#intro_bar #intro_bar_login ul {
-	padding-bottom	: 3px;
-}
-
-#intro_bar #intro_bar_login .label_extended {
-	width		: 200px;
-}
-
-#intro_bar .tabbed .tabbed_navigation {
-	background	: none;
-	position	: absolute;
-	bottom		: 0px;
-}
-
-#intro_bar .tabbed .tabbed_navigation li {
-	background	: #888;
-	display		: block;
-	height		: 12px;
-	float		: left;
-	overflow	: hidden;
-	margin		: 0 10px 0 0;
-	padding		: 0;
-	width		: 12px;
-}
-
-#intro_bar .tabbed .tabbed_navigation li a {
-	text-indent	: -2000px;
-}
-
-#intro_bar .tabbed ul.tabbed_navigation li:hover,
-#intro_bar .tabbed ul.tabbed_navigation li.selected {
-	background	: #fff;
-}
-
-#intro_bar .tabbed .tabbed_content {
-	height		: 7.5em;
-	padding-bottom	: 30px
-}
-
-#intro_bar .tabbed .tabbed_content p {
-	color		: #ccc;
-	font-size	: 1.3em;
-	line-height		: 1.4em;
-	padding-bottom	: 0;
-}
-
-#intro_bar .tabbed .tabbed_content p a {
-	text-decoration	: underline;
-}
-
-/* Main Generic */
-/* Layout: Images & Thumbnails */
-/* Layout: Listings */
-
-/* Interface: Tags */
-/* Interface: Tabs */
-/* Interface: Accordions */
-
-/* Explore, Search & Results */
-
-/* Block: Updates */
-/* Block: About */
-/* Block: Members */
-/* Block: Resources */
-/* Block: Content & Extra */
-
-/* Side Blocks: Search */
-/* Side Blocks: Members Online */
-/* Side Blocks: My Hub */
-
-
-/* Tom's evil section */
-.cannot_add {
-    display: none;
-}
-
-ins { background-color: #aaffaa; text-decoration: none;}
-del { background-color: #ff8888; text-decoration: none;}
-.insert { background-color: #aaffaa }
-.delete { background-color: #ff8888 }
-.tagInsert { background-color: #aaffaa; display:block;}
-.tagDelete { background-color: #ff8888; display:block;}
-
-
-/* Main Generic */
+/* Generic */
 
 h2,
 #page_title {
-	clear		: both;
-	font-size	: 2.6em;
-	font-weight	: normal;
-	line-height	: 1.1em;
+	clear			: both;
+	font-size		: 2.6em;
+	font-weight		: normal;
+	line-height		: 1.1em;
 	margin-bottom	: 10px;
-	width		: 100%;
+	width			: 620px;
+}
+
+#page_header #section_intro,
+#page_header #head_title_status {
+	width			: 620px;
 }
 
 h3 {
@@ -195,9 +28,9 @@ h3 {
 }
 
 h4 {
-	clear		: both;
-	font-weight	: normal;
-	font-size	: 1.5em;
+	clear			: both;
+	font-weight		: normal;
+	font-size		: 1.5em;
 	padding-bottom	: 9px;
 }
 
@@ -205,70 +38,195 @@ p {
 	padding-bottom	: 1.5em;
 }
 
-table {
-	border-collapse	: collapse;
-	font-size	: inherit;
-}
-
-td {
-	vertical-align	: top;
-}
-
-th {
-	text-align	: left;
-	vertical-align	: top;
-}
-
 .label_time {
-	color		: #888;
+	color			: #888;
 }
 
 .extra {
-	color		: #888888;
-	display		: block;
+	color			: #888888;
+	display			: block;
 }
 
-.untruncated {
-	display		: none;
-}
-
-.hidden {
-	display		: none;
+.hidden,
+.untruncated,
+.cannot_add {
+	display			: none;
 }
 
 .disabled {
-	display		: none !important;
+	display			: none !important;
 }
 
 #parent {
-	display		: block;
+	display			: block;
 }
 
+ins { background-color: #aaffaa; text-decoration: none; }
+del { background-color: #ff8888; text-decoration: none; }
+.insert { background-color: #aaffaa; }
+.delete { background-color: #ff8888; }
+.tagInsert { background-color: #aaffaa; display:block; }
+.tagDelete { background-color: #ff8888; display:block; }
+
+
+/* Intro Bar */
+
+#intro_bar {
+	border			: 1px solid #ddd;
+	overflow		: hidden;
+	padding			: 10px;
+	margin-bottom	: 1.5em;
+}
+
+#intro_bar_content {
+	background		: #454545;
+	overflow		: hidden;
+}
+
+#intro_bar * {
+	color			: #eee;
+}
+
+#intro_bar input {
+	color			: #222;
+}
+
+#intro_bar label {
+	color			: #ccc;
+}
+
+#intro_bar .tabbed {
+	float			: left;
+	overflow		: hidden;
+	padding			: 10px 15px 10px 10px;
+	position		: relative;
+	width			: 603px;
+}
+
+#intro_bar #intro_bar_login {
+	float			: left;
+	padding			: 10px;
+	width			: 227px;
+}
+
+#intro_bar #intro_bar_login ul {
+	padding-bottom	: 3px;
+}
+
+#intro_bar #intro_bar_login .label_extended {
+	width			: 200px;
+}
+
+#intro_bar .tabbed .tabbed_navigation {
+	background		: none;
+	position		: absolute;
+	bottom			: 0px;
+}
+
+#intro_bar .tabbed .tabbed_navigation li {
+	background		: #888;
+	display			: block;
+	height			: 12px;
+	float			: left;
+	overflow		: hidden;
+	margin			: 0 10px 0 0;
+	padding			: 0;
+	width			: 12px;
+}
+
+#intro_bar .tabbed .tabbed_navigation li a {
+	text-indent		: -2000px;
+}
+
+#intro_bar .tabbed ul.tabbed_navigation li:hover,
+#intro_bar .tabbed ul.tabbed_navigation li.selected {
+	background		: #fff;
+}
+
+#intro_bar .tabbed .tabbed_content {
+	height			: 7.5em;
+	padding-bottom	: 30px
+}
+
+#intro_bar .tabbed .tabbed_content p {
+	color			: #ccc;
+	font-size		: 1.3em;
+	line-height		: 1.4em;
+	padding-bottom	: 0;
+}
+
+#intro_bar .tabbed .tabbed_content p a {
+	text-decoration	: underline;
+}
+
+
+/* Highlights: Signed out */
+
+#highlights p {
+	color			: #888;
+	padding			: 0;
+}
+
+#highlights .image {
+	margin-bottom	: 10px;
+	width			: 174px;
+}
+
+#highlights .image img {
+	height			: 174px;
+}
+
+
+/* What's Next */
+
+#whats_next li {
+	float			: left;
+	list-style		: none;
+	width			: 192px;
+	margin			: 0 10px 20px 0;
+	padding			: 2px 10px 3px 0;
+	border-right	: 1px solid #ddd;
+}
+
+#whats_next li.last {
+	margin-right	: 0;
+	padding-right	: 0;
+	border-right	: 0;
+}
+
+#whats_next dt {
+	font-size		: 1.4em;
+	padding-bottom	: 2px;
+}
+
+#whats_next dd {
+	color			: #888;
+}
 
 
 /* Copy */
 
 .copy ul {
-	list-style	: disc;
-	padding		: 0 0 1.5em 2em;
+	list-style		: disc;
+	padding			: 0 0 1.5em 2em;
 }
 
 .copy ol {
-	list-style	: decimal;
-	padding		: 0 0 1.5em 2em;
+	list-style		: decimal;
+	padding			: 0 0 1.5em 2em;
 }
 
 .copy ol ol {
-	list-style	: lower-roman;
+	list-style		: lower-roman;
 }
 
 
-/* Images & Thumbnails */
+/* Elements: Images & Thumbnails */
 
 #avatar_current,
 #avatar_add {
 	margin-bottom	: 20px;
-	overflow	: hidden;
+	overflow		: hidden;
 }
 
 .avatar_choices ul {
@@ -276,49 +234,49 @@ th {
 }
 
 .avatar_choices li {
-	float		: left;
+	float			: left;
 	margin-bottom	: 13px;
-	margin-right: 10px;
+	margin-right	: 10px;
 }
 
 .avatar_choices label,
 .image,
 .thumb {
-	border		: 1px solid #ddd;
-	border-color: #ddd #ccc #bbb #ddd;
-	display		: block;
+	border			: 1px solid #ddd;
+	border-color	: #ddd #ccc #bbb #ddd;
+	display			: block;
 }
 
 .image {
-	margin-bottom 	: 1.5em;
-	padding		: 10px;
-	position	: relative;
+	margin-bottom	: 1.5em;
+	padding			: 10px;
+	position		: relative;
 }
 
 .image .bt_edit {
-	background-color	: #fff;
-	border		: 6px solid #fff;
-	bottom		: 4px;
-	position	: absolute;
-	right		: 4px;
+	background-color: #fff;
+	border			: 6px solid #fff;
+	bottom			: 4px;
+	position		: absolute;
+	right			: 4px;
 }
 
 .avatar_choices label {
-	padding		: 88px 10px 4px;
-	position	: relative;
-	text-align	: center;
-	width		: 68px;
+	padding			: 88px 10px 4px;
+	position		: relative;
+	text-align		: center;
+	width			: 68px;
 }
 
 .avatar_choices label img {
-	position	: absolute;
-	top			: 4px;
-	left		: 4px;
+	position		: absolute;
+	top				: 4px;
+	left			: 4px;
 }
 
 .thumb {
-	float		: left;
-	margin 		: 0 10px 10px 0;
+	float			: left;
+	margin 			: 0 10px 10px 0;
 }
 
 .image.member img,
@@ -335,35 +293,35 @@ th {
 
 .thumb.page,
 .thumb.upload {
-	border		: 0;
+	border			: 0;
 }
 
 
-/* Listings & tables*/
+/* Elements: Listings */
 
 .content_list,
 .link_list {
-	border-top	: 1px solid #ddd;
-	clear		: both;
-	list-style	: none;
-	overflow	: hidden;
+	border-top		: 1px solid #ddd;
+	clear			: both;
+	list-style		: none;
+	overflow		: hidden;
 }
 
 .content_list li,
 .link_list li {
 	border-bottom	: 1px solid #ddd;
-	padding		: 8px 0 9px;
-	overflow	: hidden;
+	padding			: 8px 0 9px;
+	overflow		: hidden;
 }
 
 .content_list li li,
 .link_list li li {
-	border		: 0;
-	padding		: 0;
+	border			: 0;
+	padding			: 0;
 }
 
 .content_list li .description {
-	padding		: 5px 0 0;
+	padding			: 5px 0 0;
 }
 
 .content_list li .description p {
@@ -371,85 +329,104 @@ th {
 }
 
 .content_list li .thumb {
-	margin		: -3px 10px -3px 0;
+	margin			: -3px 10px -3px 0;
 }
 
 .content_list li .info {
-	padding-left: 40px;
+	padding-left	: 40px;
 }
 
 .content_list li .info h3 {
-	clear		: none;
+	clear			: none;
 	text-transform	: none;
 }
 
-#body table {
-	width		: 100%;
+
+/* Elements: Tables */
+
+table {
+	border-collapse	: collapse;
+	font-size		: inherit;
 }
 
-table th {
-	font-weight	: bold;
-	padding		: 4px 0 5px 0;
+td {
+	vertical-align	: top;
+}
+
+th {
+	text-align		: left;
+	vertical-align	: top;
+}
+
+#body table {
+	width			: 100%;
+}
+
+#body table th {
+	font-weight		: bold;
+	padding			: 4px 0 5px 0;
 	text-transform	: uppercase;
 }
 
-table tr {
+#body table tr {
 	border-bottom	: 1px solid #ddd;
 }
 
-table td {
-	padding		: 3px 0;
+#body table td {
+	padding			: 3px 0;
 }
-
 
 
 /* Interface: Tags */
 
 .tag_list {
-	line-height	: 1em;
-	list-style	: none;
-	overflow	: hidden;
+	line-height		: 1em;
+	list-style		: none;
+	overflow		: hidden;
 }
 
 .tag_list li {
-	background	: #fff;
-	float		: left;
-	margin		: 0 3px 3px 0;
+	background		: #fff;
+	float			: left;
+	margin			: 0 3px 3px 0;
 }
 
 .tag_list .tag,
 .tag_list .delete_tag,
 .tag_list .add_tag {
-	background	: #f5f5f5 url('../images/tag_bg.gif') 0 0 repeat-x;
-	border		: 1px solid #bbb;
-	border-color: #ddd #bbb #bbb #ddd;
-	display		: block;
-	float		: left;
-	padding		: 3px 3px 4px;
+	background		: #f5f5f5 url('../images/tag_bg.gif') 0 0 repeat-x;
+	border			: 1px solid #bbb;
+	border-color	: #ddd #bbb #bbb #ddd;
+	display			: block;
+	float			: left;
+	padding			: 3px 3px 4px;
 }
 
 .tag_list a.delete_tag,
 .tag_list a.add_tag {
-	background	: #e8e8e8 url('../images/button_bg.gif') 0 0 repeat-x;
-	border-left	: 0;
-	color		: #000;
-	font-family	: verdana;
-	text-align	: center;
-	width		: 1.0em;
+	background		: #e8e8e8 url('../images/button_bg.gif') 0 0 repeat-x;
+	border-left		: 0;
+	color			: #000;
+	font-family		: verdana;
+	text-align		: center;
+	width			: 1.0em;
+}
+
+.tag_list li:hover {
+	filter			: alpha(opacity=100);
+	opacity			: 1.0;
 }
 
 .tag_list a.delete_tag:hover,
 .tag_list a.add_tag:hover {
-	background	: #ccc;
-	border-color: #aaa #999 #aaa #999;
+	background		: #ccc;
+	border-color	: #aaa #999 #aaa #999;
 }
 
-.tag_list .tag:hover {
-	background	: #5a0000;
-	border-color: #500000 #300000 #300000 #500000;
-	color		: #eee;
-	filter		: alpha(opacity=100);
-	opacity		: 1.0; 
+.tag_list a.tag:hover {
+	background		: #5a0000;
+	border-color	: #500000 #300000 #300000 #500000;
+	color			: #eee;
 }
 
 .tag_list .pop8 { opacity: 1.0; filter: alpha(opacity=100); }
@@ -463,92 +440,86 @@ table td {
 
 .tag_list a.delete_tag:hover
 .tag_list a.add_tag:hover {
-	background	: #ccc;
-	border-color: #aaa #999 #aaa #999;
+	background		: #ccc;
+	border-color	: #aaa #999 #aaa #999;
 }
 
 .tag_list.large li {
-	margin		: 0 5px 5px 0;
+	margin			: 0 5px 5px 0;
 }
 
 .tag_list.large .tag,
 .tag_list.large a.delete_tag,
 .tag_list.large a.add_tag {
-	font-size	: 1.3em;
-	padding		: 5px 5px 6px;
-}
-
-.sub_tags li:hover {
-	filter		: alpha(opacity=100);
-	opacity		: 1.0;
+	font-size		: 1.3em;
+	padding			: 5px 5px 6px;
 }
 
 
 /* Interface: Tabs */
 
 .tabbed ul.tabbed_navigation {
-	background	: #fff url('../images/tabbed_nav_bg.gif') 0 100% repeat-x;
-	font-size	: 1.6em;
-	line-height	: 1em;
-	list-style	: none;
-	margin		: 0 0 10px;
-	padding		: 0;
+	background		: #fff url('../images/tabbed_nav_bg.gif') 0 100% repeat-x;
+	font-size		: 1.6em;
+	line-height		: 1em;
+	list-style		: none;
+	margin			: 0 0 10px;
+	padding			: 0;
 }
 
 .tabbed ul.tabbed_navigation li {
-    display:inline-block;
-    display:-moz-inline-stack;
-    *display:inline; /* IE */
-    vertical-align:bottom; /* safari: for overlap */
-    cursor:pointer; /* gecko: due to -moz-inline-stack on anchor */
-    zoom:1; /* IE: kill space between horizontal tabs */
-
-	margin		: 0 20px 0 0;
-	padding		: 0 0 12px;
+    display	:inline-block;
+    display	:-moz-inline-stack;
+    *display	:inline; /* IE */
+    vertical-align	:bottom; /* safari	: for overlap */
+    cursor	:pointer; /* gecko	: due to -moz-inline-stack on anchor */
+    zoom	:1; /* IE	: kill space between horizontal tabs */
+	margin			: 0 20px 0 0;
+	padding			: 0 0 12px;
 }
 
 .tabbed ul.tabbed_navigation li a {
-    display:block;
-    display:inline-block;
-    vertical-align:bottom; /* safari: for overlap */
-    zoom:1;
+    display	:block;
+    display	:inline-block;
+    vertical-align	:bottom; /* safari	: for overlap */
+    zoom	:1;
 
-	color		: #999;
-	padding		: 0 0 5px;
+	color			: #999;
+	padding			: 0 0 5px;
 }
 
 .tabbed ul.tabbed_navigation li:hover,
 .tabbed ul.tabbed_navigation li.selected {
-	color		: #777;
-	background	: url('../images/tabbed_nav_indicator.gif') 50% 100% no-repeat;
+	color			: #777;
+	background		: url('../images/tabbed_nav_indicator.gif') 50% 100% no-repeat;
 }
 
 .tabbed ul.tabbed_navigation li.selected {
-	color		: #5a0000;
+	color			: #5a0000;
 }
 
 .tabbed ul.tabbed_navigation li a .count {
-	color		: #999;
-	font-size	: 0.625em;
-	line-height	: 1em;
-	vertical-align	: top; 
+	color			: #999;
+	font-size		: 0.625em;
+	line-height		: 1em;
+	vertical-align		: top; 
 }
 
 .tabbed ul.tabbed_navigation li.selected a .count {
-	color		: #777;
+	color			: #777;
 }
 
 .tabbed_content {
-	clear: both;
+	clear	: both;
 }
 
 .tabbed .tabbed_content .content_list {
-	border-width: 0;
-	margin-top	: -10px;
+	border-width	: 0;
+	margin-top		: -10px;
 }
 
 .tabbed .tabbed_content .content_list.results {
-	margin-top	: 0;
+	margin-top		: 0;
 }
 
 
@@ -585,7 +556,7 @@ table td {
 }
 
 
-/* Home */
+/* Page: Home */
 
 #status {
 	overflow: hidden;
@@ -606,7 +577,7 @@ table td {
 }
 
 
-/* Explore, Search & Results */
+/* Page: Explore, Search & Results */
 
 #search #current {
 	margin-bottom	: 20px;
@@ -736,7 +707,7 @@ table td {
 	width		: 190px;
 }
 
-/* Messages */
+/* Page: Messages */
 
 .messages th.contact { width: 20%; }
 .messages th.subject { width: 40%; }
@@ -784,7 +755,7 @@ table td {
 
 
 
-/* Wiki: History */
+/* Page: Wiki: History */
 
 #history table {
 	width		: 100%;
@@ -900,11 +871,8 @@ li.place div.editable {
 	margin		: 1em 0 1.5em 30%;
 }
 
-/* Block: About */
 
-#about_block {
-	
-}
+/* Block: About */
 
 #about_block dl {
 	overflow	: hidden;
@@ -969,13 +937,15 @@ li.place div.editable {
 	color		: #fff;
 }
 
-/* Help */
+
+/* Page: Help */
 
 #help img {
 	border		: 1px solid #ddd;
 	display		: block;
 	margin		: 5px 0;
 }
+
 
 /* Content */
 
@@ -1019,29 +989,9 @@ li.place div.editable {
 	display		: inline;
 }
 
-#content {
-}
-
 #content textarea {
 	width		: 100%;
 	margin-bottom	: 10px;
-}
-
-
-/* Side Blocks: Members Online */
-
-#feature_members_online ul {
-	list-style	: none;
-	overflow	: hidden;
-}
-
-#feature_members_online ul li {
-	float		: left;
-	margin-right: 10px;
-}
-
-#feature_members_online .member_thumb {
-	width		: 35px;
 }
 
 
@@ -1079,3 +1029,19 @@ li.place div.editable {
 	padding-right	: 0;
 }
 
+
+/* Side Blocks: Members Online */
+
+#feature_members_online ul {
+	list-style	: none;
+	overflow	: hidden;
+}
+
+#feature_members_online ul li {
+	float		: left;
+	margin-right: 10px;
+}
+
+#feature_members_online .member_thumb {
+	width		: 35px;
+}

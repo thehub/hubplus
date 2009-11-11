@@ -83,6 +83,14 @@ from apps.plus_permissions.default_agents import get_anonymous_group, get_admin_
 from apps.plus_permissions.exceptions import PlusPermissionsReadOnlyException, PlusPermissionsNoAccessException, NonExistentPermission, PlusPermissionAnonUserException
 
 
+def get_selected_agent(sad, agent_defaults, type_name, interface_name) :
+    try:
+        return sad[agent_defaults[type_name]['defaults'][interface_name]]
+    except KeyError:
+        return sad[agent_defaults[type_name]['defaults']['Unknown']]
+
+
+
 class SecurityContext(models.Model):
      """Target is the thing the context is associated with e.g. Group. 
      The thing that we will metaphorically put things "in".
@@ -92,23 +100,23 @@ class SecurityContext(models.Model):
 
      def get_target(self):
          return self.target.all()[0].obj
-         
+
+     def get_slider_agent_dictionary(self) :
+         slider_agents = SliderAgents[self.context_agent.obj.__class__](self)
+         return dict(slider_agents)
+
+     def get_my_type(self) :
+         return self.get_target().__class__
+     
      def set_up(self, permission_prototype='public', **kwargs):
-         """XXX set from maps and create security tags
-         """
-         
+         """XXX set from maps and create security tags         """
          # setting up security_tags
-         target = self.get_target()
-         
-         my_type = target.__class__
 
+         my_type = self.get_my_type()
          self.context_agent.permission_prototype = permission_prototype
-
          agent_defaults = AgentDefaults[self.context_agent.obj.__class__][permission_prototype]
 
-         slider_agents = SliderAgents[self.context_agent.obj.__class__](self)
-
-         sad = dict(slider_agents)
+         sad = self.get_slider_agent_dictionary()
 
          types = [my_type] + PossibleTypes[my_type]
          for typ in types:
@@ -116,14 +124,32 @@ class SecurityContext(models.Model):
                  interface_str = '%s.%s' %(typ.__name__, interface_name)
                  self.setup_tag_from_defaults(interface_str, sad, agent_defaults)
 
- 
+
+     def switch_permission_prototype(self, permission_prototype) :
+         # XXX refactor to eliminate redundancy with set_up
+         my_type = self.get_my_type()
+         self.context_agent.permission_prototype = permission_prototype
+         agent_defaults = AgentDefaults[self.context_agent.obj.__class__][permission_prototype]
+
+         sad = self.get_slider_agent_dictionary()
+         types = [my_type] + PossibleTypes[my_type]
+         for typ in types:
+             for interface_name in get_interface_map(typ.__name__):
+                 interface_str = '%s.%s' %(typ.__name__, interface_name)
+
+                 # seems to create missing sliders (if new interfaces are added)
+                 self.get_slider_level(interface_str)
+
+                 
+                 type_name, interface_name = interface_str.split('.')
+                 selected_agent = get_selected_agent(sad, agent_defaults, type_name, interface_name)
+                 self.move_slider(selected_agent, interface_str, skip_validation=True, no_user=True)
+
+
      def setup_tag_from_defaults(self, interface_str, sad, agent_defaults):
          typ, interface_name = interface_str.split('.')
          self.create_security_tag(interface_str)
-         try:
-             selected_agent = sad[agent_defaults[typ]['defaults'][interface_name]]
-         except KeyError:
-             selected_agent = sad[agent_defaults[typ]['defaults']['Unknown']]
+         selected_agent = get_selected_agent(sad, agent_defaults, typ, interface_name)
          self.move_slider(selected_agent, interface_str, skip_validation=True, no_user=True)
 
 

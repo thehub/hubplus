@@ -30,17 +30,17 @@ from apps.microblogging.views import TweetInstance
 from microblogging.utils import twitter_account_for_user, twitter_verify_credentials
 
 from django.utils.translation import ugettext_lazy as _
-
+from django.conf import settings 
 
 def home(request, success_url=None):
     """
     Let's base homepage on the microblog personal now.
     """
     if not request.user.is_authenticated():
-        return render_to_response('home/home.html', {}, context_instance=RequestContext(request))
+        return render_to_response('home/clients/%s/home.html'%settings.PROJECT_THEME, {}, context_instance=RequestContext(request))
 
     twitter_account = twitter_account_for_user(request.user)
-    template_name = "home/home_logged_in.html"
+    template_name = "home/clients/%s/home_logged_in.html" % settings.PROJECT_THEME
     form_class = TweetForm
 
     if request.method == "POST":

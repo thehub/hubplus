@@ -1,6 +1,10 @@
-from psn_import.utils import stop_words, substitutes 
+from psn_import.utils import stop_words, substitutes, strip_out
 
 from apps.plus_tags.models import Tag
+import ipdb
+import re
+
+reg = re.compile('\W')
 
 for t in Tag.objects.all() :
     
@@ -13,8 +17,16 @@ for t in Tag.objects.all() :
         t.delete()
     elif not t.keyword :
         print 'deleting empty tag %s , %s' % (t.id, t.keyword)
+
+
     if t.tag_type == 'folder' :
         t.tag_type = ''
         t.save()
-        
+
+    if reg.search(t.keyword) :
+        print "found non alpha %s" % t.keyword.encode('utf-8')
+        t.keyword = strip_out(t.keyword)
+        t.save()
+        #ipdb.set_trace()
+
 

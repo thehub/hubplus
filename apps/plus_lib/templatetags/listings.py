@@ -1,10 +1,10 @@
 from django import template
 register = template.Library()
 from django.utils.http import urlquote
+from apps.plus_lib.utils import search_caption_from_path
 
-
-@register.inclusion_tag('plus_lib/tag_and_search.html')
-def tag_and_search(listing_args, tag_intersection):
+@register.inclusion_tag('plus_lib/tag_and_search.html',takes_context=True)
+def tag_and_search(context, listing_args, tag_intersection):
     tag_extra = []
     if listing_args['order']:
         tag_extra.append('order=' + listing_args['order'])
@@ -23,11 +23,15 @@ def tag_and_search(listing_args, tag_intersection):
     for tag in tag_intersection:
         tag['tag_filter'] = listing_args['tag_filter'] + [tag['keyword']]
         tag['tag_filter'] = '+'.join(tag['tag_filter'])
-        
+    
+    path = context['request'].path
+    search_caption = search_caption_from_path(path)
+
     return {'listing_args':listing_args,
             'remove_tag_links':remove_tag_links,
             'tag_intersection':tag_intersection,
-            'tag_extra':tag_extra}
+            'tag_extra':tag_extra,
+            'search_caption':search_caption}
 
 
 @register.inclusion_tag('plus_lib/listing.html', takes_context=True)

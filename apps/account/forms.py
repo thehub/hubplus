@@ -387,6 +387,13 @@ class HubPlusApplicationForm(forms.Form):
             raise forms.ValidationError(_("There is no group called %s"%self.cleaned_data['group']))
                 
 
+    def clean_email_address(self) :
+        email = self.cleaned_data['email_address']
+        users = User.objects.filter(email_address=email)
+        if users :
+            raise forms.ValidationError(_("That email is already taken. Please choose another."))
+        return email
+
     def clean(self):
         return self.cleaned_data
 

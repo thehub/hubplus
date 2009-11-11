@@ -16,7 +16,7 @@ PROJECT_ROOT = os.path.abspath(os.path.dirname(__file__))
 # tells Pinax to use the default theme
 PINAX_THEME = 'default'
 
-DEBUG = False
+DEBUG = True
 TEMPLATE_DEBUG = False # DEBUG
 
 # tells Pinax to serve media through django.views.static.serve.
@@ -80,6 +80,7 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
 
+    'apps.django403.middleware.Django403Middleware',
     'django_openid.consumer.SessionConsumer',
     'account.middleware.LocaleMiddleware',
     'django.middleware.doc.XViewMiddleware',
@@ -169,6 +170,7 @@ INSTALLED_APPS = (
     'plus_permissions',
     'analytics',
     'plus_tags',
+    'plus_comments',
     'profiles',
     'plus_groups',
     'plus_links',
@@ -185,6 +187,7 @@ INSTALLED_APPS = (
     'tag_app',
     'django.contrib.admin',
     'haystack',
+    'django403',
     )
 
 HAYSTACK_SITECONF = 'search_sites'

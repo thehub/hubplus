@@ -4,14 +4,14 @@
 {% load listings %}
 
 {% block body %}
-<div id='body'>
+<!--div id='body'-->
   <div id="tag_refinement" class="block">
     {% goto_tag %}
     <br />
     <h3>{% trans "Popular tags" %}</h3>
     {% tag_cloud 50 'large' '' %}
   </div>  
-</div>
+<!--/div-->
 {% endblock %}
 {% block side_bar %}
 {% side_search search_args %}
