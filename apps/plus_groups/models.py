@@ -183,7 +183,7 @@ try :
                                                                    #The reverse lookup of "user.groups" unfortunately still doesn't work, however you can get a reverse lookup on user.user_group_set from which the results could be inferred
                                                                    #db_table="user_group" doesn't use the right columns for lookup
 
-        group_name = models.CharField(unique=True, max_length=60)
+        group_name = models.CharField(unique=True, max_length=70)
         display_name = models.CharField(max_length=255)
         created = models.DateTimeField(auto_now_add=True)
 
