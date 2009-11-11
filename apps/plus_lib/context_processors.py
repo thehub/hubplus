@@ -22,6 +22,7 @@ def configs(context):
             "MAIN_HUB_NAME" : main_hub_name(),
             'PROJECT_NAME' : settings.PROJECT_NAME,
             'current_area': get_area(context),
+            'CONTACT_EMAIL':settings.CONTACT_EMAIL,
             'SUPPORT_EMAIL' : settings.SUPPORT_EMAIL,
             'EXPLORE_NAME' : settings.EXPLORE_NAME, 
 
