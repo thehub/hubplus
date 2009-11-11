@@ -3,7 +3,8 @@ from django.conf import settings
 from utils import hub_name,  hub_name_plural, main_hub_name
 
 def get_area(context):
-    segment = context.path.split('/')[0]
+    path = context.path.split('/')
+    return path[1]
     
 def configs(context):
     # This function is a context processor to load the base.html template with some other standard 
@@ -21,7 +22,7 @@ def configs(context):
             'HUB_NAME_PLURAL' : hub_name_plural(),
             "MAIN_HUB_NAME" : main_hub_name(),
             'PROJECT_NAME' : settings.PROJECT_NAME,
-            'current_area': get_area(context),
+            'CURRENT_AREA': get_area(context),
             'SUPPORT_EMAIL' : settings.SUPPORT_EMAIL,
             'EXPLORE_NAME' : settings.EXPLORE_NAME, 
 

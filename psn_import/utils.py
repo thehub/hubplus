@@ -4,6 +4,7 @@ from django.core.files.base import File
 
 import re
 import pickle
+import ipdb
 
 maps = {}
 reverse = {}
@@ -107,7 +108,7 @@ def get_top_container(uid, path, tags) :
 
 
 # Tags
-def strip_out(s,bads="""/,"':()[]*\%\\;""") :
+def strip_out(s,bads="""/,"':()[]*\%\\?;""") :
     return ''.join([c for c in s if (c not in bads)])
 
 
@@ -139,8 +140,12 @@ def tag_with_folder_name(obj, creator, folder_name, tag_type='') :
 
 def tag_with(obj, creator, tags, tag_type='') :
     for tw in tags :
-        tag_add(obj, tag_type, tw, creator)
-
+        try :
+            tag_add(obj, tag_type, tw, creator)
+        except Exception, e:
+            print e
+            ipdb.set_trace()
+            
 
 # Resources 
 
@@ -226,10 +231,16 @@ def create_resource(top_container, creator, title_and_type, f_name, folder, tags
                                  resource=f, title=title, name=name, description=desc,
                                  license=license, author=author, stub=False)
        
-    resource.save()
-    
+
+    resource.save()    
     f.close()
-    tag_with(resource, creator, tags, '')
+
+    try :
+        tag_with(resource, creator, tags, '')
+    except Exception, e :
+        print e
+        ipdb.set_trace()
+
     return True
 
 from reversion import revision
@@ -240,12 +251,8 @@ def create_page(container, user, tags, **kwargs) :
     page = container.create_WikiPage(user,**kwargs)
     revision.comment='Import'
     revision.user = user
-
     tag_with(page, user, tags, tag_type='')
-
     return page
-   
-        
 
 def load_all() :
     load_file('Folder','mhpss_export/folders.pickle')

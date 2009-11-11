@@ -79,6 +79,13 @@ class EmptyString(type):
 class NotViewable(object):
     __metaclass__= EmptyString
 
+def is_not_viewable(obj,attr_name) :
+    x = getattr(obj,attr_name) 
+    if x == NotViewable :
+        return True
+    else : 
+        return False
+
 from apps.plus_permissions.models import type_interfaces_map, has_access
 
 class SecureWrapper:

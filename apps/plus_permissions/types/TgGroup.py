@@ -170,9 +170,11 @@ if not get_interface_map(TgGroup):
 # these exist on a per type basis and are globals for their type.
 # they don't need to be stored in the db
 if not SliderOptions.get(TgGroup, False):
-    SetSliderOptions(TgGroup, {'InterfaceOrder':['Viewer', 'Editor', 'Invite', 'Join', 'Uploader', 'ManageMembers', 'ManagePermissions'], 
-                               'InterfaceLabels':{'Viewer':'View',
+    SetSliderOptions(TgGroup, 
+                     {'InterfaceOrder':['Viewer', 'Editor', 'Invite', 'Join', 'Uploader', 'Commentor', 'ManageMembers', 'ManagePermissions'], 
+                      'InterfaceLabels':{'Viewer':'View',
                                                   'Editor': 'Edit',
+                                                  'Commentor': 'Comment',
                                                   'ManageMembers': 'Manage Membership',
                                                   'ManagePermissions':'Change Permissions'}})
 
