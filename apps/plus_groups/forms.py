@@ -56,7 +56,7 @@ class AddContentForm(forms.Form):
 
 class TgGroupForm(forms.Form):
     
-    name = forms.CharField()
+    name = forms.CharField(max_length=60)
     group_type = forms.ChoiceField(choices=settings.GROUP_TYPES)
     description = forms.CharField()
     address = forms.CharField(required=False)
