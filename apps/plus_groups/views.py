@@ -269,6 +269,7 @@ def leave(request, group, template_name="plus_groups/group.html", current_app='p
 @login_required
 @secure_resource(TgGroup, required_interfaces=['Invite', 'Viewer'])
 def invite(request, group, template_name='plus_groups/invite.html', current_app='plus_groups', **kwargs):
+
     if request.POST :
         form = TgGroupMemberInviteForm(request.POST)
         if form.is_valid() :
