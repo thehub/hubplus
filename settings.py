@@ -200,7 +200,7 @@ ABSOLUTE_URL_OVERRIDES = {
 }
 
 AUTH_PROFILE_MODULE = 'profiles.Profile'
-
+SITE_NAME_SENTENCE = ''   # defaults to site_name in plus_lib/context_processors.py
 NOTIFICATION_LANGUAGE_MODULE = 'account.Account'
 
 EMAIL_CONFIRMATION_DAYS = 2

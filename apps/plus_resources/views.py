@@ -30,7 +30,7 @@ def handle_uploaded_file(user, owner, form, f_data) :
     kwargs = dict([(k,v) for k,v in form.cleaned_data.iteritems()])
 
     resource = get_or_create(user, owner, **kwargs)
-    resource.stub= False
+    resource.stub = False
     resource.save()
 
 
