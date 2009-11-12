@@ -5,7 +5,8 @@ from microblogging.models import Tweet
 register = template.Library()
 
 @register.inclusion_tag('microblogging/listing.html', takes_context=True)
-def tweet_listing(context, tweets, prefix_sender, are_mine):
+def tweet_listing(context, tweets, prefix_sender, are_mine) :
+
     request = context.get('request', None)
     sc = {
         'tweets': tweets.select_related(depth=1),
