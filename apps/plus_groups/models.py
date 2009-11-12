@@ -214,12 +214,12 @@ try :
         active = models.BooleanField()
 
         def add_member(self, user_or_group):
-            
             if isinstance(user_or_group, User) and not self.users.filter(id=user_or_group.id):
                 self.users.add(user_or_group)
                 from apps.microblogging.models import Following, send_tweet # avoid circularity
-                Following.objects.follow(self, user_or_group)
-                send_tweet(user_or_group,"%s joined the group %s" % (user_or_group.get_display_name(), self.get_display_name()))
+                Following.objects.follow(user_or_group, self)
+                send_tweet(user_or_group,"%s joined the group %s" % 
+                           (user_or_group.get_display_name(), self.get_display_name()))
                 send_tweet(self,"%s joined the group %s" % (user_or_group.get_display_name(), self.get_display_name()))
 
 
@@ -251,12 +251,12 @@ try :
                 self.users.remove(user_or_group)
                 from apps.microblogging.models import Following, send_tweet # avoid circularity      
                 Following.objects.follow(self, user_or_group)
-                send_tweet(user_or_group,"%s left the group %s" % (user_or_group.get_display_name(), self.get_display_name(\
-)))
+                send_tweet(user_or_group,"%s left the group %s" % 
+                           (user_or_group.get_display_name(), self.get_display_name()))
                 send_tweet(self,"%s left the group %s" % (user_or_group.get_display_name(), self.get_display_name()))
 
                 
-                Following.objects.unfollow(self, user_or_group)
+                Following.objects.unfollow(user_or_group, self)
  
 
 
