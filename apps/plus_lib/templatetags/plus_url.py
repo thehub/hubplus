@@ -106,3 +106,27 @@ def plus_url(parser, token):
                         args.append(parser.compile_filter(arg))
     return URLNode(viewname, args, kwargs, asvar)
 url = register.tag(plus_url)
+
+@register.simple_tag
+def simple_url(target) :
+    from django.core.urlresolvers import reverse, NoReverseMatch
+
+    try :
+        target = target.get_inner()
+    except Exception, e:
+        pass
+    cls = target.__class__.__name__
+    try :
+        if cls in ('User','Profile') :            
+            url = reverse('profile_detail', args=[target.username])
+        elif cls == 'TgGroup' :
+            url = reverse('groups:group', args=[target.id])
+        elif cls in (settings.HUB_NAME) :
+            url = reverse('%s:group'%settings.HUB_NAME_PLURAL, args=[target.id])
+        else :
+            url = ''
+    except Exception, e:
+        print e, target
+        url = '' # XXX currently returning '' but what should we do?
+    return url
+    
