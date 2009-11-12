@@ -10,7 +10,7 @@
 	<li>
 	  <label for="title"><span class="required">*</span> {% trans "Title" %}</label>
 	  <input name="title" id="title" class="text" type="text" value="{{form.data.title}}" />
-	  {% if form.errors.title %}<span class="error">{{form.errors.title}}<span>{% endif %}
+	  {% if form.errors.title %}<span class="error">{{form.errors.title|safe}}<span>{% endif %}
 	</li>
       </ul>
       <label><span class="required">*</span> {% trans "Add this to" %}</label>
@@ -34,7 +34,7 @@
 	  <ul id="choose_type" class="checkboxes">
 	    {% for create_interface, label, sub_title, active in possible_interfaces %}
 	    <li id="{{create_interface}}" {% if active %}{% else %}class="cannot_add" disabled="disabled"{% endif %}>
-	      <input  id="a" name="create_iface" class="radio" value="{{create_interface}}" type="radio" {% if forloop.first %}checked="checked"{% endif %} />
+	      <input  id="a" name="create_iface" class="radio" value="{{create_interface}}" type="radio" {% if form.data.create_iface %}{% ifequal form.data.create_iface create_interface %}checked="checked"{% endifequal %}{% else %}{% if forloop.first %}checked="checked"{% endif %}{% endif %} />
 	      <label for="a">{{label}}<span class="extra">{{sub_title}}</span></label>
 	    </li>
 	    {% endfor %}

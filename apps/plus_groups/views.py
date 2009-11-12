@@ -25,6 +25,7 @@ from apps.plus_permissions.interfaces import PlusPermissionsNoAccessException, S
 from apps.plus_permissions.types.TgGroup import *
 from django.contrib.auth.decorators import login_required
 
+
 from apps.plus_groups.forms import TgGroupForm, TgGroupMemberInviteForm, AddContentForm, TgGroupMessageMemberForm
 
 from apps.plus_permissions.api import secure_resource, site_context
@@ -351,16 +352,21 @@ def group_field(request, group, classname, fieldname, *args, **kwargs) :
 @login_required
 @secure_resource(obj_schema={'group':[TgGroup]})
 def add_content_object(request, group, current_app='plus_groups', **kwargs):
-    form = AddContentForm(request.POST)
+    form_args = request.POST.copy()
+    form_args['current_app'] = current_app
+    form = AddContentForm(form_args)
     if form.is_valid():
         title = form.cleaned_data['title']
         type_string = form.cleaned_data['type_string']
         create = getattr(group, "create_" + type_string)
         title = form.cleaned_data['title']
         name = form.cleaned_data['name']
-
-        obj = create(request.user, title=title, name=name, in_agent=group.get_ref(), stub=True)
-        obj.save()
+        cls = ContentType.objects.get(model=form.cleaned_data['type_string'].lower()).model_class()
+        try:
+            obj = cls.objects.get(name=form.cleaned_data['name'], in_agent=group.get_ref(), stub=True)
+        except cls.DoesNotExist:
+            obj = create(request.user, title=title, name=name, in_agent=group.get_ref(), stub=True)
+            obj.save()
 
         #can't do a normal redirect via ajax call, so tell the js to redirect for us
 

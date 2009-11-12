@@ -17,6 +17,7 @@ def configs(context):
             "HOME_TABS" : 'home/clients/%s/tabbed_subs.html' % settings.PROJECT_THEME,
             'SITE_NAME' : settings.SITE_NAME,
             'SITE_NAME_SHORT': settings.SITE_NAME_SHORT,
+            'SITE_NAME_SENTENCE': settings.SITE_NAME_SENTENCE and settings.SITE_NAME_SENTENCE.encode('utf-8') or settings.PROJECT_NAME,
             'HUB_NAME' : hub_name(),
             'HUB_NAME_PLURAL' : hub_name_plural(),
             "MAIN_HUB_NAME" : main_hub_name(),
@@ -25,7 +26,6 @@ def configs(context):
             'CONTACT_EMAIL':settings.CONTACT_EMAIL,
             'SUPPORT_EMAIL' : settings.SUPPORT_EMAIL,
             'EXPLORE_NAME' : settings.EXPLORE_NAME, 
-
             'EXPLORE_SEARCH_TITLE' : settings.EXPLORE_SEARCH_TITLE,
             'MEMBER_SEARCH_TITLE' : settings.MEMBER_SEARCH_TITLE,
             'GROUP_SEARCH_TITLE' : settings.GROUP_SEARCH_TITLE,
