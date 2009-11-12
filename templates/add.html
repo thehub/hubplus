@@ -1,5 +1,6 @@
 {% load i18n %}
 
+{% if request.user.is_authenticated %}
 	<div id="feature_add" class="site_block">
 	    {% if group.id %}
 	    <a href="{% url plus_groups:add_content resource_id=group.id %}" class="add_content bt_add icon_text_button" rel="#overlay">Add Resource...</a>
@@ -7,3 +8,4 @@
 	    <a href="{% url plus_groups:add_content resource_id=0 %}" class="add_content bt_add icon_text_button" rel="#overlay">Add Resource...</a>
 	    {% endif %}
 	</div>
+{% endif %}
