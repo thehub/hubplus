@@ -16,6 +16,11 @@ def get_group_or_hub_name(context) :
 def configs(context):
     # This function is a context processor to load the base.html template with some other standard 
     # values pulled from local_settings.py
+    if get_area(context) in ['groups','regions','hubs'] :
+        is_group_type = True
+    else :
+        is_group_type = False
+
     try:
         SETTINGS = {
             'COPYRIGHT_HOLDER' : settings.COPYRIGHT_HOLDER,
@@ -31,6 +36,7 @@ def configs(context):
             'PROJECT_NAME' : settings.PROJECT_NAME,
             'CURRENT_AREA': get_area(context),
             'GROUP_OR_HUB' : get_group_or_hub_name(context),
+            'IS_GROUP_TYPE' : is_group_type,
             'SUPPORT_EMAIL' : settings.SUPPORT_EMAIL,
             'EXPLORE_NAME' : settings.EXPLORE_NAME, 
 
