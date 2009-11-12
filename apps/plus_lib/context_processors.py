@@ -5,6 +5,13 @@ from utils import hub_name,  hub_name_plural, main_hub_name
 def get_area(context):
     path = context.path.split('/')
     return path[1]
+
+def get_group_or_hub_name(context) :
+    area = get_area(context)
+    if area == 'groups' :
+        return 'Group'
+    else :
+        return hub_name()
     
 def configs(context):
     # This function is a context processor to load the base.html template with some other standard 
@@ -23,6 +30,7 @@ def configs(context):
             "MAIN_HUB_NAME" : main_hub_name(),
             'PROJECT_NAME' : settings.PROJECT_NAME,
             'CURRENT_AREA': get_area(context),
+            'GROUP_OR_HUB' : get_group_or_hub_name(context),
             'SUPPORT_EMAIL' : settings.SUPPORT_EMAIL,
             'EXPLORE_NAME' : settings.EXPLORE_NAME, 
 
