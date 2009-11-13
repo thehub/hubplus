@@ -193,6 +193,8 @@ post_save.connect(tweet, sender=Tweet)
 
 
 def send_tweet(sender, message) :
+    import ipdb
+    ipdb.set_trace()
     t = Tweet(text=message, sender=sender)
     t.save()
 
