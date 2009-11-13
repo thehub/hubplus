@@ -7,9 +7,9 @@ from django.contrib.contenttypes.models import ContentType
 from django.conf import settings
 from django.core.urlresolvers import reverse
 from django.utils.translation import ugettext_lazy as _
-from microblogging.utils import twitter_account_for_user, twitter_verify_credentials
-from microblogging.models import Tweet, TweetInstance, Following
-from microblogging.forms import TweetForm
+from apps.microblogging.utils import twitter_account_for_user, twitter_verify_credentials
+from apps.microblogging.models import Tweet, TweetInstance, Following
+from apps.microblogging.forms import TweetForm
 
 if "notification" in settings.INSTALLED_APPS:
     from notification import models as notification

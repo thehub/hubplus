@@ -36,3 +36,9 @@ SIDE_SEARCH_TITLE = _('side search title')
 
 STATUS_COPY = _('Update the Network, what are you doing right now ?')
 
+INVITE_EMAIL_TEMPLATE = """
+Dear {{first_name}} {{last_name}}, 
+
+{{sponsor}} has invited you to become a member of MHPSS network.
+
+Join and enter a worldwide community of people and organizations concerned with mental health & psychosocial support. Discover and learn about new Resources, Members, Groups and Regions from the worldwide network."""
