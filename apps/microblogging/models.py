@@ -114,9 +114,10 @@ class TweetInstance(models.Model):
 def tweet(sender, instance, created, **kwargs):
     #if tweet is None:
     #    tweet = Tweet.objects.create(text=text, sender=user)
+
     recipients = set() # keep track of who's received it
     publisher = instance.sender
-    
+
     # add the sender's followers
     publisher_content_type = ContentType.objects.get_for_model(publisher)
     followings = Following.objects.filter(followed_content_type=publisher_content_type, followed_object_id=publisher.id)
@@ -140,13 +141,17 @@ def tweet(sender, instance, created, **kwargs):
     
     # if contains #tribe sent it to that tribe too (the tribe itself, not the members)
     for group_id in group_ref_re.findall(instance.text):
+
         try:
             from apps.plus_groups.models import TgGroups 
             recipients.add(TgGroup.objects.get(id=group_id))
         except TgGroup.DoesNotExist:
             pass # oh well
-    
+
+    print "recipients %s" % recipients
+
     # now send to all the recipients
+
     for recipient in recipients:
         tweet_instance = TweetInstance.objects.create(text=instance.text, sender=publisher, recipient=recipient, sent=instance.sent)
 
@@ -189,12 +194,11 @@ class Following(models.Model):
     
     objects = FollowingManager()
 
-post_save.connect(tweet, sender=Tweet)
+
+post_save.connect(tweet, sender=Tweet, dispatch_uid="apps.microblogging.models")
 
 
 def send_tweet(sender, message) :
-    import ipdb
-    ipdb.set_trace()
     t = Tweet(text=message, sender=sender)
     t.save()
 
