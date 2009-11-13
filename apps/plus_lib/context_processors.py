@@ -12,7 +12,13 @@ def get_group_or_hub_name(context) :
         return 'Group'
     else :
         return hub_name()
-    
+
+def get_hub_app_name(theme) :
+    if theme == 'psn' :
+        return 'regions:groups'
+    else :
+        return 'hubs:groups'
+
 def configs(context):
     # This function is a context processor to load the base.html template with some other standard 
     # values pulled from local_settings.py
@@ -36,11 +42,12 @@ def configs(context):
             "MAIN_HUB_NAME" : main_hub_name(),
             'PROJECT_NAME' : settings.PROJECT_NAME,
 
+            'CONTACT_EMAIL':settings.CONTACT_EMAIL,
+
             'CURRENT_AREA': get_area(context),
             'GROUP_OR_HUB' : get_group_or_hub_name(context),
             'IS_GROUP_TYPE' : is_group_type,
 
-            'CONTACT_EMAIL':settings.CONTACT_EMAIL,
             'SUPPORT_EMAIL' : settings.SUPPORT_EMAIL,
             'EXPLORE_NAME' : settings.EXPLORE_NAME, 
             'EXPLORE_SEARCH_TITLE' : settings.EXPLORE_SEARCH_TITLE,
@@ -55,6 +62,8 @@ def configs(context):
             'EXPLORE_INTRO_BOX' : 'explore_intro_bar', 
             'HUBS_INTRO_BOX' : 'hubs_intro_bar',
             
+            'HUB_APP_NAME' : get_hub_app_name(settings.PROJECT_THEME),
+
             'STATUS_COPY' : settings.STATUS_COPY,
 
             }
