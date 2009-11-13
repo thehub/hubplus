@@ -218,7 +218,8 @@ def setup_defaults() :
                              'Join':'all_members_group',
                              'ManagePermissions':'context_admin',
                              'SetManagePermissions':'context_admin',
-                             'Unknown': 'context_agent'
+                             'CreateLink':'context_agent',
+                             'Unknown': 'context_admin'
                              },
                         'constraints':
                             ['Viewer>=Editor', 'Invite>=ManageMembers', 'Join>=ManageMembers', 'ManageMembers<=$anonymous_group', 'ManagePermissions<=$context_agent']
@@ -230,7 +231,7 @@ def setup_defaults() :
                              'Creator':'creator',
                              'Delete':'context_admin',
                              'Commentor':'all_members_group',
-                             'Unknown':'context_agent',
+                             'Unknown':'context_admin',
                              'ManagePermissions':'creator'},
                         'constraints': ['Viewer>=Editor', 'Editor<$anonymous_group', 'Viewer>=Commentor']
                         },
@@ -240,7 +241,7 @@ def setup_defaults() :
                           'Editor':'creator',
                           'Commentor':'context_agent',
                           'ManagePermissions':'creator',
-                          'Unknown': 'context_agent'},
+                          'Unknown': 'context_admin'},
                          'constraints':['Viewer>=Editor', 'Editor<$anonymous_group']
                          },
                    'Site' : 
@@ -258,7 +259,7 @@ def setup_defaults() :
                          'Editor':'creator',
                          'Accept':'all_members_group',
                          'ManagePermissions':'context_admin',
-                         'Unknown': 'context_agent'
+                         'Unknown': 'context_admin'
                          },
                         'constraints':['Viewer>=Editor', 'Editor<$anonymous_group'] 
                         },                      
@@ -267,20 +268,19 @@ def setup_defaults() :
                         {'ContactAdmin':'context_admin',
                          'ContactInvite':'all_members_group',
                          'ManagePermissions':'context_admin',
-                         'Unknown': 'context_agent'
+                         'Unknown': 'context_admin'
                          },               
                         'constraints':[]
                         },
                    'Link':
                        {'defaults' : 
-                          { 'Viewer': 'anonymous_group',
-                            'Manager': 'context_agent',
+                          { 'Viewer':'anonymous_group',
+                            'Manager':'creator',
                             'ManagePermissions':'context_admin',
-                            'Unknown': 'context_agent',
+                            'Unknown':'context_admin'
                           },
                           'constraints':['Viewer>=Manager']
                         },
-
                    'Resource':
                        {'defaults' :
                           { 'Viewer': 'all_members_group',
@@ -288,7 +288,7 @@ def setup_defaults() :
                             'Commentor': 'all_members_group',
                             'Manager': 'context_agent',
                             'ManagePermissions':'context_admin',
-                            'Unknown': 'context_agent',
+                            'Unknown': 'context_admin',
                           },
                           'constraints':['Viewer>=Manager']
                         },

@@ -231,8 +231,10 @@ def create_resource(top_container, creator, title_and_type, f_name, folder, tags
                                  resource=f, title=title, name=name, description=desc,
                                  license=license, author=author, stub=False)
        
+
     resource.save()    
     f.close()
+
     try :
         tag_with(resource, creator, tags, '')
     except Exception, e :

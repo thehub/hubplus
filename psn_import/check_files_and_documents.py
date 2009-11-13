@@ -24,6 +24,8 @@ def check_files(lst) :
 
         uid = file['uid']
         container = get_top_container(uid,[],[])
+        print file['state']
+        
 
         if not match :
 

@@ -1,7 +1,6 @@
  
 from apps.plus_groups.models import TgGroup
 from psn_import.utils import maps, reverse, load_all
-import ipdb
 
 def change(group, new_type) :
     print group.group_name

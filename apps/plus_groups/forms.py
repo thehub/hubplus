@@ -117,7 +117,7 @@ class TgGroupForm(forms.Form):
 
 class TgGroupMemberInviteForm(forms.Form) :
     plain_text = forms.CharField()
-    special_message = forms.CharField()
+    special_message = forms.CharField(required=False)
     
     def clean_plain_text(self) :
         tt = self.cleaned_data['plain_text']
@@ -129,7 +129,7 @@ class TgGroupMemberInviteForm(forms.Form) :
                 user = User.objects.get(email_address=tt)
             except :
                 print "%s is not an email_address" % tt
-                raise forms.ValidationError('Not recognised as either email or existing username')
+                raise forms.ValidationError(_('Not recognised as either existing username or known email'))
         self.cleaned_data['user'] = user
 
 class TgGroupMessageMemberForm(forms.Form) :

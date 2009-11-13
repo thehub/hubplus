@@ -1,3 +1,14 @@
+if(!Array.indexOf){
+    Array.prototype.indexOf = function(obj){
+	for(var i=0; i<this.length; i++){
+	    if(this[i]==obj){
+	        return i;
+	    }
+	}
+	return -1;
+    };
+}
+
 var xmllib = {};
 jq.extend(xmllib, {
     escape: function (content) {
@@ -284,8 +295,8 @@ var inplace_editor = function (element_id, url, special_options) {
         if (!options.widget_name) {
             options.widget_name = options.widget_id;
         }
-	
-	
+
+
         if (options.loadTextURL) {
             value = "";
         }
