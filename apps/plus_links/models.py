@@ -4,7 +4,7 @@ from django.contrib.contenttypes import generic
 
 from apps.plus_groups.models import Location
 from apps.plus_permissions.models import GenericReference
-
+from apps.plus_permissions.interfaces import secure_wrap
 
 class Service(models.Model) :
     url = models.URLField(max_length=200)
@@ -19,15 +19,12 @@ class Link(models.Model) :
     target = generic.GenericForeignKey('target_content_type', 'target_object_id')
 
     
-def get_links_for_type_and_id(type, id) :
-    return Link.objects.filter(target_object_id=id, target_content_type=type)
 
-def get_links_for(target) :
+
+def get_links_for(target, context):
     target_type = ContentType.objects.get_for_model(target)
-    return get_links_for_type_and_id(target_type, target.id)
-
-
-
+    secured_links = [secure_wrap(obj, context.get('request').user, interface_names=['Manager', 'Viewer']) for obj in Link.objects.filter(target_object_id=target.id, target_content_type=target_type)]
+    return secured_links
 
 
 
@@ -62,8 +59,3 @@ class ListOfLinks :
 
     def iterator(self) :
         return (x.object for x in self.link_refs)
-
-            
-        
-
-    

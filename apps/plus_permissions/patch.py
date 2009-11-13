@@ -11,7 +11,7 @@ from apps.plus_lib.models import add_edit_key, add_get_display_name
 # Add the create_* interfaces and sliders 
 def add_create_interfaces(content_type, child_types):
     for child in child_types:
-        key = 'Create%s'%child.__name__
+        key = 'Create%s' % child.__name__
         type_interfaces_map[content_type.__name__][key] = add_creator_interface(child)
 
 

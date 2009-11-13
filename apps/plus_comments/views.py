@@ -22,16 +22,11 @@ def our_comment(request, content_type, content_id, target_id, template_name="plu
         try :
             return free_comment(request, content_type=content_type, object_id=content_id, parent_id=parent_id, model=ThreadedComment, form_class=ThreadedCommentForm)
         except Exception, e :
-            print e
-            import ipdb
             raise e
-            #ipdb.set_trace()
-    else :
 
+    else :
         return render_to_response(template_name, {
             'user' : request.user,
             'parent_id' : target_id,
             'url' : '/plus_comments/our_comment/%s/%s/%s/' % (content_type, content_id, target_id),
             }, context_instance=RequestContext(request))
-
-
