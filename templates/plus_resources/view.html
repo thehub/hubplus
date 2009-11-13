@@ -56,9 +56,11 @@
 		<li>
 			{% editable "Author" resource 'author' 'Author'%}
 		</li>
+		{% if resource.download_url %}
 		<li class="download_button">
 			<a class="button" href="{{resource.download_url}}">Download</a>
 		</li>
+		{% endif %}
 	</ul>
 	</div>
 

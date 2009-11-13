@@ -48,7 +48,10 @@ class Resource(models.Model):
 
 
     def download_url(self) :
-        return self.resource.url
+        if self.resource :
+            return self.resource.url
+        else :
+            return ''
 
     def display_name(self) :
         return self.title
