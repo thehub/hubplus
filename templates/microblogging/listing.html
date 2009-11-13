@@ -2,6 +2,7 @@
 {% load oembed_tags %}
 {% load pagination_tags %}
 {% load plus_url %}
+{% load avatar_tags %}
 
 {% autopaginate tweets %}
 
@@ -11,13 +12,14 @@
     {% for tweet in tweets %}
 
     <li>
-      <div class="thumb tiny"><img src="../../site_media/images/group.jpg" /></div>
+      <div class="thumb tiny">{% avatar tweet.sender 30 %}</div>
 
         <div class="tweet" id="t{{ tweet.id }}">
             {% if prefix_sender %}<a href="{% simple_url tweet.sender %}"><b>{{ tweet.sender.get_display_name }} :</b></a>{% endif %}
             {{ tweet.html|safe|oembed|urlize }}
             <span class="label_time">{% blocktrans with tweet.sent|timesince as tweet_age %}{{ tweet_age }} ago{% endblocktrans %}</span>
-            <a class="reply" href="{  % url tweets_you_follow %}?reply={{ tweet.sender }}">{% trans "reply" %}</a>
+	    <!--XXX reply to tweets not working. comment and fix -->
+            <!--a class="reply" href="{% url tweets_you_follow %}?reply={{ tweet.sender }}">{% trans "reply" %}</a-->
          </div>
     </li>
     {% endfor %}

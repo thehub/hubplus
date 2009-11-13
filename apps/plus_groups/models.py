@@ -13,6 +13,9 @@ from apps.plus_permissions.proxy_hmac import attach_hmac
 
 import datetime
 
+from django.utils.translation import ugettext_lazy as _
+
+
 class Location(models.Model):
     class Meta:
         db_table = u'location'
@@ -159,15 +162,9 @@ def create_many_related_manager(superclass, through=False):
                 [self._pk_val])
             transaction.commit_unless_managed()
 
-
-
-            
-
-
     return ManyRelatedManager
 
 django.db.models.fields.related.create_many_related_manager = create_many_related_manager
-
 
 
 try :
@@ -216,12 +213,11 @@ try :
         def add_member(self, user_or_group):
             if isinstance(user_or_group, User) and not self.users.filter(id=user_or_group.id):
                 self.users.add(user_or_group)
-                from apps.microblogging.models import Following, send_tweet # avoid circularity
-                Following.objects.follow(user_or_group, self)
-                send_tweet(user_or_group,"%s joined the group %s" % 
-                           (user_or_group.get_display_name(), self.get_display_name()))
-                send_tweet(self,"%s joined the group %s" % (user_or_group.get_display_name(), self.get_display_name()))
 
+                from apps.microblogging.models import send_tweet # avoid circularity
+                message = _("%(joiner)s joined the group %(group)s") % (
+                    {'joiner':user_or_group.get_display_name(),'group':self.get_display_name()})
+                send_tweet(user_or_group, message)
 
             if isinstance(user_or_group, self.__class__) and not self.child_groups.filter(id=user_or_group.id):
                 self.child_groups.add(user_or_group)
@@ -249,16 +245,11 @@ try :
         def remove_member(self, user_or_group):
             if isinstance(user_or_group, User) and self.users.filter(id=user_or_group.id):
                 self.users.remove(user_or_group)
-                from apps.microblogging.models import Following, send_tweet # avoid circularity      
-                Following.objects.follow(self, user_or_group)
-                send_tweet(user_or_group,"%s left the group %s" % 
-                           (user_or_group.get_display_name(), self.get_display_name()))
-                send_tweet(self,"%s left the group %s" % (user_or_group.get_display_name(), self.get_display_name()))
 
-                
-                Following.objects.unfollow(user_or_group, self)
- 
-
+                from apps.microblogging.models import send_tweet 
+                message = _("%(leaver)s left the group %(group)s") % (
+                    {'leaver':user_or_group.get_display_name(),'group':self.get_display_name()})
+                send_tweet(user_or_group, message)
 
             if isinstance(user_or_group, self.__class__) and self.child_groups.filter(id=user_or_group.id):
                 self.child_groups.remove(user_or_group)
