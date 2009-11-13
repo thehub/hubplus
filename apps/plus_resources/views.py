@@ -89,10 +89,15 @@ def view_resource(request, group, resource_name, template_name="plus_resources/v
     except PlusPermissionsNoAccessException:
         can_comment=False
 
+    if obj.get_inner().created_by :
+        created_by = obj.get_inner().created_by.get_display_name()
+    else :
+        created_by = None
+
     return render_to_response(template_name, {
         'resource' : TemplateSecureWrapper(obj),
         'page_title' : obj.title,
-        'created_by' : obj.get_inner().created_by.get_display_name(),
+        'created_by' : created_by,
         'permissions' : perms_bool,
         'can_comment' : can_comment,
     }, context_instance=RequestContext(request, current_app=current_app))
