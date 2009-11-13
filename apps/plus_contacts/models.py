@@ -22,7 +22,7 @@ import datetime
 
 from django.db.models.signals import post_save
 
-
+from django.template import Template, Context
 
 class Contact(models.Model):
     """Use this for the sign-up / invited sign-up process, provisional users"""
@@ -104,9 +104,10 @@ We are delighted to confirm you have been accepted as a member of MHPSS
         return self.send_link_email("Confirmation of account on MHPSS", message, sponsor, site_root, application_id)
 
     def invite_mail(self, sponsor, site_root, application_id) :
-        message = """
-Dear %s %s,
-%s has invited you to become a member of MHPSS... MORE TEXT HERE""" % (self.first_name, self.last_name, sponsor.display_name)
+        message = Template(settings.INVITE_EMAIL_TEMPLATE).render(
+            Context({'sponsor':sponsor.get_display_name(),
+                     'first_name':self.first_name, 
+                     'last_name':self.last_name}))
         return self.send_link_email("Invite to join MHPSS", message, sponsor, site_root, application_id)
 
 
