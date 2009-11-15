@@ -8,8 +8,11 @@ from django.utils.translation import ugettext_lazy as _, ugettext
 from django.utils.encoding import smart_unicode
 from django.utils.hashcompat import sha_constructor
 
-from misc.utils import get_send_mail
-send_mail = get_send_mail()
+#from misc.utils import get_send_mail
+#send_mail = get_send_mail()
+from django.core.mail import send_mail
+from django.core.urlresolvers import reverse
+
 
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.models import User
@@ -242,7 +245,7 @@ class ResetPasswordForm(forms.Form):
             raise forms.ValidationError(_("Email address not recognised for any user account"))
         return self.cleaned_data["email"]
 
-    def save(self):
+    def save(self, domain):
 
         for user in User.objects.filter(email_address__iexact=self.cleaned_data["email"]):
             temp_key = sha_constructor("%s%s%s" % (
@@ -255,17 +258,15 @@ class ResetPasswordForm(forms.Form):
             password_reset = PasswordReset(user=user, temp_key=temp_key)
             password_reset.save()
             
-            current_site = Site.objects.get_current()
-            domain = unicode(current_site.domain)
-            
             #send the password reset email
             subject = _("Password reset email sent")
+            link = 'http://'+domain+reverse('acct_passwd_reset_key',args=(temp_key,))
             message = render_to_string("account/password_reset_key_message.txt", {
-                "user": user,        
+                "user": user,
                 "temp_key": temp_key,
-                "domain": domain,
+                "link" : link,
             })
-            send_mail(subject, message, settings.DEFAULT_FROM_EMAIL, [user.email_address], priority="high")
+            send_mail(subject, message, settings.DEFAULT_FROM_EMAIL, [user.email_address],fail_silently=False)
         return self.cleaned_data["email"]
         
 class ResetPasswordKeyForm(forms.Form):
@@ -275,6 +276,7 @@ class ResetPasswordKeyForm(forms.Form):
     temp_key = forms.CharField(widget=forms.HiddenInput)
 
     def clean_temp_key(self):
+
         temp_key = self.cleaned_data.get("temp_key")
         if not PasswordReset.objects.filter(temp_key=temp_key, reset=False).count() == 1:
             raise forms.ValidationError(_("Temporary key is invalid."))

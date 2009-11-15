@@ -230,12 +230,11 @@ def password_reset(request, form_class=ResetPasswordForm,
         template_name="account/password_reset.html",
         template_name_done="account/password_reset_done.html"):
 
-
     if request.method == "POST":
 
         password_reset_form = form_class(request.POST)
         if password_reset_form.is_valid():
-            email = password_reset_form.save()
+            email = password_reset_form.save(request.get_host())
             return render_to_response(template_name_done, {
                 "email": email,
             }, context_instance=RequestContext(request))
@@ -248,6 +247,7 @@ def password_reset(request, form_class=ResetPasswordForm,
     
 def password_reset_from_key(request, key, form_class=ResetPasswordKeyForm,
         template_name="account/password_reset_from_key.html"):
+
     if request.method == "POST":
         password_reset_key_form = form_class(request.POST)
         if password_reset_key_form.is_valid():
