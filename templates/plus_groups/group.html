@@ -112,15 +112,15 @@
       <li><a href="{% url plus_groups:invite_to_group group.id %}">Invite members</a></li>
       {% endif %}
       {% if can_join %}
-      <li><a href="{% url plus_groups:join_group group.id %}">Join Group</a></li>
+      <li><a href="{% url plus_groups:join_group group.id %}">Join {{GROUP_OR_HUB}}</a></li>
       {% endif %}
       {% if apply %}
-      <li><a href="{% url plus_groups:apply_group group.id %}/">Apply to Group</a></li>
+      <li><a href="{% url plus_groups:apply_group group.id %}/">Apply to {{GROUP_OR_HUB}}</a></li>
       {% endif %}
       {% if leave %}
-      <li><a href="{% url plus_groups:leave_group group.id %}">Leave Group</a></li>
+      <li><a href="{% url plus_groups:leave_group group.id %}">Leave {{GROUP_OR_HUB}}</a></li>
       {% endif %}
-      <li class="disabled last"><a href="#">Follow group ?</a></li>
+      <li class="disabled last"><a href="#">Follow {{GROUP_OR_HUB}} ?</a></li>
     </ul>
   </div>
 </div>

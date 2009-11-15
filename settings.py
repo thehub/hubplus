@@ -59,14 +59,13 @@ MEDIA_ROOT = os.path.join(os.path.dirname(__file__), "site_media")
 # Example: "http://media.lawrence.com"
 MEDIA_URL = '/site_media/'
 
-
 # URL prefix for admin media -- CSS, JavaScript and images. Make sure to use a
 # trailing slash.
 # Examples: "http://foo.com/media/", "/media/".
 ADMIN_MEDIA_PREFIX = '/media/'
 
 # Make this unique, and don't share it with anybody.
-SECRET_KEY = '89^ahj7t30ydh(%+t2$13xm!d51=wo$euj@%**kxcuu5n#03b3'
+SECRET_KEY = '89^ahj730ydh(%+t2$1k3xm!d51=wo$euj@%**kxcuu5n#03b3'
 
 # List of callables that know how to import templates from various sources.
 TEMPLATE_LOADERS = (
@@ -200,7 +199,7 @@ ABSOLUTE_URL_OVERRIDES = {
 }
 
 AUTH_PROFILE_MODULE = 'profiles.Profile'
-
+SITE_NAME_SENTENCE = ''   # defaults to site_name in plus_lib/context_processors.py
 NOTIFICATION_LANGUAGE_MODULE = 'account.Account'
 
 EMAIL_CONFIRMATION_DAYS = 2

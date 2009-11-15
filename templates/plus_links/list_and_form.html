@@ -1,30 +1,31 @@
-
+{% load i18n %}
 <div class='external_links'>
   <ul class="list_of_links">
-    {% for l in links %}
+    {% for l, l_del in links %}
+    {% if l.text %}
     <dl id='links{{l.id}}'><dt>{{l.text}}</dt><dd><a href="{{l.url}}">{{l.url}}</a> 
-	<a class="remove_link button" href="" id="{% url remove_link l.id %}">X</a>
+	{% if l_del %}<a class="remove_link button" href="" id="{% url remove_link l.id %}">X</a>{% endif %}
     </dd></dl>
+    {% endif %}
     {% endfor %}
   </ul>
 
-  {% if target.add_link %}
+  {% if can_create %}
   <form target="{% url add_link %}" class="link_form">
     <input name="target_class" class="target_class" value="{{target_class_name}}" type="hidden" />
     <input name="target_id" class="target_id" value="{{target_id}}" type="hidden" />
-    <ul>
-      <li>
-	<label for="text">Title <span class="extra">('Website', 'Flickr')</span> </label>
-	<input name="text" id="text" class="link_text text" value="{{text}}" />
-      </li>
-      <li>
-	<label for="url">Website <span class="extra">('www.mysite.com')</span></label>
-	<input name="url" id="url" class="url text" />
-      </li>
-    </ul>
-    <input type="submit" value='add' class='submit_link button' />
+        <table>
+	  <tr>
+	    <td><label for="text">{% trans "Title" %} <span class="extra">{% trans "('Website', 'Flickr')" %}</span></label></td>
+	    <td><label for="url">{% trans "Website" %} <span class="extra">{% trans "('www.mysite.com')" %}</span></label></td>
+	    <td></td>
+	  </tr>
+	  <tr>
+	    <td><input name="text" id="text" class="link_text text" value="{{form_data.text}}" /><span class="error_message">{{errors.text}}</span></td>
+	    <td><input name="url" id="url" class="url text" value="{{form_data.url}}" /><span class="error_message">{{errors.url}}</span></td>
+	    <td><input type="submit" value="{% trans 'add' %}" class='submit_link button' /></td>
+	  </tr>
+        </table>
   </form>
-
-  <input type="button" value="+" class="show_link_form button"/>
   {% endif %}
 </div>

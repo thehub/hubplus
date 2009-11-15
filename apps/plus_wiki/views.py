@@ -143,8 +143,15 @@ def view_wiki_page(request, group, page_name, template_name="plus_wiki/wiki.html
         user = get_anon_user()
         request.user = user
 
+    
     version_list = Version.objects.get_for_object(obj._inner)
-    version = Version.objects.get_for_date(obj._inner, datetime.now())
+    try :
+        version = Version.objects.get_for_date(obj._inner, datetime.now())
+    except Version.DoesNotExist :
+        # XXX this isn't a solution ... we need to know WHY the version doesn't exist, 
+        # but will hide the error page from the user
+        raise Http404
+
     contributors = get_contributors(request.user, obj)
     contributors = [TemplateSecureWrapper(contributor) for contributor in contributors]
     can_comment = False

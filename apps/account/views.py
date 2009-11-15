@@ -17,7 +17,7 @@ from apps.plus_groups.models import TgGroup
 
 from account.utils import get_default_redirect
 from account.models import OtherServiceInfo
-from account.forms import SignupForm, AddEmailForm, LoginForm, \
+from apps.account.forms import SignupForm, AddEmailForm, LoginForm, \
     ChangePasswordForm, SetPasswordForm, ResetPasswordForm, \
     ChangeTimezoneForm, ChangeLanguageForm, TwitterForm, ResetPasswordKeyForm
 
@@ -181,6 +181,7 @@ email = login_required(email)
 
 def password_change(request, form_class=ChangePasswordForm,
         template_name="account/password_change.html"):
+
     if not request.user.password:
         return HttpResponseRedirect(reverse("acct_passwd_set"))
     if request.method == "POST":
@@ -228,10 +229,12 @@ password_delete = login_required(password_delete)
 def password_reset(request, form_class=ResetPasswordForm,
         template_name="account/password_reset.html",
         template_name_done="account/password_reset_done.html"):
+
     if request.method == "POST":
+
         password_reset_form = form_class(request.POST)
         if password_reset_form.is_valid():
-            email = password_reset_form.save()
+            email = password_reset_form.save(request.get_host())
             return render_to_response(template_name_done, {
                 "email": email,
             }, context_instance=RequestContext(request))
@@ -244,6 +247,7 @@ def password_reset(request, form_class=ResetPasswordForm,
     
 def password_reset_from_key(request, key, form_class=ResetPasswordKeyForm,
         template_name="account/password_reset_from_key.html"):
+
     if request.method == "POST":
         password_reset_key_form = form_class(request.POST)
         if password_reset_key_form.is_valid():

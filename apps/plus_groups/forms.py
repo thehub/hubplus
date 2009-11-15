@@ -16,6 +16,10 @@ from apps.plus_lib.utils import HTMLField
 from django.conf import settings
 from apps.plus_permissions.default_agents import get_or_create_root_location
 
+from django.core.urlresolvers import reverse
+
+
+
 PERMISSION_OPTIONS = (
     (u'public', u'Public'),
     (u'open', u'Open'),
@@ -29,9 +33,13 @@ CREATE_INTERFACES = (
     (u"CreateEvent", u"CreateEvent")
 )
 
+reverse_lookup_dict = {'WikiPage': ['Page', 'view_WikiPage'],
+                       'Resource': ['Upload', 'view_Resource']}
+
 class AddContentForm(forms.Form):
 
     title = forms.CharField(max_length=100)
+    current_app = forms.CharField(max_length=100)
     group = forms.IntegerField()
     create_iface = forms.ChoiceField(choices=CREATE_INTERFACES)
         #ensure name is unique for group and type
@@ -46,10 +54,12 @@ class AddContentForm(forms.Form):
         cls = ContentType.objects.get(model=self.cleaned_data['type_string'].lower()).model_class()
         group = TgGroup.objects.get(id=self.cleaned_data['group'])
         try:
-            obj = cls.objects.get(name=self.cleaned_data['name'], in_agent=group.get_ref(), stub=True)
-            self._errors['title'] = _("There is already a %s in %s called %s. Please choose a different title.") %(self.cleaned_data['type_string'], group.display_name.capitalize(), self.cleaned_data['title'])
+            obj = cls.objects.get(name=self.cleaned_data['name'], in_agent=group.get_ref(), stub=False)
+            type_label, lookup_string = reverse_lookup_dict[self.cleaned_data['type_string']]
+            existing_url = reverse(self.cleaned_data['current_app'] + ':' + lookup_string, args=[group.id, self.cleaned_data['name']])
+            self._errors['title'] = _("There is already a <em>%s</em> in %s called <a href='%s'>%s</a>. Please choose a different title.") %(type_label, group.display_name.capitalize(), existing_url, self.cleaned_data['title'])
         except cls.DoesNotExist:
-            pass
+            return self.cleaned_data
 
         return self.cleaned_data
     
@@ -107,7 +117,7 @@ class TgGroupForm(forms.Form):
 
 class TgGroupMemberInviteForm(forms.Form) :
     plain_text = forms.CharField()
-    special_message = forms.CharField()
+    special_message = forms.CharField(required=False)
     
     def clean_plain_text(self) :
         tt = self.cleaned_data['plain_text']
@@ -119,7 +129,7 @@ class TgGroupMemberInviteForm(forms.Form) :
                 user = User.objects.get(email_address=tt)
             except :
                 print "%s is not an email_address" % tt
-                raise forms.ValidationError('Not recognised as either email or existing username')
+                raise forms.ValidationError(_('Not recognised as either existing username or known email'))
         self.cleaned_data['user'] = user
 
 class TgGroupMessageMemberForm(forms.Form) :

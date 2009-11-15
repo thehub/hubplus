@@ -112,7 +112,9 @@ def split_name(username):
 
 
 
+
 @login_required
+@transaction.commit_on_success
 @site_context
 def site_invite(request, site, template_name='plus_contacts/invite_non_member.html', **kwargs) :
     if request.POST:
