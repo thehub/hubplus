@@ -139,7 +139,8 @@ class TgGroupComment:
 class TgGroupUploader:
     upload = InterfaceCallProperty
 
-
+class TgGroupMessage:
+    message_members = InterfaceCallProperty
 
 class TgGroupManageMembers:
     pk = InterfaceReadProperty
@@ -162,6 +163,7 @@ if not get_interface_map(TgGroup):
                          'Join': TgGroupJoin,
                          'Comment':TgGroupComment,
                          'Uploader':TgGroupUploader,
+                         'Message':TgGroupMessage,
                          'SetManagePermissions':SetManagePermissions}
     add_type_to_interface_map(TgGroup, TgGroupInterfaces)
 

@@ -266,7 +266,7 @@ class ResetPasswordForm(forms.Form):
                 "temp_key": temp_key,
                 "link" : link,
             })
-            send_mail(subject, message, settings.DEFAULT_FROM_EMAIL, [user.email_address],fail_silently=False)
+            send_mail(subject, message, settings.SUPPORT_EMAIL, [user.email_address],fail_silently=False)
         return self.cleaned_data["email"]
         
 class ResetPasswordKeyForm(forms.Form):
@@ -291,7 +291,9 @@ class ResetPasswordKeyForm(forms.Form):
     def save(self):
         # get the password_reset object
         temp_key = self.cleaned_data.get("temp_key")
-        password_reset = PasswordReset.objects.get(temp_key__exact=temp_key)
+        password_resets = PasswordReset.objects.filter(temp_key__exact=temp_key)
+        if password_resets :
+            password_reset = password_resets[0]
         
         # now set the new user password
         user = User.objects.get(passwordreset__exact=password_reset)
