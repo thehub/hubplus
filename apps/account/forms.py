@@ -266,7 +266,7 @@ class ResetPasswordForm(forms.Form):
                 "temp_key": temp_key,
                 "link" : link,
             })
-            send_mail(subject, message, settings.DEFAULT_FROM_EMAIL, [user.email_address],fail_silently=False)
+            send_mail(subject, message, settings.SUPPORT_EMAIL, [user.email_address],fail_silently=False)
         return self.cleaned_data["email"]
         
 class ResetPasswordKeyForm(forms.Form):
