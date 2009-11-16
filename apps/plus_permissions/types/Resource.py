@@ -32,12 +32,15 @@ class ResourceManager :
 class ResourceCommentor:
     comment = InterfaceCallProperty
 
+class ResourceDelete :
+    delete = InterfaceCallProperty
 
 from apps.plus_permissions.models import add_type_to_interface_map
 ResourceInterfaces = {
     'Viewer': ResourceViewer,
     'Editor': ResourceEditor,
     'Commentor' : ResourceCommentor,
+    'Delete' : ResourceDelete, 
     'Manager' : ResourceManager,
   }
 add_type_to_interface_map(Resource, ResourceInterfaces)
