@@ -5,11 +5,11 @@
 
 {% block body %}
 
-  <form class="full uniForm" id="message_members_form" method="post" action="{% url message_members group.id %}">
+  <form class="full uniForm" id="message_members_form" method="post" action="">
 
     <h4>{% trans "Message Members" %}</h4>
     <p>
-      {% blocktrans %}Use this form to send a message to all members of{% endblocktrans %} {{group.get_display_name}} {% blocktrans %} Please be careful to ensure your message is likely to be relevant and interesting to this group.{% blocktrans %}
+      Use this form to send a message to all members of {{group.get_display_name}} Please be careful to ensure your message is likely to be relevant and interesting to this group.
     </p>
     <fieldset>
       <ul>
