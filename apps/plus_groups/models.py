@@ -237,6 +237,7 @@ try :
             return self.remove_member(user)
 
         def message_members(self, sender, message_header, message_body) :
+            from apps.plus_lib.utils import message_user
             for member in self.get_users() :
                 message_user(sender, member, message_header, message_body)
 
