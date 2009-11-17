@@ -3,7 +3,7 @@ from __future__ import with_statement
 from django.shortcuts import render_to_response, get_object_or_404
 from django.template import RequestContext
 from django.contrib.auth.models import User
-from django.http import HttpResponse, HttpResponseRedirect, HttpResponseForbidden
+from django.http import HttpResponse, HttpResponseRedirect, HttpResponseForbidden,  Http404
 from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.utils.translation import ugettext_lazy as _
@@ -28,12 +28,12 @@ import os
 
 def handle_uploaded_file(user, owner, form, f_data) :
     kwargs = dict([(k,v) for k,v in form.cleaned_data.iteritems()])
-
     resource = get_or_create(user, owner, **kwargs)
     resource.stub = False
     resource.save()
 
 
+from apps.plus_tags.models import get_tags_for_object, tag_item_delete, TagItem
 
 @login_required
 @secure_resource(TgGroup)
@@ -48,25 +48,39 @@ def edit_resource(request, group, resource_name,
     if not success_url :
         success_url = reverse(current_app + ':group',args=(group.id,))
 
-    if request.POST :
-        form = UploadFileForm(request.POST, request.FILES)
-        if form.is_valid() :
+    try:
+        secure_upload.get_all_sliders
+        perms_bool = True
+    except PlusPermissionsNoAccessException:
+        perms_bool = False
+
+    if request.POST:
+        post_kwargs = request.POST.copy()
+        post_kwargs['obj'] = secure_upload
+        form = UploadFileForm(post_kwargs)
+        if form.is_valid():
             handle_uploaded_file(request.user, group, form, request.FILES['resource'])
             return HttpResponseRedirect(success_url)
-        else :
-            print form.errors
-
+        else:
+            pass
 
     else :
         form = UploadFileForm()
         form.data['title'] = secure_upload.title
         form.data['name'] = secure_upload.name
     
-    return render_to_response(template_name, {
-        'form' : form,
-        'page_title' : 'Upload a resource',
-    }, context_instance=RequestContext(request, current_app=current_app))
+    tags = get_tags_for_object(secure_upload, request.user)
 
+    return render_to_response(template_name, {
+        'upload': TemplateSecureWrapper(secure_upload),
+        'data' : form.data,
+        'errors': form.errors,
+        'form_action':'',
+        'form_encoding':'enctype=multipart/form-data',
+        'permissions':perms_bool,
+        'tags':tags
+    }, context_instance=RequestContext(request, current_app=current_app))
+#'group_permissions_prototype': group.get_ref().permission_prototype
 
 
 @secure_resource(TgGroup)
@@ -102,3 +116,15 @@ def view_resource(request, group, resource_name, template_name="plus_resources/v
         'can_comment' : can_comment,
     }, context_instance=RequestContext(request, current_app=current_app))
 
+@login_required
+@secure_resource(TgGroup)
+def delete_stub_resource(request, group, resource_name, current_app='plus_groups', **kwargs):
+    try:
+        obj = Resource.objects.plus_get(request.user, name=resource_name, in_agent=group.get_ref(), stub=True) 
+        for tag_item in TagItem.objects.filter(ref=obj.get_ref()):
+            tag_item_delete(tag_item)
+        #check - delete gen_ref, perms, sec_context,
+        obj.delete()
+    except Resource.DoesNotExist:
+        pass
+    return HttpResponseRedirect(reverse(current_app + ':group', args=[group.id]))

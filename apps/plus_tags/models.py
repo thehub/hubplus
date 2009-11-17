@@ -224,3 +224,13 @@ def tag_delete(tagged, tag_type, tag_value, tagged_by, tagged_for=None):
         existing_tag.delete()
 
     return (None, True)
+
+def tag_item_delete(tag_item):
+    tag = tag_item.tag
+    ref = tag_item.ref
+    tag.items.remove(ref)
+    if not tag.items.count():
+        tag.delete()
+
+
+    
