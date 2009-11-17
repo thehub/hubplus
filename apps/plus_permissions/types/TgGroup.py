@@ -152,6 +152,10 @@ class TgGroupManageMembers:
     remove_member = InterfaceCallProperty
 
 
+class TgGroupStatusViewer:
+    current_status = InterfaceCallProperty
+
+
 class SetManagePermissions:
     pass
 
@@ -169,6 +173,7 @@ if not get_interface_map(TgGroup):
                          'Uploader':TgGroupUploader,
                          'Message':TgGroupMessage,
                          'GroupTypeEditor':TgGroupTypeEditor,
+                         'StatusViewer':TgGroupStatusViewer,
                          'SetManagePermissions':SetManagePermissions}
     add_type_to_interface_map(TgGroup, TgGroupInterfaces)
 
@@ -227,6 +232,12 @@ def setup_defaults() :
                              'ManagePermissions':'context_admin',
                              'SetManagePermissions':'context_admin',
                              'CreateLink':'context_agent',
+                             'CreateComment':'all_members_group',
+                             'CreateWikiPage':'context_agent',
+                             'CreateResource':'context_agent',
+                             'Message':'context_agent',
+                             'StatusViewer':'anonymous_group',
+                             'GroupTypeEditor':'context_admin',
                              'Unknown': 'context_admin'
                              },
                         'constraints':
@@ -239,6 +250,7 @@ def setup_defaults() :
                              'Creator':'creator',
                              'Delete':'context_admin',
                              'Commentor':'all_members_group',
+                             'CommentViewer':'anonymous_group',
                              'Unknown':'context_admin',
                              'ManagePermissions':'creator'},
                         'constraints': ['Viewer>=Editor', 'Editor<$anonymous_group', 'Viewer>=Commentor']
@@ -262,12 +274,12 @@ def setup_defaults() :
                     'constraints': [] 
                     },
                    'Application':
-                       {'defaults' : 
+                       {'defaults' :
                         {'Viewer':'all_members_group',
                          'Editor':'creator',
                          'Accept':'all_members_group',
                          'ManagePermissions':'context_admin',
-                         'Unknown': 'context_admin'
+                         'Unknown': 'context_admin',
                          },
                         'constraints':['Viewer>=Editor', 'Editor<$anonymous_group'] 
                         },                      
