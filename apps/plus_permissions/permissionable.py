@@ -56,7 +56,7 @@ class PermissionableManager(models.Manager):
 
 
     def plus_get(self, p_user, **kwargs) :
-        a = super(self.__class__,self).get(**kwargs)
+        a = super(self.__class__, self).get(**kwargs)
         return secure_wrap(a, p_user)
  
     def plus_count(self, p_user, **kwargs) :
@@ -169,6 +169,9 @@ def get_creator(self):
 def add_create_method(content_type, child_type) :
 
     def f(self, creator, **kwargs) :
+        # check for validity of the entered name
+        if hasattr(child_type, 'check_name') and 'name' in kwargs and 'in_agent' in kwargs:
+            child_type.check_name(kwargs['name'], kwargs['in_agent'])
         resource = child_type(**kwargs)
         resource.save()
         # now create its security_context etc.        

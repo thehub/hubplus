@@ -1,20 +1,32 @@
 from django.db import models
 from apps.plus_permissions.models import GenericReference
 from django.contrib.auth.models import User
-from apps.plus_groups.models import name_from_title
+
 
 class WikiPage(models.Model):
     class Meta:
         unique_together = (("name", "in_agent"),)
     name = models.CharField(max_length=100)
-    def name_from_title(self):
-        #if name changes (and this is not a stub) we should set up a permanent redirect from here
-        self.name = name_from_title(self.title)
-        return self.name
+
+    @classmethod
+    def check_name(self, name, in_agent, obj=None):
+        try:
+            page = WikiPage.objects.get(name=name, in_agent=in_agent)
+            if obj and obj.id == page.id:
+                pass
+            else:
+                raise ValueError("Can't change name to %s, a WikiPage of that name already exists in this group" % name)
+        except WikiPage.DoesNotExist:
+            pass
+
+    def set_name(self, name):
+        self.check_name(name, self.in_agent, obj=self)
+        self.name = name
 
     title = models.CharField(max_length=100)
     def display_name(self):
         return self.title
+
     stub = models.BooleanField(default=True)
     license = models.CharField(max_length=100)
     content = models.TextField(blank=True)  # html field

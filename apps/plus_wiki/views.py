@@ -60,7 +60,7 @@ def edit_wiki(request, group, page_name, template_name="plus_wiki/create_wiki.ht
                               {'page':TemplateSecureWrapper(secure_page),
                                'form_action':reverse(current_app + ":create_WikiPage", args=[secure_page.in_agent.obj.id, secure_page.name]),
                                'contributors':contributors,
-                               'tags':get_tags(request.user, secure_page),
+                               'tags':get_tags_for_object(secure_page, request.user),
                                'permissions':perms_bool}, 
                               context_instance=RequestContext(request, current_app=current_app))
 
@@ -70,16 +70,19 @@ def edit_wiki(request, group, page_name, template_name="plus_wiki/create_wiki.ht
 def create_wiki_page(request, group, page_name, template_name="plus_wiki/create_wiki.html", current_app='plus_groups', **kwargs):
     """creates OR saves WikiPages
     """
-    form = EditWikiForm(request.POST)
     try:
         obj = WikiPage.objects.plus_get(request.user, name=page_name, in_agent=group.get_ref())
     except:
         raise Http404
+    post_kwargs = request.POST.copy()
+    post_kwargs['obj'] = obj
+    form = EditWikiForm(post_kwargs)
 
     if form.is_valid():
         title = form.cleaned_data['title']
         content = form.cleaned_data['content']
         license = form.cleaned_data['license']
+        name = form.cleaned_data['name']
         if request.POST.get('preview', None):
             return render_to_response(template_name, 
                                       {'page':TemplateSecureWrapper(obj),
@@ -100,7 +103,7 @@ def create_wiki_page(request, group, page_name, template_name="plus_wiki/create_
             #XXX this diff needs to only include things in the proximity of an insertion or deletion
             revision.add_meta(VersionDelta, delta=diff)
             obj.title = title
-            obj.name_from_title()
+            obj.set_name(name)
             obj.content = content
             obj.license = license
             obj.stub = False
@@ -122,18 +125,16 @@ def get_contributors(user, obj):
     return User.objects.plus_filter(user, revision__version__object_id__exact=str(obj.id), revision__version__content_type=content_type, distinct=True)
 
 
-from apps.plus_tags.models import get_tags_for_object 
+from apps.plus_tags.models import get_tags_for_object, tag_item_delete, TagItem
 
-def get_tags(user, obj):
-    """Get all the tags on this object
-    """
-    return get_tags_for_object(obj._inner, user)
+
 
 from apps.plus_permissions.api import TemplateSecureWrapper
 
 
 @secure_resource(TgGroup)
 def view_wiki_page(request, group, page_name, template_name="plus_wiki/wiki.html", current_app='plus_groups', **kwargs):
+
     try:
         obj = WikiPage.objects.plus_get(request.user, name=page_name, in_agent=group.get_ref())
     except WikiPage.DoesNotExist:
@@ -145,7 +146,7 @@ def view_wiki_page(request, group, page_name, template_name="plus_wiki/wiki.html
 
     
     version_list = Version.objects.get_for_object(obj._inner)
-    try :
+    try:
         version = Version.objects.get_for_date(obj._inner, datetime.now())
     except Version.DoesNotExist :
         # XXX this isn't a solution ... we need to know WHY the version doesn't exist, 
@@ -185,7 +186,7 @@ def view_wiki_page(request, group, page_name, template_name="plus_wiki/wiki.html
             'contributors':contributors,
             'can_comment':can_comment,
             'version_list':version_list,
-            'tags':get_tags(request.user, obj),
+            'tags': get_tags_for_object(obj, request.user),
             'permissions':perms_bool,
             'can_edit': edit,
             'comparable':version_list.count()>1}, context_instance=RequestContext(request, current_app=current_app))
@@ -239,6 +240,9 @@ def compare_versions(request, group, page_name, **kwargs):
 def delete_stub_page(request, group, page_name, current_app='plus_groups', **kwargs):
     try:
         obj = WikiPage.objects.plus_get(request.user, name=page_name, in_agent=group.get_ref(), stub=True)
+        for tag_item in TagItem.objects.filter(ref=obj.get_ref()):
+            tag_item_delete(tag_item)
+        #check - delete gen_ref, perms, sec_context,
         obj.delete()
     except WikiPage.DoesNotExist:
         pass
