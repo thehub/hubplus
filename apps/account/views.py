@@ -258,6 +258,7 @@ def password_reset_from_key(request, key, form_class=ResetPasswordKeyForm,
     
     return render_to_response(template_name, {
         "form": password_reset_key_form,
+        'temp_key':key,
     }, context_instance=RequestContext(request))
     
 
