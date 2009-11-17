@@ -2,7 +2,7 @@ from django.db import models
 from django.conf import settings
 from django.contrib.contenttypes import generic
 from django.contrib.contenttypes.models import ContentType
-
+from apps.plus_groups.models import name_from_title
 from django.contrib.auth.models import User
 from apps.plus_permissions.models import GenericReference
 
@@ -32,6 +32,21 @@ class Resource(models.Model):
     title = models.CharField(max_length=100)
     def display_name(self):
         return self.title
+    
+    @classmethod
+    def check_name(self, name, in_agent, obj=None):
+        try:
+            res = Resource.objects.get(name=name, in_agent=in_agent)
+            if obj and obj.id==res.id:
+                pass
+            else:
+                raise ValueError("Can't change name to %s, a Resource of that name already exists in this group" % name)
+        except Resource.DoesNotExist:
+            pass
+
+    def set_name(self, name):
+        self.check_name(name, self.in_agent, obj=self)
+        self.name = name
 
     description = models.TextField(default='')
 
@@ -112,28 +127,35 @@ class Resource(models.Model):
         pass
         # dummy, for testing
 
-def get_or_create(user, owner, **kwargs) :
-    resources = Resource.objects.filter(in_agent=owner.get_ref(),name=kwargs['name'])
+def get_or_create(user, owner, **kwargs):
+    
+    resources = Resource.objects.filter(in_agent=owner.get_ref(), name=kwargs['name'])
 
     if resources.count() < 1 :
+        # when creating from an import script
         resource = owner.create_Resource(user, in_agent=owner.get_ref(), 
                                          title=kwargs['title'], description=kwargs['description'],
                                          author=kwargs['author'], license=kwargs['license'],
                                          created_by=user, name=kwargs['name'])
         resource.save()
         if kwargs.has_key('resource') :
-            resource.get_inner().resource = kwargs['resource']  
+            resource.get_inner().resource = kwargs['resource']
         resource.save()
-    else :
+    elif resource.count() == 1:
         resource = resources[0]
-        try : 
+        try :
             resource = resource.get_inner()
         except :
             pass
+        resource.set_name(kwargs['name'])
+        if 'name' in kwargs:
+            del kwargs['name']
         resource.in_agent = owner.get_ref()
         resource.created_by = user
-        dummy = extract(kwargs,'in_agent')
-        dummy = extract(kwargs,'created_by')
+        if 'in_agent' in kwargs:
+            del kwargs['in_agent']
+        if 'created_by' in kwargs:
+            del kwargs['created_by']
         for k,v in kwargs.iteritems() :
             setattr(resource, k, v)
 

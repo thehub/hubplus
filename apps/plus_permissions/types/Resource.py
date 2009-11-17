@@ -20,6 +20,7 @@ class ResourceViewer :
     in_agent = InterfaceReadProperty
 
 class ResourceEditor :
+    set_name = InterfaceCallProperty
     title = InterfaceWriteProperty
     description = InterfaceWriteProperty
     author = InterfaceWriteProperty

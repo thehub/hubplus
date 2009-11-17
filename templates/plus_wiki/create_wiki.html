@@ -8,11 +8,10 @@
 {% block edit_header %}
     <a id="parent" href="{% url plus_groups:group page.in_agent.obj.id %}">{{page.in_agent.obj.display_name}}</a>
     <input id="page_title" name="title" class="text" type="text" value="{% if data.title %}{{data.title}}{% else %}{{page.title}}{% endif %}" />
-    {% if errors.title %}<span class="error">{{errors.title}}<span>{% endif %}
+    {% if errors.title %}<div class="error_message">{{errors.title}}</div>{% endif %}
 {% endblock %}
 {% block body %}      
-    <div id="main_title" class="block wiki_edit">
-      
+    <div id="main_title" class="block wiki_edit">      
       <ul class="icon_text_button_set">
 	<!--<li><a class="icon_text_button bt_edit" href="#">Edit page</a></li>-->
 	    {% if permissions %}<li><a class="icon_text_button bt_permissions" href="#" rel="#overlay" id="{{page.edit_key}}permissionedit">{% trans "Permissions" %}</a></li>{% endif %}

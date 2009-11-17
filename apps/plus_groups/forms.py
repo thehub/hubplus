@@ -47,22 +47,24 @@ class AddContentForm(forms.Form):
         if self._errors:
             return self.cleaned_data
     
-            #raise forms.ValidationError()
 
         self.cleaned_data['name'] = name_from_title(self.cleaned_data['title'])
         self.cleaned_data['type_string'] = self.cleaned_data['create_iface'].split('Create')[1]
         cls = ContentType.objects.get(model=self.cleaned_data['type_string'].lower()).model_class()
         group = TgGroup.objects.get(id=self.cleaned_data['group'])
-        try:
-            obj = cls.objects.get(name=self.cleaned_data['name'], in_agent=group.get_ref(), stub=False)
-            type_label, lookup_string = reverse_lookup_dict[self.cleaned_data['type_string']]
-            existing_url = reverse(self.cleaned_data['current_app'] + ':' + lookup_string, args=[group.id, self.cleaned_data['name']])
-            self._errors['title'] = _("There is already a <em>%s</em> in %s called <a href='%s'>%s</a>. Please choose a different title.") %(type_label, group.display_name.capitalize(), existing_url, self.cleaned_data['title'])
-        except cls.DoesNotExist:
-            return self.cleaned_data
-
+        cleaned_data = validate_name_url(cls, group, self.cleaned_data)
         return self.cleaned_data
     
+
+def validate_name_url(cls, group, cleaned_data):
+    try:
+        obj = cls.objects.get(name=cleaned_data['name'], in_agent=group.get_ref(), stub=False)
+        type_label, lookup_string = reverse_lookup_dict[cls.__name__]
+        existing_url = reverse(cleaned_data['current_app'] + ':' + lookup_string, args=[group.id, cleaned_data['name']])
+        self._errors['title'] = _("There is already a <em>%s</em> in %s called <a href='%s'>%s</a>. Please choose a different title.") %(type_label, group.display_name.capitalize(), existing_url, cleaned_data['title'])
+    except cls.DoesNotExist:
+        return cleaned_data
+
 
 class TgGroupForm(forms.Form):
     

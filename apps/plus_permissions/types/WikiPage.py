@@ -41,13 +41,15 @@ class WikiPageViewer:
     stub = InterfaceReadProperty
     created_by = InterfaceReadProperty
     creation_time = InterfaceReadProperty
+    author = InterfaceReadProperty
 
 class WikiPageEditor:
-    name_from_title = InterfaceCallProperty
+    set_name = InterfaceCallProperty
     title = InterfaceWriteProperty
     content = InterfaceWriteProperty
     license = InterfaceWriteProperty
     stub = InterfaceWriteProperty
+    author = InterfaceWriteProperty
 
 class WikiPageCreator:
     created_by = InterfaceWriteProperty

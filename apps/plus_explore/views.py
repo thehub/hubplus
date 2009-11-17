@@ -14,25 +14,31 @@ from apps.plus_lib.search import side_search_args, listing_args
 
 from django.db.models import Q
 import settings
+from apps.plus_explore.forms import SearchForm
 
 def index(request, template_name="plus_explore/explore.html"):
-    search = request.GET.get('search', '')
-    search_type = request.GET.get('current_area', '')
-    if search_type:
-        url = reverse(search_type)
+    form = SearchForm(request.GET)
+    if form.is_valid():
+        search = form.cleaned_data.get('search', '')
+        search_type = form.cleaned_data.get('current_area', '')
+        if search_type:
+            url = reverse(search_type)
+            if search:
+                url += '?search=' + search
+            return HttpResponseRedirect(url)
+
         if search:
-            url += '?search=' + search
-        return HttpResponseRedirect(url)
-
-    if search:
-        return filter(request, tag_string='')
-
+            return filter(request, tag_string='')
+    else:
+        pass
+    
     side_search = side_search_args('', '')
     
     return render_to_response(template_name, 
                               {'head_title':settings.EXPLORE_NAME, 
                                'search_args':side_search,
-                               'intro_box_override':True,}, context_instance=RequestContext(request))
+                               'intro_box_override':True}, context_instance=RequestContext(request))     
+
 
 def get_virtual_groups():
     return TgGroup.objects.filter(place__name=settings.VIRTUAL_HUB_NAME, level='member')
@@ -65,20 +71,24 @@ def goto_tag(request):
 def filter(request, tag_string, template_name='plus_explore/explore_filtered.html'):
     """ this should be integrated with index into a single method - probably
     """
-    search = request.GET.get('search', '')
-    order = request.GET.get('order', '')
+    form = SearchForm(request.GET)
+    if form.is_valid():
+        search = form.cleaned_data.get('search', '')
+        order = form.cleaned_data.get('order', '')
+    else:
+        search = ''
+        order = ''
 
     side_search = side_search_args('', '')
     search_types = get_search_types()
-    
     head_title = settings.EXPLORE_NAME
     listing_args_dict = listing_args('explore', 'explore_filtered', tag_string=tag_string, search_terms=search, multitabbed=True, order=order, template_base="site_base.html", search_type_label=head_title)
     search_dict = plus_search(listing_args_dict['tag_filter'], search, search_types, order)
     
     return render_to_response(template_name, {'head_title':head_title, 
-                                              'listing_args':listing_args_dict,
-                                              'search':search_dict,
-                                              'search_args':side_search,}, context_instance=RequestContext(request))
+                                                  'listing_args':listing_args_dict,
+                                                  'search':search_dict,
+                                                  'search_args':side_search,}, context_instance=RequestContext(request))
 
 
 def plus_search(tags, search, search_types, order=None, in_group=None, extra_filter=None):

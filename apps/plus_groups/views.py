@@ -10,7 +10,7 @@ from django.utils.encoding import smart_str
 from django.db import transaction
 from django.utils import simplejson
 
-from apps.plus_groups.models import TgGroup, name_from_title
+from apps.plus_groups.models import TgGroup
 from django.core.urlresolvers import reverse
 
 from django.template import defaultfilters
@@ -197,6 +197,7 @@ def group(request, group, template_name="plus_groups/group.html", current_app='p
 
 from apps.plus_lib.utils import hub_name_plural, hub_name
 from apps.plus_explore.views import plus_search, get_search_types
+from apps.plus_explore.forms import SearchForm
 
 def narrow_search_types(type_name):
     types = dict(get_search_types())
@@ -204,8 +205,14 @@ def narrow_search_types(type_name):
 
 @site_context
 def groups(request, site, tag_string='', type='other', template_name='plus_explore/explore_filtered.html', current_app='plus_groups'):
-    search = request.GET.get('search', '')
-    order = request.GET.get('order', '')
+    form = SearchForm(request.GET)
+    if form.is_valid():
+        search = form.cleaned_data.get('search', '')
+        order = form.cleaned_data.get('order', '')
+    else:
+        search = ''
+        search_type = ''
+
     create_group = False
     if request.user.is_authenticated():
         try:
@@ -364,7 +371,8 @@ def add_content_object(request, group, current_app='plus_groups', **kwargs):
         name = form.cleaned_data['name']
         cls = ContentType.objects.get(model=form.cleaned_data['type_string'].lower()).model_class()
         try:
-            obj = cls.objects.get(name=form.cleaned_data['name'], in_agent=group.get_ref(), stub=True)
+            #if a stub exists, use it
+            obj = cls.objects.plus_get(request.user, name=form.cleaned_data['name'], in_agent=group.get_ref(), stub=True)
         except cls.DoesNotExist:
             obj = create(request.user, title=title, name=name, in_agent=group.get_ref(), stub=True)
             obj.save()
