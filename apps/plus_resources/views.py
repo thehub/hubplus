@@ -45,9 +45,6 @@ def edit_resource(request, group, resource_name,
     except Resource.DoesNotExist:
         raise Http404
  
-    if not success_url :
-        success_url = reverse(current_app + ':group',args=(group.id,))
-
     try:
         secure_upload.get_all_sliders
         perms_bool = True
@@ -57,9 +54,13 @@ def edit_resource(request, group, resource_name,
     if request.POST:
         post_kwargs = request.POST.copy()
         post_kwargs['obj'] = secure_upload
-        form = UploadFileForm(post_kwargs)
+        form = UploadFileForm(post_kwargs, request.FILES)
         if form.is_valid():
             handle_uploaded_file(request.user, group, form, request.FILES['resource'])
+
+            if not success_url :
+                success_url = reverse(current_app + ':view_Resource', args=(group.id, secure_upload.name))
+
             return HttpResponseRedirect(success_url)
         else:
             pass
