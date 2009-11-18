@@ -1,0 +1,40 @@
+{% load avatar_tags %}
+{% load plus_tags %}
+{% load i18n %}
+
+<div id="extra" class="block accordion">
+  <h3 class="first">{% trans "Tags" %}</h3>
+  <div class="first">
+    <ol class="tag_list">
+      {% for tag in tags %}
+      <li><a href="#" class="tag pop7">{{tag.keyword}}</a></li>
+      {% endfor %}
+    </ol>
+  </div>
+  <h3>{% trans "My Tags" %}</h3>
+  <div>
+    {% plus_tag 'Tags' 'tag' upload.obj user %}
+  </div>
+<!--  <h3>{% trans "Backlinks" %}</h3>
+  <div>
+    page list
+  </div> -->
+</div>
+
+<!--
+<div id="actions_list" class="block">
+  <ul id="actions" class="link_list">
+    <li class="first"><a href="#">{% trans "Follow this page" %}</a></li>
+    <li class="last"><a href="#">{% trans "Recommend" %}</a></li>
+  </ul>
+  
+</div>
+-->
+<div id="feature_search" class="site_block">
+  <h3>{% trans "Search" %}</h3>
+  <form>
+    <input name="search_term" type="text" class="text" /> <input class="button" type="submit" value="Search" /><br />
+    <input name="current_area" type="checkbox" checked="checked" /> This group only<br />
+    
+  </form>
+</div>
