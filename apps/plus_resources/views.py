@@ -14,7 +14,7 @@ from apps.plus_resources.models import Resource, get_or_create
 from django.contrib.auth.decorators import login_required
 
 from apps.plus_permissions.decorators import secure_resource
-from apps.plus_permissions.api import TemplateSecureWrapper
+from apps.plus_permissions.api import TemplateSecureWrapper, has_access
 
 from apps.plus_groups.models import TgGroup
 from django.core.urlresolvers import reverse
@@ -104,17 +104,22 @@ def view_resource(request, group, resource_name, template_name="plus_resources/v
     except PlusPermissionsNoAccessException:
         can_comment=False
 
+    edit = has_access(request.user, obj, 'WikiPage.Editor')
+    tags = get_tags_for_object(obj, request.user)
+
     if obj.get_inner().created_by :
         created_by = obj.get_inner().created_by.get_display_name()
     else :
         created_by = None
 
     return render_to_response(template_name, {
-        'resource' : TemplateSecureWrapper(obj),
+        'upload' : TemplateSecureWrapper(obj),
         'page_title' : obj.title,
         'created_by' : created_by,
         'permissions' : perms_bool,
         'can_comment' : can_comment,
+        'can_edit' : edit,
+        'tags': tags
     }, context_instance=RequestContext(request, current_app=current_app))
 
 @login_required

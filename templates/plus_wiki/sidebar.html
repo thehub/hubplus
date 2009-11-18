@@ -17,7 +17,7 @@
       <li>
 	<ul id="members_list">
 	  {% for contributor in contributors %}
-	  <li><a href="{   % url profile_detail contributor.username %}" 
+	  <li><a href="{% url profile_detail contributor.username %}" 
 		 class="thumb small">{% avatar contributor.obj 40 %}
 	      {% if contributor.display_name %}{{contributor.display_name}}{% else %}{{contributor.username}}{%endif%}</a>
 	  </li>
