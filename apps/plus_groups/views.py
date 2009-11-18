@@ -117,7 +117,7 @@ def group(request, group, template_name="plus_groups/group.html", current_app='p
 
 
         try :
-            group.message
+            group.message_members
             message = True
         except :
             pass
@@ -301,6 +301,7 @@ def add_member(request, group, username, current_app='plus_groups', **kwargs) :
     group.add_member(user)
     return HttpResponseRedirect(reverse(current_app + ':group',args=(group.id,)))
 
+
 @login_required
 @secure_resource(TgGroup, required_interfaces=['Message','Viewer'])
 def message_members(request, group, current_app='plus_groups', **kwargs) :
@@ -308,9 +309,10 @@ def message_members(request, group, current_app='plus_groups', **kwargs) :
     if request.POST :
         form = TgGroupMessageMemberForm(request.POST)
         if form.is_valid() :
-            group.message_members(request.user, message_header, message_body)
-            request.user.message_set.create(message=_("You have successfully messaged everyone in %s"))
-            return HttpResponseRedirect(reverse(current_app + ':group',args=(group.id)))
+            group.message_members(request.user, form.data['message_header'], form.data['message_body'])
+            message = _("You have successfully messaged everyone in %(group_name)s") % {'group_name':group.get_display_name()}
+            request.user.message_set.create(message=message)
+            return HttpResponseRedirect(reverse(current_app + ':group',args=(group.id,)))
     else :
         form = TgGroupMessageMemberForm()
     return render_to_response(template_name, 

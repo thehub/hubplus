@@ -83,8 +83,6 @@ def get_or_create(group_name=None, display_name=None, place=None, level=None, us
 
     return group, created
 
-# XXX will be moved to patch.py
-#TgGroup.objects.get_or_create = get_or_create
 
 def get_admin_group(self) :
     return self.get_security_context().context_admin.obj 
@@ -126,6 +124,8 @@ class TgGroupEditor:
 class TgGroupJoin:
     pk = InterfaceReadProperty
     join = InterfaceCallProperty
+
+class TgGroupLeave:
     leave = InterfaceCallProperty
 
 class TgGroupInviteMember:
@@ -139,13 +139,21 @@ class TgGroupComment:
 class TgGroupUploader:
     upload = InterfaceCallProperty
 
+class TgGroupMessage:
+    message_members = InterfaceCallProperty
 
+class TgGroupTypeEditor:
+    group_type = InterfaceWriteProperty
 
 class TgGroupManageMembers:
     pk = InterfaceReadProperty
     add_member = InterfaceCallProperty
     accept_member = InterfaceCallProperty
     remove_member = InterfaceCallProperty
+
+
+class TgGroupStatusViewer:
+    current_status = InterfaceCallProperty
 
 
 class SetManagePermissions:
@@ -160,8 +168,12 @@ if not get_interface_map(TgGroup):
                          'Invite': TgGroupInviteMember,
                          'ManageMembers': TgGroupManageMembers,
                          'Join': TgGroupJoin,
+                         'Leave': TgGroupLeave,
                          'Comment':TgGroupComment,
                          'Uploader':TgGroupUploader,
+                         'Message':TgGroupMessage,
+                         'GroupTypeEditor':TgGroupTypeEditor,
+                         'StatusViewer':TgGroupStatusViewer,
                          'SetManagePermissions':SetManagePermissions}
     add_type_to_interface_map(TgGroup, TgGroupInterfaces)
 
@@ -216,9 +228,16 @@ def setup_defaults() :
                              'Invite':'context_agent',
                              'ManageMembers':'creator',
                              'Join':'all_members_group',
+                             'Leave':'context_agent',
                              'ManagePermissions':'context_admin',
                              'SetManagePermissions':'context_admin',
                              'CreateLink':'context_agent',
+                             'CreateComment':'all_members_group',
+                             'CreateWikiPage':'context_agent',
+                             'CreateResource':'context_agent',
+                             'Message':'context_agent',
+                             'StatusViewer':'anonymous_group',
+                             'GroupTypeEditor':'context_admin',
                              'Unknown': 'context_admin'
                              },
                         'constraints':
@@ -231,6 +250,7 @@ def setup_defaults() :
                              'Creator':'creator',
                              'Delete':'context_admin',
                              'Commentor':'all_members_group',
+                             'CommentViewer':'anonymous_group',
                              'Unknown':'context_admin',
                              'ManagePermissions':'creator'},
                         'constraints': ['Viewer>=Editor', 'Editor<$anonymous_group', 'Viewer>=Commentor']
@@ -254,12 +274,12 @@ def setup_defaults() :
                     'constraints': [] 
                     },
                    'Application':
-                       {'defaults' : 
+                       {'defaults' :
                         {'Viewer':'all_members_group',
                          'Editor':'creator',
                          'Accept':'all_members_group',
                          'ManagePermissions':'context_admin',
-                         'Unknown': 'context_admin'
+                         'Unknown': 'context_admin',
                          },
                         'constraints':['Viewer>=Editor', 'Editor<$anonymous_group'] 
                         },                      

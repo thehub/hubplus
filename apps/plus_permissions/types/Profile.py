@@ -76,6 +76,7 @@ class ProfileEditor:
     homeplace = InterfaceWriteProperty
 
 
+
 from apps.plus_permissions.models import add_type_to_interface_map
 
 ProfileInterfaces = {'Viewer': ProfileViewer,
