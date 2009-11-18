@@ -5,7 +5,7 @@ from django.utils.translation import ugettext_lazy as _
 PROJECT_NAME=_("Mental Health and Psychosocial Support Network")
 COPYRIGHT_HOLDER=_('Psychosocial Support Network')
 
-VIRTUAL_HUB_NAME = 'HubPlus'
+VIRTUAL_HUB_NAME = 'MHPSS Network'
 EXPLORE_NAME = _('Resources')
 
 SITE_NAME = _("Psychosocial Support Network")
