@@ -110,8 +110,6 @@ class Resource(models.Model):
         
         file_path[-1]=new_file_name
         new_path = '/'.join(file_path)
-        print "old ",file.name
-        print "new ",new_path
 
         try :
             f = File(open(file.name,'rb'))
@@ -141,7 +139,7 @@ def get_or_create(user, owner, **kwargs):
         if kwargs.has_key('resource') :
             resource.get_inner().resource = kwargs['resource']
         resource.save()
-    elif resource.count() == 1:
+    elif resources.count() == 1:
         resource = resources[0]
         try :
             resource = resource.get_inner()
