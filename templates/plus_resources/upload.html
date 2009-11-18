@@ -1,4 +1,4 @@
-{% extends "site_base.html" %}
+{% extends "page_editor.html" %}
 
 {% load i18n %}
 {% load avatar_tags %}
@@ -7,85 +7,73 @@
 {% load plus_tags %}
 {% load editable_attribute %}
 
+{% block edit_header %}
+    <a id="parent" href="{% url plus_groups:group upload.in_agent.obj.id %}">{{upload.in_agent.obj.display_name}}</a>
+    <input id="page_title" name="title" class="text" type="text" value="{% if data.title %}{{data.title}}{% else %}{{upload.title}}{% endif %}" />
+    {% if errors.title %}<span class="error">{{errors.title}}<span>{% endif %}
+{% endblock %}
 
-{% block body %}
           
-<div id="permission_sliders"></div>
-
-<h2>{% trans "Share a file" %}</h2>
-
-<div id="body">
-  <form class="full block" enctype="multipart/form-data" method="POST">
-    <h4>{% trans "Upload resource" %}</h4>
-    <p>Fill in the form below to upload a new resource.</p>
-
-    <fieldset>
-      <ul>
-	<li class="hidden">
-          <label for="name"><span class="required">*</span> Document Name</label>
-          <input  id="name" name="name" class="text" type="hidden" value="{{form.data.name}}" />
-	  {{form.data.name}}
-          {{form.name.errors}}
-	</li>
-	<li>
-	  <label for="title"><span class="required">*</span> Title</label>
-	  <input  id="title" name="title" class="text" type="text" value="{{form.data.title}}" />
-	  {{form.title.errors}}
-	</li>
-	<li>
-	  <label for="description">Description</label>
-	  <textarea id="description" name="description" rows="3" maxlength="20">{{form.data.description}}</textarea>
-	  {{form.description.errors}}
-	</li>
-	<li>
-	  <label for="author">Author</label>
-	  <input  id="author" name="author" class="text" type="text" value='{{form.data.author}}'/>
-	  {{form.author.errors}}
-	</li>
-	<!--li>
-	  <label for="tags"><span class="required">*</span> Tags</label> 
-	  <input  id="tags" class="text" type="text" />
-	  span style="color:red">(Use existing tag functionality profiles here)</span>
-	</li-->
+{% block body %}      
+    <div id="main_title" class="block wiki_edit">
+      
+      <ul class="icon_text_button_set">
+	    {% if permissions %}<li><a class="icon_text_button bt_permissions" href="#" rel="#overlay" id="{{upload.edit_key}}permissionedit">{% trans "Permissions" %}</a></li>{% endif %}
       </ul>
       <ul>
+	<li id="description_area">
+	  <label for="description"><span class="required">*</span>{% trans "Description" %}</label>
+	  <textarea id="description" name="description" rows="3" maxlength="20">{{data.description}}</textarea>
+	  {{errors.description}}
+	</li>
 	<li>
-	  <label for="resource"><span class="required">*</span> Select resource</label>
+	  <label for="resource"><span class="required">*</span>{% trans "Select resource" %}</label>
 	  <input  id="resource" name="resource" class="file" type="file" />
-	  {{form.resource.errors}}
+	  {{errors.resource}}
 	</li>
       </ul>
-      <ul>
+      <ul id="content_extra">
 	<li>
-	  <label for="license">License <span class="extra">('©2009', 'GPL')</span></label>
-	  <input  id="license" name="license" class="text" type="text" />
-	  {{form.license.errors}}
+	  <dl>
+            {% if upload.stub %}
+	       {% plus_tag 'Tags' 'tag' upload user %}
+            {% endif %}
+	  </dl>
 	</li>
-      </ul>
-      <ul>
 	<li>
-	  <label><span class="required">*</span> <span class="label_permissions">Permissions</span></label>
-	  <ul class="checkboxes">
-	    <li>
-	      <input  id="group" name="permissions_set" class="radio" type="radio" checked="checked" />
-	      <div class="label_extended">
-		<label for="group">Use group permission – <a href="#">Show settings</a> <span class="extra">Currently set to Public</span></label>
-	      </div>
-	    </li>
-	    <li>
-	      <input  id="custom" name="permissions_set" class="radio" type="radio" />
-	      <div class="label_extended">
-		<label for="custom">Custom settings – <a href="#">Edit settings</a> <span class="extra">Choose you're own permissions</span></label>
-	      </div>
-	    </li>
-	  </ul>
+	  <dl>
+	    <dt>
+	      <label for="author">{% trans "Copyright / Author" %}</label>
+	    </dt>
+	    <dd>
+	      <span class="error"><input  id="author" name="author" class="text" type="text" value='{{data.author}}'/></span>
+	      {% if errors.author %}<span class="error">{{errors.author}}</span>{% endif %}
+	    </dd>
+	    <dt>
+	      <label for="license">{% trans "License" %} <span class="extra">('©2009', 'GPL')</span></label>
+	    </dt>
+	    <dd>
+	      <input name="license" id="license" class="text" type="text" value="{% if data.license %}{{data.license}}{% else %}{{upload.license}}{% endif %}" />
+	      {% if errors.license %}<span class="error">{{errors.license}}<span>{% endif %}
+	    </dd>
+	  </dl>
 	</li>
       </ul>
-      <input type="hidden" name="uploader_name" value="{{request.user.username}}" />
-    </fieldset>
-    <input class="submit button" type="Submit" value="Upload" /> or <a href="#">Go back</a>
-  </form>
-  
-</div>
+      {% if upload.stub %}     
+	 <input class="button" id="edit_submit"  type="submit" value="Create"/>
+	 or <a href="{% url plus_groups:deletestub_Resource upload.in_agent.obj.id upload.name  %}">Go back</a>
+      {% else %}
+	 <input class="button" id="edit_submit"  type="submit" value="Save"/>
+	 or  <a href="{% url plus_groups:view_Resource upload.in_agent.obj.id upload.name  %}">Cancel</a>
+      {% endif %}
+   </div>
+{% endblock %}
 
+
+
+{% block side_bar %}
+   {% if upload.stub %}
+   {% else %}
+     {% include "plus_wiki/sidebar.html" %}
+   {% endif %}
 {% endblock %}

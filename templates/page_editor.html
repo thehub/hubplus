@@ -23,7 +23,7 @@
   {% endif %}
 </div>
 <!-- end site_wide_messages -->
-<form action="{{form_action}}" method="POST" id="page_edit_form" class="page">
+<form action="{{form_action}}" method="POST" id="page_edit_form" class="page" {{form_encoding}} >
 
 <div id="page_header">
   {% block edit_header %}{% endblock %}

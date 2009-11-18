@@ -33,7 +33,7 @@ from django.db.models import Q
 
 from itertools import chain
 from django.template import defaultfilters
-
+from apps.plus_explore.forms import SearchForm
 
 #from gravatar.templatetags.gravatar import gravatar as avatar
 
@@ -50,8 +50,13 @@ def narrow_search_types():
     return (('Profile', types['Profile']),)
 
 def profiles(request, tag_string='', template_name="plus_explore/explore_filtered.html"):
-    search = request.GET.get('search', '')
-    order = request.GET.get('order', '')
+    form = SearchForm(request.GET)
+    if form.is_valid():
+        search = form.cleaned_data.get('search', '')
+        order = form.cleaned_data.get('order', '')
+    else:
+        search = ''
+        order = ''
 
     search_types = narrow_search_types()
     side_search = side_search_args('profile_list', search_types[0][1][2])
