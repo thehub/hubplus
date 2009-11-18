@@ -580,9 +580,7 @@ th {
 /* Page: Explore, Search & Results */
 
 #search #current {
-	margin-bottom	: 20px;
-	/*padding-bottom	: 10px;*/
-	/*border-bottom	: 1px solid #ddd;*/
+	margin-bottom	: 13px;
 }
 
 .display_options {
