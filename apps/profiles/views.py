@@ -179,6 +179,16 @@ def profile(request, username, template_name="profiles/profile.html"):
     search_types_len = len(search_types)
     search_type_label = search_types[0][1][2]
 
+    host_info = other_user.get_profile().get_host_info()
+    host_info = secure_wrap(host_info,user)
+
+    see_host_info = False
+    try :
+        host_info.user 
+        see_host_info = True
+    except :
+        pass # can't see host_info
+
     return render_to_response(template_name, {
             "profile_form": profile_form,
             "is_me": is_me,
