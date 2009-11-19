@@ -11,29 +11,38 @@
 	<link rel="shortcut icon" href="/site_media/themes/{{PROJECT_THEME}}/favicon.ico" />
 
 	<!-- STYLES -->
-	<link rel="stylesheet" href="{{ MEDIA_URL }}css/site.css"        type="text/css" media="all" />
-	<link rel="stylesheet" href="{{ MEDIA_URL }}css/header.css"      type="text/css" media="all" />
-	<link rel="stylesheet" href="{{ MEDIA_URL }}css/main.css"        type="text/css" media="all" />
-	<link rel="stylesheet" href="{{ MEDIA_URL }}css/serendipity.css" type="text/css" media="all" />
-	<link rel="stylesheet" href="{{ MEDIA_URL }}css/footer.css"      type="text/css" media="all" />
-	<link rel="stylesheet" href="{{ MEDIA_URL }}css/forms.css"       type="text/css" media="all" />
-	<link rel="stylesheet" href="{{ MEDIA_URL }}css/tabview.css"     type="text/css" media="all" />
-	<link rel="stylesheet" href="{{ MEDIA_URL }}css/overlay.css"     type="text/css" media="all" />
-	<link rel="stylesheet" href="{{ MEDIA_URL }}themes/{{PROJECT_THEME}}/css/theme.css" type="text/css" media="all" />
+	<link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}css/site.css"            media="all" />
+	<link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}css/header.css"          media="all" />
+	<link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}css/main.css"            media="all" />
+	<link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}css/serendipity.css"     media="all" />
+	<link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}css/footer.css"          media="all" />
+	<link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}css/forms.css"           media="all" />
+	<link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}css/tabview.css"         media="all" />
+	<link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}css/overlay.css"         media="all" />
+	<link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}css/permissions.css"     media="all" />
+	<link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}css/flickr.css"          media="all" />
+	<link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}css/list-edit-table.css" media="all" />
 	<!--[if IE]><style>
 		div { zoom: 1; } /* trigger hasLayout */
 	</style><![endif]-->
 
+	<!-- STYLES: THEME -->
+	<link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}themes/{{PROJECT_THEME}}/css/theme.css" media="all" />
+
 	<!-- SCRIPT: JQUERY -->
-	<script src="{{ MEDIA_URL }}js/jquery.min.js" type="text/javascript" charset="utf-8"></script>
-	<script src="{{ MEDIA_URL }}js/jq.noconflict.js" type="text/javascript" charset="utf-8"></script>
-	<script src="{{ MEDIA_URL }}js/ui.core.js" type="text/javascript" charset="utf-8"></script>
-	<script src="{{ MEDIA_URL }}js/effects.core.js" type="text/javascript" charset="utf-8"></script>
-	<script src="{{ MEDIA_URL }}js/effects.highlight.js" type="text/javascript" charset="utf-8"></script>
-	<script src="{{ MEDIA_URL }}js/jquery.bgiframe.min.js" type="text/javascript" charset="utf-8"></script>
-	<script src="{{ MEDIA_URL }}js/jquery.autocomplete.min.js" type="text/javascript" charset="utf-8"></script>
-	<script src="{{ MEDIA_URL }}js/tools.overlay-1.0.4.min.js" type="text/javascript" charset="utf-8"></script>
-	<script src="{{ MEDIA_URL }}js/json2.js" type="text/javascript" charset="utf-8"></script>
+	<link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}css/jquery.autocomplete.css" media="screen"/>
+
+	<script type="text/javascript" src="{{ MEDIA_URL }}js/jquery.min.js" charset="utf-8"></script>
+	<script type="text/javascript" src="{{ MEDIA_URL }}js/jq.noconflict.js" charset="utf-8"></script>
+	<script type="text/javascript" src="{{ MEDIA_URL }}js/ui.core.js" charset="utf-8"></script>
+	<script type="text/javascript" src="{{ MEDIA_URL }}js/effects.core.js" charset="utf-8"></script>
+	<script type="text/javascript" src="{{ MEDIA_URL }}js/effects.highlight.js" charset="utf-8"></script>
+	<script type="text/javascript" src="{{ MEDIA_URL }}js/jquery.bgiframe.min.js" charset="utf-8"></script>
+	<script type="text/javascript" src="{{ MEDIA_URL }}js/jquery.autocomplete.min.js" charset="utf-8"></script>
+	<script type="text/javascript" src="{{ MEDIA_URL }}js/tools.overlay-1.0.4.min.js" charset="utf-8"></script>
+	<script type="text/javascript" src="{{ MEDIA_URL }}js/json2.js" charset="utf-8"></script>
+
+	<!-- SCRIPT: YUI -->
 	<link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}js/yui2/build/editor/assets/skins/sam/editor.css" />
 	<!-- <link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}js/yui2/build/fonts/fonts-min.css" /> -->
 	<link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}js/yui2/build/logger/assets/skins/sam/logger.css" />	
@@ -41,9 +50,10 @@
 	<link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}js/yui2/build/button/assets/skins/sam/button.css" />
 	<link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}js/yui2/build/container/assets/skins/sam/container.css" />
 	<link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}js/yui2/build/autocomplete/assets/skins/sam/autocomplete.css" />
+	<link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}js/yui2/build/slider/assets/skins/sam/slider.css" />
 
 	<script type="text/javascript" src="{{ MEDIA_URL }}js/yui2/build/yahoo-dom-event/yahoo-dom-event.js"></script> 
-	<script type="text/javascript" src="{{ MEDIA_URL }}js/yui2/build/element/element-min.js"></script>  
+	<script type="text/javascript" src="{{ MEDIA_URL }}js/yui2/build/element/element-min.js"></script>
 	<script type="text/javascript" src="{{ MEDIA_URL }}js/yui2/build/container/container_core-min.js"></script>
 	<!--<script type="text/javascript" src="{{ MEDIA_URL }}js/yui2/build/container/container-min.js"></script>-->
 	<script type="text/javascript" src="{{ MEDIA_URL }}js/yui2/build/menu/menu-min.js"></script> 
@@ -59,42 +69,34 @@
 	<script type="text/javascript" src="{{ MEDIA_URL }}js/yui2/build/tabview/tabview-min.js"></script>
 	<script type="text/javascript" src="{{ MEDIA_URL }}js/yui2/build/history/history-min.js"></script>
 	<script type="text/javascript" src="{{ MEDIA_URL }}js/yui2/build/datasource/datasource-min.js"></script>
-    <script type="text/javascript" src="{{ MEDIA_URL }}js/yui2/build/connection/connection-min.js"></script>
+	<script type="text/javascript" src="{{ MEDIA_URL }}js/yui2/build/connection/connection-min.js"></script>
 	<script type="text/javascript" src="{{ MEDIA_URL }}js/yui2/build/autocomplete/autocomplete-min.js"></script>
 	<script type="text/javascript" src="{{ MEDIA_URL }}js/editor.js"></script>
-	<script src="{{ MEDIA_URL }}js/ui.accordion.js" type="text/javascript" charset="utf-8"></script>
-	<link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}css/jquery.autocomplete.css" media="screen"/>
-
-
-	<link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}css/list-edit-table.css" />
-	<script src="{{ MEDIA_URL }}js/json2.js"></script>
-	<script src="{{ MEDIA_URL }}js/jquery.confirm.js" type="text/javascript" charset="utf-8"></script>
-	<script src="{{ MEDIA_URL }}js/jquery.confirm-1.1.js" type="text/javascript" charset="utf-8"></script>
+	<script type="text/javascript" src="{{ MEDIA_URL }}js/ui.accordion.js" charset="utf-8"></script>
+	<script type="text/javascript" src="{{ MEDIA_URL }}js/json2.js"></script>
+	<script type="text/javascript" src="{{ MEDIA_URL }}js/jquery.confirm.js" charset="utf-8"></script>
+	<script type="text/javascript" src="{{ MEDIA_URL }}js/jquery.confirm-1.1.js" charset="utf-8"></script>
 
 	<!-- SCRIPT: SITE -->
-	<!-- <script src="{{ MEDIA_URL }}js/list-editor.js" type="text/javascript" charset="utf-8"></script> -->
-	<script src="{{ MEDIA_URL }}js/hubcms.js" type="text/javascript" charset="utf-8"></script>
-	<script src="{{ MEDIA_URL }}js/tab_hist.js" type="text/javascript" charset="utf-8"></script>
-	<!--<script src="{{ MEDIA_URL }}js/Jit/jit-yc.js" type="text/javascript" charset="utf-8"></script>
-	<link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}css/jit.css">      
-	<script src="{{ MEDIA_URL }}js/jit-example.js" type="text/javascript" charset="utf-8"></script>-->
-	<script src="{{ MEDIA_URL }}js/hubplus.js" ></script> 
-	
-	<link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}js/yui2/build/slider/assets/skins/sam/slider.css" />
-	<link rel="stylesheet" href="{{ MEDIA_URL }}css/permissions.css" type="text/css" media="all" />
-	<link rel="stylesheet" href="{{ MEDIA_URL }}css/flickr.css" type="text/css" media="all" />
-	<script src="{{ MEDIA_URL }}js/yui2/build/slider/slider-min.js"></script>
-	<!--<script src="{{ MEDIA_URL }}js/plus_libs/html.js"></script>
-	<script src="{{ MEDIA_URL }}js/plus_libs/utils.js"></script> -->
-	<script src="{{ MEDIA_URL }}js/plus_resources/replace_file.js"></script>
-	<script src="{{ MEDIA_URL }}js/plus_permissions/views.js"></script> 	
-	<script src="{{ MEDIA_URL }}js/pinax_libs/comments.js"></script>
-	<script src="{{ MEDIA_URL }}js/plus_links/plus_links.js"></script>
-	<script src="{{ MEDIA_URL }}js/listings.js"></script>
-	<script src="{{ MEDIA_URL }}js/home.js"></script>
-	<!-- SCRIPT: SITE READY (Put your "on load" functions that fire it all off in here) -->
-	<script src="{{ MEDIA_URL }}js/ready.js"></script>
+	<!-- <script type="text/javascript" src="{{ MEDIA_URL }}js/list-editor.js" charset="utf-8"></script> -->
+	<script type="text/javascript" src="{{ MEDIA_URL }}js/hubcms.js" charset="utf-8"></script>
+	<script type="text/javascript" src="{{ MEDIA_URL }}js/tab_hist.js" charset="utf-8"></script>
+	<!--<script type="text/javascript" src="{{ MEDIA_URL }}js/Jit/jit-yc.js" charset="utf-8"></script>
+	<link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}css/jit.css">
+	<script type="text/javascript" src="{{ MEDIA_URL }}js/jit-example.js" charset="utf-8"></script>-->
+	<script type="text/javascript" src="{{ MEDIA_URL }}js/hubplus.js" ></script> 
+	<script type="text/javascript" src="{{ MEDIA_URL }}js/yui2/build/slider/slider-min.js"></script>
+	<!--<script type="text/javascript" src="{{ MEDIA_URL }}js/plus_libs/html.js"></script>
+	<script type="text/javascript" src="{{ MEDIA_URL }}js/plus_libs/utils.js"></script> -->
+	<script type="text/javascript" src="{{ MEDIA_URL }}js/plus_resources/replace_file.js"></script>
+	<script type="text/javascript" src="{{ MEDIA_URL }}js/plus_permissions/views.js"></script> 	
+	<script type="text/javascript" src="{{ MEDIA_URL }}js/pinax_libs/comments.js"></script>
+	<script type="text/javascript" src="{{ MEDIA_URL }}js/plus_links/plus_links.js"></script>
+	<script type="text/javascript" src="{{ MEDIA_URL }}js/listings.js"></script>
+	<script type="text/javascript" src="{{ MEDIA_URL }}js/home.js"></script>
 
+	<!-- SCRIPT: SITE READY (Put your "on load" functions that fire it all off in here) -->
+	<script type="text/javascript" src="{{ MEDIA_URL }}js/ready.js"></script>
 	{% block extra_head_base %}
 	{% block extra_head %}{% endblock %}
 	{% endblock %}

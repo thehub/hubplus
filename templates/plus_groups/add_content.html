@@ -8,17 +8,17 @@
     <fieldset>
       <ul>
 	<li>
-	  <label for="title"><span class="required">*</span> {% trans "Title" %}</label>
+	  <label for="title">{% trans "Title" %} <span class="required">*</span></label>
 	  <input name="title" id="title" class="text" type="text" value="{{form.data.title}}" />
 	  {% if form.errors.title %}<span class="error">{{form.errors.title|safe}}<span>{% endif %}
 	</li>
       </ul>
-      <label><span class="required">*</span> {% trans "Add this to" %}</label>
+      <label>{% trans "Add this to" %} <span class="required">*</span></label>
       <ul class="checkboxes">
 	<li {% if can_add %}{% else %}class="hidden"{% endif %}>
 	  <div class="label_extended">
 	    <label><span id="group_display_name">{{group.display_name}}</span><a id="change_group" href="#">  – {% trans "Change group/Hub" %}</a></label>
-            <input name="group" value="{{group.id}}" id="group_input" type="hidden"  />
+            <input name="group" value="{{group.id}}" id="group_input" type="hidden" />
 	  </div> 
 	</li>
 	<li id="auto_change_group" {% if can_add %}class="hidden"{% endif %}>
@@ -34,8 +34,8 @@
 	  <ul id="choose_type" class="checkboxes">
 	    {% for create_interface, label, sub_title, active in possible_interfaces %}
 	    <li id="{{create_interface}}" {% if active %}{% else %}class="cannot_add" disabled="disabled"{% endif %}>
-	      <input  id="a" name="create_iface" class="radio" value="{{create_interface}}" type="radio" {% if form.data.create_iface %}{% ifequal form.data.create_iface create_interface %}checked="checked"{% endifequal %}{% else %}{% if forloop.first %}checked="checked"{% endif %}{% endif %} />
-	      <label for="a">{{label}}<span class="extra">{{sub_title}}</span></label>
+	      <input  id="{{label}}" name="create_iface" class="radio" value="{{create_interface}}" type="radio" {% if form.data.create_iface %}{% ifequal form.data.create_iface create_interface %}checked="checked"{% endifequal %}{% else %}{% if forloop.first %}checked="checked"{% endif %}{% endif %} />
+	      <label for="{{label}}">{{label}}<span class="extra">{{sub_title}}</span></label>
 	    </li>
 	    {% endfor %}
 	  </ul>
