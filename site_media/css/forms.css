@@ -106,6 +106,97 @@ form.page .message_body textarea {
 	width		: 612px;
 }
 
+
+
+/* Form Related Elements */
+
+p.note {
+	color		: #888888;
+}
+
+/* Form: Full Size NEW */
+
+form.full_block {
+	padding-bottom	: 15px;
+}
+
+form.full_block fieldset {
+	padding-bottom	: 15px;
+}
+
+form.full_block ul {
+	padding		: 0;
+}
+
+form.full_block p.note {
+	margin-bottom : -3px;
+	padding		: 0;
+}
+
+form.full_block fieldset p {
+	padding		: 0;
+}
+
+form.full_block .label p,
+form.full_block .input p {
+	font-size	: .9em;
+	line-height	: 1.4em;
+}
+
+form.full_block .label {
+	float		: left;
+	text-align	: right;
+	padding		: 0 10px 0 30px;
+	width		: 200px;
+}
+
+form.full_block .label label {
+	font-size	: 1.1em;
+}
+
+form.full_block .input {
+	float		: left;
+	width		: 208px;
+}
+
+form.full_block .input .text,
+form.full_block .input textarea {
+	width		: 208px;
+	max-width   : 208px;
+}
+
+form.full_block .input select {
+	width		: 100%;
+}
+
+form.full_block .input.checkboxes .label {
+	float		: right;
+	padding		: 0;
+	text-align	: left;
+	width		: 190px;
+}
+
+form.full_block .input .note {
+	margin-bottom   : 0;
+	padding-bottom	: 3px;
+}
+
+form.full_block input.checkbox,
+form.full_block input.radio {
+	float		: left;
+	margin-right: 0;
+}
+
+form.full_block .buttons,
+form.full_block .unlabelled {
+	padding-left: 240px;
+}
+
+form.full_block .button {
+	margin-bottom	: 3px;
+}
+
+
 /* Forms: Full Size */
 
 form.full fieldset {
