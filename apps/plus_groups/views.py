@@ -393,7 +393,7 @@ def possible_create_interfaces():
     """return tuples of form, interface string, label, subtext
     """
     return [["CreateWikiPage", _("Page"), _("Create new wiki page")], 
-            ["CreateResource", _("Resource"), _("Upload a resource")],
+            ["CreateResource", _("Upload"), _("Share a document")],
             ["CreateNews", _("News"), _("Create a new posting")],
             ["CreateEvent", _("Events"), _("Create a new event")]]
 
