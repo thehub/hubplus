@@ -3,13 +3,19 @@
 {% load i18n %}
 {% load uni_form %}
 
+{% block page_header %}
+<a id="parent" href="{% url plus_groups:group group_id %}">{{group.display_name}}</a>
+<h2 id="page_title">{% trans "Message Members" %}</h2>
+{% endblock %}
+
+
 {% block body %}
 
   <form class="full uniForm" id="message_members_form" method="post" action="">
 
-    <h4>{% trans "Message Members" %}</h4>
+
     <p>
-      {% trans "Use this form to send a message to all members of"%} {{group.get_display_name}} {% trans "Please be careful to ensure your message is likely to be relevant and interesting to this group."}
+      {% trans "Use this form to send a message to all members of"%} {{group.get_display_name}} {% trans "Please be careful to ensure your message is likely to be relevant and interesting to this group." %}
     </p>
     <fieldset>
       <ul>
