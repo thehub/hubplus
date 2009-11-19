@@ -56,7 +56,8 @@ def edit_resource(request, group, resource_name,
         post_kwargs['obj'] = secure_upload
         form = UploadFileForm(post_kwargs, request.FILES)
         if form.is_valid():
-            handle_uploaded_file(request.user, group, form, request.FILES['resource'])
+            if form.cleaned_data['resource']:
+                handle_uploaded_file(request.user, group, form, form.cleaned_data['resource'])
 
             if not success_url :
                 success_url = reverse(current_app + ':view_Resource', args=(group.id, secure_upload.name))
