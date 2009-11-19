@@ -61,6 +61,8 @@ def configs(context):
             'MEMBERS_INTRO_BOX' : 'clients/%s/intro_box.html' % settings.PROJECT_THEME,
             'EXPLORE_INTRO_BOX' : 'explore_intro_bar', 
             'HUBS_INTRO_BOX' : 'hubs_intro_bar',
+
+            'HOST_INFO_FORM' : 'profiles/clients/%s/host_info.html' % settings.PROJECT_THEME,
             
             'HUB_APP_NAME' : get_hub_app_name(settings.PROJECT_THEME),
 

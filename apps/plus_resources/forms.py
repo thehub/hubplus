@@ -12,16 +12,17 @@ licenses = (('',''),
 
 class UploadFileForm(forms.Form):
     title = forms.CharField(max_length=50)
-    resource  = forms.FileField()
+    resource  = forms.FileField(required=False)
     description = forms.CharField(required=True)
     license = forms.CharField(required=False)
     author = forms.CharField(required=False) # copyright purposes
 
     def clean(self):
-        obj = self.data['obj']
-        if self._errors:
-            return self.cleaned_data
-        
+        obj = self.data['obj']        
+
+        if not self.cleaned_data['resource'] and not obj.resource:
+            self._errors['resource'] = "You must upload a file"
+
         self.cleaned_data['name'] = name_from_title(self.cleaned_data['title'])
         # should use validate_name_url from plus_groups form
         if self.cleaned_data['name'] != obj.name:
@@ -32,5 +33,3 @@ class UploadFileForm(forms.Form):
                 pass
         return self.cleaned_data
     
-
-

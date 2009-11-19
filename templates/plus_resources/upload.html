@@ -23,13 +23,23 @@
       <ul>
 	<li id="description_area">
 	  <label for="description"><span class="required">*</span>{% trans "Description" %}</label>
-	  <textarea id="description" name="description" rows="3" maxlength="20">{{data.description}}</textarea>
-	  {{errors.description}}
+	  <textarea id="description" name="description" rows="3" maxlength="20">{% if data.description %}{{data.description}}{% else %}{{upload.description}}{% endif %}</textarea>
+	  <div class="error_message">{{errors.description}}</div>
 	</li>
-	<li>
+	<li class="upload_field">
+          {% if not upload.resource %}
 	  <label for="resource"><span class="required">*</span>{% trans "Select resource" %}</label>
 	  <input  id="resource" name="resource" class="file" type="file" />
-	  {{errors.resource}}
+	  <div class="error_message">{{errors.resource}}</div>
+	  {% else %}
+   	    {% if upload.download_url %}
+	      <label for="resource"><span class="required">*</span>{% trans "File" %}</label>
+	      <a  href="{{upload.download_url}}" class="file_name">{{upload.get_file_name}}</a><span><a href="#" class="replace_file_button">{% trans "Replace File" %}</a></span>
+	      <input  id="resource" name="resource"  type="file" class="hidden replace_file" />
+	      <span><a href="#" class="keep_existing hidden" >{% trans "Keep existing file" %}</a></span>
+              <div class="error_message">{{errors.resource}}</div>
+            {% endif %}
+          {% endif %}
 	</li>
       </ul>
       <ul id="content_extra">
@@ -46,7 +56,7 @@
 	      <label for="author">{% trans "Copyright / Author" %}</label>
 	    </dt>
 	    <dd>
-	      <span class="error"><input  id="author" name="author" class="text" type="text" value='{{data.author}}'/></span>
+            <input  id="author" name="author" class="text" type="text" value='{% if data.author %}{{data.author}}{% else %}{{upload.author}}{% endif %}'/>
 	      {% if errors.author %}<span class="error">{{errors.author}}</span>{% endif %}
 	    </dd>
 	    <dt>
@@ -74,6 +84,6 @@
 {% block side_bar %}
    {% if upload.stub %}
    {% else %}
-     {% include "plus_wiki/sidebar.html" %}
+     {% include "plus_resources/sidebar.html" %}
    {% endif %}
 {% endblock %}

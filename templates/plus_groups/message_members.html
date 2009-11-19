@@ -3,13 +3,19 @@
 {% load i18n %}
 {% load uni_form %}
 
+{% block page_header %}
+<a id="parent" href="{% url plus_groups:group group_id %}">{{group.display_name}}</a>
+<h2 id="page_title">{% trans "Message Members" %}</h2>
+{% endblock %}
+
+
 {% block body %}
 
   <form class="full uniForm" id="message_members_form" method="post" action="">
 
-    <h4>{% trans "Message Members" %}</h4>
+
     <p>
-      {% trans "Use this form to send a message to all members of"%} {{group.get_display_name}} {% trans "Please be careful to ensure your message is likely to be relevant and interesting to this group."}
+      {% trans "Use this form to send a message to all members of"%} {{group.get_display_name}} {% trans "Please be careful to ensure your message is likely to be relevant and interesting to this group." %}
     </p>
     <fieldset>
       <ul>
@@ -22,7 +28,7 @@
         <li>
 	  {{ form.message_body.errors}}
           <p>
-            <label for="">{% trans "Add a special invite message to the user" %}</label>
+            <label for="">{% trans "Your message to the user" %}</label>
           </p>
           <textarea id="message_body" name="message_body">
           </textarea>
@@ -30,7 +36,7 @@
 
       </ul>
     </fieldset>
-    <input class="submit button" type="submit" value="{% trans "Invite &raquo;" %}" />
+    <input class="submit button" type="submit" value="{% trans "Send &raquo;" %}" />
 
   </form>
 

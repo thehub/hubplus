@@ -13,7 +13,7 @@ sites = {
 reg = re.compile("DEBUG_STATUS=OK")
 browser = get_browser()
 
-areas = ['explore','members','groups']
+areas = ['explore','members','groups','hubs','regions']
 
 class TestSites(unittest.TestCase) :
     pass

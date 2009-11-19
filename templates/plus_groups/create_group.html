@@ -12,167 +12,233 @@
 
 <div id="intro" class="block">
 
-<form class="full" method="POST" action="{% url plus_groups:create_group %}">
   <h4>About your {{name_of_created}}</h4>
-  <p>Please enter your details below to create a new {{name_of_created}}.</p>
+  <p class="note">Please enter your details below to create a new {{name_of_created}}.</p>
 
-  <fieldset>
-    <ul>
-      <li>
-	<label for="name"><span class="required">*</span> {% trans "Name" %}</label>
-	<input  id="name" name="name" class="text" type="text" value="{{form.data.name}}" />
-	{{form.name.errors}}
-      </li>
-      {% if is_hub %}
-      <input type='hidden' name='is_hub' value='True'/>
-      <input type="hidden" name="group_type" value="internal"/>
-      {% else %}
-      <input type='hidden' name='is_hub' value='False'/>
- 
-      <li>
-	<label for="group_type"><span class="required">*</span> {% trans "Type" %}</label>
-	<select id="group_type" name="group_type">
-	  <option value="interest">Interest group</option>
-	  <option value="organisation">Organisation</option>
-	  <option value="project">Project</option>
-	  <option value="internal">Internal</option>
-	</select>
-	{{form.group_type.errors}}
-      </li>
-      {% endif %}
-      <li>
-	<label for="descripton"><span class="required">*</span> Description <span class="extra">what is this group about?</span></label>
-	<textarea id="description" name="description" rows="5">{{form.data.description}}</textarea>
-	{{form.description.errors}}	
-      </li>
-      {% if is_hub %}
-      <li>
+  <form class="full_block" method="POST" action="{% url plus_groups:create_group %}">
 
-	<label for="location">Location <span class="extra">postcode, country</span></label>
-	<input  id="location" class="text" name="location" type="text" />
-	{{form.location.errors}}
-	<!--br /><span style="color:red">(Use existing google maps here)</span-->
-      </li>
-      {% endif %}
-      <li class="disabled">
-	<label for="about"><span class="required">*</span> What is the group about?</label>
-	<span style="color:red">(Use existing tag functionality here)</span>
-      </li>
-      <li class="disabled">
-	<label for="skills">What are the group's skills?</label>
-	<span style="color:red">(Use existing tag functionality here)</span>
-      </li>
-      <li class="disabled">
-	<label for="needs">What are the group's needs?</label>
-	<span style="color:red">(Use existing tag functionality here)</span>
-      </li>
-    </ul>
-    <ul>
-      <li class="checkboxes">
-	{{form.permissions_set.errors}}
-	<label><span class="required">*</span> <span class="label_permissions">Permissions</span> <span class="extra">These settings that can be customised once your group has been created<!--><br /><a href="#">more info</a>--></span></label>
-	<ul>
-	  <li>
-	    <input  id="public" name="permissions_set" class="radio" type="radio" value="public" checked="checked" />
-	    <div class="label_extended">
-	      <label for="public">Public <span class="extra">Visible to the world<br />Site members can join</span></label>
-	    </div>
-	  </li>
-	  <li>
-	    <input  id="open" name="permissions_set" class="radio" type="radio" value="open"/>
-	    <div class="label_extended">
-	      <label for="open">{{SITE_NAME_SHORT}} Open <span class="extra">Visible to site members<br />Site members can join</span></label>
-	    </div>
-	  </li>
-	  <li>
-	    <input  id="invite" name="permissions_set" class="radio" type="radio" value="invite"/>
-	    <div class="label_extended">
-	      <label for="invite">{{SITE_NAME_SHORT}} Invite only <span class="extra">Visible to site members<br /> Invited or approved members can join</span></label>
-	    </div>
-	  </li>
-	  <li>
-	    <input  id="private" name="permissions_set" class="radio" type="radio" value="private"/>
-	    <div class="label_extended">
-	      <label for="private">Private <span class="extra">Contents visible to group members only<br /> Invited or approved members can join</span></label>
-	    </div>
-	  </li>
-	</ul>
-      </li>
-    </ul>
+    {% if is_hub %}
+    <input type='hidden' name='is_hub' value='True'/>
+    <input type="hidden" name="group_type" value="internal"/>
+    {% else %}
+    <input type='hidden' name='is_hub' value='False'/>   
+    {% endif %}
 
-<!--    <h4>Links</h4>
-    <ul class="disabled custom_labels">
+    <fieldset>
+
+      <ul>
+
+        <li>
+          <div class="label">
+            <label for="name"><span class="required">*</span> {% trans "Name" %}</label>
+          </div>
+          <div class="input">
+            <input  id="name" name="name" class="text" type="text" value="{{form.data.name}}" />
+            {{form.name.errors}}
+          </div>
+        </li>
+
+        {% if is_hub %}
+        {% else %}
+        <li>
+          <div class="label">
+            <label for="group_type"><span class="required">*</span> {% trans "Type" %}</label>
+          </div>
+          <div class="input">
+            <select id="group_type" name="group_type">
+              <option value="interest">Interest group</option>
+              <option value="organisation">Organisation</option>
+              <option value="project">Project</option>
+              <option value="internal">Internal</option>
+            </select>
+            {{form.group_type.errors}}
+          </div>
+        </li>
+        {% endif %}
+
+        <li>
+          <div class="label">
+            <label for="descripton"><span class="required">*</span> Description</label>
+             <p class="note">what is this group about?</p>
+          </div>
+          <div class="input">
+            <textarea id="description" name="description" rows="5">{{form.data.description}}</textarea>
+            {{form.description.errors}}	
+          </div>
+        </li>
+
+        {% if is_hub %}
+        <li>
+          <div class="label">
+            <label for="location">Location</label>
+            <p class="note">postcode, country</p>
+          </div>
+          <div class="input">
+            <input  id="location" class="text" name="location" type="text" />
+            {{form.location.errors}}
+          </div>
+        </li>
+        {% endif %}
+
+        <li class="disabled">
+          <div class="label">
+            <label for="about"><span class="required">*</span> What is the group about?</label>
+          </div>
+          <div class="input">
+            <span style="color:red">(Use existing tag functionality here)</span>
+          </div>
+        </li>
+
+        <li class="disabled">
+          <div class="label">
+            <label for="skills">What are the group's skills?</label>
+          </div>
+          <div class="input">
+            <span style="color:red">(Use existing tag functionality here)</span>
+          </div>
+        </li>
+
+        <li class="disabled">
+          <div class="label">
+            <label for="needs">What are the group's needs?</label>
+          </div>
+          <div class="input">
+            <span style="color:red">(Use existing tag functionality here)</span>
+          </div>
+        </li>
+
+      </ul>
+
+      <ul>
       
-      <li>
-	<div class="label_extended">
-	  <input  id="link_title" class="text" type="text" value="Website" />
-	</div>
-	<div class="input_extended">
-	  <input  id="link_url" class="text" type="text" value="www.mysite.com" />
-	  <button class="button add_link">X</button>
-	</div>
-      </li>
-      <li>
-	<div class="label_extended">
-	  <input  id="link_title" class="text" type="text" />
-	</div>
-	<div class="input_extended">
-	  <input  id="link_url" class="text" type="text" />
-	  <button class="button add_link">Add</button>
-	</div>
-      </li>
-      <li>
-	<div class="label_extended">
-	  <label for="link_title"><span class="extra">Title ('Website', 'Flickr')</span></label>
-	</div>
-	<div class="input_extended">
-	  <label for="link_url"><span class="extra">Website ('www.mysite.com')</span></label>
-	</div>
-      </li>
-    </ul>
-    <h4>Contact</h4>
-    <ul class="disabled custom_labels">
-      <li>
-	<div class="label_extended">
-	  <input  id="link_title" class="text" type="text" />
-	</div>
-	<div class="input_extended">
-	  <input  id="link_url" class="text" type="text" />
-	  <button class="button add_link">Add</button>
-	</div>
-      </li>
-      <li>
-	<div class="label_extended">
-	  <label for="link_title"><span class="extra">Title ('Phone', 'Skype')</span></label>
-	</div>
-	<div class="input_extended">
-	  <label for="link_url"><span class="extra">Username/Group ('Meme2009')</span></label>
-				</div>
-      </li>
-    </ul>
-    <h4>Email</h4>
-    <ul class="disabled custom_labels">
-      <li>
-	<div class="label_extended">
-	  <input  id="link_title" class="text" type="text" />
-	</div>
-	<div class="input_extended">
-	  <input  id="link_url" class="text" type="text" />
-	  <button class="button add_link">Add</button>
-	</div>
-      </li>
-      <li>
-	<div class="label_extended">
-	  <label for="link_title"><span class="extra">Title ('Email')</span></label>
-	</div>
-	<div class="input_extended">
-	  <label for="link_url"><span class="extra">Email address ('me@domain.com')</span></label>
-	</div>
-      </li>
-    </ul> -->
-  </fieldset>
-  <input class="submit button" type="Submit" value="{% trans 'Create' %}" /> or <a href="{% url plus_groups:groups %}">Go back</a>
-</form>
+        <li>
+          <div class="label">
+            {{form.permissions_set.errors}}
+            <label><span class="required">*</span> <span class="label_permissions">Permissions</span></label>
+            <p class="note">These settings that can be customised once your group has been created</p>
+          </div>
+          <div class="input checkboxes">
+            <ul>
+              <li>
+                <input  id="public" name="permissions_set" class="radio" type="radio" value="public" checked="checked" />
+                <div class="label">
+                  <label for="public">Public</label>
+                   <p class="note">Visible to the world<br />Site members can join</p>
+                </div>
+              </li>
+              <li>
+                <input  id="open" name="permissions_set" class="radio" type="radio" value="open"/>
+                <div class="label">
+                  <label for="open">{{SITE_NAME_SHORT}} Open</label>
+                  <p class="note">Visible to site members<br />Site members can join</p>
+                </div>
+              </li>
+              <li>
+                <input  id="invite" name="permissions_set" class="radio" type="radio" value="invite"/>
+                <div class="label">
+                  <label for="invite">{{SITE_NAME_SHORT}} Invite only</label>
+                  <p class="note">Visible to site members<br /> Invited or approved members can join</p>
+                </div>
+              </li>
+              <li>
+                <input  id="private" name="permissions_set" class="radio" type="radio" value="private"/>
+                <div class="label">
+                  <label for="private">Private</label>
+                  <p class="note">Visible to group members only<br /> Invited or approved members can join</p>
+                </div>
+              </li>
+            </ul>
+          </div>
+        </li>
+
+      </ul>
+  
+    </fieldset>
+
+
+  
+  <!--
+  <fieldset>
+    <h4>Links</h4>
+      <ul class="disabled custom_labels">
+        
+        <li>
+    <div class="label_extended">
+      <input  id="link_title" class="text" type="text" value="Website" />
+    </div>
+    <div class="input_extended">
+      <input  id="link_url" class="text" type="text" value="www.mysite.com" />
+      <button class="button add_link">X</button>
+    </div>
+        </li>
+        <li>
+    <div class="label_extended">
+      <input  id="link_title" class="text" type="text" />
+    </div>
+    <div class="input_extended">
+      <input  id="link_url" class="text" type="text" />
+      <button class="button add_link">Add</button>
+    </div>
+        </li>
+        <li>
+    <div class="label_extended">
+      <label for="link_title"><span class="extra">Title ('Website', 'Flickr')</span></label>
+    </div>
+    <div class="input_extended">
+      <label for="link_url"><span class="extra">Website ('www.mysite.com')</span></label>
+    </div>
+        </li>
+      </ul>
+      <h4>Contact</h4>
+      <ul class="disabled custom_labels">
+        <li>
+    <div class="label_extended">
+      <input  id="link_title" class="text" type="text" />
+    </div>
+    <div class="input_extended">
+      <input  id="link_url" class="text" type="text" />
+      <button class="button add_link">Add</button>
+    </div>
+        </li>
+        <li>
+    <div class="label_extended">
+      <label for="link_title"><span class="extra">Title ('Phone', 'Skype')</span></label>
+    </div>
+    <div class="input_extended">
+      <label for="link_url"><span class="extra">Username/Group ('Meme2009')</span></label>
+          </div>
+        </li>
+      </ul>
+      <h4>Email</h4>
+      <ul class="disabled custom_labels">
+        <li>
+    <div class="label_extended">
+      <input  id="link_title" class="text" type="text" />
+    </div>
+    <div class="input_extended">
+      <input  id="link_url" class="text" type="text" />
+      <button class="button add_link">Add</button>
+    </div>
+        </li>
+        <li>
+    <div class="label_extended">
+      <label for="link_title"><span class="extra">Title ('Email')</span></label>
+    </div>
+    <div class="input_extended">
+      <label for="link_url"><span class="extra">Email address ('me@domain.com')</span></label>
+    </div>
+        </li>
+      </ul>
+      
+    </fieldset>-->
+
+    <fieldset class="buttons">
+
+      <input class="submit button" type="Submit" value="{% trans 'Create' %}" /> or <a href="{% url plus_groups:groups %}">Go back</a>
+
+    </fieldset>
+
+  </form>
 
 </div>
 

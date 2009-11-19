@@ -10,8 +10,8 @@
 
 
 {% block page_header %}
-<a id="parent" href="{% url plus_groups:group resource.in_agent.obj.id %}">{{resource.in_agent.obj.display_name}}</a>
-<h2 id="page_title">{{resource.title}}</h2>
+<a id="parent" href="{% url plus_groups:group upload.in_agent.obj.id %}">{{upload.in_agent.obj.display_name}}</a>
+<h2 id="page_title">{{upload.title}}</h2>
 {% endblock %}
 
 
@@ -20,12 +20,12 @@
   <ul class="icon_text_button_set">
     {% if can_edit %}
     <li>
-      <a class="icon_text_button bt_edit" href="{% url plus_groups:edit_Resource resource.in_agent.obj.id resource.name %}">{% trans "Edit page"%}</a>
+      <a class="icon_text_button bt_edit" href="{% url plus_groups:edit_Resource upload.in_agent.obj.id upload.name %}">{% trans "Edit page"%}</a>
     </li>
     {% endif %}
     {% if permissions %}
     <li>
-      <a class="icon_text_button bt_permissions" href="#overlay" rel="#overlay" id="{{resource.edit_key}}permissionedit">{% trans "Permissions" %}</a>
+      <a class="icon_text_button bt_permissions" href="#overlay" rel="#overlay" id="{{upload.edit_key}}permissionedit">{% trans "Permissions" %}</a>
     </li>
     {% endif %}
   </ul>
@@ -34,15 +34,12 @@
 <div id="upload_viewer">
 	<ul class="yui-skin-sam">
 		<li>
-		{% editable "Title" resource 'title' 'Title' %}
+		{% editable "Title" upload 'title' 'Title' %}
 		</li>
 		<li>
 		{% autoescape off %}
-		{% editable "Description" resource 'description' 'About this document'%}
+		{% editable "Description" upload 'description' 'About this document'%}
 		{% endautoescape %}
-		</li>
-		<li>
-			<dl>{% plus_tag 'Tags' ''  resource  '' %}</dl>
 		</li>
 		<li>
 			<dl>
@@ -51,14 +48,14 @@
 			</dl>
 		</li>
 		<li>
-			{% editable "License" resource 'license' 'License'%}
+			{% editable "License" upload 'license' 'License'%}
 		</li>
 		<li>
-			{% editable "Author" resource 'author' 'Author'%}
+			{% editable "Author" upload 'author' 'Author'%}
 		</li>
-		{% if resource.download_url %}
+		{% if upload.download_url %}
 		<li class="download_button">
-			<a class="button" href="{{resource.download_url}}">Download</a>
+			<a class="button" href="{{upload.download_url}}">Download</a>
 		</li>
 		{% endif %}
 	</ul>
@@ -67,7 +64,7 @@
 
 <div id="section_tab_navigation" class="tabbed section yui-navset">
   <ul class="tabbed_navigation yui-nav">
-    {% get_comment_count for resource as comment_count %}
+    {% get_comment_count for upload as comment_count %}
     <li class="selected"><a href="#comments"><span>{% trans "Comments" %}({{comment_count}})</span></a></li>
     
     <!--li><a href="#attachments"><span>{% trans "Attachments" %} (0)</span></a></li>
@@ -80,4 +77,8 @@
     </div>
   </div>
 </div>
+{% endblock %}
+
+{% block side_bar %}
+     {% include "plus_resources/sidebar.html" %}
 {% endblock %}

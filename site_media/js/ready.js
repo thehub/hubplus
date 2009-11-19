@@ -9,4 +9,7 @@ jq(document).ready(function () {
     if (jq('#intro_bar_tabs').length) {
 	home();
     }
+    if (jq('.upload_field').length==1) {
+	replace_file();
+    }
 });

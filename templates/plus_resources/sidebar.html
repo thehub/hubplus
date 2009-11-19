@@ -11,26 +11,9 @@
       {% endfor %}
     </ol>
   </div>
-  <h3>{% trans "Contributors" %}</h3>
-  <div>
-    <ul>
-      <li>
-	<ul id="members_list">
-	  {% for contributor in contributors %}
-	  <li><a href="{% url profile_detail contributor.username %}" 
-		 class="thumb small">{% avatar contributor.obj 40 %}
-	      {% if contributor.display_name %}{{contributor.display_name}}{% else %}{{contributor.username}}{%endif%}</a>
-	  </li>
-	  {% endfor %}
-	</ul>
-	<!--<a href="#" class='disabled'>Show all ({{member_count}})</a>-->
-      </li>
-    </ul>
-  </div>
   <h3>{% trans "My Tags" %}</h3>
-  
   <div>
-    {% plus_tag 'Tags' 'tag' page.obj user %}
+    {% plus_tag 'Tags' 'tag' upload.obj user %}
   </div>
 <!--  <h3>{% trans "Backlinks" %}</h3>
   <div>
