@@ -299,6 +299,7 @@ def setup_defaults() :
                           { 'Viewer':'anonymous_group',
                             'Editor':'creator',
                             'Delete':'context_agent',
+                            'Manager':'context_agent',
                             'ManagePermissions':'context_admin',
                             'Unknown':'context_admin'
                           },
