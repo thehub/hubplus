@@ -14,6 +14,11 @@ var widget_map = {
 	       'project_stage':'text_wysiwyg',
 	       'place': 'gmap'
     },
+    'HostInfo':{'find_out':'text_wysiwyg',
+                'project_stage':'text_wysiwyg',
+                'assistence_offered':'text_wysiwyg',
+		'project':'text_wysiwyg',
+                'expected_membership_benefits':'text_wysiwyg'},
     'TgGroup':{'description':'text_wysiwyg'},
     'Resource':{'description':'text_wysiwyg'}
 };
