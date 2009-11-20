@@ -32,7 +32,7 @@ class Contact(models.Model):
     first_name = models.CharField(max_length=60)
     last_name = models.CharField(max_length=60)
     organisation = models.CharField(max_length=255)
-    email_address = models.CharField(max_length=255,unique=True)
+    email_address = models.CharField(max_length=255)  # unique=True) --> removing this requirement, I don't see why there can't be the same contact in more than user's contacts. Also it should be possible for a user to make more than one application e.g. to two different groups. We should then validate when creating users that the email address used isn't that of an existing user.
     location = models.CharField(max_length=100)
     apply_msg = models.TextField()
     find_out = models.TextField()
@@ -52,7 +52,6 @@ class Contact(models.Model):
         u = create_user(username, self.email_address)
         if password:
             u.set_password(password)
-        u.save()
         p = u.get_profile()
         p.first_name = self.first_name
         p.last_name = self.last_name
@@ -67,7 +66,7 @@ class Contact(models.Model):
         h.find_out = self.find_out
         p.save()
         h.save()
-
+        u.save()
         get_all_members_group().add_member(u)
 
         # do we want to delete the Contact if it becomes a User?
@@ -119,9 +118,9 @@ We are delighted to confirm you have been accepted as a member of %(site)s
 class Application(models.Model) :
     applicant_content_type = models.ForeignKey(ContentType,related_name='applicant_type')
     applicant_object_id = models.PositiveIntegerField()
-    applicant = generic.GenericForeignKey('applicant_content_type', 'applicant_object_id')
+    applicant = generic.GenericForeignKey('applicant_content_type', 'applicant_object_id') # either user or contact
     
-    group = models.ForeignKey(TgGroup,null=True)
+    group = models.ForeignKey(TgGroup, null=True)
     request = models.TextField()
     status = models.PositiveIntegerField(default=PENDING)
 

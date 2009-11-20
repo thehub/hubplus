@@ -5,6 +5,7 @@
 {% load app_plugins %}
 {% load uni_form %}
 {% load plus_tags %}
+{% load plus_url %}
 {% load editable_attribute %}
 {% block body %}
 
@@ -53,29 +54,29 @@
 	</dl>
       </li>  
       <li>
-	<dl class="disabled"><dt >{% trans "Region" %} : </dt>
+	<dl class="disabled"><dt >{% trans "Region" %}</dt>
 	  <dd>
 	    <a href="hub.html" class='editable_temp_off' id='{{profile.edit_key}}hub'>{{profile.get_hub}}</a>
 	</dd></dl>
       </li>
+      {% if member_of %}
       <li>
 	<dl>
-	  <dt>{% trans "Groups" %} :</dt>
+	  <dt>{% trans "Groups" %}</dt>
 	  <dd>
-	    {% for g in other_user.get_enclosures %}
-	      <a href="/groups/{{g.pk}}/">{{g.get_permission_agent_name}}</a>{% if forloop.last %}{% else %},{% endif %}
+	    {% for reverse_g, g in member_of %}
+	      <a href="{% plus_url reverse_g g.pk %}">{{g.get_permission_agent_name}}</a>{% if forloop.last %}{% else %}, {% endif %}
 	    {% endfor %}
 	  </dd>
 	</dl>
       </li>
-      <br />
+      {% endif %}
       <li>
 	   {% editable "Organisation" profile 'organisation' 'Your organisation' %}
       </li>
       <li>
 	   {% editable "Role" profile 'role' 'Your role' %}
       </li>
-      <br />
       <li class="place">
 	   {% editable "Location" profile 'place' 'Your Location' %}
       </li>	
