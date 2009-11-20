@@ -183,6 +183,7 @@ def profile(request, username, template_name="profiles/profile.html"):
     host_info = secure_wrap(host_info,user)
 
     see_host_info = False
+
     try :
         host_info.user 
         see_host_info = True
@@ -211,7 +212,8 @@ def profile(request, username, template_name="profiles/profile.html"):
             "search_type":search_type,
             "search_types":search_types,
             "search_type_label":search_type_label,
-            "search_types_len":search_types_len
+            "search_types_len":search_types_len,
+            "host_info":TemplateSecureWrapper(host_info),
             }, context_instance=RequestContext(request))
 
 

@@ -93,7 +93,6 @@ class Profile(models.Model):
 import logging
 
 
-
 class HostInfo(models.Model):
     """ Information asked by hosts about this user """
     user = models.ForeignKey(User, unique=True, verbose_name=_('user'))
@@ -109,10 +108,8 @@ class HostInfo(models.Model):
 def create_host_info(sender, instance=None, **kwargs) :
     if instance is None : 
         return
-    host_info, created = HostInfo.objects.get_or_create(user=instance.user)
-
-post_save.connect(create_host_info,sender=Profile) 
-
+    if HostInfo.objects.filter(user__username=instance.username).count() < 1  :
+       profile = instance.create_HostInfo(instance, user=instance)
 
 def create_profile(sender, instance=None, **kwargs):
    if instance is None:
