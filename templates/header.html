@@ -18,7 +18,7 @@
 				{% else %} 
 				<li class="first"><a href="{% url acct_apply %}">{% trans "Apply to join" %}</a></li>
 				<li><span>{% trans "or" %}</span></li>
-				<li class="last"><a href="{% url acct_login %}?next={{request.path}}">{% trans "Log in" %}</a></li>
+				<li class="last"><a href="{% url acct_login %}?next={{request.get_full_path}}">{% trans "Log in" %}</a></li>
 			{% endif %}
 		</ul>
 		{% endblock %}

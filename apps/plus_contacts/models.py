@@ -123,9 +123,9 @@ We are delighted to confirm you have been accepted as a member of MHPSS
 class Application(models.Model) :
     applicant_content_type = models.ForeignKey(ContentType,related_name='applicant_type')
     applicant_object_id = models.PositiveIntegerField()
-    applicant = generic.GenericForeignKey('applicant_content_type', 'applicant_object_id')
+    applicant = generic.GenericForeignKey('applicant_content_type', 'applicant_object_id') # either user or contact
     
-    group = models.ForeignKey(TgGroup,null=True)
+    group = models.ForeignKey(TgGroup, null=True)
     request = models.TextField()
     status = models.PositiveIntegerField(default=PENDING)
 
