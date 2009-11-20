@@ -15,6 +15,7 @@ browser = get_browser()
 
 areas = ['explore','members','groups','hubs','regions']
 
+
 class TestSites(unittest.TestCase) :
     pass
 
@@ -29,7 +30,9 @@ def add_test(cls,site,url) :
         for area in areas :
             browser.go('%s%s/' % (url,area))
             self.assertTrue(reg.search(browser.get_html()))
-
+        browser.go('%s%s/%s'%(url,'groups',1))
+        self.assertTrue(reg.search(browser.get_html()))
+                 
 
     setattr(cls,'test_%s'%site,test_it)
 
