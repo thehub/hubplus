@@ -49,3 +49,15 @@ Dear {{first_name}} {{last_name}},
 Unfortunately, we can not accept you to become a member of MHPSS network at this time.
 
 """
+
+PASSWORD_RESET_TEMPLATE = """
+Dear %(display_name)s,
+
+You have requested to change your password, to reset your password click here: %(link)s
+
+Your username, in case you've forgotten : %(username)s
+
+You should log in as soon as possible and change your password.
+
+Thanks for using our site!
+"""
