@@ -180,9 +180,7 @@ def profile(request, username, template_name="profiles/profile.html"):
     search_type_label = search_types[0][1][2]
 
     host_info = other_user.get_profile().get_host_info()
-    host_info = secure_wrap(host_info,user)
-
-    #host_info = TemplateSecureWrapper(host_info)
+    host_info = secure_wrap(host_info, user)
 
     see_host_info = False
 
@@ -192,7 +190,7 @@ def profile(request, username, template_name="profiles/profile.html"):
     except :
         pass # can't see host_info
 
-
+    host_info = TemplateSecureWrapper(host_info)
 
     return render_to_response(template_name, {
             "profile_form": profile_form,
@@ -218,6 +216,7 @@ def profile(request, username, template_name="profiles/profile.html"):
             "search_type_label":search_type_label,
             "search_types_len":search_types_len,
             "host_info":host_info, 
+            "see_host_info":see_host_info,
             }, context_instance=RequestContext(request))
 
 
