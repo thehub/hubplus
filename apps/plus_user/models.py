@@ -124,6 +124,7 @@ class HubspaceAuthenticationBackend :
 
 
 
+
 def patch_user_class():    
     User._meta.db_table = 'tg_user'
 
@@ -165,6 +166,8 @@ def patch_user_class():
     User.get_enclosure_set = get_enclosure_set
     User.is_group = lambda(self) : False
     User.save = user_save
+
+    User.is_admin_of = lambda self, group : self.is_member_of(group.get_admin_group())
    
     print "Monkey Patched User Class ... gulp!"
 

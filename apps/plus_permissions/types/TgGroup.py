@@ -235,6 +235,7 @@ def setup_defaults() :
                              'CreateComment':'all_members_group',
                              'CreateWikiPage':'context_agent',
                              'CreateResource':'context_agent',
+                             'CreateApplication':'all_members_group',
                              'Message':'context_agent',
                              'StatusViewer':'anonymous_group',
                              'GroupTypeEditor':'context_admin',
@@ -266,7 +267,7 @@ def setup_defaults() :
                          },
                    'Site' : 
                    {'defaults':
-                        {'create_Application':'anonymous_group',
+                        {'CreateApplication':'anonymous_group',
                          'ManagePermissions':'context_admin',
                          'CreateVirtual':'all_members_group',
                          'CreateHub':'context_admin',
@@ -275,9 +276,10 @@ def setup_defaults() :
                     },
                    'Application':
                        {'defaults' :
-                        {'Viewer':'all_members_group',
+                        {'Viewer':'context_admin',
                          'Editor':'creator',
-                         'Accept':'all_members_group',
+                         'Accept':'context_agent',
+                         'Reject':'context_admin',
                          'ManagePermissions':'context_admin',
                          'Unknown': 'context_admin',
                          },
@@ -295,7 +297,8 @@ def setup_defaults() :
                    'Link':
                        {'defaults' : 
                           { 'Viewer':'anonymous_group',
-                            'Manager':'creator',
+                            'Editor':'creator',
+                            'Delete':'context_agent',
                             'ManagePermissions':'context_admin',
                             'Unknown':'context_admin'
                           },
@@ -306,6 +309,7 @@ def setup_defaults() :
                           { 'Viewer': 'all_members_group',
                             'Editor':  'context_agent',
                             'Commentor': 'all_members_group',
+                            'Delete' : 'context_admin',
                             'Manager': 'context_agent',
                             'ManagePermissions':'context_admin',
                             'Unknown': 'context_admin',

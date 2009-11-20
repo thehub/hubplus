@@ -88,7 +88,10 @@ def group(request, group, template_name="plus_groups/group.html", current_app='p
 
     if user.is_authenticated():
         if user.is_direct_member_of(group.get_inner()):
-            leave = True
+            if not user.is_admin_of(group.get_inner()) or group.get_inner().get_admin_group() == group.get_inner() :
+                # can't leave a group you're the admin of *unless* the group is its own admin
+                # (without the second clause, you'd be trapped there forever)
+                leave = True
             try :
                 group.invite_member
                 invite = True

@@ -45,3 +45,9 @@ Dear {{first_name}} {{last_name}},
 Join and enter a worldwide community of social entrepreneurs and organizations concerned with making the world a better place."""
 
 
+APPLICATION_REJECT_TEMPLATE = """                                                    
+Dear {{first_name}} {{last_name}},                                                   
+
+Unfortunately, we can not accept you to become a member of Hub+ at this time.
+
+"""
