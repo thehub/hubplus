@@ -25,10 +25,11 @@ from apps.plus_permissions.api import site_context, secure_resource
 from apps.plus_groups.models import TgGroup
 from django.db import transaction
 
+from apps.plus_explore.views import get_hubs
+
 @login_required
 def list_of_applications(request, template_name="plus_contacts/applicant_list.html"):
     applications= Application.objects.plus_filter(request.user, status=PENDING)
-
 
     # filter the application so that if they're ALSO applications to groups, 
     # I only see the ones where I have permission to accept them to their chosen group
@@ -59,8 +60,6 @@ def accept_application(request,id) :
     application = Application.objects.plus_get(request.user, id=id)
 
     try :
-        # now approved ... we need to send a confirmation mail, however, for the moment, we'll just 
-        # create the login url and show it,
         # also, if the applicant already has an account, we can join him/her to a group
 
         if application.is_site_application() :
@@ -82,7 +81,7 @@ def accept_application(request,id) :
             except PlusPermissionsNoAccessException :
             
                 return render_to_response('no_permission.html', {
-                        'msg' : _("You don't have permission to accept this application into %" %application.group),
+                        'msg' : _("You don't have permission to accept this application into %(group)s" %{'group':application.group}),
                         'user' : request.user,
                         'resource' : "an application you can't see"
                         }, context_instance=RequestContext(request))
@@ -112,7 +111,6 @@ def split_name(username):
 
 
 
-
 @login_required
 @transaction.commit_on_success
 @site_context
@@ -124,10 +122,10 @@ def site_invite(request, site, template_name='plus_contacts/invite_non_member.ht
             form.clean()
             email_address = form.cleaned_data['email_address']
             if Contact.objects.filter(email_address=email_address):
-                print "We know this person as a contact"
+             
                 contact = Contact.objects.plus_get(request.user, email_address=email_address)
             else :
-                print "New contact"
+             
                 username, first_name, last_name = split_name(form.cleaned_data['username'])
                 # we don't really want to give "create_Contact" in general to this user
                 # just convenient to have a contact now ... hence site.get_inner
@@ -135,7 +133,8 @@ def site_invite(request, site, template_name='plus_contacts/invite_non_member.ht
                 contact = site.get_inner().create_Contact(request.user, 
                                     email_address = email_address, 
                                     first_name=first_name,
-                                    last_name=last_name)
+                                    last_name=last_name,
+                                    status=WAITING_USER_SIGNUP)
 
 
             if form.cleaned_data['group'] :
@@ -145,8 +144,7 @@ def site_invite(request, site, template_name='plus_contacts/invite_non_member.ht
                 group = None
 
             msg,url = contact.invite(site, request.user, request.get_host(), group=group)
-
-
+            
             return render_to_response('plus_contacts/dummy_email.html',
                                           {'url':url, 'message':msg},                                      
                                           context_instance=RequestContext(request))
@@ -156,7 +154,14 @@ def site_invite(request, site, template_name='plus_contacts/invite_non_member.ht
         
     return render_to_response(template_name, {
             'form':form,
+            'hubs':get_hubs(),
             }, context_instance=RequestContext(request))
                               
 
-    
+@login_required
+@transaction.commit_on_success
+@secure_resource(Application, required_interfaces=['Reject','Viewer'])
+def reject_application(request, application, template_name="plus_contacts/applicant_list.html", **kwargs) :
+    application.reject()
+    return HttpResponseRedirect(reverse('list_open_applications'))
+ 
