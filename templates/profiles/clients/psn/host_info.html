@@ -3,10 +3,13 @@
 
 <dev class="host_info">
 
-  <h3>{% trans "Host Information" %}</h3>
+  <h3>{% trans "Private Questions" %}</h3>
     <ul class="yui-skin-sam">
       <li>
-         <!-- {    % editable 'project' host_info 'project' 'what' %} -->
+         {% editable 'How did you find out about the network?' host_info 'find_out' 'I heard about the network ...' %}
+         {% editable "What's your aim for the next six months?" host_info 'project' 'I am planning ...' %}
+         {% editable "What would you like to get from being involved in the network?'" host_info 'project_stage' 'I am looking for ...' %}
+
       </li>
     </ul>
 
