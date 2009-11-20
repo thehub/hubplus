@@ -23,9 +23,14 @@
     <fieldset>
       <ul>
 	<li>
-	  <label for="id_username"><span class="required">*</span> Name</label>
-	  <input  id="id_username" name="username" class="text" type="text" value="{{form.data.username}}"/>
-	  {{ form.username.errors }}
+	  <label for="id_first_name"><span class="required">*</span>First Name</label>
+	  <input  id="id_first_name" name="first_name" class="text" type="text" value="{{form.data.first_name}}"/>
+	  {{ form.first_name.errors }}
+	</li>
+	<li>
+	  <label for="id_last_name"><span class="required">*</span>Last Name</label>
+	  <input  id="id_last_name" name="last_name" class="text" type="text" value="{{form.data.last_name}}"/>
+	  {{ form.last_name.errors }}
 	</li>
 	<li>
 	  <label for="id_email_address"><span class="required">*</span> Email</label>
@@ -110,8 +115,8 @@
 	      jq("#which_hub").toggle();
 	//.attr("disabled","disabled");
 	    });
-            jq('#signup_form').validate('{% url signup_form_validate %}', {type: 'table', fields: ['username'], dom: jq('#id_username'), event: 'change'});
-            jq("#id_username").focus();
+            jq('#signup_form').validate('{% url signup_form_validate %}', {type: 'table', fields: ['first_name'], dom: jq('#id_first_name'), event: 'change'});
+            jq("#id_first_name").focus();
 	    
         });
 	jq("#which-hub").hide();

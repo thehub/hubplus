@@ -10,7 +10,6 @@ from django.conf import settings
 
 from apps.plus_contacts.status_codes import WAITING_USER_SIGNUP
 from apps.plus_permissions.proxy_hmac import attach_hmac 
-
 import datetime
 
 from django.utils.translation import ugettext_lazy as _
@@ -168,7 +167,6 @@ django.db.models.fields.related.create_many_related_manager = create_many_relate
 
 
 try :
-
     class TgGroup(models.Model):
         
         class Meta:
@@ -324,6 +322,19 @@ try :
 
         child_groups = models.ManyToManyField('self', symmetrical=False, related_name='parent_groups')
 
+        def group_app_label(self):
+            from apps.plus_lib.utils import hub_name
+            try:
+                if self.place.name == settings.VIRTUAL_HUB_NAME:
+                    group_label = "group"
+                else:
+                    group_label = hub_name().lower()
+            except Location.DoesNotExist:
+                group_label = "group"
+            group_app_label = group_label + 's'
+            return group_app_label
+
+
     
 except Exception, e:
     print "##### %s" % e
@@ -356,13 +367,16 @@ def is_member_of(self, group, already_seen=None) :
 TgGroup.is_member_of = is_member_of
 
 # to be added to User class
-def get_enclosures(self) :
+def get_enclosures(self, levels=None) :
     """Give us all the things of which this user/group is a member_of
     """
+    if levels == None:
+        levels = ['member', 'host']
+
     if isinstance(self, User):
-        return self.tggroup_set.filter(level__in=['member', 'host'])
+        return self.tggroup_set.filter(level__in=levels)
     elif isinstance(self, TgGroup):
-        return self.parent_groups.filter(level__in=['member', 'host'])
+        return self.parent_groups.filter(level__in=levels)
 
 TgGroup.get_enclosures = get_enclosures
 

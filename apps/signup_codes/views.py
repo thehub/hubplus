@@ -86,9 +86,8 @@ def proxied_signup(request, application, form_class=SignupForm,
             username = form.cleaned_data['username']
             password = form.cleaned_data['password1']
 
-            application.applicant.become_member(username, accepted_by=sponsor, password = password)
+            application.applicant.become_member(username, accepted_by=sponsor, password=password)
             user = authenticate(username=username, password=password)
-            display_name = application.applicant.get_display_name()
             
             auth_login(request, user)
             user.message_set.create(
@@ -103,9 +102,7 @@ def proxied_signup(request, application, form_class=SignupForm,
 
             #application.delete()
             return HttpResponseRedirect(success_url)
-        else :
 
-            print form.errors
     else:
 
         form = form_class()
@@ -113,11 +110,10 @@ def proxied_signup(request, application, form_class=SignupForm,
         applicant = application.get_inner().applicant
         if applicant :
             form.data['email_address'] = applicant.email_address
-            form.data['username'] = applicant.first_name
-            if applicant.last_name :
-                form.username = form.username + '.' + applicant.last_name
-            
-            display_name = form.data['username']
+            form.data['first_name'] = applicant.first_name
+            form.data['last_name'] = applicant.last_name 
+            form.data['username'] = applicant.first_name.lower() + '.' + applicant.last_name.lower()  #normalize and uniquify
+            display_name = form.data['first_name'] + ' ' + form.data['last_name']
         else :
             form.email_address = ''
             form.username = ''
@@ -158,5 +154,3 @@ def admin_invite_user(request, form_class=InviteUserForm,
         "title": "Invite user",
         "form": form,
     }, context_instance=RequestContext(request))
-
-

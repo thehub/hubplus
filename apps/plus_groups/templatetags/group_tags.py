@@ -13,19 +13,10 @@ register = template.Library()
 def show_group(context, group):
     #group = TemplateSecureWrapper(group)
     no_of_members = group.get_no_members()
-    try:
-        if group.place.name == settings.VIRTUAL_HUB_NAME:
-            group_label = "group"
-        else:
-            group_label = hub_name().lower()
-    except Location.DoesNotExist:
-        group_label = "group"
-    
-
-    urlvar = group_label + u's:group'
+    group_app_label = group.group_app_label()
+    urlvar = group_app_label + u':group'
     group_url = reverse(urlvar, args=[group.id])
-    
-    return {"group": group, "no_of_members":no_of_members, "group_label":group_label, "group_url":group_url}
+    return {"group": group, "no_of_members":no_of_members, "group_label":group_app_label, "group_url":group_url}
 register.inclusion_tag("group_item.html", takes_context=True)(show_group)
 
 

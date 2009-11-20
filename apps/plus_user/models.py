@@ -133,7 +133,7 @@ def patch_user_class():
     User.add_to_class('email_address', models.CharField(max_length=255,unique=True))
     del User.groups
     #User.add_to_class('active',models.SmallIntegerField(null=True)) # not shown
-    User.add_to_class('display_name', models.CharField(max_length=255,null=True))
+    #User.add_to_class('display_name', models.CharField(max_length=255,null=True))
 
     User.add_to_class('description', models.TextField())
     User.add_to_class('organisation', models.CharField(max_length=255)) 

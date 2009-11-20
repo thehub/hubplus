@@ -38,6 +38,9 @@ from django.contrib.contenttypes.models import ContentType
 from apps.plus_resources.models import get_permissioned_resources_for
 import itertools
 
+
+
+
 #separate params for searches
 
 @secure_resource(TgGroup)
