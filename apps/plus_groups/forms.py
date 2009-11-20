@@ -20,6 +20,7 @@ from django.core.urlresolvers import reverse
 
 
 
+
 PERMISSION_OPTIONS = (
     (u'public', u'Public'),
     (u'open', u'Open'),
@@ -70,7 +71,8 @@ class TgGroupForm(forms.Form):
     
     name = forms.CharField(max_length=60)
     group_type = forms.ChoiceField(choices=settings.GROUP_TYPES)
-    description = forms.CharField()
+    description = HTMLField()
+
     address = forms.CharField(required=False)
     location = forms.CharField(required=False)
     permissions_set = forms.ChoiceField(choices=PERMISSION_OPTIONS)
