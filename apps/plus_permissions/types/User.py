@@ -31,7 +31,7 @@ def create_user(user_name, email_address, password='dummy', permission_prototype
         setup_user_security(user, permission_prototype)
 
         user.create_Profile(user,user=user)
-
+        user.create_HostInfo(user,user=user)
     return user
 
 
