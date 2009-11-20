@@ -80,9 +80,9 @@ def accept_application(request,id) :
             
                 return HttpResponseRedirect(reverse('list_open_applications'))
             except PlusPermissionsNoAccessException :
-            
+                
                 return render_to_response('no_permission.html', {
-                        'msg' : _("You don't have permission to accept this application into %" %application.group),
+                        'msg' : _("You don't have permission to accept this application"),
                         'user' : request.user,
                         'resource' : "an application you can't see"
                         }, context_instance=RequestContext(request))
