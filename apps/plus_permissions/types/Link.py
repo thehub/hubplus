@@ -20,11 +20,15 @@ class LinkEditor:
 class LinkDelete :
     delete = InterfaceCallProperty
 
+class LinkManager :
+    delete = InterfaceCallProperty
+
 from apps.plus_permissions.models import add_type_to_interface_map
 LinkInterfaces = {
     'Viewer' : LinkViewer, 
     'Editor' : LinkEditor,
-    'Delete' : LinkDelete,  }
+    'Delete' : LinkDelete,  
+    'Manager' : LinkManager}
 add_type_to_interface_map(Link, LinkInterfaces)
 
 
