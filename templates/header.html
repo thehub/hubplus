@@ -10,7 +10,7 @@
 
 		<ul id="account_navigation" style="">
 			{% if user.is_authenticated %}
-				<li class="first"><span>{% openid_icon openid user %}{% trans "Welcome" %} <a href="{% url profile_detail user.username %}">{{ user.get_display_name }}</a></span></li>
+				<li class="first"><span>{% openid_icon openid user %}{% trans "Welcome" %} <a href="{% url profile_detail user.username %}">{{user.get_display_name}}</a></span></li>
 				<li><a href="{% url profile_detail user.username %}">{% trans "Profile" %}</a></li>
 				<li><a href="{% url messages_all %}">{% trans "Inbox" %}</a></li>
 				<li class="disabled"><a href="{% url acct_email %}">{% trans "Settings" %}</a></li>
@@ -18,7 +18,7 @@
 				{% else %} 
 				<li class="first"><a href="{% url acct_apply %}">{% trans "Apply to join" %}</a></li>
 				<li><span>{% trans "or" %}</span></li>
-				<li class="last"><a href="{% url acct_login %}">{% trans "Log in" %}</a></li>
+				<li class="last"><a href="{% url acct_login %}?next={{request.get_full_path}}">{% trans "Log in" %}</a></li>
 			{% endif %}
 		</ul>
 		{% endblock %}

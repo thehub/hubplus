@@ -31,7 +31,8 @@ from plus_permissions.default_agents import get_site, get_admin_user
 from plus_groups.models import TgGroup
 
 
-alnum_re = re.compile(r'^[\w\.\s]+$')
+alnum_re = re.compile(r'^[\w\s]+$')
+ascii_re = re.compile(r'^[a-z0-9A-Z\.]+$')
 
 class LoginForm(forms.Form):
 
@@ -75,7 +76,7 @@ class SignupForm(forms.Form):
     confirmation_key = forms.CharField(max_length=40, required=False, widget=forms.HiddenInput())
 
     def clean_username(self):
-        if not alnum_re.search(self.cleaned_data["username"]):
+        if not ascii_re.search(self.cleaned_data["username"]):
             raise forms.ValidationError(_("Usernames can only contain letters, numbers and underscores."))
         try:
             user = User.objects.get(username__iexact=self.cleaned_data["username"])
@@ -360,7 +361,9 @@ class TwitterForm(UserForm):
 
 class HubPlusApplicationForm(forms.Form):
 
-    username = forms.CharField(label=_("Username"), max_length=30, widget=forms.TextInput())
+    #username = forms.RegexField(regex=ascii_re, label=_("Username"), max_length=30, widget=forms.TextInput(), error_messages={'invalid': 'Username must only contain a-z, 0-9 and "."'})
+    first_name = forms.RegexField(regex=alnum_re, label=_("First Name"), max_length=30, widget=forms.TextInput(), error_messages={'invalid': 'Name must only contain alphabetic character'})
+    last_name = forms.RegexField(regex=alnum_re, label=_("Last Name"), max_length=30, widget=forms.TextInput(), error_messages={'invalid': 'Name must only contain alphabetic character'})
     email_address = forms.EmailField(label=_("Email (required)"), required=True, widget=forms.TextInput())
 
     organisation = forms.CharField(label=_("Organisation"),required=False,widget=forms.TextInput())
@@ -371,15 +374,14 @@ class HubPlusApplicationForm(forms.Form):
     find_out = forms.CharField(label=_("How did you find out about the Hub?"), required=True, widget=forms.TextInput())
     group = forms.CharField(label=_("A group you'd like to join (Optional)"), required=False, widget=forms.TextInput())
 
-    def clean_username(self):
-        if not alnum_re.search(self.cleaned_data["username"]):
-            raise forms.ValidationError(_("Usernames can only contain letters, numbers and underscores."))
-        users = User.objects.filter(username__iexact=self.cleaned_data["username"])
-        if users :
-            user = users[0]
-        else :
-            return self.cleaned_data["username"]
-        raise forms.ValidationError(_("This username is already taken. Please choose another."))
+    #def clean_username(self):
+    #    username = self.cleaned_data["username"].lower()
+    #    users = User.objects.filter(username__iexact=username)
+    #    contacts = Contact.objects.filter(username__iexact=username)
+    #    if users or contacts:
+    #        raise forms.ValidationError(_("This username is already taken. Please choose another."))
+    #    else :
+    #        return self.cleaned_data["username"]
 
 
     def clean_group(self) :
@@ -395,46 +397,35 @@ class HubPlusApplicationForm(forms.Form):
     def clean_email_address(self) :
         email = self.cleaned_data['email_address']
         users = User.objects.filter(email_address=email)
-        if users :
+        if users:
             raise forms.ValidationError(_("That email is already taken. Please choose another."))
         return email
 
     def clean(self):
         return self.cleaned_data
 
-        
     def save(self, user):
-
-        username = self.cleaned_data["username"]
-        email = self.cleaned_data["email_address"]
-        if username.find(' ') > 0 :
-            
-            first_name, last_name = (username.rsplit(' ',1)) # note that if users need > 2 names, we have to do something
-            username = '%s.%s' % (first_name,last_name)
-        else : 
-            first_name=username
-            last_name = ''
-        
         site = get_site(get_admin_user())
-
-        if Contact.objects.filter(email_address=email).count() < 1 :
-            contact= site.create_Contact(user, email_address=email)
-            contact = contact.get_inner()
-            contact.first_name = first_name
-            contact.last_name = last_name
-            contact.username = username
-            contact.find_out = self.cleaned_data["find_out"]
-            contact.email_address = email
-            contact.location = self.cleaned_data["location"]
-            contact.save()
-        else :
-            contact = Contact.objects.get(email_address=email)
+        ##see validator "clean_email_address" this cannot happen
+        #if Contact.objects.filter(email_address=email).count() < 1 :
+        group = self.cleaned_data.pop('group')
+        about_and_why = self.cleaned_data.pop("about_and_why"),
+        contact= site.create_Contact(user, **self.cleaned_data)
+        #contact = contact.get_inner()
+        #contact.first_name = self.cleaned_data['first_name']
+        #contact.last_name = self.cleaned_data['last_name']
+        #contact.find_out = self.cleaned_data["find_out"]
+        #contact.email_address = self.cleaned_data["email_address"]
+        #contact.location = self.cleaned_data["location"]
+        #contact.save()
+        #else :
+        #    contact = Contact.objects.get(email_address=email)
 
 
         application = site.create_Application(user, applicant=contact,
-                                       request=self.cleaned_data["about_and_why"],
-                                       group=self.cleaned_data["group"])
+                                       request=about_and_why,
+                                       group=group)
 
-        return contact, application
+        return contact, application, group
         
 

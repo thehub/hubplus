@@ -47,11 +47,4 @@
   
 </div>
 -->
-<div id="feature_search" class="site_block">
-  <h3>{% trans "Search" %}</h3>
-  <form>
-    <input name="search_term" type="text" class="text" /> <input class="button" type="submit" value="Search" /><br />
-    <input name="current_area" type="checkbox" checked="checked" /> This group only<br />
-    
-  </form>
-</div>
+{% include "plus_explore/side_search.html" %}

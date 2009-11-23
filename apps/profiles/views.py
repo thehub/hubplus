@@ -131,20 +131,20 @@ def profile(request, username, template_name="profiles/profile.html"):
     previous_invitations_to = FriendshipInvitation.objects.filter(to_user=other_user, from_user=request.user)
     previous_invitations_from = FriendshipInvitation.objects.filter(to_user=request.user, from_user=other_user)
     
-    if is_me:
-        if request.method == "POST":
-            if request.POST["action"] == "update":
-                profile_form = ProfileForm(request.POST, instance=other_user.get_profile())
-                if profile_form.is_valid():
-                    profile = profile_form.save(commit=False)
-                    profile.user = other_user
-                    profile.save()
-            else:
-                profile_form = ProfileForm(instance=other_user.get_profile())
-        else:
-            profile_form = ProfileForm(instance=other_user.get_profile())
-    else:
-        profile_form = None
+    #if is_me:
+    #    if request.method == "POST":
+    #        if request.POST["action"] == "update":
+    #            profile_form = ProfileForm(request.POST, instance=other_user.get_profile())
+    #            if profile_form.is_valid():
+    #                profile = profile_form.save(commit=False)
+    #                profile.user = other_user
+    #                profile.save()
+    #        else:
+    #            profile_form = ProfileForm(instance=other_user.get_profile())
+    #    else:
+    #        profile_form = ProfileForm(instance=other_user.get_profile())
+    #else:
+    #    profile_form = None
 
     interests = get_tags(tagged=other_user.get_profile(), tagged_for=other_user, tag_type='interest')
     skills = get_tags(tagged = other_user.get_profile(), tagged_for=other_user, tag_type='skill')
@@ -192,8 +192,10 @@ def profile(request, username, template_name="profiles/profile.html"):
 
     host_info = TemplateSecureWrapper(host_info)
 
+    member_of = [(g.group_app_label() + ':group', g) for g in other_user.get_enclosures(levels=['member']).exclude(group_name='all_members')]
+    host_of = [(g.group_app_label() + ':group', g) for g in other_user.get_enclosures(levels=['host']).exclude(group_name='all_members_hosts')]
+
     return render_to_response(template_name, {
-            "profile_form": profile_form,
             "is_me": is_me,
             "is_friend": is_friend,
             "is_following": is_following,
@@ -211,6 +213,8 @@ def profile(request, username, template_name="profiles/profile.html"):
             "interests" : interests,
             "other_user_tweets" : other_user_tweets,
             "permissions":perms_bool,
+            "member_of":member_of,
+            "host_of":host_of,
             "search_type":search_type,
             "search_types":search_types,
             "search_type_label":search_type_label,

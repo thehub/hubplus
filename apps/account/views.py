@@ -344,22 +344,22 @@ def apply(request, form_class=HubPlusApplicationForm,
     if request.method == "POST":
         form = form_class(request.POST)
         if form.is_valid():
-            contact, application = form.save(user)
+            contact, application, group = form.save(user)
             return render_to_response('plus_contacts/application_thanks.html',{
-                    'group' : form.cleaned_data['group'],
-                    "head_title" : 'Thanks for your application',
+                    'group' : group,
+                    "head_title" : _('Thanks for your application'),
                     "head_title_status" : '',
  
             },context_instance=RequestContext(request))
 
         else :
-            print "invalid form"
+            pass
     else:
         form = form_class()
     return render_to_response(template_name, {
         "form": form,
         "hubs":hubs,
-        "head_title": "Like to join us?",
+        "head_title": _("Like to join us?"),
         "head_title_status" : '',
  
     }, context_instance=RequestContext(request))
