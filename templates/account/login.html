@@ -28,7 +28,7 @@
 
         <li>
           <div class="label">
-            <label for="id_username"><span class="required">*</span> Username</label>
+            <label for="id_username"><abbr class="required" title="required">*</abbr> Username</label>
           </div>
           <div class="input">
             <input id="id_username" type="text" class="text" name="username" maxlength="30" />
@@ -38,7 +38,7 @@
 
         <li>
           <div class="label">
-            <label for="id_password"><span class="required">*</span> Password</label>
+            <label for="id_password"><abbr class="required" title="required">*</abbr> Password</label>
           </div>
           <div class="input">
             <input type="password" name="password" type="text" class="text" id="id_password" />
@@ -63,8 +63,7 @@
     <fieldset class="buttons">
 
       <input type="submit" class="submit button" value="{% trans 'Log in' %}" />
-      <span>or</span>
-      <a href="{% url acct_apply %}">{% trans "Apply to join" %}</a>
+      <span class="alternative">or <a href="{% url acct_apply %}">{% trans "Apply to join" %}</a></span>
 
     </fieldset>
 
