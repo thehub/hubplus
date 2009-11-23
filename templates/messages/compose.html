@@ -9,7 +9,8 @@
 	<li> 
 	  <dl>
 	    <dt><label for="message_recipient"><span class="required">*</span> {% trans 'To' %}</label></dt>
-	    <dd><input type="text" id="message_recipient" name="recipient" value="{{form.data.recipient}}"/>
+	    <dd>
+	      {{form.recipient}} 
 	      <!-- error here -->
 	    </dd>
 	  </dl>
