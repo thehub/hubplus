@@ -25,9 +25,7 @@ def add_get_display_name(cls) :
     # display_name and we don't want to hide it 
     def get_display_name(self) :
         try : 
-            self.first_name
-            self.last_name
-            if self.first_name and self.last_name :
+            if self.first_name and self.last_name:
                 return '%s %s' % (self.first_name, self.last_name)
         except :
             pass

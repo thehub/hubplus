@@ -23,13 +23,16 @@ import datetime
 from django.db.models.signals import post_save
 
 from django.template import Template, Context
+from django.utils.translation import ugettext, ugettext_lazy as _
+
+
 
 class Contact(models.Model):
     """Use this for the sign-up / invited sign-up process, provisional users"""
     first_name = models.CharField(max_length=60)
     last_name = models.CharField(max_length=60)
     organisation = models.CharField(max_length=255)
-    email_address = models.CharField(max_length=255,unique=True)
+    email_address = models.CharField(max_length=255)  # unique=True) --> removing this requirement, I don't see why there can't be the same contact in more than user's contacts. Also it should be possible for a user to make more than one application e.g. to two different groups. We should then validate when creating users that the email address used isn't that of an existing user.
     location = models.CharField(max_length=100)
     apply_msg = models.TextField()
     find_out = models.TextField()
@@ -49,7 +52,6 @@ class Contact(models.Model):
         u = create_user(username, self.email_address)
         if password:
             u.set_password(password)
-        u.save()
         p = u.get_profile()
         p.first_name = self.first_name
         p.last_name = self.last_name
@@ -64,7 +66,7 @@ class Contact(models.Model):
         h.find_out = self.find_out
         p.save()
         h.save()
-
+        u.save()
         get_all_members_group().add_member(u)
 
         # do we want to delete the Contact if it becomes a User?
@@ -80,28 +82,20 @@ class Contact(models.Model):
         url = attach_hmac("/signup/%s/" % id, sponsor)
         url = 'http://%s%s' % (site_root, url)
 
-        message = message + """
+        message = message + _("""
 
-Please visit the following link to confirm your account : %s""" % url
+Please visit the following link to confirm your account : %(url)s""") % {'url': url}
 
-        try :
-
-            send_mail(title, message, settings.CONTACT_EMAIL,
+        send_mail(title, message, settings.CONTACT_EMAIL,
                   [self.email_address], fail_silently=False)
-            print "Email sent to %s" % self.email_address
-        except Exception, e :
-            print settings.EMAIL_HOST, settings.EMAIL_PORT
-            print e
-
         return message, url
 
-
     def accept_mail(self, sponsor, site_root, application_id):
-        message = """
-Dear %s %s
-We are delighted to confirm you have been accepted as a member of MHPSS
-""" % (self.first_name, self.last_name)
-        return self.send_link_email("Confirmation of account on MHPSS", message, sponsor, site_root, application_id)
+        message = _("""
+Dear %(first)s %(last)s
+We are delighted to confirm you have been accepted as a member of %(site)s
+""") % {'first':self.first_name, 'last':self.last_name, 'site':settings.SITE_NAME}
+        return self.send_link_email(_("Confirmation of account on %(site)s") % {'site':settings.SITE_NAME}, message, sponsor, site_root, application_id)
 
     def invite_mail(self, sponsor, site_root, application_id) :
         message = Template(settings.INVITE_EMAIL_TEMPLATE).render(
@@ -124,9 +118,9 @@ We are delighted to confirm you have been accepted as a member of MHPSS
 class Application(models.Model) :
     applicant_content_type = models.ForeignKey(ContentType,related_name='applicant_type')
     applicant_object_id = models.PositiveIntegerField()
-    applicant = generic.GenericForeignKey('applicant_content_type', 'applicant_object_id')
+    applicant = generic.GenericForeignKey('applicant_content_type', 'applicant_object_id') # either user or contact
     
-    group = models.ForeignKey(TgGroup,null=True)
+    group = models.ForeignKey(TgGroup, null=True)
     request = models.TextField()
     status = models.PositiveIntegerField(default=PENDING)
 
@@ -150,13 +144,18 @@ class Application(models.Model) :
             return False
 
     def accept(self,sponsor,site_root,**kwargs) :
-
         self.status = WAITING_USER_SIGNUP
         if kwargs.has_key('admin_comment') :
             self.admin_comment = kwargs['admin_comment']
             self.accepted_by = sponsor
         self.save()
         return self.applicant.accept_mail(sponsor, site_root, self.id)
+
+    def reject(self) :
+        message = message + _(settings.APPLICATION_REJECT_TEMPLATE) % {'first': self.applicant.first_name, 'last': self.applicant.last_name}
+        send_mail(title, message, settings.CONTACT_EMAIL,
+                  [self.email_address], fail_silently=False)
+        self.delete()
 
 
     def get_approvers(self):
