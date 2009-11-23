@@ -107,12 +107,22 @@ form.page .message_body textarea {
 }
 
 
-
 /* Form Related Elements */
 
 p.note {
 	color		: #888888;
 }
+
+abbr {
+    border		: 0;
+}
+
+abbr.required {
+	color		: #5a0000;
+	font-size	: 1.2em;
+	line-height	: 0em;
+}
+
 
 /* Form: Full Size NEW */
 
@@ -192,9 +202,14 @@ form.full_block .unlabelled {
 	padding-left: 240px;
 }
 
-form.full_block .button {
+form.full_block .buttons .button {
 	margin-bottom	: 3px;
 }
+
+form.full_block .buttons .alternative {
+    color       : #888;
+}
+
 
 
 /* Forms: Full Size */
@@ -330,6 +345,7 @@ form fieldset .checkboxes select {
 	background	: #e8e8e8 url('../images/button_bg.gif') 0 0 repeat-x;
 	border		: 1px solid #bbb;
 	border-color: #bbb #999 #999 #bbb;
+    color       : #222;
 	cursor		: pointer;
 	padding		: 3px 5px 3px;	
 	text-transform	: uppercase;
