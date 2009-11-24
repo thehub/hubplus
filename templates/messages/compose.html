@@ -20,6 +20,7 @@
 	          {% autocomplete_user_form %}
 	      {% endif %}
 
+	      {{form.recipient.errors}}
 	    </dd>
 	  </dl>
 	</li>
@@ -27,7 +28,7 @@
 	  <dl>
 	    <dt><label for="message_subject"><span class="required">*</span> {% trans 'Subject' %}</label></dt>
 	    <dd>
-	      <input type="text" id="message_subject" name="subject"/>
+	      <input type="text" id="message_subject" name="subject" value="{{form.data.subject}}"/>
 	      <!-- error here -->
 
 	  </dl>
@@ -37,7 +38,7 @@
 	<li>
 	  <dl>
 	    <dt><label for="message_content"><span class="required">*</span> Body</label></dt>
-	    <dd><textarea name="body" cols="55" rows="12" id="message_content"></textarea></dd>
+	    <dd><textarea name="body" cols="55" rows="12" id="message_content">{{form.data.body}}</textarea></dd>
 	  </dl>
 	</li>
       </ul>
