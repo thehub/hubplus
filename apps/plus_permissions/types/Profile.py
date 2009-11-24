@@ -28,6 +28,7 @@ class ProfileViewer:
     title = InterfaceReadProperty
     get_display_name = InterfaceCallProperty
 
+    cc_messages_to_email = InterfaceReadProperty
 
 class ProfileEmailAddressViewer:
     email_address = InterfaceReadProperty
@@ -74,6 +75,8 @@ class ProfileEditor:
     skype_id = InterfaceWriteProperty
     sip_id = InterfaceWriteProperty
     homeplace = InterfaceWriteProperty
+
+    cc_messages_to_email = InterfaceWriteProperty
 
 
 
