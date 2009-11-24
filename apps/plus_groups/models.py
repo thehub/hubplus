@@ -234,10 +234,10 @@ try :
         def leave(self, user):
             return self.remove_member(user)
 
-        def message_members(self, sender, message_header, message_body) :
+        def message_members(self, sender, message_header, message_body, domain) :
             from apps.plus_lib.utils import message_user
             for member in self.get_users() :
-                message_user(sender, member, message_header, message_body)
+                message_user(sender, member, message_header, message_body, domain)
 
         def is_group(self) : return True
 

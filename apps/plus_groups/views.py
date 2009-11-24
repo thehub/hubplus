@@ -315,7 +315,7 @@ def message_members(request, group, current_app='plus_groups', **kwargs) :
     if request.POST :
         form = TgGroupMessageMemberForm(request.POST)
         if form.is_valid() :
-            group.message_members(request.user, form.data['message_header'], form.data['message_body'])
+            group.message_members(request.user, form.data['message_header'], form.data['message_body'], request.get_host())
             message = _("You have successfully messaged everyone in %(group_name)s") % {'group_name':group.get_display_name()}
             request.user.message_set.create(message=message)
             return HttpResponseRedirect(reverse(current_app + ':group',args=(group.id,)))
