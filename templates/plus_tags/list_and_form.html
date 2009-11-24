@@ -1,5 +1,5 @@
-<dt>{{label}}</dt>
-<dd class="tag_manager" id="{{tag_type}}">
+<div class="label">{{label}}</div>
+<div class="input tag_manager" id="{{tag_type}}">
   <ul class="tag_list">
     {% for t in tags %}
     <li {% if forloop.first %}class="first"{% endif %}><a href="{% url explore_filtered  t.keyword  %}" class="tag option">{{t.keyword}}</a>
@@ -16,6 +16,6 @@
     <input class="button add_tag" type="submit" value="Add" />
   </div> 
   <span class="error_message"></span>
-  <span class="extra">Keep your tags short and concise</span>
+  <p class="note">Keep your tags short and concise</p>
 
-</dd>
+</div>

@@ -1,50 +1,92 @@
 {% load i18n %}
 
 <h2>{% trans "Add new" %}</h2>
-<div id="add_form">
-  <form class="full block" method="POST" action="{% url plus_groups:add_content_object %}">
-    <h4>{% trans "Create new content" %}<!--  in Sexy Salad Club  --><!-- <img style="margin-bottom: 5px;" src="images/dropdown.gif" /> --><!-- <a href="add_content2.html" style="font-size: .6em; line-height: 1em;">Change group/Hub</a> --></h4>
-    <p>Here you can add new pages and files, simply give it a title and choose which group or {{HUB_NAME}} to put it.</p>
-    <fieldset>
-      <ul>
-	<li>
-	  <label for="title">{% trans "Title" %} <span class="required">*</span></label>
-	  <input name="title" id="title" class="text" type="text" value="{{form.data.title}}" />
-	  {% if form.errors.title %}<span class="error">{{form.errors.title|safe}}<span>{% endif %}
-	</li>
-      </ul>
-      <label>{% trans "Add this to" %} <span class="required">*</span></label>
-      <ul class="checkboxes">
-	<li {% if can_add %}{% else %}class="hidden"{% endif %}>
-	  <div class="label_extended">
-	    <label><span id="group_display_name">{{group.display_name}}</span><a id="change_group" href="#">  – {% trans "Change group/Hub" %}</a></label>
-            <input name="group" value="{{group.id}}" id="group_input" type="hidden" />
-	  </div> 
-	</li>
-	<li id="auto_change_group" {% if can_add %}class="hidden"{% endif %}>
-	  <div class="label_extended">
-	    <input id="autocomplete_group"  class="text" type="text" />
-	    <span class="extra">{% blocktrans %}Choose a group or {{HUB_NAME}} to add to{% endblocktrans %}</span>
-	  </div>
-	</li>	
-      </ul>
-      <ul {% if can_add %}{% else %}class="hidden"{% endif %}>
-	<li>
-	  <label><span class="required">*</span> {% trans "Type of content" %} </label>
-	  <ul id="choose_type" class="checkboxes">
-	    {% for create_interface, label, sub_title, active in possible_interfaces %}
-	    <li id="{{create_interface}}" {% if active %}{% else %}class="cannot_add" disabled="disabled"{% endif %}>
-	      <input  id="{{label}}" name="create_iface" class="radio" value="{{create_interface}}" type="radio" {% if form.data.create_iface %}{% ifequal form.data.create_iface create_interface %}checked="checked"{% endifequal %}{% else %}{% if forloop.first %}checked="checked"{% endif %}{% endif %} />
-	      <label for="{{label}}">{{label}}<span class="extra">{{sub_title}}</span></label>
-	    </li>
-	    {% endfor %}
-	  </ul>
-	</li>
-      </ul>
-      
-    </fieldset>
-    <input id="create_content" {% if can_add %}{% else %}disabled="disabled"{% endif %} class="{% if can_add %}{% else %}disabled {% endif %}submit button" type="Submit" value="{% trans 'Create' %}" />
-  </form>
-  
-</div>
+<div id="add_form" class="block">
 
+	<form class="full_block" method="POST" action="{% url plus_groups:add_content_object %}">
+
+		<h4>{% trans "Create new content" %}</h4>
+		<p>Here you can add new pages and files, simply give it a title and choose which group or {{HUB_NAME}} to put it.</p>
+
+		<fieldset>
+
+			<ul>
+
+				<li>
+					<div class="label">
+						<label for="title"><abbr class="required" title="required">* </abbr>{% trans "Title" %}</label>
+					</div>
+					<div class="input">
+						<input name="title" id="title" class="text" type="text" value="{{form.data.title}}" />
+						{% if form.errors.title %}<p class="error">{{form.errors.title|safe}}<p>{% endif %}
+					</div>
+				</li>
+
+			</ul>
+
+		</fieldset>
+		<fieldset>
+
+			<ul>
+
+				<li>
+					<div class="label">
+						<label><abbr class="required" title="required">* </abbr>{% trans "Add this to" %}</label>
+					</div>
+					<div class="input">
+						<ul class="checkboxes">
+							<li {% if can_add %}{% else %}class="hidden"{% endif %}>
+								<div class="label_extended">
+									<label><span id="group_display_name">{{group.display_name}}</span><a id="change_group" href="#">  – {% trans "Change group/Hub" %}</a></label>
+									<input name="group" value="{{group.id}}" id="group_input" type="hidden" />
+								</div> 
+							</li>
+							<li id="auto_change_group" {% if can_add %}class="hidden"{% endif %}>
+								<div class="label_extended">
+									<input id="autocomplete_group"  class="text" type="text" />
+									<p class="note">{% blocktrans %}Choose a group or {{HUB_NAME}}.{% endblocktrans %} <a href="{% url help %}#adding_resources">{% trans "More info..." %}</a></p>
+								</div>
+							</li>
+						</ul>
+					</div>
+				</li>
+
+			</ul>
+
+		</fieldset>
+		<fieldset {% if can_add %}{% else %}class="hidden"{% endif %}>
+
+			<ul>
+
+				<li>
+					<div class="label">
+						<label><abbr class="required" title="required">* </abbr>{% trans "Type of content" %}</label>
+					</div>
+					<div class="input checkboxes">
+						<ul id="choose_type">
+							{% for create_interface, label, sub_title, active in possible_interfaces %}
+							<li id="{{create_interface}}" {% if active %}{% else %}class="cannot_add" disabled="disabled"{% endif %}>
+								<div class="label">
+									<label for="{{label}}">{{label}}</label>
+									<p class="note">{{sub_title}}</p>
+								</div>
+								<input  id="{{label}}" name="create_iface" class="radio" value="{{create_interface}}" type="radio" {% if form.data.create_iface %}{% ifequal form.data.create_iface create_interface %}checked="checked"{% endifequal %}{% else %}{% if forloop.first %}checked="checked"{% endif %}{% endif %} />
+							</li>
+							{% endfor %}
+						</ul>
+					</div>
+				</li>
+
+			</ul>
+
+		</fieldset>
+
+	    <fieldset class="buttons">
+
+			<input id="create_content" {% if can_add %}{% else %}disabled="disabled"{% endif %} class="{% if can_add %}{% else %}disabled {% endif %}submit button" type="Submit" value="{% trans 'Create' %}" />
+
+		</fieldset>
+
+	</form>
+
+</div>
