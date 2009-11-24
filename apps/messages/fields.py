@@ -31,7 +31,7 @@ class CommaSeparatedUserField(forms.Field):
         if isinstance(value, (list, tuple)):
             return value
         
-        names = set(value.split(','))
+        names = set([v for v in value.split(',') if v])
         names_set = set([name.strip() for name in names])
         users = list(User.objects.filter(username__in=names_set))
         unknown_names = names_set ^ set([user.username for user in users])
