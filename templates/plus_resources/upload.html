@@ -8,78 +8,102 @@
 {% load editable_attribute %}
 
 {% block edit_header %}
-    <a id="parent" href="{% url plus_groups:group upload.in_agent.obj.id %}">{{upload.in_agent.obj.display_name}}</a>
-    <input id="page_title" name="title" class="text" type="text" value="{% if data.title %}{{data.title}}{% else %}{{upload.title}}{% endif %}" />
-    {% if errors.title %}<span class="error">{{errors.title}}<span>{% endif %}
+	<a id="parent" href="{% url plus_groups:group upload.in_agent.obj.id %}">{{upload.in_agent.obj.display_name}}</a>
+	<input id="page_title" name="title" class="text" type="text" value="{% if data.title %}{{data.title}}{% else %}{{upload.title}}{% endif %}" />
+	{% if errors.title %}<span class="error">{{errors.title}}<span>{% endif %}
 {% endblock %}
 
           
-{% block body %}      
-    <div id="main_title" class="block wiki_edit">
-      
-      <ul class="icon_text_button_set">
-	    {% if permissions %}<li><a class="icon_text_button bt_permissions" href="#" rel="#overlay" id="{{upload.edit_key}}permissionedit">{% trans "Permissions" %}</a></li>{% endif %}
-      </ul>
-      <ul>
-	<li id="description_area">
-	  <label for="description"><span class="required">*</span>{% trans "Description" %}</label>
-	  <textarea id="description" name="description" rows="3" maxlength="20">{% if data.description %}{{data.description}}{% else %}{{upload.description}}{% endif %}</textarea>
-	  <div class="error_message">{{errors.description}}</div>
-	</li>
-	<li class="upload_field">
-          {% if not upload.resource %}
-	  <label for="resource"><span class="required">*</span>{% trans "Select resource" %}</label>
-	  <input  id="resource" name="resource" class="file" type="file" />
-	  <div class="error_message">{{errors.resource}}</div>
-	  {% else %}
-   	    {% if upload.download_url %}
-	      <label for="resource"><span class="required">*</span>{% trans "File" %}</label>
-	      <a  href="{{upload.download_url}}" class="file_name">{{upload.get_file_name}}</a><span><a href="#" class="replace_file_button">{% trans "Replace File" %}</a></span>
-	      <input  id="resource" name="resource"  type="file" class="hidden replace_file" />
-	      <span><a href="#" class="keep_existing hidden" >{% trans "Keep existing file" %}</a></span>
-              <div class="error_message">{{errors.resource}}</div>
-            {% endif %}
-          {% endif %}
-	</li>
-      </ul>
-      <ul id="content_extra">
-	<li>
-	  <dl>
-            {% if upload.stub %}
-	       {% plus_tag 'Tags' 'tag' upload user %}
-            {% endif %}
-	  </dl>
-	</li>
-	<li>
-	  <dl>
-	    <dt>
-	      <label for="author">{% trans "Copyright / Author" %}</label>
-	    </dt>
-	    <dd>
-            <input  id="author" name="author" class="text" type="text" value='{% if data.author %}{{data.author}}{% else %}{{upload.author}}{% endif %}'/>
-	      {% if errors.author %}<span class="error">{{errors.author}}</span>{% endif %}
-	    </dd>
-	    <dt>
-	      <label for="license">{% trans "License" %} <span class="extra">('©2009', 'GPL')</span></label>
-	    </dt>
-	    <dd>
-	      <input name="license" id="license" class="text" type="text" value="{% if data.license %}{{data.license}}{% else %}{{upload.license}}{% endif %}" />
-	      {% if errors.license %}<span class="error">{{errors.license}}<span>{% endif %}
-	    </dd>
-	  </dl>
-	</li>
-      </ul>
-      {% if upload.stub %}     
-	 <input class="button" id="edit_submit"  type="submit" value="Create"/>
-	 or <a href="{% url plus_groups:deletestub_Resource upload.in_agent.obj.id upload.name  %}">Go back</a>
-      {% else %}
-	 <input class="button" id="edit_submit"  type="submit" value="Save"/>
-	 or  <a href="{% url plus_groups:view_Resource upload.in_agent.obj.id upload.name  %}">Cancel</a>
-      {% endif %}
-   </div>
+{% block body %}
+<div id="main_title" class="block wiki_edit">
+
+	<ul class="icon_text_button_set">
+		{% if permissions %}<li><a class="icon_text_button bt_permissions" href="#" rel="#overlay" id="{{upload.edit_key}}permissionedit">{% trans "Permissions" %}</a></li>{% endif %}
+	</ul>
+
+	<fieldset>
+
+		<ul>
+			<li id="description_area">
+				<div class="label">
+					<label for="description">{% trans "Description" %}<abbr class="required" title="required"> *</abbr></label>
+				</div>
+				<div class="input">
+					<textarea id="description" class="text" name="description" rows="3" maxlength="20">{% if data.description %}{{data.description}}{% else %}{{upload.description}}{% endif %}</textarea>
+					{{errors.description}}
+				</div>
+			</li>
+			<li class="upload_field">
+				{% if not upload.resource %}
+				<div class="label">
+					<label for="resource">{% trans "Select resource" %}<abbr class="required" title="required"> *</abbr></label>
+				</div>
+				<div class="input">
+					<input  id="resource" name="resource" class="file" type="file" />
+					{{errors.resource}}
+				</div>
+				{% else %}
+				{% if upload.download_url %}
+				<div class="label">
+					<label for="resource"><abbr class="required" title="required">* </abbr>{% trans "File" %}</label>
+					<a href="{{upload.download_url}}" class="file_name">{{upload.get_file_name}}</a><span><a href="#" class="replace_file_button">{% trans "Replace File" %}</a></span>
+				</div>
+				<div class="input">
+					<input  id="resource" name="resource"  type="file" class="hidden replace_file" />
+					<span><a href="#" class="keep_existing hidden" >{% trans "Keep existing file" %}</a></span>
+					{{errors.resource}}
+				</div>
+				{% endif %}
+				{% endif %}
+			</li>
+		</ul>
+
+	</fieldset>
+
+	<fieldset>
+
+		<ul id="content_extra">
+			{% if upload.stub %}
+			<li>
+				{% plus_tag 'Tags' 'tag' upload user %}
+			</li>
+			{% endif %}
+			<li>
+				<div class="label">
+					<label for="author">{% trans "Copyright / Author" %}</label>
+				</div>
+				<div class="input">
+					<input  id="author" name="author" class="text" type="text" value='{% if data.author %}{{data.author}}{% else %}{{upload.author}}{% endif %}'/>
+					{% if errors.author %}<span class="error">{{errors.author}}</span>{% endif %}
+				</div>
+			</li>
+			<li>
+				<div class="label">
+					<label for="license">{% trans "License" %} <span class="extra">('©2009', 'GPL')</span></label>
+				</div>
+				<div class="input">
+					<input name="license" id="license" class="text" type="text" value="{% if data.license %}{{data.license}}{% else %}{{upload.license}}{% endif %}" />
+					{% if errors.license %}<span class="error">{{errors.license}}<span>{% endif %}
+				</div>
+			</li>
+		</ul>
+
+	</fieldset>
+
+    <fieldset class="buttons">
+
+		{% if upload.stub %}     
+		<input class="button" id="edit_submit"  type="submit" value="Create"/>
+		or <a href="{% url plus_groups:deletestub_Resource upload.in_agent.obj.id upload.name  %}">Go back</a>
+		{% else %}
+		<input class="button" id="edit_submit"  type="submit" value="Save"/>
+		or  <a href="{% url plus_groups:view_Resource upload.in_agent.obj.id upload.name  %}">Cancel</a>
+		{% endif %}
+		
+    </fieldset>
+
+</div>
 {% endblock %}
-
-
 
 {% block side_bar %}
    {% if upload.stub %}
