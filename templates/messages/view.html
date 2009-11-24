@@ -36,7 +36,7 @@
 	<p class="message_body">{% oembed %}{% autoescape off %}{{ message.body|linebreaksbr }}{% endautoescape %}{% endoembed %}</p>
 
 	{% ifequal message.recipient user %}
-		<a class="button" href="{% url messages_reply message.id %}">{% trans "Reply" %}</a>
+		<a class="button" href="{% url messages_reply message.id %}#tabview=compose">{% trans "Reply" %}</a>
 		or
 	{% endifequal %}
 

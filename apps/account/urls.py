@@ -2,6 +2,7 @@ from django.conf.urls.defaults import *
 from account.forms import *
 
 urlpatterns = patterns('',
+    url(r'^settings/$','account.views.site_settings', name='acct_settings'),                       
     url(r'^email/$', 'account.views.email', name="acct_email"),
     url(r'^signup/$', 'account.views.signup', name="acct_signup"),
     url(r'^login/$', 'account.views.login', name="acct_login"),
