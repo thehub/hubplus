@@ -208,15 +208,18 @@ def view(request, message_id, template_name='messages/view.html'):
     }, context_instance=RequestContext(request))
 view = login_required(view)
 
-def in_out_trash_comp(request, recipient=None, form_class=ComposeForm,
+def in_out_trash_comp(request, recipient=None, message_id=None, form_class=ComposeForm,
         template_name='messages/messages.html', success_url=None):
     """
     combines inbox, outbox, trash and compose
     """
 
+    system_messages = []
+    for ms in request.user.message_set.all() :
+        system_messages.append(ms)
 
     if request.method == "POST":
-
+ 
         sender = request.user
         form = form_class(request.POST)
         if form.is_valid():
@@ -224,22 +227,37 @@ def in_out_trash_comp(request, recipient=None, form_class=ComposeForm,
             request.user.message_set.create(
                 message=_(u"Message successfully sent."))
             if success_url is None:
-                success_url = reverse('messages_all')
+                success_url = reverse('messages_all')+'#tabview=inbox'
+
             return HttpResponseRedirect(success_url)
         prefill=False
         recipient_str=''
     else:
-        
-        form = form_class()
-
-        if recipient is not None:
-            recipients = [u for u in User.objects.filter(username__in=[r.strip() for r in recipient.split('+')])]
-            form.fields['recipient'].initial = recipients
+       
+        if message_id :
+            # assuming this is a reply
+            parent = Message.objects.get(id=message_id)
+            form = form_class({
+                    'body': _(u"%(sender)s wrote:\n%(body)s") % {
+                        'sender': parent.sender,
+                        'body': format_quote(parent.body)
+                        },
+                    'subject': _(u"Re: %(subject)s") % {'subject': parent.subject},
+                    'recipient': [parent.sender,]
+            })
             prefill = True
-            recipient_str = ','.join(['%s %s (%s)'%(u.first_name, u.last_name, u.username) for u in recipients])
+            recipient_str = '%s %s (%s)'% (parent.sender.first_name, parent.sender.last_name, parent.sender.username)
         else :
-            prefill = False
-            recipient_str = ''
+            form = form_class()
+
+            if recipient is not None:
+                recipients = [u for u in User.objects.filter(username__in=[r.strip() for r in recipient.split('+')])]
+                form.fields['recipient'].initial = recipients
+                prefill = True
+                recipient_str = ','.join(['%s %s (%s)'%(u.first_name, u.last_name, u.username) for u in recipients])
+            else :
+                prefill = False
+                recipient_str = ''
 
     return render_to_response(template_name, {
         'form': form,
@@ -248,6 +266,7 @@ def in_out_trash_comp(request, recipient=None, form_class=ComposeForm,
         'inbox': Message.objects.inbox_for(request.user),
         'outbox': Message.objects.outbox_for(request.user),
         'trash' : Message.objects.trash_for(request.user),
+        'system_messages' : system_messages,
 
     }, context_instance=RequestContext(request))
 compose = login_required(compose)
