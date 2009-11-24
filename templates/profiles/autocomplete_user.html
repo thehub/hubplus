@@ -1,0 +1,19 @@
+
+<dd class="user_list_manager" id="main_user_list_manager">
+
+  <ul class="user_list">
+    {% for u in current_list %}
+    <li {% if forloop.first %}class="first"{% endif %}><span>{{u}}</span> &nbsp;
+      <a class="delete_username" href="DELETE_NAME_URL">X</a></li>
+    {% endfor %}
+  </ul>
+
+  <div class="add_user_form" id="ADD_URL" >
+    <input name="username" class="username_or_full_name" id="AUTOCOMPLETE_URL" />
+    <input class="button add_user" type="submit" value="Add" />
+  </div>
+
+  <span class="error_message"></span>
+
+</dd>
+

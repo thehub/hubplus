@@ -73,7 +73,7 @@ var editing = function () {
     });
 };
 
-
+///// Tags
 var tag_list = function (ele) {
     var manager = jq(ele);
     var delete_url = manager.find('ul .first a.delete_tag').attr('href');
@@ -127,6 +127,7 @@ var tag_list = function (ele) {
 	return false;
     });
 };
+
 var setup_tag_lists = function () {
     jq('.tag_manager').each(function(i, ele) {
 	tag_list(ele);
@@ -137,11 +138,77 @@ var setup_tag_lists = function () {
 							      max:10});
 };
 
+
+//// User list
+
+var user_list = function (ele) {
+    var manager = jq(ele);
+    var delete_url = manager.find('ul .first a.delete_username').attr('href');
+
+    var append_name_to_list = function (name) {
+        var new_name = jq('<li><span>' + name + '</span>&nbsp;<a class="delete_username" href="'+ delete_url +'">X</a></li>');
+	manager.find('.user_list').append(new_name);
+    };
+
+    manager.find('.username_or_full_name').autocomplete('/members/autocomplete_user_or_full_name',
+       { width: 175,
+	 matchSubset: false,
+	 selectFirst: false,
+	 max:20 }  );
+
+    manager.find('.add_user').click(function () {
+	    var compound_name = manager.find('.username_or_full_name').val();
+	    append_name_to_list(compound_name); 
+	    manager.find('.username_or_full_name').val('');
+	    return false;
+	});
+
+    var delete_buttons = '#'+ manager.attr('id') + ' .delete_username';
+    jq(delete_buttons).live('click', function () {
+	    jq(this).parent().remove();
+	    return false;
+	});
+
+    // find if there's a message compose form 
+    // if there is, we're going to 
+    // a) hack the submit button to 
+    // b) fill the "to" field from our list of names
+    
+    compose_manager = jq('#compose');
+    if (compose_manager) {
+	compose_manager.find(':submit').click(function() {
+		build = '';
+		manager.find('.user_list').children().each(function(i, ele) {
+			var s = jq(jq(ele).children()[0]).html();
+			match = s.match(/([\w ]+)\(([\w.]+)\)/);
+			build=build + match[2] + ',';
+		    });
+		compose_manager.find('#id_recipient').val(build);
+		return true;
+	    });
+    }
+
+};
+
+
+var setup_user_lists = function () {
+    jq('.user_list_manager').each(function(i, ele) {
+	    user_list(ele);
+	});
+};
+
+
+///// Maps
+
+
 var setup_maps = function () {
     jq("[id$='-place']").each(function () {
 	create_map(jq(this), plot_point);
     });
 };
+
+
+///// Editor
 var get_add_content = function (ele) {
     var overlay_content = jq('#overlay_content');
     jq('div.close').click(function () {
@@ -240,6 +307,9 @@ var profile_ready = function () {
 	jq.getScript("http://maps.google.com/maps?file=api&v=2.x&key=ABQIAAAAiA7tLHdzZr8yhGAEbo5FGxS_srkAJTD0j5T3EF3o06M_52NTAhQM2w0ugG9dZdoyPl3s9RqydGrzpQ&async=2&callback=setup_maps");
     }
     //jq.getJSON('map_tags/', {}, init_rgraph);
+
+    setup_user_lists();
+
 };
 
 
