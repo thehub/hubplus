@@ -30,7 +30,7 @@ from apps.microblogging.views import TweetInstance
 from microblogging.utils import twitter_account_for_user, twitter_verify_credentials
 
 from django.utils.translation import ugettext_lazy as _
-from django.conf import settings 
+
 
 def home(request, success_url=None):
     """
@@ -69,6 +69,10 @@ def home(request, success_url=None):
         "twitter_authorized": twitter_verify_credentials(twitter_account),
     }, context_instance=RequestContext(request))
 
+
+@login_required
+def site_settings(request, template_name='account/settings.html'):
+    return render_to_response(template_name, {}, context_instance=RequestContext(request))
 
 
 def login(request, form_class=LoginForm,
