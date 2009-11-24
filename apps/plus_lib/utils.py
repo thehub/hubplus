@@ -55,7 +55,6 @@ def i_debug(f):
     return g
 
 
-
 def make_name(s):
     """Turn the argument into a name suitable for a URL """
     s=s.strip()
@@ -69,9 +68,30 @@ def make_name(s):
 
 
 from messages.models import Message
-def message_user(sender, recipient, subject, body) :
+from django.core.mail import send_mail
+from django.core.urlresolvers import reverse
+from django.utils.translation import ugettext_lazy as _, ugettext
+
+
+def message_user(sender, recipient, subject, body, domain) :
     m = Message(subject=subject, body=body, sender = sender, recipient=recipient)
     m.save()
+
+
+    if recipient.cc_messages_to_email :
+        # recipient wants emails cc-ed
+        link = 'http://'+domain+reverse('messages_all')
+        message = _("""
+%(sender)s has sent you a new message on %(account_name)s .
+
+%(body)s
+
+Click %(link)s to see your account 
+""") % {'account_name':settings.SITE_NAME, 'body':body, 'link':link, 'sender':sender.get_display_name()}
+
+        send_mail(subject, message, settings.SUPPORT_EMAIL, [recipient.email_address],fail_silently=False)
+
+    return m
 
 
 from django.conf import settings
