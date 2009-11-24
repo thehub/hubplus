@@ -30,4 +30,11 @@ def clear_search_url(request):
         return request.path
 register.simple_tag(clear_search_url)
 
-
+@register.inclusion_tag("profiles/autocomplete_user.html", takes_context=True)
+def autocomplete_user_form(context, username=None) :
+    # NB username should be a User.username of a default recipient
+    if username :
+        current_list = [username]
+    else:
+        current_list = []
+    return {"current_list":current_list}

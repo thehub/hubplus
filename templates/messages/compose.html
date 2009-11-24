@@ -1,8 +1,10 @@
 {% load i18n %} 
 {% load uni_form %}
+{% load profile_tags %}
 
 <div id="compose">
-
+  <div id='user_list' class='user_list'>
+  </div>
   <form class="page" method="post" action="">
     <fieldset>
       <ul class="message_headers">
@@ -10,8 +12,14 @@
 	  <dl>
 	    <dt><label for="message_recipient"><span class="required">*</span> {% trans 'To' %}</label></dt>
 	    <dd>
-	      {{form.recipient}} 
-	      <!-- error here -->
+	      <input id="id_recipient" type="hidden" name="recipient"/>
+	      
+	      {% if prefill %}
+	          {% autocomplete_user_form recipient_str %}
+	      {% else %}
+	          {% autocomplete_user_form %}
+	      {% endif %}
+
 	    </dd>
 	  </dl>
 	</li>
@@ -21,7 +29,7 @@
 	    <dd>
 	      <input type="text" id="message_subject" name="subject"/>
 	      <!-- error here -->
-	    </dd>
+
 	  </dl>
 	</li>
       </ul>

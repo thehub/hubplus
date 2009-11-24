@@ -213,7 +213,10 @@ def in_out_trash_comp(request, recipient=None, form_class=ComposeForm,
     """
     combines inbox, outbox, trash and compose
     """
+
+
     if request.method == "POST":
+
         sender = request.user
         form = form_class(request.POST)
         if form.is_valid():
@@ -223,14 +226,25 @@ def in_out_trash_comp(request, recipient=None, form_class=ComposeForm,
             if success_url is None:
                 success_url = reverse('messages_all')
             return HttpResponseRedirect(success_url)
+        prefill=False
+        recipient_str=''
     else:
+        
         form = form_class()
+
         if recipient is not None:
             recipients = [u for u in User.objects.filter(username__in=[r.strip() for r in recipient.split('+')])]
             form.fields['recipient'].initial = recipients
+            prefill = True
+            recipient_str = ','.join(['%s %s (%s)'%(u.first_name, u.last_name, u.username) for u in recipients])
+        else :
+            prefill = False
+            recipient_str = ''
 
     return render_to_response(template_name, {
         'form': form,
+        'prefill':prefill,
+        'recipient_str': recipient_str,
         'inbox': Message.objects.inbox_for(request.user),
         'outbox': Message.objects.outbox_for(request.user),
         'trash' : Message.objects.trash_for(request.user),
