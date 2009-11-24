@@ -29,7 +29,7 @@
 	    <dt><label for="message_subject"><span class="required">*</span> {% trans 'Subject' %}</label></dt>
 	    <dd>
 	      <input type="text" id="message_subject" name="subject" value="{{form.data.subject}}"/>
-	      <!-- error here -->
+	      {{form.subject.errors}}
 
 	  </dl>
 	</li>
