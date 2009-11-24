@@ -181,7 +181,10 @@ var user_list = function (ele) {
 		manager.find('.user_list').children().each(function(i, ele) {
 			var s = jq(jq(ele).children()[0]).html();
 			match = s.match(/([\w ]+)\(([\w.]+)\)/);
-			build=build + match[2] + ',';
+			if (match) {
+			    build=build + match[2] + ',';
+			}
+
 		    });
 		compose_manager.find('#id_recipient').val(build);
 		return true;
