@@ -208,6 +208,7 @@ def view(request, message_id, template_name='messages/view.html'):
     }, context_instance=RequestContext(request))
 view = login_required(view)
 
+@login_required
 def in_out_trash_comp(request, recipient=None, message_id=None, form_class=ComposeForm,
         template_name='messages/messages.html', success_url=None):
     """
