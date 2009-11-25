@@ -74,6 +74,14 @@ def profiles(request, tag_string='', template_name="plus_explore/explore_filtere
 
 
 
+def show_section(profile, attribute_list) :
+    # if none of the list of attributes are visible to this viewer, hide them all
+    def test_att(name) :
+        if profile.__getattr__(name) :
+            return True
+        return False
+
+    return any((test_att(name) for name in attribute_list))
 
 def profile(request, username, template_name="profiles/profile.html"):
     other_user = get_object_or_404(User, username=username)
@@ -189,11 +197,14 @@ def profile(request, username, template_name="profiles/profile.html"):
         see_host_info = True
     except :
         pass # can't see host_info
-
     host_info = TemplateSecureWrapper(host_info)
 
     member_of = [(g.group_app_label() + ':group', g) for g in other_user.get_enclosures(levels=['member']).exclude(group_name='all_members')]
     host_of = [(g.group_app_label() + ':group', g) for g in other_user.get_enclosures(levels=['host']).exclude(group_name='all_members_hosts')]
+
+    see_about = is_me or show_section(profile, ('about',))
+    see_contacts = is_me or show_section(profile,('mobile','home','work','fax','address','email_address'))
+    see_links = is_me or show_section(profile,('website',))
 
     return render_to_response(template_name, {
             "is_me": is_me,
@@ -221,6 +232,9 @@ def profile(request, username, template_name="profiles/profile.html"):
             "search_types_len":search_types_len,
             "host_info":host_info, 
             "see_host_info":see_host_info,
+            "see_about":see_about,
+            "see_contacts":see_contacts,
+            "see_links":see_links,
             }, context_instance=RequestContext(request))
 
 

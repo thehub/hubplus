@@ -29,6 +29,7 @@ class TemplateSecureWrapper:
         if name.startswith("has_write_"):
             write_attr = name.split('has_write_')[1]
             return self.can_write(write_attr)
+
         try:
             return getattr(self.SecureWrapper, name)
         except:
@@ -75,9 +76,22 @@ class EmptyString(type):
         return ""
     def __unicode__(cls):
         return u""
+    def __repr__(cls):
+        return u""
 
 class NotViewable(object):
     __metaclass__= EmptyString
+    @classmethod
+    def __str__(cls):
+        return ""
+    @classmethod
+    def __unicode__(cls):
+        return u""
+    @classmethod
+    def __repr__(cls):
+        return u""
+    def __nonzero__(self) :
+        return False
 
 def is_not_viewable(obj,attr_name) :
     x = getattr(obj,attr_name) 

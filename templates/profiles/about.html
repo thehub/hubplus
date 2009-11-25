@@ -2,42 +2,70 @@
 {% load editable_attribute %}
 {% load plus_tags %}
   <div id="about_block">
-  
+
+    {% if see_about %}
     <h3>About me</h3>
     <ul class="yui-skin-sam">
+      {% if profile.about %}
       <li>
 	   {% editable "A bit about me" profile 'about' 'About me' 'html' %}
       </li>
+      {% endif %}
     </ul>
+    {% endif %}
 
+    {% if see_contacts %}
     <h3>Contact</h3>
     <ul>
+
+      {% if profile.mobile %}
       <li>
-         {% editable 'Phone (Mobile) <span class="extra">Include dialing code (eg '+44')</span>' profile 'mobile' 'My mobile' %} 
+        {% editable 'Phone (Mobile) <span class="extra">Include dialing code (eg '+44')</span>' profile 'mobile' 'My mobile' %} 
       </li>
+      {% endif %}
+
+      {% if profile.work %}
       <li>
          {% editable 'Phone (Work) <span class="extra">Include dialing code (eg '+44')</span>' profile 'work' 'My work phone' %} 
       </li>
+      {% endif %}
+
+      {% if profile.home %}
       <li>
          {% editable 'Phone (Home) <span class="extra">Include dialing code (eg '+44')</span>' profile 'home' 'My phone' %} 
       </li> 
+      {% endif  %}
+
+      {% if profile.fax %}
       <li>
          {% editable 'Fax No. <span class="extra">Include dialing code (eg '+44')</span>' profile 'fax' 'My fax' %} 
       </li>
+      {% endif %}
+
+      {% if profile.address %}
       <li>
          {% editable 'Address' profile 'address' 'My address' %} 
       </li>
+      {% endif %}
+
+      {% if profile.email_address %}
       <li>
          {% editable 'Email <span class="extra">This is our main contact email for you.</span>' profile 'email_address' 'My email' 'url'%} 
       </li> 
+      {% endif %}
     </ul>
+    {% endif %}
 
+    {% if see_links %}
     <h3>Links</h3>
     <ul>
+      {% if profile.website %}
       <li>
          {% editable "Website" profile 'website' 'My site' 'url' %} 
       </li> 
+      {% endif %}
     </ul>
+    {% endif %}
 
     <h3>Skills and needs</h3>
     <ul id="skills_needs_list">
