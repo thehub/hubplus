@@ -58,8 +58,7 @@ def list_of_applications(request, template_name="plus_contacts/applicant_list.ht
 @transaction.commit_on_success
 def accept_application(request,id) :
     application = Application.objects.plus_get(request.user, id=id)
-
-    try :
+    try:
         # also, if the applicant already has an account, we can join him/her to a group
 
         if application.is_site_application() :
@@ -73,10 +72,9 @@ def accept_application(request,id) :
         # if we have the right permissions
         if application.has_group_request() :
             # we're asking for a group
-
-            try :
+            try:
                 application.group.join(application.get_user())
-            
+                
                 return HttpResponseRedirect(reverse('list_open_applications'))
             except PlusPermissionsNoAccessException :
                 
@@ -101,6 +99,7 @@ def accept_application(request,id) :
 
 
 def split_name(username):
+    # XXX this should be deleted and not used below
     if username.find(' ') > 0 :
         first_name, last_name = (username.split(' ')) # note that if users need > 2 names, we have to do something
         username = '%s.%s' % (first_name,last_name)

@@ -225,8 +225,10 @@ try :
             self.add_member(user)
             return user
 
-        def apply(self, user):
-            pass
+        def apply(self, user, applicant=None, about_and_why='', group=None):
+            if not applicant or not group:
+                raise ValueError('there must be an applicant and a group')
+            self.create_Application(user, applicant=applicant, request=about_and_why)
 
         def change_avatar(self) :
             pass

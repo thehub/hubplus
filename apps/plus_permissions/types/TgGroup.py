@@ -362,9 +362,9 @@ def setup_defaults() :
     
 
     AgentDefaults = {'public':public_defaults,
-                 'private':private_defaults,
-                 'open' : open_defaults,
-                 'invite' : invite_defaults}
+                     'private':private_defaults,
+                     'open' : open_defaults,
+                     'invite' : invite_defaults}
 
     return AgentDefaults
 

@@ -187,6 +187,7 @@ def profile(request, username, template_name="profiles/profile.html"):
     search_types_len = len(search_types)
     search_type_label = search_types[0][1][2]
 
+
     host_info = other_user.get_profile().get_host_info()
     host_info = secure_wrap(host_info, user)
 
@@ -198,6 +199,7 @@ def profile(request, username, template_name="profiles/profile.html"):
     except :
         pass # can't see host_info
     host_info = TemplateSecureWrapper(host_info)
+
 
     member_of = [(g.group_app_label() + ':group', g) for g in other_user.get_enclosures(levels=['member']).exclude(group_name='all_members')]
     host_of = [(g.group_app_label() + ':group', g) for g in other_user.get_enclosures(levels=['host']).exclude(group_name='all_members_hosts')]

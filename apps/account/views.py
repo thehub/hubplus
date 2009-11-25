@@ -333,26 +333,25 @@ def other_services_remove(request):
     return HttpResponseRedirect(reverse("acct_other_services"))
 other_services_remove = login_required(other_services_remove)
 
+from apps.plus_lib.utils import get_hubs, get_virtual_groups
 
-
-def apply(request, form_class=HubPlusApplicationForm,
-        template_name="account/apply_form.html"):
+def apply(request, form_class=HubPlusApplicationForm, template_name="account/apply_form.html"):
 
     user = request.user
-    if user.__class__ == AnonymousUser :
+    if user.__class__ == AnonymousUser:
         user = get_anon_user()
         
     # XXX there's a dedicated function for this, replace
-    hubs = TgGroup.objects.filter(level='member').exclude(place__name=settings.VIRTUAL_HUB_NAME)
+    hubs = get_hubs()
 
     if request.method == "POST":
         form = form_class(request.POST)
         if form.is_valid():
             contact, application, group = form.save(user)
             return render_to_response('plus_contacts/application_thanks.html',{
-                    'group' : group,
-                    "head_title" : _('Thanks for your application'),
-                    "head_title_status" : '',
+                    'group':group,
+                    "head_title": _('Thanks for your application'),
+                    "head_title_status":'',
  
             },context_instance=RequestContext(request))
 

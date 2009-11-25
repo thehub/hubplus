@@ -40,13 +40,9 @@ def index(request, template_name="plus_explore/explore.html"):
                                'intro_box_override':True}, context_instance=RequestContext(request))     
 
 
-def get_virtual_groups():
-    return TgGroup.objects.filter(place__name=settings.VIRTUAL_HUB_NAME, level='member')
 
-def get_hubs() :
-    return TgGroup.objects.filter(level='member').exclude(place__name=settings.VIRTUAL_HUB_NAME)
 
-from plus_lib.utils import hub_name, hub_name_plural
+from apps.plus_lib.utils import hub_name, hub_name_plural, get_hubs, get_virtual_groups
 
 def get_search_types():
     v_groups = get_virtual_groups()

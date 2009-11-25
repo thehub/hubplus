@@ -39,7 +39,7 @@ class Contact(models.Model):
     invited_by = models.ForeignKey(User,null=True,related_name='invited_contact')
 
 
-    def get_user(self) :
+    def get_user(self):
         if len( User.objects.filter(email_address=self.email_address) ) < 1 : 
             return None
         return User.objects.get(email_address=self.email_address)
@@ -97,7 +97,7 @@ We are delighted to confirm you have been accepted as a member of %(site)s
 """) % {'first':self.first_name, 'last':self.last_name, 'site':settings.SITE_NAME}
         return self.send_link_email(_("Confirmation of account on %(site)s") % {'site':settings.SITE_NAME}, message, sponsor, site_root, application_id)
 
-    def invite_mail(self, sponsor, site_root, application_id) :
+    def invite_mail(self, sponsor, site_root, application_id):
         message = Template(settings.INVITE_EMAIL_TEMPLATE).render(
             Context({'sponsor':sponsor.get_display_name(),
                      'first_name':self.first_name, 
@@ -115,8 +115,8 @@ We are delighted to confirm you have been accepted as a member of %(site)s
             application.group=group
         return self.invite_mail(sponsor, site_root, application.id)
         
-class Application(models.Model) :
-    applicant_content_type = models.ForeignKey(ContentType,related_name='applicant_type')
+class Application(models.Model):
+    applicant_content_type = models.ForeignKey(ContentType, related_name='applicant_type')
     applicant_object_id = models.PositiveIntegerField()
     applicant = generic.GenericForeignKey('applicant_content_type', 'applicant_object_id') # either user or contact
     
@@ -129,29 +129,29 @@ class Application(models.Model) :
     accepted_by = models.ForeignKey(User, null=True)
 
 
-    def is_site_application(self) :
+    def is_site_application(self):
         """ Is this an application by someone who's not yet a site-member and needs an User / Profile object created"""
 
-        if self.applicant.get_user() is None :
+        if self.applicant.get_user() is None:
             return True
         return False
 
-    def has_group_request(self) :
+    def has_group_request(self):
         """ Is this application requesting a group in addition to site membership?"""
         if self.group : 
             return True
         else :
             return False
 
-    def accept(self,sponsor,site_root,**kwargs) :
+    def accept(self,sponsor,site_root,**kwargs):
         self.status = WAITING_USER_SIGNUP
-        if kwargs.has_key('admin_comment') :
+        if kwargs.has_key('admin_comment'):
             self.admin_comment = kwargs['admin_comment']
             self.accepted_by = sponsor
         self.save()
         return self.applicant.accept_mail(sponsor, site_root, self.id)
 
-    def reject(self) :
+    def reject(self):
         message = message + _(settings.APPLICATION_REJECT_TEMPLATE) % {'first': self.applicant.first_name, 'last': self.applicant.last_name}
         send_mail(title, message, settings.CONTACT_EMAIL,
                   [self.email_address], fail_silently=False)
@@ -162,11 +162,11 @@ class Application(models.Model) :
         return [u for u in get_all_members_group().get_admin_group().get_users()]
 
 
-    def __str__(self) :
+    def __str__(self):
         return u"<Application from %s, %s, (group %s)" % ('%s %s'% (self.applicant.first_name,self.applicant.last_name),self.request,self.group) 
 
 def create_notifications(sender, instance, **kwargs):
-    if instance is None :
+    if instance is None:
         return
     application = instance
     from notification import models as notification
@@ -182,7 +182,3 @@ def create_notifications(sender, instance, **kwargs):
     
 if "notification" in settings.INSTALLED_APPS:
     post_save.connect(create_notifications,sender=Application)
-
-
-
-

@@ -24,34 +24,42 @@
     <fieldset>
 
       <ul>
+	<li>
+          <div class="label">
+	      <label for="id_first_name"><span class="required">*</span>{% trans "First Name" %}</label>
 
+          </div>
+	  <div class="input">
+	    <input  id="id_first_name" name="first_name" class="text" type="text" value="{{form.data.first_name}}"/>
+   	    {{form.first_name.errors}}
+          </div>
+	</li>
+	<li>
+          <div class="label">
+              <label for="id_last_name"><span class="required">*</span>{% trans "Last Name" %}</label>
+	  </div>
+	  <div class="input">
+  	      <input  id="id_last_name" name="last_name" class="text" type="text" value="{{form.data.last_name}}"/>
+	       {{form.last_name.errors}}
+          </div>
+	</li>
         <li>
           <div class="label">
-            <label for="id_username"><abbr class="required" title="required"> * </abbr>Name</label>
-          </div>
-          <div class="input">
-            <input  id="id_username" name="username" class="text" type="text" value="{{form.data.username}}"/>
-            {{ form.username.errors }}
-          </div>
-        </li> 
-
-        <li>
-          <div class="label">
-            <label for="id_email_address"><abbr class="required" title="required">* </abbr>Email</label>
+            <label for="id_email_address"><span class="required">*</span>{% trans "Email" %}</label>
           </div>
           <div class="input">
             <input  id="id_email_address" name="email_address" class="text" type="text" value="{{form.data.email_address}}"/>
-            {{ form.email_address.errors}}
+            {{form.email_address.errors}}
           </div>
         </li>
 
         <li>
           <div class="label">
-            <label for="id_organisation">Organisation</label>
+            <label for="id_organisation">{% trans "Organisation" %}</label>
           </div>
           <div class="input">
             <input  id="id_organisation" name="organisation" class="text" type="text" value="{{form.data.organisation}}"/>
-            {{ form.organisation.errors}}
+            {{form.organisation.errors}}
           </div>
         </li>
 
@@ -60,22 +68,38 @@
     </fieldset>
 
     <fieldset>
-
       <ul>
-
         <li>
           <div class="label">
-            <label for="id_location">Location</label>
-            <p class="note">postcode, country</p>
+            <label for="id_address">{% trans "Address" %}</label>
+            <p class="note"></p>
           </div>
           <div class="input">
-            <input  id="id_location" name="location" class="text" type="text" value="{{form.data.location}}"/>
-            {{ form.location.errors}}
+            <textarea  id="id_address" name="address" class="text" type="text">{{form.data.address}}</textarea>
+            {{form.address.errors}}
           </div>
         </li>
-
+        <li>
+          <div class="label">
+            <label for="id_postcode">{% trans "Zip/Postcode" %}</label>
+            <p class="note"></p>
+          </div>
+          <div class="input">
+            <input  id="id_postcode" name="postcode" class="text" type="text" value="{{form.data.postcode}}" />
+            {{form.postcode.errors}}
+          </div>
+        </li>
+        <li>
+          <div class="label">
+            <label for="id_country">{% trans "Country" %}</label>
+            <p class="note"></p>
+          </div>
+          <div class="input">
+            <input  id="id_country" name="country" class="text" type="text" value="{{form.data.country}}" />
+            {{form.country.errors}}
+          </div>
+        </li>
       </ul>
-
     </fieldset>
 
     <fieldset>
@@ -84,8 +108,8 @@
 
         <li>
           <div class="label">
-            <label for="id_about"><abbr class="required" title="required">* </abbr>Tell us a bit about yourself</label>
-            <p class="note">what you do and why you're interested in {{ SITE_NAME }}?</p>
+            <label for="id_about"><span class="required">*</span>{% trans "Tell us a bit about yourself" %}</label>
+            <p class="note">{% blocktrans %}what you do and why you're interested in {{ SITE_NAME }}?{% endblocktrans %}</p>
           </div>
           <div class="input">
             <textarea id="id_about" class="text" name="about_and_why" rows="5">{{form.data.about_and_why}}</textarea>
@@ -95,7 +119,7 @@
 
         <li  class='disabled'>
           <div class="label">
-            <label for="interests"><abbr class="required" title="required">* </abbr>What are your interests?</label>
+            <label for="interests"><span class="required">*</span>{% trans "What are your interests?" %}</label>
           </div>
           <div class="input">
             <!-- <input  id="interests" class="text" type="text" /> -->
