@@ -2,6 +2,14 @@ from django import forms
 import html5lib
 from html5lib import sanitizer, serializer, treebuilders, treewalkers
 
+from apps.plus_groups.models import TgGroup
+import settings
+
+def get_virtual_groups():
+    return TgGroup.objects.filter(place__name=settings.VIRTUAL_HUB_NAME, level='member')
+
+def get_hubs() :
+    return TgGroup.objects.filter(level='member').exclude(place__name=settings.VIRTUAL_HUB_NAME)
 
 class HTMLField(forms.CharField):
     def __init__(self, *args, **kwargs):

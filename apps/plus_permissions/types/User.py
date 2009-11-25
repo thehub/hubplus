@@ -1,11 +1,12 @@
 from apps.plus_permissions.interfaces import InterfaceReadProperty, InterfaceWriteProperty, InterfaceCallProperty, secure_wrap
-from apps.plus_permissions.models import SetSliderOptions, SetAgentDefaults, SetPossibleTypes, SetSliderAgents, SetVisibleAgents, SetVisibleTypes
+from apps.plus_permissions.models import SetSliderOptions, SetAgentDefaults, SetPossibleTypes, SetSliderAgents, SetVisibleAgents, SetVisibleTypes, PossibleTypes, SetTypeLabels
+
 from apps.plus_permissions.default_agents import get_all_members_group, get_anonymous_group, get_creator_agent
 
 from django.contrib.auth.models import User
 from django.db.models.signals import post_save
 
-from apps.profiles.models import Profile
+from apps.profiles.models import Profile, HostInfo
 
 import datetime
 
@@ -30,7 +31,7 @@ def create_user(user_name, email_address, password='dummy', permission_prototype
         setup_user_security(user, permission_prototype)
 
         user.create_Profile(user,user=user)
-
+        user.create_HostInfo(user,user=user)
     return user
 
 
@@ -102,9 +103,17 @@ SetSliderAgents(User, get_slider_agents)
 
 # ChildTypes are used to determine what types of objects can be created in this security context (and acquire security context from this). These are used when creating an explicit security context for an object of this type. 
 
-child_types = [Profile]
-SetPossibleTypes(User, child_types)
-SetVisibleTypes(User, [Profile])
+
+
+child_types = [Profile, HostInfo]
+# ChildTypes are used to determine what types of objects can be created in this security context (and acquire security context from this). These are used when creating an explicit security context for an object of this type.
+
+if User not in PossibleTypes :
+    child_types = [Profile, HostInfo]
+    SetPossibleTypes(User, child_types)
+    SetVisibleTypes(content_type, [Profile, HostInfo])
+    SetTypeLabels(content_type, 'User')
+
 
 # The agent must have a set of default levels for every type which can be created within it. Other objects don't need these as they will be copied from acquired security context according to the possible types available at the "lower" level. We have different AgentDefaults for different group types e.g. standard, public, or private.
 
@@ -120,34 +129,37 @@ AgentDefaults = {'public':
                            'constraints':
                                []
                            },
-                      'Profile':
-                          { 'defaults' : {'Viewer':'all_members_group',
-                                          'Editor':'context_agent',
-                                          'Unknown': 'context_agent',
-                                          'ManagePermissions':'context_agent'},
-                            'constraints':['Viewer>=Editor', 'Editor<$anonymous_group', 'Editor>=$context_agent']
-                            },
+                   'Profile':
+                       {'defaults':
+                        {'Viewer': 'anonymous_group',
+                         'Editor': 'context_agent',
+                         'EmailAddressViewer' : 'context_agent',
+                         'HomeViewer' : 'context_agent',
+                         'WorkViewer' : 'context_agent',
+                         'MobileViewer' : 'context_agent',
+                         'FaxViewer' : 'context_agent',
+                         'AddressViewer' : 'context_agent',
+                         'SkypeViewer' : 'context_agent',
+                         'SipViewer' : 'context_agent',
+                         'ManagePermissions':'context_admin',
+                         'Unknown' : 'context_agent',
+                         },
+                        'constraints':['Viewer>=Editor', 'Editor<$anonymous_group', 'Editor>=$context_agent']
+                        },
                       'Link': 
                           {'defaults': {'Viewer':'all_members_group',
                                         'Manager':'context_agent',
                                         'ManagePermissions':'context_admin'},
                            'constraints':['Viewer>=Manager']
                            },
-                      },
-                 'private':
-                     {'User':
-                          {'defaults': {
-                                'Unknown': 'context_agent'
-                                },                           
-                           'constraints':
-                               []
-                           },
-                      'Profile':
-                          { 'defaults' : {'Viewer':'anonymous_group',
-                                          'Editor':'creator',
-                                          'Unknown': 'context_agent'},
-                            'constraints':[]
-                            },
+                      'HostInfo':
+                          {'defaults': {'Viewer':'context_agent',
+                                        'Editor':'context_agent',
+                                        'ManagePermissions':'context_agent',
+                                        'Unknown':'context_agent',
+                                        },
+                           'constraints':['Viewer>=Editor']
+                          },
                       },
                  }
                  

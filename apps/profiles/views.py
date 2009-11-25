@@ -179,8 +179,19 @@ def profile(request, username, template_name="profiles/profile.html"):
     search_types_len = len(search_types)
     search_type_label = search_types[0][1][2]
 
-    member_of = [(g.group_app_label() + ':group', g) for g in other_user.get_enclosures(levels=['member']).exclude(group_name='all_members')]
-    host_of = [(g.group_app_label() + ':group', g) for g in other_user.get_enclosures(levels=['host']).exclude(group_name='all_members_hosts')]
+
+    host_info = other_user.get_profile().get_host_info()
+    host_info = secure_wrap(host_info, user)
+
+    see_host_info = False
+
+    try :
+        host_info.user 
+        see_host_info = True
+    except :
+        pass # can't see host_info
+
+    host_info = TemplateSecureWrapper(host_info)
 
     return render_to_response(template_name, {
             "is_me": is_me,
@@ -205,7 +216,9 @@ def profile(request, username, template_name="profiles/profile.html"):
             "search_type":search_type,
             "search_types":search_types,
             "search_type_label":search_type_label,
-            "search_types_len":search_types_len
+            "search_types_len":search_types_len,
+            "host_info":host_info, 
+            "see_host_info":see_host_info,
             }, context_instance=RequestContext(request))
 
 

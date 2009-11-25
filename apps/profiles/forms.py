@@ -1,5 +1,7 @@
 from django import forms
 from profiles.models import Profile, HostInfo
+from apps.plus_lib.utils import HTMLField
+
 
 class ProfileInfoForm(forms.Form):
     #organization,role,location, hub
@@ -16,7 +18,7 @@ class ProfileHostInfoForm(forms.Form) :
 
 
 class ProfileForm(forms.ModelForm):
-    about = forms.CharField()
+    about = HTMLField()
     email_address = forms.EmailField(max_length=100)
     name = forms.CharField(max_length=100)
     #display_name = forms.CharField(max_length=100)

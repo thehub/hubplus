@@ -66,6 +66,7 @@ def set_all_members_group():
     return TgGroup.objects.get_or_create(group_name='all_members', display_name='All Members', place=get_or_create_root_location(), level='member', user=admin_user)
            
 def get_all_members_group():
+    #XXXchange this to use the a group ID configured in local_settings.py
     all_members = TgGroup.objects.filter(group_name="all_members")
     if not all_members:
         all_members, created = set_all_members_group()

@@ -91,7 +91,10 @@ def group(request, group, template_name="plus_groups/group.html", current_app='p
 
     if user.is_authenticated():
         if user.is_direct_member_of(group.get_inner()):
-            leave = True
+            if not user.is_admin_of(group.get_inner()) or group.get_inner().get_admin_group() == group.get_inner() :
+                # can't leave a group you're the admin of *unless* the group is its own admin
+                # (without the second clause, you'd be trapped there forever)
+                leave = True
             try :
                 group.invite_member
                 invite = True
@@ -287,13 +290,13 @@ def invite(request, group, template_name='plus_groups/invite.html', current_app=
             invited = form.cleaned_data['user']
             group.invite_member(invited, form.cleaned_data['special_message'], request.user, request.get_host())
             return HttpResponseRedirect(reverse(current_app + ':group',args=(group.id,)))
-
             
     else :
         form = TgGroupMemberInviteForm()
     return render_to_response(template_name,{
             'form' : form,
             'group' : group,
+            'group_id' : group.id,
             }, context_instance=RequestContext(request, current_app=current_app))
 
 
@@ -320,7 +323,8 @@ def message_members(request, group, current_app='plus_groups', **kwargs) :
         form = TgGroupMessageMemberForm()
     return render_to_response(template_name, 
                               {'form' : form,
-                               'group': group }, context_instance=RequestContext(request, current_app=current_app))
+                               'group': group,
+                               'group_id': group.id}, context_instance=RequestContext(request, current_app=current_app))
 
 
 @login_required
@@ -396,7 +400,7 @@ def possible_create_interfaces():
     """return tuples of form, interface string, label, subtext
     """
     return [["CreateWikiPage", _("Page"), _("Create new wiki page")], 
-            ["CreateResource", _("Resource"), _("Upload a resource")],
+            ["CreateResource", _("Upload"), _("Share a document")],
             ["CreateNews", _("News"), _("Create a new posting")],
             ["CreateEvent", _("Events"), _("Create a new event")]]
 

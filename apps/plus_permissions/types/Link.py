@@ -10,11 +10,21 @@ class LinkViewer :
     target = InterfaceReadProperty
     service = InterfaceReadProperty
 
-class LinkManager :
+class LinkEditor:
+    text = InterfaceWriteProperty
+    url = InterfaceWriteProperty
+    target = InterfaceWriteProperty
+    service = InterfaceWriteProperty
+
+
+class LinkDelete :
     delete = InterfaceCallProperty
 
 from apps.plus_permissions.models import add_type_to_interface_map
-LinkInterfaces = {'Viewer' : LinkViewer, 'Manager' : LinkManager  }
+LinkInterfaces = {
+    'Viewer' : LinkViewer, 
+    'Editor' : LinkEditor,
+    'Delete' : LinkDelete,  }
 add_type_to_interface_map(Link, LinkInterfaces)
 
 

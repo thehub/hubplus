@@ -358,6 +358,7 @@ class TwitterForm(UserForm):
 
 
 # hubplus alternatives
+from apps.plus_permissions.default_agents import get_all_members_group
 
 class HubPlusApplicationForm(forms.Form):
 
@@ -398,7 +399,7 @@ class HubPlusApplicationForm(forms.Form):
         email = self.cleaned_data['email_address']
         users = User.objects.filter(email_address=email)
         if users:
-            raise forms.ValidationError(_("That email is already taken. Please choose another."))
+            raise forms.ValidationError(_("There is already a user with that email address. Please choose another."))
         return email
 
     def clean(self):
@@ -406,25 +407,20 @@ class HubPlusApplicationForm(forms.Form):
 
     def save(self, user):
         site = get_site(get_admin_user())
-        ##see validator "clean_email_address" this cannot happen
-        #if Contact.objects.filter(email_address=email).count() < 1 :
         group = self.cleaned_data.pop('group')
         about_and_why = self.cleaned_data.pop("about_and_why"),
         contact= site.create_Contact(user, **self.cleaned_data)
-        #contact = contact.get_inner()
-        #contact.first_name = self.cleaned_data['first_name']
-        #contact.last_name = self.cleaned_data['last_name']
-        #contact.find_out = self.cleaned_data["find_out"]
-        #contact.email_address = self.cleaned_data["email_address"]
-        #contact.location = self.cleaned_data["location"]
-        #contact.save()
-        #else :
-        #    contact = Contact.objects.get(email_address=email)
 
-
-        application = site.create_Application(user, applicant=contact,
-                                       request=about_and_why,
-                                       group=group)
+        members_group = get_all_members_group()
+        application = members_group.apply(user, 
+                                          applicant=contact,
+                                          about_and_why=about_and_why,
+                                          group=group)
+        if group:
+            group.apply(user, 
+                        applicant=contact,
+                        about_and_why=about_and_why,
+                        group=group)
 
         return contact, application, group
         

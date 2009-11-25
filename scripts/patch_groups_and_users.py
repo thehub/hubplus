@@ -57,6 +57,17 @@ def patch_in_profiles():
 
     print "patched %s users to have profiles" % str(no_of_users)
 
+    users = User.objects.filter(hostinfo__isnull=True)
+    no_of_users = users.count()
+
+    for user in users:
+        print user.username
+        hi = user.create_HostInfo(user, user=user)
+        hi.save()
+        print `hi`
+
+    print "patched %s users to have host_info" % str(no_of_users)
+
 
 patch_in_groups()
 patch_in_profiles()

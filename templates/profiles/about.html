@@ -53,6 +53,10 @@
       </li>      
     </ul>
     
-    {% include "profiles/profile_about_form.html" %}
+    {% if see_host_info %}
+    <dev class='host_info'>
+    {% include HOST_INFO_FORM %}
+    </dev>
+    {% endif %}
 
 </div>

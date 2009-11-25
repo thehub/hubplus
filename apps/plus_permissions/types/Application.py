@@ -50,13 +50,17 @@ class ApplicationAccept:
     accepted_by = InterfaceReadWriteProperty
     delete = InterfaceCallProperty
 
-
+class ApplicationReject:
+    pk = InterfaceReadProperty
+    reject = InterfaceCallProperty
+    delete = InterfaceCallProperty
 
 from apps.plus_permissions.models import add_type_to_interface_map
 
 ApplicationInterfaces = {'Viewer': ApplicationViewer,
                          'Editor': ApplicationEditor,
-                         'Accept': ApplicationAccept
+                         'Accept': ApplicationAccept,
+                         'Reject': ApplicationReject,
                          }
 
 
@@ -67,7 +71,7 @@ add_type_to_interface_map(Application, ApplicationInterfaces)
 # use InterfaceOrder to draw the slider and constraints, these are used in rendering the sliders and in validating the results
 # these exist on a per type basis and are globals for their type.
 # they don't need to be stored in the db
-SliderOptions = {'InterfaceOrder':['Viewer', 'Editor', 'Accept']}
+SliderOptions = {'InterfaceOrder':['Viewer', 'Editor', 'Accept', 'Reject']}
 SetSliderOptions(Application, SliderOptions) 
 
 

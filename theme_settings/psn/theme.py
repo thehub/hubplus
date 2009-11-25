@@ -42,3 +42,10 @@ Dear {{first_name}} {{last_name}},
 {{sponsor}} has invited you to become a member of MHPSS network.
 
 Join and enter a worldwide community of people and organizations concerned with mental health & psychosocial support. Discover and learn about new Resources, Members, Groups and Regions from the worldwide network."""
+
+APPLICATION_REJECT_TEMPLATE = """
+Dear {{first_name}} {{last_name}},
+
+Unfortunately, we can not accept you to become a member of MHPSS network at this time.
+
+"""

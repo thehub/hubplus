@@ -26,11 +26,9 @@ class InviteForm(forms.Form):
     def clean_group(self):
         # turn group id into actual object
         group = self.cleaned_data['group']
-        if not group :
+        if not group:
             return None
 
         if TgGroup.objects.filter(group_name=group):
             return TgGroup.objects.get(group_name=group)
         raise forms.ValidationError(_("There is no group with a group_name %s" % group))
-        
-
