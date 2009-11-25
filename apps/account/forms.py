@@ -262,11 +262,11 @@ class ResetPasswordForm(forms.Form):
             #send the password reset email
             subject = _("Password reset email sent")
             link = 'http://'+domain+reverse('acct_passwd_reset_key',args=(temp_key,))
-            message = render_to_string("account/password_reset_key_message.txt", {
-                "user": user,
-                "temp_key": temp_key,
+            message = _(settings.PASSWORD_RESET_TEMPLATE) % {
+                "display_name" : user.get_display_name(),
+                "username": user.username,
                 "link" : link,
-            })
+            }
             send_mail(subject, message, settings.SUPPORT_EMAIL, [user.email_address],fail_silently=False)
         return self.cleaned_data["email"]
         

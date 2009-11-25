@@ -5,74 +5,86 @@
 {% load app_plugins %}
 {% load plus_tags %}
 {% load uni_form %}
+
 {% block edit_header %}
-    <a id="parent" href="{% url plus_groups:group page.in_agent.obj.id %}">{{page.in_agent.obj.display_name}}</a>
-    <input id="page_title" name="title" class="text" type="text" value="{% if data.title %}{{data.title}}{% else %}{{page.title}}{% endif %}" />
-    {% if errors.title %}<div class="error_message">{{errors.title}}</div>{% endif %}
+	<a id="parent" href="{% url plus_groups:group page.in_agent.obj.id %}">{{page.in_agent.obj.display_name}}</a>
+	<input id="page_title" name="title" class="text" type="text" value="{% if data.title %}{{data.title}}{% else %}{{page.title}}{% endif %}" />
+	{% if errors.title %}<div class="error_message">{{errors.title}}</div>{% endif %}
 {% endblock %}
+
 {% block body %}      
-    <div id="main_title" class="block wiki_edit">      
-      <ul class="icon_text_button_set">
-	<!--<li><a class="icon_text_button bt_edit" href="#">Edit page</a></li>-->
-	    {% if permissions %}<li><a class="icon_text_button bt_permissions" href="#" rel="#overlay" id="{{page.edit_key}}permissionedit">{% trans "Permissions" %}</a></li>{% endif %}
-      </ul>
-      {% if preview_content %}
-      <div id="preview_content">
-	  {% autoescape off %}{{preview_content}}{% endautoescape %}
-      </div>
-      {% endif %}
-      <div id="content" class="yui-skin-sam">
-	<textarea name="content" rows="30">{% if data.content %}{{data.content}}{% else %}{{page.content}}{% endif %}</textarea>
-	{% if errors.content %}<span class="error">{{errors.content}}<span>{% endif %}
-      </div>
-      
-      <ul id="content_extra">
-	<li>
-	  <dl>
-            {% if page.stub %}
-	       {% plus_tag 'Tags' 'tag' page user %}
-            {% endif %}
-	  </dl>
-	</li>
-	<li>
-	  <dl>
-		  <dt>
-			  <label for="license">License <span class="extra">('©2009', 'GPL')</span></label>
-		  </dt>
-		  <dd>
-			  <input name="license" id="license" class="text" type="text" value="{% if data.license %}{{data.license}}{% else %}{{page.license}}{% endif %}" />
-			  {% if errors.license %}<span class="error">{{errors.license}}<span>{% endif %}
-		  </dd>
-	  </dl>
-	</li>
-	{% if page.stub %}
-	{% else %}
-	<li class="changes_set">	
-	  <dl>
-		  <dt>
-			  <label for="what_changed">What's changed? <span class="extra">describe what you've just changed</span></label>
-		  </dt>
-		  <dd>
-			  <textarea id="what_changed" name="what_changed" class="text">{{data.what_changed}}</textarea>
-			  {% if errors.what_changed %}<span class="error">{{errors.what_changed}}<span>{% endif %}
-		  </dd>
-	  </dl>
-	</li>
+<div id="main_title" class="block wiki_edit">      
+
+	<ul class="icon_text_button_set">
+		{% if permissions %}<li><a class="icon_text_button bt_permissions" href="#" rel="#overlay" id="{{page.edit_key}}permissionedit">{% trans "Permissions" %}</a></li>{% endif %}
+	</ul>
+
+	{% if preview_content %}
+	<div id="preview_content">
+		{% autoescape off %}{{preview_content}}{% endautoescape %}
+	</div>
 	{% endif %}
-	
-      </ul>
-      
-      {% if page.stub %}
-         <input class="submit button" id="preview" name="preview"  type="submit" value="Preview"/>      
-	 <input class="button" id="edit_submit"  type="submit" value="Create"/>
-	 or <a href="{% url plus_groups:deletestub_WikiPage page.in_agent.obj.id page.name  %}">Go back</a>
-      {% else %}
-         <input class="submit button" id="preview" name="preview" type="submit" value="Preview"/>
-	 <input class="button" id="edit_submit"  type="submit" value="Save"/>
-	 or <a href="{% url plus_groups:view_WikiPage page.in_agent.obj.id page.name  %}">Cancel</a>
-      {% endif %}
-    </div>
- {% endblock %}
+
+	<fieldset>
+
+		<div id="content" class="yui-skin-sam">
+			<textarea name="content" rows="30">{% if data.content %}{{data.content}}{% else %}{{page.content}}{% endif %}</textarea>
+			{% if errors.content %}<span class="error">{{errors.content}}<span>{% endif %}
+		</div>
+
+	</fieldset>
+
+	<fieldset>
+
+		<ul id="content_extra">
+
+			<li>
+				{% if page.stub %}
+				{% plus_tag 'Tags' 'tag' page user %}
+				{% endif %}
+			</li>
+			<li>
+				<div class="label">
+					<label for="license">License <span class="extra">('©2009', 'GPL')</span></label>
+				</div>
+				<div class="input">
+					<input name="license" id="license" class="text" type="text" value="{% if data.license %}{{data.license}}{% else %}{{page.license}}{% endif %}" />
+					{% if errors.license %}<span class="error">{{errors.license}}<span>{% endif %}
+				</div>
+			</li>
+			{% if page.stub %}
+			{% else %}
+			<li class="changes_set">	
+				<div class="label">
+					<label for="what_changed">What's changed? <span class="extra">describe what you've just changed</span></label>
+				</div>
+				<div class="input">
+					<textarea id="what_changed" name="what_changed" class="text">{{data.what_changed}}</textarea>
+					{% if errors.what_changed %}<span class="error">{{errors.what_changed}}<span>{% endif %}
+				</div>
+			</li>
+			{% endif %}
+
+		</ul>
+
+	</fieldset>
+
+    <fieldset class="buttons">
+
+		{% if page.stub %}
+		<input class="submit button" id="preview" name="preview"  type="submit" value="Preview"/>      
+		<input class="button" id="edit_submit"  type="submit" value="Create"/>
+		or <a href="{% url plus_groups:deletestub_WikiPage page.in_agent.obj.id page.name  %}">Go back</a>
+		{% else %}
+		<input class="submit button" id="preview" name="preview" type="submit" value="Preview"/>
+		<input class="button" id="edit_submit"  type="submit" value="Save"/>
+		or <a href="{% url plus_groups:view_WikiPage page.in_agent.obj.id page.name  %}">Cancel</a>
+		{% endif %}
+
+	</fieldset>
+		
+</div>
+{% endblock %}
    
  {% block side_bar %}
     {% if page.stub %}

@@ -33,7 +33,7 @@
 
         <li>
           <div class="label">
-            <label for="username"><span class="required">*</span> Username</label>
+            <label for="username"><abbr class="required" title="required">* </abbr>Username</label>
           </div>
           <div class="input">
             <input  id="username" name="username" class="text" type="text" value="{{form.data.username}}"/>
@@ -43,7 +43,7 @@
 
         <li>
           <div class="label">
-            <label for="password1"><span class="required">*</span> Password</label>
+            <label for="password1"><abbr class="required" title="required">* </abbr>Password</label>
           </div>
           <div class="input">
             <input  id="password1" name="password1" class="text" type="password" />
@@ -53,7 +53,7 @@
 
         <li>
           <div class="label">
-            <label for="password2"><span class="required">*</span> Re-enter password</label>
+            <label for="password2"><abbr class="required" title="required">* </abbr>Re-enter password</label>
           </div>
           <div class="input">
             <input  id="password2" name="password2" class="text" type="password" />
@@ -68,7 +68,7 @@
     <fieldset class="buttons">
 
       <input class="submit button" type="Submit" value="Create account" />
-      <p class="button_alternative">{% trans "Already have an account?" %} <a href="{% url acct_login %}">{% trans "Log in" %}</a>!</p>
+      <p class="alternative">{% trans "Already have an account?" %} <a href="{% url acct_login %}">{% trans "Log in" %}</a>!</p>
 
     </fieldset>
 

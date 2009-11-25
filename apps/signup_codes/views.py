@@ -118,7 +118,6 @@ def proxied_signup(request, application, form_class=SignupForm,
             form.email_address = ''
             form.username = ''
             
-
         
 
     # the outstanding issue is how to make sure that the form we're rendering comes back here

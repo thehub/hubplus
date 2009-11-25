@@ -8,6 +8,15 @@
 
 {% block body %}
 
+
+{% if system_messages %}
+<ul class='system_messages'>
+  {% for ms in system_messages %}
+  <li>{{ms}}</li>
+  {% endfor %}
+</ul>
+{% endif %}
+
 {% include "messages/tabbed_subs.html" %}
 
 {% endblock %}

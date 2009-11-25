@@ -193,6 +193,10 @@ def profile(request, username, template_name="profiles/profile.html"):
 
     host_info = TemplateSecureWrapper(host_info)
 
+
+    member_of = [(g.group_app_label() + ':group', g) for g in other_user.get_enclosures(levels=['member']).exclude(group_name='all_members')]
+    host_of = [(g.group_app_label() + ':group', g) for g in other_user.get_enclosures(levels=['host']).exclude(group_name='all_members_hosts')]
+
     return render_to_response(template_name, {
             "is_me": is_me,
             "is_friend": is_friend,
@@ -309,3 +313,23 @@ def update_main_permission_sliders(request,username) :
     pass
 
 
+
+@login_required
+def autocomplete_user_or_full_name(request):
+    """ looks for user and fullname  """
+
+    q = request.GET['q']
+
+    limit = request.GET['limit']             
+    if not limit :
+        limit = 40 # should be enough for anyone
+    q_username = Q(user__username__istartswith=q)
+    q_first = Q(user__first_name__istartswith=q)
+    q_last = Q(user__last_name__istartswith=q)
+
+    options = ['%s %s (%s)' % (p.user.first_name, p.user.last_name, p.user.username) for p in Profile.objects.filter(q_username | q_first | q_last)[:limit]] 
+
+    # XXX add permissioning on results
+
+    options = '\n'.join(options)
+    return HttpResponse(options)

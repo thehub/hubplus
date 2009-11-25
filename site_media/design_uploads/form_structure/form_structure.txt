@@ -1,0 +1,92 @@
+Form Stucture for Hub+
+
+
+FORM
+---
+
+form.full_block
+
+-	h4
+-	p.note
+
+-	fieldset
+	-	ul
+		-	INPUT (see below)
+			
+-	fieldset.buttons
+	-	input.submit.button
+	-	abbr.terms (optional, for asterisk)
+	-	span.alternatives (or p.alternative if follows an 'abbr.terms', optional)
+		-	a
+
+-	p.note (optional)
+
+---
+
+
+INPUT: STANDARD
+---
+
+		-	li
+
+			-	div.label
+				-	label
+					-	abbr.required
+				-	p.note (optional)
+
+			-	div.input
+				-	input / textarea / select
+				-	p.note (optional)
+				-	ul.error_list (generated) (generated)
+
+---
+
+
+INPUT: SINGLE CHECKBOX/RADIO
+---
+
+		-	li (or li.unlabelled if no label)
+
+			-	div.label (optional)
+				-	label
+				-	p.note (optional)
+
+				div.input.checkboxes (or div.input.radios)
+				-	div.label
+					-	label
+					-	p.note (optional)
+					-	ul.error_list (generated)
+					-	div.input (or div.input.inactive, optional, if dependent on checkbox)
+						-	input / textarea / select
+						-	p.note (optional)
+						-	ul.error_list (generated)
+				-	input
+
+---
+
+
+INPUT: MULTIIPLE CHECKBOXES/RADIOS
+---
+
+		-	li
+
+			-	div.label
+				-	label
+				-	p.note (optional)
+
+				div.input.checkboxes
+				-	ul
+					-	li
+						-	div.label
+							-	label
+							-	p.note (optional)
+							-	ul.error_list (generated) (for this input only)
+							-	div.input (or div.input.inactive, optional, if dependent on checkbox)
+								-	input / textarea / select
+								-	p.note (optional)
+								-	ul.error_list (generated)
+						-	input
+				-	ul.error_list (generated) (for all inputs)
+
+---
+

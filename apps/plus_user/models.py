@@ -156,7 +156,9 @@ def patch_user_class():
 
     User.add_to_class('psn_id', models.CharField(max_length=50,null=True))
     User.add_to_class('psn_password_hmac_key', models.CharField(max_length=50, null=True)) #this is just for the bizare hmacing of psn passwords by a field formly known as "fullname"
-    
+
+    User.add_to_class('cc_messages_to_email',models.BooleanField(default=False)) # internal messages get reflected to email
+
     User.email = AliasOf('email_address')
     User.set_password = set_password
     User.check_password = check_password
