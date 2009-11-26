@@ -53,6 +53,7 @@
 	  {% plus_tag 'Interests' 'interests'  profile  other_user %}
 	</dl>
       </li>  
+      
       <li>
 	<dl class="disabled"><dt >{% trans "Region" %}</dt>
 	  <dd>
@@ -71,15 +72,24 @@
 	</dl>
       </li>
       {% endif %}
+
+      {% if profile.should_show_organisation %}
       <li>
 	   {% editable "Organisation" profile 'organisation' 'Your organisation' %}
       </li>
+      {% endif %}
+
+      {% if profile.should_show_role %}
       <li>
 	   {% editable "Role" profile 'role' 'Your role' %}
       </li>
+      {% endif %}
+
+      {% if profile.should_show_place %}
       <li class="place">
 	   {% editable "Location" profile 'place' 'Your Location' %}
       </li>	
+      {% endif %}
     </ul>
   </div>
 </div>
