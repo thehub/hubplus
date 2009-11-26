@@ -35,6 +35,7 @@ from itertools import chain
 from django.template import defaultfilters
 from apps.plus_explore.forms import SearchForm
 
+
 #from gravatar.templatetags.gravatar import gravatar as avatar
 
 if "notification" in settings.INSTALLED_APPS:
@@ -77,7 +78,7 @@ def profiles(request, tag_string='', template_name="plus_explore/explore_filtere
 def show_section(profile, attribute_list) :
     # if none of the list of attributes are visible to this viewer, hide them all
     def test_att(name) :
-        if profile.__getattr__(name) :
+        if profile.__getattr__('should_show_'+name) :
             return True
         return False
 
@@ -161,7 +162,6 @@ def profile(request, username, template_name="profiles/profile.html"):
     profile = other_user.get_profile()
     user = request.user
 
-
     if not user.is_authenticated():
         user = get_anon_user()
 
@@ -205,6 +205,7 @@ def profile(request, username, template_name="profiles/profile.html"):
     host_of = [(g.group_app_label() + ':group', g) for g in other_user.get_enclosures(levels=['host']).exclude(group_name='all_members_hosts')]
 
     see_about = is_me or show_section(profile, ('about',))
+
     see_contacts = is_me or show_section(profile,('mobile','home','work','fax','address','email_address'))
     see_links = is_me or show_section(profile,('website',))
 
