@@ -394,6 +394,20 @@ class GenericReference(models.Model):
     # If there are only these, we can add a choice to this field, but I'm not 100% certain yet.
     permission_prototype = models.CharField(max_length=10, null=True)
 
+
+    def delete(self) :
+        # remove the generic reference
+        # try not to call this directly, but via deleting a group etc. (which we'll wrap in a transaction)
+
+        # remove tags                                                                                                    
+        from apps.plus_tags.models import TagItem, tag_item_delete
+        for ti in TagItem.objects.filter(ref=self) :
+            tag_item_delete(ti)
+
+        super(GenericReference,self).delete()
+
+        
+
 def ref(agent) :
     # if we're sent ordinary agent (group etc.) get the ref, if we've already got a ref, just return it
     if agent.__class__ != GenericReference :
