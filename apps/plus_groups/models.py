@@ -1,3 +1,4 @@
+
 from django.db import models
 from django.db.models.signals import post_save
 from itertools import chain
@@ -13,6 +14,8 @@ from apps.plus_permissions.proxy_hmac import attach_hmac
 import datetime
 
 from django.utils.translation import ugettext_lazy as _
+from django.db import transaction
+
 
 
 class Location(models.Model):
@@ -336,6 +339,70 @@ try :
             group_app_label = group_label + 's'
             return group_app_label
 
+        @transaction.commit_on_success
+
+        def delete(self) :
+ 
+            sc = self.get_security_context()
+            ref = self.get_ref()
+
+            # remove members
+            for m in self.get_members() :
+                self.remove_member(m)
+            
+            # remove tags, now moved to GenericReference.delete()
+
+            content_type = ContentType.objects.get_for_model(self)
+
+            # remove statuses
+            from apps.microblogging.models import TweetInstance, Tweet, Following
+
+            for ti in TweetInstance.objects.tweets_from(self) :
+                ti.delete()
+            for ti in TweetInstance.objects.tweets_for(self) :
+                ti.delete()
+
+            for t in Tweet.objects.filter(sender_type=content_type, sender_id=self.id) :
+                t.delete()
+            for f in Following.objects.filter(follower_content_type=content_type,follower_object_id=self.id) :
+                f.delete()
+            for f in Following.objects.filter(followed_content_type=content_type,followed_object_id=self.id) :
+                f.delete() 
+
+            # remove comments
+            from threadedcomments.models import ThreadedComment
+            for c in ThreadedComment.objects.filter(content_type=content_type, object_id=self.id) :
+                c.delete()
+
+            # remove resource (WikiPage)
+                
+            from apps.plus_wiki.models import WikiPage
+            for p in WikiPage.objects.filter(in_agent=ref) :
+                p.delete()
+
+            # remove resource (Uploads)
+            from apps.plus_resources.models import Resource
+            for r in Resource.objects.filter(in_agent=ref) :
+                r.delete()
+
+
+            # permissions
+            
+            sc.target.clear()
+
+            # a) delete security tags
+            for t in sc.get_tags() :
+                t.delete()
+                # does this delete the relation between other GenRefs and the tag?
+
+            # b) delete this agent as security_context
+            sc.delete()
+
+            # remove the genref to this
+            ref.delete()
+
+            # remove the group
+            super(TgGroup,self).delete()
 
     
 except Exception, e:

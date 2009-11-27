@@ -1,4 +1,5 @@
 from django.shortcuts import render_to_response, get_object_or_404
+from django.http import Http404 
 from django.template import RequestContext
 from django.contrib.auth.models import User
 from django.http import HttpResponse, HttpResponseRedirect, HttpResponseForbidden
@@ -68,11 +69,15 @@ def resources(group, tags=[], order=None, search=''):
 @secure_resource(TgGroup)
 def group(request, group, template_name="plus_groups/group.html", current_app='plus_groups', **kwargs):
 
+    if not group :
+        raise Http404(_('There is no group with this id'))
+
     user = request.user
     if not user.is_authenticated():
         user = get_anon_user()
         request.user = user 
             
+    
     members = group.get_users()[:10]
     member_count = group.get_no_members()
 
