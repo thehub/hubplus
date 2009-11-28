@@ -169,14 +169,15 @@ jq.extend(widget, {
     },
 
     new_select: function (widget_id, widget_name, widget_class, value) {
-	/* copied from select, but general */
-	//var source = ['room', 'hotdesk', 'phone', 'printer', 'custom', 'other'];
+	    /* copied from select, but gets option values via ajax */
 	var source;
 	var element = jq('<select id="{id}" name="{name}" class="{className}" >'.supplant({id: widget_id,
 											   name: widget_name,
 											   className: widget_class}));
-	
-	jq.getJSON('/groups/group_type_ajax',function(source) {
+
+	// XXX do we have a better way to get this element that gives us the URL?
+	ajax_url = jq('#ajax_select_list_url').attr('href');
+	jq.getJSON(ajax_url,function(source) {
 		jq.each(source, function (i, val) {
 			widget.new_add_option(val, element);
 		    }); 
