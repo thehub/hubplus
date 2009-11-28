@@ -167,6 +167,35 @@ jq.extend(widget, {
         });
         return [element, null];
     },
+
+    new_select: function (widget_id, widget_name, widget_class, value) {
+	/* copied from select, but general */
+	//var source = ['room', 'hotdesk', 'phone', 'printer', 'custom', 'other'];
+	var source;
+	var element = jq('<select id="{id}" name="{name}" class="{className}" >'.supplant({id: widget_id,
+											   name: widget_name,
+											   className: widget_class}));
+	
+	jq.getJSON('/groups/group_type_ajax',function(source) {
+		jq.each(source, function (i, val) {
+			widget.new_add_option(val, element);
+		    }); 
+	    });
+
+        return [element, null];
+    },
+
+    new_add_option: function (val, element) {
+	var ele = jq('<option></option>');
+	ele.val(val[0]);
+	ele.html(val[1]);
+	if (this === val) {
+	    ele.selected = 'selected';
+	}
+	ele.appendTo(element);
+    },
+
+
     add_option: function (val, element) {
         var ele = jq('<option></option>');
         ele.val(val);

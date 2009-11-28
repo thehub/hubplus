@@ -19,7 +19,7 @@ var widget_map = {
                 'assistence_offered':'text_wysiwyg',
 		'project':'text_wysiwyg',
                 'expected_membership_benefits':'text_wysiwyg'},
-    'TgGroup':{'description':'text_wysiwyg'},
+    'TgGroup':{'description':'text_wysiwyg', 'group_type':'new_select'},
     'Resource':{'description':'text_wysiwyg'}
 };
 
@@ -292,6 +292,7 @@ var add_content = function () {
 			       }
     });
 };
+
 var profile_ready = function () {
     add_content();
     wiki_edit();

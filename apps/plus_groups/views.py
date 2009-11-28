@@ -442,3 +442,7 @@ def autocomplete(request, j=None, current_app='plus_groups', **kwargs):
     options = [{'display_name':group.display_name, 'id':str(group.id), 'interfaces':[iface.split('.')[1] for iface in group._interfaces]} for group in groups]
     return options
 
+
+@json_view
+def group_type_ajax(request,**kwargs) :
+    return settings.GROUP_TYPES
