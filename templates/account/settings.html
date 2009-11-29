@@ -1,0 +1,30 @@
+{% extends "site_base.html" %}
+
+{% load i18n %}
+{% load avatar_tags %}
+
+{% block head_title %}{% trans "Edit Your Settings" %}{% endblock %}
+{% block page_title %}{% trans "Edit Your Settings" %}{% endblock %}
+
+{% block body %}
+
+<div class="block">
+
+<ul>
+  <form action="" method="POST">
+    <dl>
+      <dt>{% trans "Forward site messages to your email account?" %}</dt>
+      <dd>
+	{{form.cc_email}}
+	{{form.cc_email.errors}}
+      </dd>
+      <dt></dt>
+      <dl>
+	<input type='submit'/>
+      </dl>
+
+    </dl>
+  </form>
+</ul>
+</div>
+{% endblock %}

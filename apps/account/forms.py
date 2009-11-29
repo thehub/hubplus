@@ -335,6 +335,8 @@ class ChangeLanguageForm(AccountForm):
         self.user.message_set.create(message=ugettext(u"Language successfully updated."))
 
 
+
+
 # @@@ these should somehow be moved out of account or at least out of this module
 
 from account.models import OtherServiceInfo, other_service, update_other_services
@@ -425,3 +427,5 @@ class HubPlusApplicationForm(forms.Form):
         return contact, application, group
         
 
+class SettingsForm(forms.Form) :
+    cc_email = forms.BooleanField(required=False)

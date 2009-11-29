@@ -21,7 +21,7 @@ from apps.account.forms import SignupForm, AddEmailForm, LoginForm, \
     ChangePasswordForm, SetPasswordForm, ResetPasswordForm, \
     ChangeTimezoneForm, ChangeLanguageForm, TwitterForm, ResetPasswordKeyForm
 
-from forms import HubPlusApplicationForm
+from forms import HubPlusApplicationForm, SettingsForm
 
 from emailconfirmation.models import EmailAddress, EmailConfirmation
 
@@ -72,7 +72,16 @@ def home(request, success_url=None):
 
 @login_required
 def site_settings(request, template_name='account/settings.html'):
-    return render_to_response(template_name, {}, context_instance=RequestContext(request))
+    if request.method=='POST' :
+
+        form = SettingsForm(request.POST)
+        if form.is_valid() :
+            request.user.cc_messages_to_email = form.cleaned_data['cc_email']
+            request.user.save()
+
+    else:
+        form = SettingsForm(initial={'cc_email':request.user.cc_messages_to_email})
+    return render_to_response(template_name, {'form':form}, context_instance=RequestContext(request))
 
 
 def login(request, form_class=LoginForm,

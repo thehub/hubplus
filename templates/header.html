@@ -13,7 +13,7 @@
 				<li class="first"><span>{% openid_icon openid user %}{% trans "Welcome" %} <a href="{% url profile_detail user.username %}">{{user.get_display_name}}</a></span></li>
 				<li><a href="{% url profile_detail user.username %}">{% trans "Profile" %}</a></li>
 				<li><a href="{% url messages_all %}">{% trans "Inbox" %}</a></li>
-				<li class="disabled"><a href="{% url acct_settings %}">{% trans "Settings" %}</a></li>
+				<li><a href="{% url acct_settings %}">{% trans "Settings" %}</a></li>
 				<li class="last"><a href="/openid/logout/?next={% url acct_logout %}">{% trans "Logout" %}</a></li>
 				{% else %} 
 				<li class="first"><a href="{% url acct_apply %}">{% trans "Apply to join" %}</a></li>
