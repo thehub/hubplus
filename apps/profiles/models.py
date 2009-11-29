@@ -26,12 +26,12 @@ class ProfileStatusDescriptor(object):
     # because we're using the Profile, we have to get the user 
 
     def __get__(self,profile,typ=None):
-        from apps.microblogging.models import send_tweet, TweetInstance
+        from apps.microblogging.models import TweetInstance
         return TweetInstance.objects.tweets_from(profile.user).order_by("-sent")[0].text
 
     def __set__(self,profile,val):
-        from apps.microblogging.models import send_tweet, TweetInstance
-        send_tweet(profile,val)
+        from apps.microblogging.models import send_tweet
+        send_tweet(profile.user,val)
 
 
 class Profile(models.Model):    
