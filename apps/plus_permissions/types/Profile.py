@@ -27,7 +27,7 @@ class ProfileViewer:
     display_name = InterfaceReadProperty
     title = InterfaceReadProperty
     get_display_name = InterfaceCallProperty
-
+    status = InterfaceReadProperty
     cc_messages_to_email = InterfaceReadProperty
 
 class ProfileEmailAddressViewer:
@@ -62,6 +62,8 @@ class ProfileEditor:
 
     organisation = InterfaceWriteProperty
     role = InterfaceWriteProperty
+
+    status = InterfaceWriteProperty
 
     display_name = InterfaceWriteProperty
     title = InterfaceWriteProperty

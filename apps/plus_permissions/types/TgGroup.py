@@ -108,6 +108,7 @@ class TgGroupViewer:
     get_admin_group = InterfaceCallProperty
     homeplace = InterfaceReadProperty
     get_group_type_display = InterfaceReadProperty
+    status = InterfaceReadProperty
 
 
 class TgGroupEditor: 
@@ -119,7 +120,8 @@ class TgGroupEditor:
     message_members = InterfaceCallProperty
     add_link = InterfaceCallProperty
     change_avatar = InterfaceCallProperty
-
+    status = InterfaceWriteProperty
+    group_type = InterfaceWriteProperty
 
 class TgGroupJoin:
     pk = InterfaceReadProperty
