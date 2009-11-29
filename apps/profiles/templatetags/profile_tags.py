@@ -10,7 +10,7 @@ def show_profile(context, profile):
     if isinstance(profile, GenericReference):
         profile = profile.obj
     try:
-        homehub = profile.homeplace.tggroup_set.filter(level='member')[0]
+        homehub = (p for p in profile.homeplace.tggroup_set.filter(level='member') if p.is_hub_type())[0]
     except:
         homehub = TgGroup.objects.get(id=1)
         
