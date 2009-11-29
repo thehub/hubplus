@@ -293,6 +293,8 @@ var add_content = function () {
     });
 };
 
+
+
 var profile_ready = function () {
     add_content();
     wiki_edit();
@@ -315,5 +317,4 @@ var profile_ready = function () {
     setup_user_lists();
 
 };
-
 

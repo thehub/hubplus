@@ -1,6 +1,9 @@
 {% load i18n %}
 {% load intro_box %}
 
+{% load editable_attribute %}
+
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" dir="{% if LANGUAGE_BIDI %}rtl{% else %}ltr{% endif %}" xml:lang="{{ LANGUAGE_CODE }}" lang="{{ LANGUAGE_CODE }}">
 
@@ -147,10 +150,26 @@
                                {% intro_box %}
                             {% else %}
 				<div id="head_title_status">
-				{% if head_title_status %}
-			           <p>{% autoescape off %}{{head_title_status}}{% endautoescape %} - <span class="label_time">{{head_title_status.time}}</span>
-<span id="new_status"></span></p>
-				{% endif %}
+
+				  {% if status_type %}
+				  <ul>
+				    <li>
+				      {% autoescape off %}
+				      {% ifequal status_type 'group' %}
+				      {% editable "Group Status" group 'status' '' %}
+				      {% endifequal %}
+
+				      {% ifequal status_type 'profile' %}
+				      {% editable "Status" profile 'status' '' %}
+				      {% endifequal %}
+				      {% endautoescape %} 
+				      <span class="label_time">{{status_since}}</span>
+				    </li>
+				  </ul> 
+				  {% endif %}
+				  <span id="new_status"></span>
+
+
 				</div>
 		            {% endif %}
 			  {% endblock %}

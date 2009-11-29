@@ -147,14 +147,19 @@ def group(request, group, template_name="plus_groups/group.html", current_app='p
             pass
 
 
+    # XXXX review this status section if we make it an editable attribute
     tweets = TweetInstance.objects.tweets_from(group).order_by("-sent") 
     if tweets :
         latest_status = tweets[0]
-        dummy_status = DisplayStatus(
-            defaultfilters.safe( defaultfilters.urlize(latest_status.html())),
-                                 defaultfilters.timesince(latest_status.sent) )
+        #dummy_status = DisplayStatus(
+        #    defaultfilters.safe( defaultfilters.urlize(latest_status.html())),
+        #                         defaultfilters.timesince(latest_status.sent) )
+        status_type = 'group'
+        status_since = defaultfilters.timesince(latest_status.sent)
     else:
-        dummy_status = DisplayStatus('No status', '')
+        status_type = ''
+        status_since = ''
+    
 
     try:
         group.get_all_sliders
@@ -178,7 +183,8 @@ def group(request, group, template_name="plus_groups/group.html", current_app='p
 
     return render_to_response(template_name, {
             "head_title" : "%s" % group.get_display_name(),
-            "head_title_status" : dummy_status,
+            "status_type" : 'group',
+            "status_since" : status_since,
             "group" : TemplateSecureWrapper(group),
             "target_class" : ContentType.objects.get_for_model(group.get_inner()).id,
             "target_id" : group.get_inner().id,

@@ -10,6 +10,7 @@ from apps.plus_permissions.default_agents import get_admin_user, get_site
 
 from timezones.fields import TimeZoneField
 
+
 import itertools
 
 class DelegateToUser(object) :
@@ -19,6 +20,19 @@ class DelegateToUser(object) :
        #print "setting %s to %s for %s (class %s (user = %s, cls = %s))" % (self.attr_name,val,obj,obj.__class__,obj.user, obj.user.__class__)
        setattr(obj.user,self.attr_name,val)
        #print "Getting from inner %s" % getattr(obj.user,self.attr_name)
+
+class ProfileStatusDescriptor(object):
+    # XXXX Bah! There has to be a better way than this, but
+    # because we're using the Profile, we have to get the user 
+
+    def __get__(self,profile,typ=None):
+        from apps.microblogging.models import send_tweet, TweetInstance
+        return TweetInstance.objects.tweets_from(profile.user).order_by("-sent")[0].text
+
+    def __set__(self,profile,val):
+        from apps.microblogging.models import send_tweet, TweetInstance
+        send_tweet(profile,val)
+
 
 class Profile(models.Model):    
    user = models.ForeignKey(User, unique=True, verbose_name=_('user'))
@@ -49,6 +63,9 @@ class Profile(models.Model):
    
    invited_by = models.ForeignKey(User, related_name='invited_users', null=True)
    accepted_by = models.ForeignKey(User, related_name='accepted_users', null=True)
+
+   status = ProfileStatusDescriptor()
+
 
    def __unicode__(self):
        return self.user.username

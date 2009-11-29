@@ -20,7 +20,7 @@ from profiles.forms import ProfileForm, HostInfoForm
 
 from avatar.templatetags.avatar_tags import avatar
 
-from apps.plus_lib.models import DisplayStatus, add_edit_key
+from apps.plus_lib.models import add_edit_key
 
 from apps.plus_permissions.api import secure_resource, secure_wrap, TemplateSecureWrapper, PlusPermissionsNoAccessException, PlusPermissionsReadOnlyException, get_anon_user
 
@@ -83,6 +83,8 @@ def show_section(profile, attribute_list) :
         return False
 
     return any((test_att(name) for name in attribute_list))
+
+
 
 def profile(request, username, template_name="profiles/profile.html"):
     other_user = get_object_or_404(User, username=username)
@@ -166,14 +168,17 @@ def profile(request, username, template_name="profiles/profile.html"):
         user = get_anon_user()
 
     user_type = ContentType.objects.get_for_model(other_user)
-    other_user_tweets = Tweet.objects.filter(sender_type=user_type, sender_id=other_user.id).order_by("-sent") # other_user
-    if other_user_tweets :
-        latest_status = other_user_tweets[0]
-        dummy_status = DisplayStatus(
-            defaultfilters.safe( defaultfilters.urlize(latest_status.html())),
-                                 defaultfilters.timesince(latest_status.sent) )
-    else : 
-        dummy_status = DisplayStatus('No status', '')
+
+    # new style statuses
+    tweets = TweetInstance.objects.tweets_from(user).order_by("-sent")
+    if tweets :
+        latest_status = tweets[0]
+        status_type = 'profile'
+        status_since = defaultfilters.timesince(latest_status.sent)
+    else:
+        status_type = ''
+        status_since = ''
+
     profile = secure_wrap(profile, user)
     try:
         profile.get_all_sliders
@@ -220,12 +225,13 @@ def profile(request, username, template_name="profiles/profile.html"):
             "previous_invitations_to": previous_invitations_to,
             "previous_invitations_from": previous_invitations_from,
             "head_title" : "%s" % other_user.get_profile().get_display_name(),
-            "head_title_status" : dummy_status,
+            "status_type" : status_type,
+            "status_since" : status_since,
             "host_info" : other_user.get_profile().get_host_info(),
             "skills" : skills,
             "needs" : needs,
             "interests" : interests,
-            "other_user_tweets" : other_user_tweets,
+            "other_user_tweets" : tweets,
             "permissions":perms_bool,
             "member_of":member_of,
             "host_of":host_of,

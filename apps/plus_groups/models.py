@@ -15,6 +15,7 @@ import datetime
 
 from django.utils.translation import ugettext_lazy as _
 from django.db import transaction
+from apps.plus_lib.status import StatusDescriptor
 
 
 
@@ -210,6 +211,8 @@ try :
         rights = models.TextField()
 
         active = models.BooleanField()
+
+        status = StatusDescriptor() 
 
         def add_member(self, user_or_group):
             if isinstance(user_or_group, User) and not self.users.filter(id=user_or_group.id):
