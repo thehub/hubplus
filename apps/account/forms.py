@@ -436,13 +436,20 @@ class SettingsForm(forms.Form) :
         if not email :
             raise forms.ValidationError(_("Email address is empty."))
 
-        if self.user : 
+        try :
+            self.user
             # someone has injected a user in from outside,
             # so we can validate whether the email address belongs to this user
+            user = self.user
+        except :
+            user = None
+
+        if user :
             users = User.objects.filter(email_address=email)
             if users:
                 if users[0].username == self.user.username :
                     return email
                 raise forms.ValidationError(_("There is already a user with that email address. Please choose another."))
+
 
         return email

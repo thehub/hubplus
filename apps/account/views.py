@@ -75,6 +75,8 @@ def site_settings(request, template_name='account/settings.html'):
     if request.method=='POST' :
 
         form = SettingsForm(request.POST)
+        form.user = request.user
+
         if form.is_valid() :
             request.user.cc_messages_to_email = form.cleaned_data['cc_email']
             request.user.email_address=form.cleaned_data['email']
