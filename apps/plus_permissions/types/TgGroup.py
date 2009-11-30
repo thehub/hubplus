@@ -109,7 +109,7 @@ class TgGroupViewer:
     homeplace = InterfaceReadProperty
     get_group_type_display = InterfaceReadProperty
     status = InterfaceReadProperty
-
+    is_hub_type = InterfaceCallProperty
 
 class TgGroupEditor: 
     pk = InterfaceReadProperty
