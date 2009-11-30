@@ -1,3 +1,18 @@
+/* Forms: Header Status */
+
+#page_header #page_status {
+
+}
+
+#page_header #page_status dt {
+	display		: none;
+}
+
+#page_header #page_status dd .text {
+	width		: 612px;
+}
+
+
 /* Forms */
 
 form p {
@@ -203,7 +218,7 @@ form.full_block input#page_title {
 	width		: 612px;
 }
 
-form.full_block {
+form.full_block #content {
 	width		: 612px;
 }
 
