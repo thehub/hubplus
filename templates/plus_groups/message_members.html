@@ -11,32 +11,35 @@
 
 {% block body %}
 
-  <form class="full uniForm" id="message_members_form" method="post" action="">
-
-
-    <p>
-      {% trans "Use this form to send a message to all members of"%} {{group.get_display_name}} {% trans "Please be careful to ensure your message is likely to be relevant and interesting to this group." %}
-    </p>
+  <form class="full_block block" id="message_members_form" method="post" action="">
+    <p>{% trans "Use this form to send a message to all members of"%} {{group.get_display_name}}. {% trans "Please be careful to ensure your message is likely to be relevant and interesting to this group." %}</p>
     <fieldset>
       <ul>
         <li>
-          {{ form.message_header.errors }}
-          <p><label for="message_header"><span class="required">*</span> {% trans "Message Header" %}</label>
+          <div class="label">
+            <label for="message_header"><span class="required">*</span> {% trans "Title" %}</label>
+          </div>
+          <div class="input">
             <input  id="message_header" name="message_header" class="text" type="text" />
-          </p>
+            {{ form.message_header.errors }}
+          </div>
         </li>
         <li>
-	  {{ form.message_body.errors}}
-          <p>
-            <label for="">{% trans "Your message to the user" %}</label>
-          </p>
-          <textarea id="message_body" name="message_body">
-          </textarea>
+          <div class="label">
+            <label for="">{% trans "Message" %}</label>
+          </div>
+          <div class="input">
+            <textarea id="message_body" name="message_body"></textarea>
+            {{ form.message_body.errors}}
+          </div>
         </li>
-
       </ul>
     </fieldset>
-    <input class="submit button" type="submit" value="{% trans "Send &raquo;" %}" />
+
+    <fieldset class="buttons">
+      <input class="button" type="submit" value="{% trans 'Send' %}" />
+      <span class="alternative">or <a href="{% url plus_groups:group group_id %}">{% trans "Go back" %}</a></span>
+    </fieldset>
 
   </form>
 
