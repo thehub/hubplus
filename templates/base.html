@@ -151,10 +151,7 @@
                                {% intro_box %}
                             {% else %}
 				<div id="head_title_status">
-
 				  {% if status_type %}
-				  <ul>
-				    <li>
 				      {% autoescape off %}
 				      {% ifequal status_type 'group' %}
 				      {% editable "Group Status" group 'status' '' %}
@@ -164,9 +161,7 @@
 				      {% editable "Status" profile 'status' '' %}
 				      {% endifequal %}
 				      {% endautoescape %} 
-				      <span class="label_time">{{status_since}}</span>
-				    </li>
-				  </ul> 
+				      <span class="label_time">{{status_since}} {% trans "ago"%}.</span>
 				  {% endif %}
 				  <span id="new_status"></span>
 
