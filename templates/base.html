@@ -150,7 +150,7 @@
                             {% if intro_box_override %}
                                {% intro_box %}
                             {% else %}
-				<div id="head_title_status">
+				<div id="page_status">
 				  {% if status_type %}
 				      {% autoescape off %}
 				      {% ifequal status_type 'group' %}
@@ -161,7 +161,7 @@
 				      {% editable "Status" profile 'status' '' %}
 				      {% endifequal %}
 				      {% endautoescape %} 
-				      <span class="label_time">{{status_since}} {% trans "ago"%}.</span>
+				      <p class="label_time">{{status_since}} {% trans "ago"%}.</p>
 				  {% endif %}
 				  <span id="new_status"></span>
 
