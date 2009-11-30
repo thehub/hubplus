@@ -18,26 +18,44 @@
     <fieldset>
       <ul>
 
+	<li>
+	  <div class="label">
+	    <label for="id_first_name">{% trans "First Name" %}</label>
+	  </div>
+	  <div class="input">
+	    {{form.first_name}} {{form.first_name.errors}}
+	  </div>
+	</li>
+
         <li>
           <div class="label">
-			<label for="id_email"><abbr class="required" title="required">* </abbr>{% trans "Email" %}</label>
+            <label for="id_last_name">{% trans "Last Name" %}</label>
           </div>
           <div class="input">
-			{{form.email}}
-			{{form.email.errors}}
-		  </div>
+            {{form.last_name}} {{form.last_name.errors}}
+          </div>
+        </li>
+
+        <li>
+          <div class="label">
+	    <label for="id_email"><abbr class="required" title="required">* </abbr>{% trans "Email" %}</label>
+          </div>
+          <div class="input">
+	    {{form.email}}
+	    {{form.email.errors}}
+	  </div>
         </li>
 
         <li class="unlabelled">
-
+	  
           <div class="input checkboxes">
             <div class="label">
-			  <label for="id_cc_email">{% trans "Forward my messages" %}</label>
+	      <label for="id_cc_email">{% trans "Forward my messages" %}</label>
               <p class="note">Get a copy of site messages sent to your email.</p>
-			  {{form.cc_email.errors}}
+	      {{form.cc_email.errors}}
             </div>
-			{{form.cc_email}}
-		  </div>
+	    {{form.cc_email}}
+	  </div>
         </li>
 
       </ul>
