@@ -64,6 +64,7 @@ class UserViewer:
     get_profile = InterfaceCallProperty
     get_display_name = InterfaceCallProperty
     display_name = InterfaceReadProperty 
+    is_site_admin = InterfaceCallProperty
 
 class SetManagePermissions:
     pass
@@ -133,14 +134,14 @@ AgentDefaults = {'public':
                        {'defaults':
                         {'Viewer': 'anonymous_group',
                          'Editor': 'context_agent',
-                         'EmailAddressViewer' : 'context_agent',
-                         'HomeViewer' : 'context_agent',
-                         'WorkViewer' : 'context_agent',
-                         'MobileViewer' : 'context_agent',
-                         'FaxViewer' : 'context_agent',
-                         'AddressViewer' : 'context_agent',
-                         'SkypeViewer' : 'context_agent',
-                         'SipViewer' : 'context_agent',
+                         'EmailAddressViewer' : 'all_members_group',
+                         'HomeViewer' : 'all_members_group',
+                         'WorkViewer' : 'all_members_group',
+                         'MobileViewer' : 'all_members_group',
+                         'FaxViewer' : 'all_members_group',
+                         'AddressViewer' : 'all_memebers_group',
+                         'SkypeViewer' : 'all_members_group',
+                         'SipViewer' : 'all_members_group',
                          'ManagePermissions':'context_admin',
                          'Unknown' : 'context_agent',
                          },
