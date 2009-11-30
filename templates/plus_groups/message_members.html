@@ -17,7 +17,7 @@
       <ul>
         <li>
           <div class="label">
-            <label for="message_header"><span class="required">*</span> {% trans "Title" %}</label>
+            <label for="message_header"><abbr class="required" title="required">* </abbr> {% trans "Title" %}</label>
           </div>
           <div class="input">
             <input  id="message_header" name="message_header" class="text" type="text" />
@@ -26,7 +26,7 @@
         </li>
         <li>
           <div class="label">
-            <label for="">{% trans "Message" %}</label>
+            <label for=""><abbr class="required" title="required">* </abbr>{% trans "Message" %}</label>
           </div>
           <div class="input">
             <textarea id="message_body" name="message_body"></textarea>
