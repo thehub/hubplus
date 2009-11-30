@@ -10,7 +10,10 @@
 
 		<ul id="account_navigation" style="">
 			{% if user.is_authenticated %}
-				<li class="first"><span>{% openid_icon openid user %}{% trans "Welcome" %} <a href="{% url profile_detail user.username %}">{{user.get_display_name}}</a></span></li>
+				<li class="first"><span>{% openid_icon openid user %}{% trans "Welcome" %} <a href="{% url profile_detail user.username %}">{{user.first_name}}</a>
+
+				{% if user.is_site_admin %}({% trans "Admin" %}){% endif %}</span>
+</li>
 				<li><a href="{% url profile_detail user.username %}">{% trans "Profile" %}</a></li>
 				<li><a href="{% url messages_all %}">{% trans "Inbox" %}</a></li>
 				<li><a href="{% url acct_settings %}">{% trans "Settings" %}</a></li>
