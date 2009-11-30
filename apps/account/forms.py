@@ -430,3 +430,14 @@ class HubPlusApplicationForm(forms.Form):
 class SettingsForm(forms.Form) :
     cc_email = forms.BooleanField(required=False)
     email = forms.EmailField(required=False)
+
+    def clean_email(self) :
+        email = self.cleaned_data['email']
+        if not email :
+            raise forms.ValidationError(_"Email address is empty."))
+
+        users = User.objects.filter(email_address=email)
+        if users:
+            raise forms.ValidationError(_("There is already a user with that email address. Please choose another."))
+
+        return email
