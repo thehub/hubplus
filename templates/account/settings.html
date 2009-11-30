@@ -3,34 +3,51 @@
 {% load i18n %}
 {% load avatar_tags %}
 
-{% block head_title %}{% trans "Edit Your Settings" %}{% endblock %}
-{% block page_title %}{% trans "Edit Your Settings" %}{% endblock %}
+{% block head_title %}{% trans "Settings" %}{% endblock %}
+{% block page_title %}{% trans "Settings" %}{% endblock %}
 
 {% block body %}
 
 <div class="block">
 
-<ul>
-  <form action="" method="POST">
-    <dl>
-      <dt>{% trans "Forward site messages to your email account?" %}</dt>
-      <dd>
-	{{form.cc_email}}
-	{{form.cc_email.errors}}
-      </dd>
-      <dt>{% trans "Your Email" %}</dt>
-      <dl>
-	{{form.email}}
-	{{form.email.errors}}
-      </dl>
-  
-      <dt></dt>
-      <dl>
-	<input type='submit'/>
-      </dl>
+<form class="full_block" action="" method="POST">
 
-    </dl>
-  </form>
-</ul>
+    <h4>{% trans "Edit your site settings" %}</h4>
+    <p>{% trans "Change your main email address and forwarding options." %}</p>
+
+    <fieldset>
+      <ul>
+
+        <li>
+          <div class="label">
+			<label for="id_email"><abbr class="required" title="required">* </abbr>{% trans "Email" %}</label>
+          </div>
+          <div class="input">
+			{{form.email}}
+			{{form.email.errors}}
+		  </div>
+        </li>
+
+        <li class="unlabelled">
+
+          <div class="input checkboxes">
+            <div class="label">
+			  <label for="id_cc_email">{% trans "Forward my messages" %}</label>
+              <p class="note">Get a copy of site messages sent to your email.</p>
+			  {{form.cc_email.errors}}
+            </div>
+			{{form.cc_email}}
+		  </div>
+        </li>
+
+      </ul>
+    </fieldset>
+
+    <fieldset class="buttons">
+      <input class="button" type="submit" value="{% trans 'Save' %}" />
+    </fieldset>
+
+</form>
+
 </div>
 {% endblock %}

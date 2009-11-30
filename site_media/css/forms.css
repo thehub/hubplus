@@ -512,3 +512,32 @@ form .label_permissions {
 #search #current input {
 	margin-bottom	: 3px;
 }
+
+.yui-editor-container .yui-toolbar-titlebar {
+	height			: 20px;
+}
+
+.yui-editor-container .yui-toolbar-titlebar h2 {
+	display			: none;
+}
+
+form.full_block .yui-editor-container fieldset {
+	padding		: 0 !important;
+}
+
+.yui-editor-container .yui-toolbar-subcont {
+	padding		: 3px 3px 0 !important;
+}
+
+.yui-editor-container .yui-toolbar-subcont h3 {
+	display		: none;
+}
+
+.yui-editor-container .yui-toolbar-subcont ul {
+	padding-bottom	: 0px !important;
+}
+
+.yui-editor-container .yui-toolbar-group {
+	margin		: 0 3px 3px 0 !important;
+}
+
