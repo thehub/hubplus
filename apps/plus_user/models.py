@@ -170,6 +170,11 @@ def patch_user_class():
     User.save = user_save
 
     User.is_admin_of = lambda self, group : self.is_member_of(group.get_admin_group())
+
+    def is_site_admin(self) :
+       from apps.plus_permissions.default_agents import get_all_members_group
+       return self.is_admin_of(get_all_members_group())
+    User.is_site_admin = is_site_admin
    
     print "Monkey Patched User Class ... gulp!"
 
