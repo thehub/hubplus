@@ -429,3 +429,4 @@ class HubPlusApplicationForm(forms.Form):
 
 class SettingsForm(forms.Form) :
     cc_email = forms.BooleanField(required=False)
+    email = forms.EmailField(required=False)
