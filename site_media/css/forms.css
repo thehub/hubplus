@@ -219,7 +219,7 @@ form.full_block input#page_title {
 }
 
 form.full_block #content {
-	width		: 612px;
+	width		: 620px;
 }
 
 
@@ -513,12 +513,17 @@ form .label_permissions {
 	margin-bottom	: 3px;
 }
 
+.yui-editor-container {
+	border		: 1px solid #bbb !important;
+	border-color: #aaa #bbb #ddd #aaa !important;
+}
+
 .yui-editor-container .yui-toolbar-titlebar {
-	height			: 20px;
+	height		: 20px !important;
 }
 
 .yui-editor-container .yui-toolbar-titlebar h2 {
-	display			: none;
+	display		: none;
 }
 
 form.full_block .yui-editor-container fieldset {
@@ -539,5 +544,9 @@ form.full_block .yui-editor-container fieldset {
 
 .yui-editor-container .yui-toolbar-group {
 	margin		: 0 3px 3px 0 !important;
+}
+
+.yui-editor-container .dompath {
+	border-top	: 1px solid #ddd !important;
 }
 

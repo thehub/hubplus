@@ -852,7 +852,7 @@ li.place div.editable {
 
 #intro #info ul,
 #group_intro #info ul,
-#upload_viewer ul{
+#upload_viewer ul {
 	clear		: both;
 	list-style	: none;
 	padding-bottom	: 1em;
@@ -868,6 +868,28 @@ li.place div.editable {
 #upload_viewer .download_button {
 	margin		: 1em 0 1.5em 30%;
 }
+
+
+#intro li,
+#group_intro li,
+#upload_viewer li {
+	overflow	: hidden;
+}
+
+#intro .label,
+#group_intro .label,
+#upload_viewer .label {
+	float		: left;
+	width		: 30%;
+}
+
+#intro .input,
+#group_intro .input,
+#upload_viewer .input {
+	float		: left;
+	width		: 70%;
+}
+
 
 
 /* Block: About */
@@ -949,20 +971,19 @@ li.place div.editable {
 
 #content,
 #preview_content {
+	border-bottom	: 1px solid #ddd;
 	clear		: both;
-	margin-bottom	: 25px;
+	padding-bottom	: 20px;
 }
 
 #preview_content {
-	border-bottom	: 1px solid #ddd;
-	padding-bottom	: 20px;
+	margin-bottom	: 20px;
 }
 
 
 /* Content Extra */
 
 #content_extra {
-	border-top	: 1px solid #ddd;
 	padding		: 5px 0 10px;
 }
 
