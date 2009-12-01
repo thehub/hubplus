@@ -22,7 +22,7 @@
           <div class="label">
 			<label for="id_email"><abbr class="required" title="required">* </abbr>{% trans "Email" %}</label>
           </div>
-          <div class="input">
+          <div class="value">
 			{{form.email}}
 			{{form.email.errors}}
 		  </div>
@@ -30,7 +30,7 @@
 
         <li class="unlabelled">
 
-          <div class="input checkboxes">
+          <div class="value checkboxes">
             <div class="label">
 			  <label for="id_cc_email">{% trans "Forward my messages" %}</label>
               <p class="note">Get a copy of site messages sent to your email.</p>

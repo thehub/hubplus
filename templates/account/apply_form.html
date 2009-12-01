@@ -29,7 +29,7 @@
 	      <label for="id_first_name"><span class="required">*</span>{% trans "First Name" %}</label>
 
           </div>
-	  <div class="input">
+	  <div class="value">
 	    <input  id="id_first_name" name="first_name" class="text" type="text" value="{{form.data.first_name}}"/>
    	    {{form.first_name.errors}}
           </div>
@@ -38,7 +38,7 @@
           <div class="label">
               <label for="id_last_name"><span class="required">*</span>{% trans "Last Name" %}</label>
 	  </div>
-	  <div class="input">
+	  <div class="value">
   	      <input  id="id_last_name" name="last_name" class="text" type="text" value="{{form.data.last_name}}"/>
 	       {{form.last_name.errors}}
           </div>
@@ -47,7 +47,7 @@
           <div class="label">
             <label for="id_email_address"><span class="required">*</span>{% trans "Email" %}</label>
           </div>
-          <div class="input">
+          <div class="value">
             <input  id="id_email_address" name="email_address" class="text" type="text" value="{{form.data.email_address}}"/>
             {{form.email_address.errors}}
           </div>
@@ -57,7 +57,7 @@
           <div class="label">
             <label for="id_organisation">{% trans "Organisation" %}</label>
           </div>
-          <div class="input">
+          <div class="value">
             <input  id="id_organisation" name="organisation" class="text" type="text" value="{{form.data.organisation}}"/>
             {{form.organisation.errors}}
           </div>
@@ -74,7 +74,7 @@
             <label for="id_address">{% trans "Address" %}</label>
             <p class="note"></p>
           </div>
-          <div class="input">
+          <div class="value">
             <textarea  id="id_address" name="address" class="text" type="text">{{form.data.address}}</textarea>
             {{form.address.errors}}
           </div>
@@ -84,7 +84,7 @@
             <label for="id_postcode">{% trans "Zip/Postcode" %}</label>
             <p class="note"></p>
           </div>
-          <div class="input">
+          <div class="value">
             <input  id="id_postcode" name="postcode" class="text" type="text" value="{{form.data.postcode}}" />
             {{form.postcode.errors}}
           </div>
@@ -94,7 +94,7 @@
             <label for="id_country">{% trans "Country" %}</label>
             <p class="note"></p>
           </div>
-          <div class="input">
+          <div class="value">
             <input  id="id_country" name="country" class="text" type="text" value="{{form.data.country}}" />
             {{form.country.errors}}
           </div>
@@ -111,7 +111,7 @@
             <label for="id_about"><span class="required">*</span>{% trans "Tell us a bit about yourself" %}</label>
             <p class="note">{% blocktrans %}what you do and why you're interested in {{ SITE_NAME }}?{% endblocktrans %}</p>
           </div>
-          <div class="input">
+          <div class="value">
             <textarea id="id_about" class="text" name="about_and_why" rows="5">{{form.data.about_and_why}}</textarea>
             {{ form.about_and_why.errors}}
           </div>
@@ -121,7 +121,7 @@
           <div class="label">
             <label for="interests"><span class="required">*</span>{% trans "What are your interests?" %}</label>
           </div>
-          <div class="input">
+          <div class="value">
             <!-- <input  id="interests" class="text" type="text" /> -->
             <span style="color:red">(Use existing tag functionality profiles here)</span>
           </div>
@@ -131,7 +131,7 @@
           <div class="label">
             <label for="skills"><abbr class="required" title="required">* </abbr>What are your skills?</label>
           </div>
-          <div class="input">
+          <div class="value">
             <!-- <input  id="skills" class="text" type="text" /> -->
             <span style="color:red">(Use existing tag functionality from profiles here)</span>
           </div>
@@ -141,14 +141,14 @@
           <div class="label">
             <label for="id_referal"><abbr class="required" title="required">* </abbr>How did you find out about {{ SITE_NAME }}?</label>
           </div>
-          <div class="input">
+          <div class="value">
             <textarea id="id_referal" class="text" name="find_out" rows="2">{{form.data.find_out}}</textarea>
             {{form.find_out.errors}}
           </div>
         </li>
 
         <li class="unlabelled">
-          <div class="input checkboxes">
+          <div class="value checkboxes">
             <div class="label">
               <label for="physical_hub">I'm interested in joining a {{HUB_NAME}}.</label>
               <p class="note">Connect and stay up-to-date with the latest happenings in your area.</p>
