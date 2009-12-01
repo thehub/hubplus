@@ -48,7 +48,9 @@ Join and enter a worldwide community of people and organizations concerned with 
 APPLICATION_REJECT_TEMPLATE = """
 Dear {{first_name}} {{last_name}},
 
-Unfortunately, we can not accept you to become a member of MHPSS network at this time.
+Thank you for applying to join MHPSS network.
+
+Unfortunately, we can not accept you to become a member at this time.
 
 """
 
