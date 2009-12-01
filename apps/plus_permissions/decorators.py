@@ -4,9 +4,15 @@ from apps.plus_permissions.default_agents import get_site
 from django.http import HttpResponseForbidden
 from django.contrib.contenttypes.models import ContentType
 
+import re
+
 def get_resource(cls, resource_id):
+
     if cls.__name__ == 'User':
-        resource = cls.objects.get(username=resource_id)
+        if re.match('[0-9]+',resource_id) :
+            resource = cls.objects.get(id=resource_id)
+        else :
+            resource = cls.objects.get(username=resource_id)
     else:
         try:
             resource=cls.objects.get(pk=resource_id)
@@ -51,7 +57,9 @@ def secure_resource(cls=None, with_interfaces=None, required_interfaces=None, ob
                 return f(request, sec_resource, *args,**kwargs)
             return g
         elif obj_schema:
+
             def g(request, *args, **kwargs):
+
                 if request.POST:
                     data = request.POST.copy() 
                 elif request.GET:
