@@ -34,7 +34,7 @@ from django.db.models import Q
 from itertools import chain
 from django.template import defaultfilters
 from apps.plus_explore.forms import SearchForm
-
+from apps.plus_links.models import get_links_for
 
 #from gravatar.templatetags.gravatar import gravatar as avatar
 
@@ -210,9 +210,14 @@ def profile(request, username, template_name="profiles/profile.html"):
     host_of = [(g.group_app_label() + ':group', g) for g in other_user.get_enclosures(levels=['host']).exclude(group_name='all_members_hosts')]
 
     see_about = is_me or show_section(profile, ('about',))
+    see_contacts = is_me or show_section(profile,('mobile','home','work','fax','website','address','email_address'))
+    
+    see_links = is_me
+    links = get_links_for(other_user,RequestContext(request))
+    if links :
+        see_links = True
 
-    see_contacts = is_me or show_section(profile,('mobile','home','work','fax','address','email_address'))
-    see_links = is_me or show_section(profile,('website',))
+    see_tags = is_me or True # criteria for seeing tags
 
     return render_to_response(template_name, {
             "is_me": is_me,
@@ -244,6 +249,8 @@ def profile(request, username, template_name="profiles/profile.html"):
             "see_about":see_about,
             "see_contacts":see_contacts,
             "see_links":see_links,
+            "other_user_class":user_type.id,
+            "other_user_id":other_user.id,
             }, context_instance=RequestContext(request))
 
 
