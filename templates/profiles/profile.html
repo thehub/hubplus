@@ -53,27 +53,27 @@
 
 			<li>
 				{% plus_tag 'Interests' 'interests'	profile	other_user %}
-			</li>	
+			</li>
 
-			<li>
-				<dl class="disabled">
-				<dt >{% trans "Region" %}</dt>
-				<dd>
+			<li class="disabled">
+				<div class="label">
+					{% trans "Region" %}
+				</div>
+				<div class="value">
 					<a href="hub.html" class='editable_temp_off' id='{{profile.edit_key}}hub'>{{profile.get_hub}}</a>
-				</dd>
-				</dl>
+				</div>
 			</li>
 
 			{% if member_of %}
 			<li>
-				<dl>
-					<dt>{% trans "Groups" %}</dt>
-					<dd>
-						{% for reverse_g, g in member_of %}
-							<a href="{% plus_url reverse_g g.pk %}">{{g.get_permission_agent_name}}</a>{% if forloop.last %}{% else %}, {% endif %}
-						{% endfor %}
-					</dd>
-				</dl>
+				<div class="label">
+					{% trans "Groups" %}
+				</div>
+				<div class="value">
+					{% for reverse_g, g in member_of %}
+					<a href="{% plus_url reverse_g g.pk %}">{{g.get_permission_agent_name}}</a>{% if forloop.last %}{% else %}, {% endif %}
+					{% endfor %}
+				</div>
 			</li>
 			{% endif %}
 

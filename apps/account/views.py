@@ -80,10 +80,17 @@ def site_settings(request, template_name='account/settings.html'):
         if form.is_valid() :
             request.user.cc_messages_to_email = form.cleaned_data['cc_email']
             request.user.email_address=form.cleaned_data['email']
+            request.user.first_name=form.cleaned_data['first_name']
+            request.user.last_name=form.cleaned_data['last_name']
             request.user.save()
 
     else:
-        form = SettingsForm(initial={'email': request.user.email_address, 'cc_email':request.user.cc_messages_to_email})
+        form = SettingsForm(initial={
+                'email': request.user.email_address, 
+                'cc_email':request.user.cc_messages_to_email,
+                'first_name':request.user.first_name,
+                'last_name':request.user.last_name,
+                })
     return render_to_response(template_name, {'form':form}, context_instance=RequestContext(request))
 
 

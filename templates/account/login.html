@@ -30,7 +30,7 @@
           <div class="label">
             <label for="id_username"><abbr class="required" title="required">* </abbr>Username</label>
           </div>
-          <div class="input">
+          <div class="value">
             <input id="id_username" type="text" class="text" name="username" maxlength="30" />
             {{ form.username.errors }}
           </div>
@@ -40,14 +40,14 @@
           <div class="label">
             <label for="id_password"><abbr class="required" title="required">* </abbr>Password</label>
           </div>
-          <div class="input">
+          <div class="value">
             <input type="password" name="password" type="text" class="text" id="id_password" />
             {{ form.password.errors }}
           </div>
         </li>
 
         <li id="div_id_remember" class="unlabelled">
-          <div class="input checkboxes">
+          <div class="value checkboxes">
             <div class="label">
               <label for="id_remember">{% trans "Remember me"%}</label>
               <p class="note">{% trans "Stay logged in for 3 weeks" %}</p>

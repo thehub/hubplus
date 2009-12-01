@@ -122,6 +122,7 @@ class TgGroupEditor:
     change_avatar = InterfaceCallProperty
     status = InterfaceWriteProperty
     group_type = InterfaceWriteProperty
+    address = InterfaceWriteProperty
 
 class TgGroupJoin:
     pk = InterfaceReadProperty

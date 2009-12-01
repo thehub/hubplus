@@ -431,6 +431,12 @@ class SettingsForm(forms.Form) :
     cc_email = forms.BooleanField(required=False)
     email = forms.EmailField(required=False)
 
+    first_name = forms.RegexField(regex=alnum_re, label=_("First Name"), max_length=30, widget=forms.TextInput(), 
+                                  error_messages={'invalid': 'Name must only contain alphabetic character'})
+    last_name = forms.RegexField(regex=alnum_re, label=_("Last Name"), max_length=30, widget=forms.TextInput(), 
+                                 error_messages={'invalid': 'Name must only contain alphabetic character'})
+
+
     def clean_email(self) :
         email = self.cleaned_data['email']
         if not email :
