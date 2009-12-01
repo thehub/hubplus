@@ -1,6 +1,8 @@
 {% load i18n %}
 {% load editable_attribute %}
 {% load plus_tags %}
+{% load plus_links %}
+
 
   <div id="about_block">
 
@@ -18,6 +20,7 @@
     {% if see_contacts %}
     <h3>{% trans "Contact" %}</h3>
     <ul>
+
       {% if profile.should_show_mobile %}
       <li>
         {% editable 'Phone (Mobile) <span class="extra">Include dialing code (eg '+44')</span>' profile 'mobile' 'My mobile' %} 
@@ -36,6 +39,18 @@
       </li> 
       {% endif  %}
 
+      {% if profile.should_show_email_address %}
+      <li>
+         {% editable 'Email <span class="extra">This is our main contact email for you.</span>' profile 'email_address' 'My email' 'url'%}
+      </li>
+      {% endif %}
+
+      {% if profile.should_show_website %}
+      <li>
+         {% editable "Website" profile 'website' 'My site' 'url' %}
+      </li>
+      {% endif %}
+
       {% if profile.should_show_fax %}
       <li>
          {% editable 'Fax No. <span class="extra">Include dialing code (eg '+44')</span>' profile 'fax' 'My fax' %} 
@@ -48,25 +63,20 @@
       </li>
       {% endif %}
 
-      {% if profile.should_show_email_address %}
-      <li>
-         {% editable 'Email <span class="extra">This is our main contact email for you.</span>' profile 'email_address' 'My email' 'url'%} 
-      </li> 
-      {% endif %}
-
     </ul>
     {% endif %}
 
     {% if see_links %}
     <h3>{% trans "Links" %}</h3>
     <ul>
-      {% if profile.should_show_website %}
       <li>
-         {% editable "Website" profile 'website' 'My site' 'url' %} 
-      </li> 
-      {% endif %}
+	{% plus_links other_user_class other_user_id %}
+      </li>
+      
     </ul>
     {% endif %}
+
+
 
     <h3>{% trans "Skills and needs" %}</h3>
     <ul id="skills_needs_list">
