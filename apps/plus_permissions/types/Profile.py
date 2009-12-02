@@ -21,6 +21,7 @@ class ProfileViewer:
     place = InterfaceReadProperty
     website = InterfaceReadProperty
     homeplace = InterfaceReadProperty
+    homehub = InterfaceReadProperty
     organisation = InterfaceReadProperty
     role = InterfaceReadProperty
 
@@ -77,6 +78,8 @@ class ProfileEditor:
     skype_id = InterfaceWriteProperty
     sip_id = InterfaceWriteProperty
     homeplace = InterfaceWriteProperty
+    homehub = InterfaceWriteProperty
+
 
     cc_messages_to_email = InterfaceWriteProperty
 
