@@ -154,6 +154,8 @@ def patch_user_class():
     User.add_to_class('website',models.TextField())
     User.add_to_class('homeplace', models.ForeignKey(Location, null=True))
 
+    User.add_to_class('homehub', models.ForeignKey("plus_groups.TgGroup", null=True)) # we need this for PSN, XXX need to decide how to make it compatible with hubspace for hub+ 
+
     User.add_to_class('psn_id', models.CharField(max_length=50,null=True))
     User.add_to_class('psn_password_hmac_key', models.CharField(max_length=50, null=True)) #this is just for the bizare hmacing of psn passwords by a field formly known as "fullname"
 
