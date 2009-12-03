@@ -7,6 +7,9 @@ COPYRIGHT_HOLDER=_('Hub World Ltd')
 
 VIRTUAL_HUB_NAME = 'HubPlus'
 ALL_MEMBERS_NAME = 'HubPlus'
+VIRTUAL_MEMBERS_GROUP_NAME = 'virtual_members'
+VIRTUAL_MEMBERS_DISPLAY_NAME = 'Hub+ Virtual'
+
 
 EXPLORE_NAME = _('Explore')
 

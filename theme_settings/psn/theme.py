@@ -6,7 +6,9 @@ PROJECT_NAME=_("Mental Health and Psychosocial Support Network")
 COPYRIGHT_HOLDER=_('Psychosocial Support Network')
 
 VIRTUAL_HUB_NAME = 'MHPSS Network'
-ALL_MEMBERS_NAME = 'MHPSS Network'
+ALL_MEMBERS_NAME = 'All Members'
+VIRTUAL_MEMBERS_GROUP_NAME = 'virtual_members'
+VIRTUAL_MEMBERS_DISPLAY_NAME = 'MHPSS Network'
 
 EXPLORE_NAME = _('Resources')
 
