@@ -68,14 +68,6 @@
                     {% editable "Main Region" profile 'homehub' '' %}
 		  </li>
 		  
-		  <li class="disabled">
-		    <div class="label">
-		      {% trans "Region" %}
-		    </div>
-		    <div class="value">
-		      <a href="hub.html" class='editable_temp_off' id='{{profile.edit_key}}hub'>{{profile.get_hub}}</a>
-		    </div>
-		  </li>
 		  
 		  {% if member_of %}
 		  <li>
@@ -104,7 +96,7 @@
 		  
 		  {% if profile.should_show_place %}
 		  <li class="place">
-		    {% editable "Location" profile 'place' 'Your Location' %}
+		    {% editable "Location" profile 'place' 'London' %}
 		  </li>	
 		  {% endif %}
 		  
