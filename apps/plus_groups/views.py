@@ -11,7 +11,7 @@ from django.utils.encoding import smart_str
 from django.db import transaction
 from django.utils import simplejson
 
-from apps.plus_groups.models import TgGroup
+from apps.plus_groups.models import TgGroup, get_hubs
 from django.core.urlresolvers import reverse
 
 from django.template import defaultfilters
@@ -452,3 +452,10 @@ def autocomplete(request, j=None, current_app='plus_groups', **kwargs):
 @json_view
 def group_type_ajax(request,**kwargs) :
     return settings.GROUP_TYPES
+
+
+
+@json_view
+def ajax_hub_list(request,**kwargs) :    
+    xs = [(t.id, t.display_name) for t in get_hubs()]
+    return xs
