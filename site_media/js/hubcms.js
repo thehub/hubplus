@@ -176,7 +176,8 @@ jq.extend(widget, {
 											   className: widget_class}));
 
 	// XXX do we have a better way to get this element that gives us the URL?
-	ajax_url = jq('#ajax_select_list_url').attr('href');
+	var ajax_url = jq('#ajax_select_list_url_'+widget_id).attr('href');
+
 	jq.getJSON(ajax_url,function(source) {
 		jq.each(source, function (i, val) {
 			widget.new_add_option(val, element);
@@ -191,7 +192,7 @@ jq.extend(widget, {
 	ele.val(val[0]);
 	ele.html(val[1]);
 	if (this === val) {
-	    ele.selected = 'selected';
+	    ele.attr({'selected':'true'});
 	}
 	ele.appendTo(element);
     },

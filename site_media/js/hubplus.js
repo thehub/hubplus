@@ -12,7 +12,8 @@ var widget_map = {
     'Profile':{'about':'text_wysiwyg',
                'find_out':'text_wysiwyg',
 	       'project_stage':'text_wysiwyg',
-	       'place': 'gmap'
+	       'place': 'gmap',
+	       'homehub':'new_select',
     },
     'HostInfo':{'find_out':'text_wysiwyg',
                 'project_stage':'text_wysiwyg',
