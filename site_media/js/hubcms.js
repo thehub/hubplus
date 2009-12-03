@@ -174,10 +174,8 @@ jq.extend(widget, {
 	var element = jq('<select id="{id}" name="{name}" class="{className}" >'.supplant({id: widget_id,
 											   name: widget_name,
 											   className: widget_class}));
-
 	// XXX do we have a better way to get this element that gives us the URL?
 	var ajax_url = jq('#ajax_select_list_url_'+widget_id).attr('href');
-
 	jq.getJSON(ajax_url,function(source) {
 		jq.each(source, function (i, val) {
 			widget.new_add_option(val, element);
@@ -197,7 +195,6 @@ jq.extend(widget, {
 	ele.appendTo(element);
     },
 
-
     add_option: function (val, element) {
         var ele = jq('<option></option>');
         ele.val(val);
@@ -207,6 +204,8 @@ jq.extend(widget, {
         }
         ele.appendTo(element);
     }
+
+
 });
 var inplace_editor = function (element_id, url, special_options) {
     var element = jq('#' + element_id);
