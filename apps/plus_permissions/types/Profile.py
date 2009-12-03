@@ -24,6 +24,8 @@ class ProfileViewer:
     homehub = InterfaceReadProperty
     organisation = InterfaceReadProperty
     role = InterfaceReadProperty
+    first_name = InterfaceReadProperty
+    last_name = InterfaceReadProperty
 
     display_name = InterfaceReadProperty
     title = InterfaceReadProperty
@@ -80,6 +82,8 @@ class ProfileEditor:
     homeplace = InterfaceWriteProperty
     homehub = InterfaceWriteProperty
 
+    first_name = InterfaceWriteProperty
+    last_name = InterfaceWriteProperty
 
     cc_messages_to_email = InterfaceWriteProperty
 
