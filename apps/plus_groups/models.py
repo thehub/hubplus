@@ -325,8 +325,7 @@ try :
             return self.groupextras
         
         def __str__(self) : 
-            return "<TgGroup : %s>" % self.group_name
-        
+            return self.display_name        
 
         child_groups = models.ManyToManyField('self', symmetrical=False, related_name='parent_groups')
 
@@ -485,7 +484,7 @@ def get_permission_agent_name(self) :
 
 # Move MemberInvite (to group) here
 class MemberInvite(models.Model) :
-    # Actually, it's useful to have a generic invited member,                                                                
+    # Actually, it's useful to have a generic invited member,
     invited = models.ForeignKey(User, related_name='invited_member')
     invited_by = models.ForeignKey(User, related_name='member_is_invited_by')
     group = models.ForeignKey(TgGroup)
@@ -497,3 +496,7 @@ class MemberInvite(models.Model) :
         return 'http://%s%s' % (site_root, url)
 
 
+def get_hubs() :
+    # one place to define the "get list of hubs" we need for region dropdown
+    return (t for t in TgGroup.objects.filter(level='member') if t.is_hub_type())
+ 
