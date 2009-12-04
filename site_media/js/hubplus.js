@@ -206,9 +206,14 @@ var setup_user_lists = function () {
 
 
 var setup_maps = function () {
+    console.log('setting up maps');
     jq("[id$='-place']").each(function () {
+	    console.log('in place');
+	    console.log(this);
+	    console.log(plot_point);
 	create_map(jq(this), plot_point);
     });
+    console.log('fin maps');
 };
 
 
@@ -310,8 +315,17 @@ var profile_ready = function () {
 	jq('.tabbed_content #resources').load(form.attr('action') + ' form', form.serialize());
 	return false;
     });
-    if (jq('li.place .editable').length) {
-	jq.getScript("http://maps.google.com/maps?file=api&v=2.x&key=ABQIAAAAiA7tLHdzZr8yhGAEbo5FGxS_srkAJTD0j5T3EF3o06M_52NTAhQM2w0ugG9dZdoyPl3s9RqydGrzpQ&async=2&callback=setup_maps");
+    console.log(jq('div.place .editable'));
+    console.log(jq('div.place .editable').length);
+
+    if (jq('div.place .editable').length) {
+	// the-hub.net key ABQIAAAAUO5htA3plE0mHcReh9HGtxS_srkAJTD0j5T3EF3o06M_52NTAhS5z_4HyMj1VVfc-7jrnMrs_e_CBA
+	alert('matches');
+       var g_url = "http://maps.google.com/maps?file=api&v=2.x&key=ABQIAAAAUO5htA3plE0mHcReh9HGtxS_srkAJTD0j5T3EF3o06M_52NTAhS5z_4HyMj1VVfc-7jrnMrs_e_CBA&async=2&callback=setup_maps"
+	   
+	jq.getScript(g_url);
+	// original key
+	/* jq.getScript("http://maps.google.com/maps?file=api&v=2.x&key=ABQIAAAAiA7tLHdzZr8yhGAEbo5FGxS_srkAJTD0j5T3EF3o06M_52NTAhQM2w0ugG9dZdoyPl3s9RqydGrzpQ&async=2&callback=setup_maps"); */
     }
     //jq.getJSON('map_tags/', {}, init_rgraph);
 
