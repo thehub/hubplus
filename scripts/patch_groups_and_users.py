@@ -4,6 +4,10 @@ from apps.plus_permissions.views import setup_hubs_security, create_reference, s
 from django.contrib.auth.models import User
 from apps.plus_permissions.types.User import setup_user_security
 
+from apps.plus_permissions.default_agents import get_or_create_root_location, get_virtual_members_group
+
+vm = get_virtual_members_group()
+ 
 def patch_in_groups():
     """Do group security setup for hubspace groups
 
