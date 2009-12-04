@@ -107,9 +107,12 @@
 		  {% endif %}
 		  
 		  {% if profile.should_show_place %}
-		  <li class="place">
+		  <div class="place">
+		    <!-- NOTE : Please leave this as a "div" place because we need to capture that fact that 
+			 it's class="place" . If this were [li class="place"] django templates would automatically 
+			 close the li because of the second li inside the expanded "editable" templatetag -->
 		    {% editable "Location" profile 'place' 'London' %}
-		  </li>	
+		  </div>	
 		  {% endif %}
 		  
 		</ul>
