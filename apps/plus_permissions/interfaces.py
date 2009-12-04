@@ -154,6 +154,10 @@ class SecureWrapper:
     def get_inner_class(self) :
         return self.get_inner().__class__
 
+    def has_interface(self,i_str) :
+        # string representation of interface ie. "Profile.Viewer"
+        return i_str in self._interfaces
+
     def load_interfaces_for(self, agent, interface_names=None) :
         """Load interfaces for the wrapped inner content that are available to the agent"""
         resource = self.get_inner()

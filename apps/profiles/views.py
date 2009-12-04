@@ -142,20 +142,6 @@ def profile(request, username, template_name="profiles/profile.html"):
     previous_invitations_to = FriendshipInvitation.objects.filter(to_user=other_user, from_user=request.user)
     previous_invitations_from = FriendshipInvitation.objects.filter(to_user=request.user, from_user=other_user)
     
-    #if is_me:
-    #    if request.method == "POST":
-    #        if request.POST["action"] == "update":
-    #            profile_form = ProfileForm(request.POST, instance=other_user.get_profile())
-    #            if profile_form.is_valid():
-    #                profile = profile_form.save(commit=False)
-    #                profile.user = other_user
-    #                profile.save()
-    #        else:
-    #            profile_form = ProfileForm(instance=other_user.get_profile())
-    #    else:
-    #        profile_form = ProfileForm(instance=other_user.get_profile())
-    #else:
-    #    profile_form = None
 
     interests = get_tags(tagged=other_user.get_profile(), tagged_for=other_user, tag_type='interest')
     skills = get_tags(tagged = other_user.get_profile(), tagged_for=other_user, tag_type='skill')
@@ -197,7 +183,6 @@ def profile(request, username, template_name="profiles/profile.html"):
     host_info = secure_wrap(host_info, user)
 
     see_host_info = False
-
     try :
         host_info.user 
         see_host_info = True
@@ -217,7 +202,7 @@ def profile(request, username, template_name="profiles/profile.html"):
     if links :
         see_links = True
 
-    see_tags = is_me or True # criteria for seeing tags
+    can_tag = profile.has_interface('Profile.Editor')
 
     return render_to_response(template_name, {
             "is_me": is_me,
@@ -251,6 +236,7 @@ def profile(request, username, template_name="profiles/profile.html"):
             "see_links":see_links,
             "other_user_class":user_type.id,
             "other_user_id":other_user.id,
+            "can_tag":can_tag,
             }, context_instance=RequestContext(request))
 
 
