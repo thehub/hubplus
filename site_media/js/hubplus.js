@@ -315,12 +315,11 @@ var profile_ready = function () {
 	jq('.tabbed_content #resources').load(form.attr('action') + ' form', form.serialize());
 	return false;
     });
-    console.log(jq('div.place .editable'));
-    console.log(jq('div.place .editable').length);
 
-    if (jq('div.place .editable').length) {
+
+    if (jq('li.place .editable').length) {
 	// the-hub.net key ABQIAAAAUO5htA3plE0mHcReh9HGtxS_srkAJTD0j5T3EF3o06M_52NTAhS5z_4HyMj1VVfc-7jrnMrs_e_CBA
-	alert('matches');
+	
        var g_url = "http://maps.google.com/maps?file=api&v=2.x&key=ABQIAAAAUO5htA3plE0mHcReh9HGtxS_srkAJTD0j5T3EF3o06M_52NTAhS5z_4HyMj1VVfc-7jrnMrs_e_CBA&async=2&callback=setup_maps"
 	   
 	jq.getScript(g_url);
