@@ -20,6 +20,7 @@ function status_form(ele) {
         edit.hide();
     } else {
 	show.hide();
+        toggle.hide();
     }
 
     function toggle_all() {
@@ -29,6 +30,7 @@ function status_form(ele) {
 
     toggle.click(function(e) {
 	    toggle_all();
+	    toggle.hide();
 	} );
 
     show.click(function(e) {
