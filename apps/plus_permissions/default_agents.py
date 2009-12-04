@@ -79,7 +79,7 @@ def get_virtual_members_group() :
     if virtual_members :
         return virtual_members[0]
     admin = get_admin_user()
-    return TgGroup.objects.get_or_create(group_name=settings.VIRTUAL_MEMBERS_GROUP_NAME, display_name=settings.VIRTUAL_MEMBERS_DISPLAY_NAME, place=get_or_create_root_location(), level='member', user=admin)
+    return TgGroup.objects.get_or_create(group_name=settings.VIRTUAL_MEMBERS_GROUP_NAME, display_name=settings.VIRTUAL_MEMBERS_DISPLAY_NAME, place=get_or_create_root_location(), level='member', user=admin)[0]
     
 
 

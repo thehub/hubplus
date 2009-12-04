@@ -302,6 +302,8 @@ EMAIL_USE_TLS=False
 
 HMAC_KEY = "XXXXXXXXX"
 
+GOOGLE_MAP_KEY = "XXXXXXXXXXXX"
+
 # a local_settings file can over-ride the above
 try:
     from local_settings import *
