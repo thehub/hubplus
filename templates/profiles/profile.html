@@ -72,6 +72,14 @@
                     {% editable "Main Region" profile 'homehub' '' %}
 		  </li>
 		  
+		  <li>
+		    <dl class="disabled"><dt >{% trans "Region" %}</dt>
+		      <dd>
+			<a href="hub.html" class='editable_temp_off' id='{{profile.edit_key}}hub'>{{profile.get_hub}}</a>
+		      </dd>
+		    </dl>
+		  </li>
+	  
 		  
 		  {% if member_of %}
 		  <li>
