@@ -58,7 +58,11 @@
 		  </li>
 
 		  <li>
+		    {% if can_tag %}
 		    {% plus_tag 'Interests' 'interests'	profile	other_user %}
+		    {% else %}
+		    {% view_plus_tag 'Interests' 'interests' profile '' %}
+		    {% endif %}
 		  </li>
 		  
 		  <li>

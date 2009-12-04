@@ -54,7 +54,7 @@
 		{% if can_tag %}
 						{% plus_tag 'Skills <span class="extra">What does the group specialise in? (eg. 'nutrition')</span>' 'skills'	group user %}
 		{% else %}
-				{% view_plus_tag 'Skills' 'skills' group user %}
+				{% view_plus_tag 'Skills' 'skills' group '' %}
 		{% endif %}
 	</dl>
 			</li>
@@ -66,8 +66,8 @@
 		{% if can_tag %}
 				{% plus_tag 'Needs <span class="extra">What skills are the group looking for from other members? (eg. 'marketing')</span>' 'needs'	group	user %}
 		{% else %}
-				{% view_plus_tag 'Needs' 'needs' group user %}
-					{% endif %}
+				{% view_plus_tag 'Needs' 'needs' group '' %}
+		{% endif %}
 	</dl>
 			</li>
 		</ul>

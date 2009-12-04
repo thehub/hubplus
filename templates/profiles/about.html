@@ -82,12 +82,20 @@
     <ul id="skills_needs_list">
       <li>
 	<dl>
+	  {% if can_tag %}
 	  {% plus_tag 'Skills <span class="extra">What do you specialise in? (eg. 'nutrition')</span>' 'skills'  profile  other_user %}
+	  {% else %}
+	  {% view_plus_tag 'Skills <span class="extra">What do I specialise in?</span>' 'skills' '' %} 
+	  {% endif %}
 	</dl>
       </li>
       <li>
 	<dl>
+	  {% if can_tag %}
 	  {% plus_tag 'Needs <span class="extra">What skills are you looking for from other members? (eg. 'marketing')</span>' 'needs'  profile  other_user %}
+	  {% else %}
+	  {% view_plus_tag 'Needs<span class="extra"What skills am I looking for from other members?</span>' 'needs' profile '' %}
+	  {% endif %}
 	</dl>
       </li>      
     </ul>
