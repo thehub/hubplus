@@ -88,7 +88,7 @@ def message_user(sender, recipient, subject, body, domain) :
 
     if recipient.cc_messages_to_email :
         # recipient wants emails cc-ed
-        link = 'http://'+domain+reverse('messages_all')
+        link = 'http://' + domain + reverse('messages_all')
         message = _("""
 %(sender)s has sent you a new message on %(account_name)s .
 

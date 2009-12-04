@@ -14,10 +14,20 @@
 {% block body %}
 
 <div id="group_intro" class="block">
+    <div id='messages'>
+      {% if messages %}
+      <ul>
+	{% for message in messages %}
+	<li>{{ message }}</li>
+	{% endfor %}
+      </ul>
+      {% endif %}
+    </div>
+
   <div id="info" class="block_column">
     {% if permissions %}
     <ul class="icon_text_button_set">
-      <li><a href="#overlay" class="icon_text_button bt_permissions" rel="#overlay" id="{{group.edit_key}}permissionedit">Permissions</a></li>
+      <li><a href="#overlay" class="icon_text_button bt_permissions" rel="#overlay" id="{{group.edit_key}}permissionedit">{% trans "Permissions" %}</a></li>
     </ul>
     {% endif %}
     <h3>{% trans "About" %}</h3>
@@ -115,7 +125,7 @@
       <li><a href="{% url plus_groups:join_group group.id %}">Join {{GROUP_OR_HUB}}</a></li>
       {% endif %}
       {% if apply %}
-      <li><a href="{% url plus_groups:apply_group group.id %}/">Apply to {{GROUP_OR_HUB}}</a></li>
+      <li><a href="{% url plus_groups:apply_group group.id %}">Apply to {{GROUP_OR_HUB}}</a></li>
       {% endif %}
       {% if leave %}
       <li><a href="{% url plus_groups:leave_group group.id %}">Leave {{GROUP_OR_HUB}}</a></li>
@@ -142,5 +152,11 @@
 {% include "add.html" %}
 
 {% include "my_hub.html" %}
+
+{% if has_accept %}
+<ul>
+  <li><a href="{% url plus_groups:list_open_applications group.id %}">{% trans "View recent applicants" %}</a></li>
+</ul>
+{% endif %}
 
 {% endblock %}

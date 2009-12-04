@@ -359,7 +359,7 @@ class TwitterForm(UserForm):
 
 # hubplus alternatives
 from apps.plus_permissions.default_agents import get_all_members_group
-
+from apps.plus_contacts.countryfield import COUNTRIES
 class HubPlusApplicationForm(forms.Form):
 
     #username = forms.RegexField(regex=ascii_re, label=_("Username"), max_length=30, widget=forms.TextInput(), error_messages={'invalid': 'Username must only contain a-z, 0-9 and "."'})
@@ -367,11 +367,14 @@ class HubPlusApplicationForm(forms.Form):
     last_name = forms.RegexField(regex=alnum_re, label=_("Last Name"), max_length=30, widget=forms.TextInput(), error_messages={'invalid': 'Name must only contain alphabetic character'})
     email_address = forms.EmailField(label=_("Email (required)"), required=True, widget=forms.TextInput())
 
-    organisation = forms.CharField(label=_("Organisation"),required=False,widget=forms.TextInput())
-    location = forms.CharField(label=_("Location"),required=False,widget=forms.TextInput())
+    organisation = forms.CharField(label=_("Organisation"), required=False, widget=forms.TextInput())
+    address = forms.CharField(label=_("Address"), required=True, widget=forms.TextInput())
+    country = forms.ChoiceField(label=_("Country"), required=True, widget=forms.Select(), choices=COUNTRIES)
+    post_or_zip = forms.CharField(label=_("Zip/Postcode"), required=True, widget=forms.TextInput())
     about_and_why = forms.CharField(
         label=_("Tell us a bit about yourself what you do and why you're interested in the Hub?"),
-        required=True, widget=forms.TextInput())
+        required=True, widget=forms.TextInput()
+        )
     find_out = forms.CharField(label=_("How did you find out about the Hub?"), required=True, widget=forms.TextInput())
     group = forms.CharField(label=_("A group you'd like to join (Optional)"), required=False, widget=forms.TextInput())
 
@@ -408,20 +411,19 @@ class HubPlusApplicationForm(forms.Form):
     def save(self, user):
         site = get_site(get_admin_user())
         group = self.cleaned_data.pop('group')
-        about_and_why = self.cleaned_data.pop("about_and_why"),
+        about_and_why = self.cleaned_data.pop("about_and_why")
         contact= site.create_Contact(user, **self.cleaned_data)
 
         members_group = get_all_members_group()
-        application = members_group.apply(user, 
-                                          applicant=contact,
-                                          about_and_why=about_and_why,
-                                          group=group)
+        site_application = members_group.apply(user, 
+                                               applicant=contact,
+                                               about_and_why=about_and_why)
         if group:
             group.apply(user, 
                         applicant=contact,
-                        about_and_why=about_and_why,
-                        group=group)
-
-        return contact, application, group
+                        about_and_why=about_and_why)
+        if not group:
+            group = members_group
+        return group
         
 

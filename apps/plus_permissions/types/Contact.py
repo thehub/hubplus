@@ -28,7 +28,6 @@ class ContactAdmin:
 
     become_member = InterfaceCallProperty
     invite = InterfaceCallProperty
-    #has_group_request = InterfaceCallProperty
 
 class ContactInvite:
     pk = InterfaceReadProperty

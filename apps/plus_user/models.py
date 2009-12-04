@@ -148,11 +148,13 @@ def patch_user_class():
     User.add_to_class('created',models.DateTimeField(default=datetime.datetime.now))
     User.add_to_class('email2',models.CharField(max_length=255))
     User.add_to_class('email3',models.CharField(max_length=255))
-    User.add_to_class('address',models.TextField())
     User.add_to_class('skype_id',models.TextField())
     User.add_to_class('sip_id',models.TextField())
     User.add_to_class('website',models.TextField())
     User.add_to_class('homeplace', models.ForeignKey(Location, null=True))
+    User.add_to_class('address', models.TextField())
+    User.add_to_class('post_or_zip', models.CharField(null=True, default="", max_length=30))
+    User.add_to_class('country', models.CharField(null=True, default="", max_length=2))
 
     User.add_to_class('psn_id', models.CharField(max_length=50,null=True))
     User.add_to_class('psn_password_hmac_key', models.CharField(max_length=50, null=True)) #this is just for the bizare hmacing of psn passwords by a field formly known as "fullname"

@@ -71,11 +71,11 @@
       <ul>
         <li>
           <div class="label">
-            <label for="id_address">{% trans "Address" %}</label>
+            <label for="id_address"><span class="required">*</span>{% trans "Address" %}</label>
             <p class="note"></p>
           </div>
           <div class="input">
-            <textarea  id="id_address" name="address" class="text" type="text">{{form.data.address}}</textarea>
+	    <textarea  id="id_address" name="address" class="text" type="text">{{form.data.address}}</textarea>
             {{form.address.errors}}
           </div>
         </li>
@@ -85,18 +85,17 @@
             <p class="note"></p>
           </div>
           <div class="input">
-            <input  id="id_postcode" name="postcode" class="text" type="text" value="{{form.data.postcode}}" />
-            {{form.postcode.errors}}
+            <input  id="id_postcode" name="post_or_zip" class="text" type="text" value="{{form.data.post_or_zip}}" />
+            {{form.post_or_zip.errors}}
           </div>
         </li>
         <li>
           <div class="label">
-            <label for="id_country">{% trans "Country" %}</label>
+            <label for="id_country"><span class="required">*</span>{% trans "Country" %}</label>
             <p class="note"></p>
           </div>
           <div class="input">
-            <input  id="id_country" name="country" class="text" type="text" value="{{form.data.country}}" />
-            {{form.country.errors}}
+	    {{country_field}}
           </div>
         </li>
       </ul>
@@ -150,17 +149,17 @@
         <li class="unlabelled">
           <div class="input checkboxes">
             <div class="label">
-              <label for="physical_hub">I'm interested in joining a {{HUB_NAME}}.</label>
-              <p class="note">Connect and stay up-to-date with the latest happenings in your area.</p>
+              <label for="physical_hub">{% blocktrans %}I'm interested in joining a {{HUB_NAME}}{% endblocktrans %}.</label>
+              <p class="note">{% blocktrans %}Connect and stay up-to-date with the latest happenings in your area.{% endblocktrans %}</p>
               <select id="which_hub" name="group" style="display: none;">
-                <option value="" readonly="readonly" selected="selected">Please select a {{HUB_NAME}}...</option>
+                <option value="" readonly="readonly">{% blocktrans %}Please select a {{HUB_NAME}}...{% endblocktrans %}</option>
                 {% for h in hubs %}
-                <option value="{{h.group_name}}">{{h.display_name}}</option>
+                <option value="{{h.group_name}}" {% ifequal h.group_name form.data.group %} selected="selected"{% endifequal %}>{{h.display_name}}</option>
                 {% endfor %}
               </select>
               {{ form.which_hub.errors }}
             </div>
-            <input id="physical_hub" name="physical_hub_check" class="checkbox" type="checkbox">
+            <input id="physical_hub" name="physical_hub_check" class="checkbox" type="checkbox" {% ifequal form.data.physical_hub_check 'on'  %}checked="checked"{% endifequal %}>
           </div>
         </li>
 
@@ -196,15 +195,15 @@
     {% include_validation %}
     <!-- XXX move into .js file -->
     <script type="text/javascript">
-        jq(function(){
-      jq("#physical_hub").click(function() {
-        jq("#which_hub").toggle();
-  //.attr("disabled","disabled");
-      });
-            jq('#signup_form').validate('{% url signup_form_validate %}', {type: 'table', fields: ['username'], dom: jq('#id_username'), event: 'change'});
-            jq("#id_username").focus();
-      
-        });
-  jq("#which-hub").hide();
+       jq(document).ready(function() {
+          if(jq("#physical_hub:checked").length===1) {
+             jq("#which_hub").show();
+          }
+          jq("#physical_hub").click(function() {
+              jq("#which_hub").toggle();
+          });
+          jq('#signup_form').validate('{% url signup_form_validate %}', {type: 'table', fields: ['username'], dom: jq('#id_username'), event: 'change'});
+          jq("#id_username").focus();
+       });
     </script>
 {% endblock %}

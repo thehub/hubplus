@@ -510,22 +510,24 @@ def secure_filter(agent, objects, interface):
     pass
 
 
-def has_access(agent, resource, interface) :
+def has_access(agent, resource, interface, sec_context=None) :
     """Does the agent have access to this interface in this resource. All the special casing below will make it hard to refactor this method and for instance make it work for a whole lot of objects
     """
     
-    # make sure we've stripped resource from any SecureWrappers
-    if resource.__class__.__name__ == "SecureWrapper":
-        resource = resource.get_inner()
-
     # make sure we've stripped agent from any SecureWrappers
     if agent.__class__.__name__ == "SecureWrapper":
         agent = agent.get_inner()
  
-    # we're always interested in the security_context of this resource
 
-    context = resource.get_security_context()
+    if not sec_context:
+        # make sure we've stripped resource from any SecureWrappers
+        if resource.__class__.__name__ == "SecureWrapper":
+            resource = resource.get_inner()
 
+
+        context = resource.get_security_context()
+    else:
+        context = sec_context
 
     # which agents have access?
 
@@ -554,10 +556,11 @@ def has_access(agent, resource, interface) :
         #that user is in the "anyone" group
         return True
 
-    if get_creator_agent().obj in allowed_agents :
-        actual_creator = resource.get_ref().creator
-        if agent == actual_creator:
-            return True
+    if resource:
+        if get_creator_agent().obj in allowed_agents :
+            actual_creator = resource.get_ref().creator
+            if agent == actual_creator:
+                return True
 
     if agent.__class__ == AnonymousUser :
         # we clearly shouldn't be seeing this - sure but is this a security issue - t.s.

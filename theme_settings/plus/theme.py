@@ -19,8 +19,6 @@ GROUP_TYPES = (
     (u'hub', u'Hub'),
 )
 
-CONTACT_EMAIL = "world.tech.plus@the-hub.net"
-SUPPORT_EMAIL = "world.tech.plus@the-hub.net"
 
 HUB_NAME = 'Hub'
 HUB_NAME_PLURAL = 'Hubs'

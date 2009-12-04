@@ -14,7 +14,12 @@ from apps.plus_permissions.decorators import secure, check_interfaces, secure_re
 
 from apps.plus_permissions.exceptions import PlusPermissionsReadOnlyException, PlusPermissionsNoAccessException
 
-__all__ = ['secure_wrap', 'TemplateSecureWrapper', 'has_access', 'get_or_create_root_location', 'get_site', 'get_anonymous_group', 'get_all_members_group', 'get_admin_user', 'get_admin_user', 'secure_resource', 'site_context', 'PlusPermissionsNoAccessException', 'PlusPermissionsReadOnlyException', 'secure_resource', 'check_interfaces', 'secure_resource', 'site_context']
+def has_interface(sec_resource, iface_name):
+    if iface_name in sec_resource._interfaces:
+        return True
+    return False
+
+__all__ = ['secure_wrap', 'TemplateSecureWrapper', 'has_access', 'get_or_create_root_location', 'get_site', 'get_anonymous_group', 'get_all_members_group', 'get_admin_user', 'get_admin_user', 'secure_resource', 'site_context', 'PlusPermissionsNoAccessException', 'PlusPermissionsReadOnlyException', 'secure_resource', 'check_interfaces', 'secure_resource', 'site_context', 'has_interface']
 
 
 

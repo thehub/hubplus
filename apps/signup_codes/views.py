@@ -13,7 +13,7 @@ from signup_codes.models import check_signup_code
 
 from signup_codes.forms import SignupForm, InviteUserForm
 
-from apps.plus_permissions.default_agents import get_admin_user, get_anon_user, get_site
+from apps.plus_permissions.default_agents import get_admin_user, get_anon_user, get_site, get_all_members_group
 
 from apps.plus_permissions.api import secure_resource, secure_wrap
 from apps.plus_permissions.proxy_hmac import hmac_proxy
@@ -31,7 +31,8 @@ def signup(request, form_class=SignupForm,
         if form.is_valid():
             username, password = form.save()
             user = authenticate(username=username, password=password)
-            
+            all_members_group = get_all_members_group()
+            all_members_group.join(user)
             signup_code = form.cleaned_data["signup_code"]
             signup_code.use(user)
             

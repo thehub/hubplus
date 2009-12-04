@@ -25,7 +25,7 @@ class Profile(models.Model):
    def content(self):
       return """
 %s
-%s""" % (self.about,self.get_display_name())
+%s""" % (self.get_display_name(), self.about)
    about = DelegateToUser('description')
    email_address = DelegateToUser('email_address')
    name = DelegateToUser('username')
@@ -38,7 +38,8 @@ class Profile(models.Model):
    home = DelegateToUser('home')
    work = DelegateToUser('work')
    fax = DelegateToUser('fax')
-   
+   post_or_zip = DelegateToUser('post_or_zip')   
+   country = DelegateToUser('country')
    email2 = DelegateToUser('email2')
    address = DelegateToUser('address')
    skype_id = DelegateToUser('skype_id')

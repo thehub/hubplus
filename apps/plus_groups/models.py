@@ -2,13 +2,9 @@ from django.db import models
 from django.db.models.signals import post_save
 from itertools import chain
 from django.contrib.auth.models import User, UserManager, check_password
-
-from django.contrib.contenttypes.models import ContentType
-from django.contrib.contenttypes import generic
-
 from django.conf import settings
 
-from apps.plus_contacts.status_codes import WAITING_USER_SIGNUP
+from apps.plus_contacts.status_codes import ACCEPTED_PENDING_USER_SIGNUP
 from apps.plus_permissions.proxy_hmac import attach_hmac 
 import datetime
 
@@ -225,10 +221,10 @@ try :
             self.add_member(user)
             return user
 
-        def apply(self, user, applicant=None, about_and_why='', group=None):
-            if not applicant or not group:
-                raise ValueError('there must be an applicant and a group')
-            self.create_Application(user, applicant=applicant, request=about_and_why)
+        def apply(self, user, applicant=None, about_and_why=''):
+            if not applicant:
+                raise ValueError('there must be an applicant')
+            self.create_Application(user, applicant=applicant, request=about_and_why, group=self)
 
         def change_avatar(self) :
             pass
@@ -258,7 +254,7 @@ try :
 
         def invite_member(self, invited, special_message, invited_by, url_root ) : 
             invite = MemberInvite(invited=invited, invited_by=invited_by, 
-                                  group=self, status=WAITING_USER_SIGNUP)
+                                  group=self, status=ACCEPTED_PENDING_USER_SIGNUP)
             invite_url = invite.make_accept_url(url_root)
             if special_message :
                 message = """<p>%s</p>""" % special_message

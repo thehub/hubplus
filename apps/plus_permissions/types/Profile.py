@@ -24,6 +24,9 @@ class ProfileViewer:
     organisation = InterfaceReadProperty
     role = InterfaceReadProperty
 
+    address = InterfaceReadProperty
+    country = InterfaceReadProperty
+    post_or_zip = InterfaceReadProperty
     display_name = InterfaceReadProperty
     title = InterfaceReadProperty
     get_display_name = InterfaceCallProperty
@@ -66,6 +69,9 @@ class ProfileEditor:
     display_name = InterfaceWriteProperty
     title = InterfaceWriteProperty
 
+    address = InterfaceWriteProperty
+    country = InterfaceWriteProperty
+    post_or_zip = InterfaceWriteProperty
     mobile = InterfaceWriteProperty
     work = InterfaceWriteProperty
     home = InterfaceWriteProperty

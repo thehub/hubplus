@@ -16,86 +16,71 @@ from django.db import transaction
 
 from django.template import RequestContext
 
-from apps.plus_contacts.models import Application, Contact, PENDING, WAITING_USER_SIGNUP
+from apps.plus_contacts.models import Application, Contact
+from apps.plus_contacts.status_codes import PENDING, ACCEPTED_PENDING_USER_SIGNUP, ACCEPTED
 from apps.plus_contacts.forms import InviteForm
 
 from apps.plus_permissions.interfaces import PlusPermissionsNoAccessException, secure_wrap
 from apps.plus_permissions.api import site_context, secure_resource
+from apps.plus_permissions.default_agents import get_all_members_group
 
 from apps.plus_groups.models import TgGroup
-from django.db import transaction
 
 from apps.plus_explore.views import get_hubs
 
 @login_required
-def list_of_applications(request, template_name="plus_contacts/applicant_list.html"):
-    applications= Application.objects.plus_filter(request.user, status=PENDING)
+def list_of_applications(request, resource_id=None, template_name="plus_contacts/applicant_list.html", **kwargs):
+    group = resource_id
+    all_members_group = get_all_members_group()
+    if group == None or int(group) == all_members_group.id:
+        group = get_all_members_group()
+        title = settings.SITE_NAME
+        applications = Application.objects.plus_filter(request.user, status=PENDING, group=group, interface_names=['Viewer', 'Accept', 'Reject'], required_interfaces=['Viewer', 'Accept'], all_or_any='ALL')
+    else:
+        applications = Application.objects.plus_filter(request.user, status=PENDING, group=group, interface_names=['Viewer', 'Accept', 'Reject'], required_interfaces=['Viewer', 'Accept'], all_or_any='ALL')
+        title = TgGroup.objects.get(id=group).get_display_name()
 
-    # filter the application so that if they're ALSO applications to groups, 
-    # I only see the ones where I have permission to accept them to their chosen group
-    # XXX there's probably a more efficient way of doing this filtering
-    groups = set([])
-    for application in applications :
-        if application.group :
-            group = secure_wrap(application.group, request.user)
-            try : 
-                group.add_member
-                groups.add(group)
-            except PlusPermissionsNoAccessException, e :
-                pass # can't add member to this group so we don't care about it
+    reject = False
     
-    # now set "groups" has wrapped groups for the applications, 
-    # so we strip out the applications with groups that we have no access to
-    applications = [a for a in applications if ((a.group is None) or
-                                                (a.group in groups))]
+    if len(applications):
+        app = applications[0]
+        try:
+            app.reject
+            reject = True
+        except PlusPermissionsNoAccessException:
+            pass
 
     return render_to_response(template_name, {
+            'title': title,
             'applications' : applications,
+            'reject':reject
             }, context_instance=RequestContext(request))
 
 
 @login_required
 @transaction.commit_on_success
-def accept_application(request,id) :
-    application = Application.objects.plus_get(request.user, id=id)
+def accept_application(request, resource_id, id, **kwargs):
+    application = Application.objects.plus_get(request.user, id=id, interface_names=['Viewer', 'Accept'])
     try:
-        # also, if the applicant already has an account, we can join him/her to a group
+        application.accept(request.user, request.get_host())
+        return HttpResponseRedirect(reverse('plus_groups:list_open_applications', args=[application.group.id]))
 
-        if application.is_site_application() :
-            # contact is not a user 
-            msg,url = application.accept(request.user, request.get_host())
-            return render_to_response('plus_contacts/dummy_email.html',
-                                          {'url':url, 'message':msg},                                      
-                                          context_instance=RequestContext(request))
-
-        # here, this user already exists, now we're going to allow to become member of group,
-        # if we have the right permissions
-        if application.has_group_request() :
-            # we're asking for a group
-            try:
-                application.group.join(application.get_user())
-                
-                return HttpResponseRedirect(reverse('list_open_applications'))
-            except PlusPermissionsNoAccessException :
-                
-                return render_to_response('no_permission.html', {
-                        'msg' : _("You don't have permission to accept this application into %(group)s" %{'group':application.group}),
-                        'user' : request.user,
-                        'resource' : "an application you can't see"
-                        }, context_instance=RequestContext(request))
-
-        
-        return HttpResponseRedirect(reverse('list_open_applications'))
-    except PlusPermissionsNoAccessException :
-        
+    except PlusPermissionsNoAccessException :        
         sc = application.get_inner().get_security_context()
         return render_to_response('no_permission.html', {
-            'msg' : _("You don't have permission to accept this application"),
-            'user' : request.user,
-            'resource' : _("an application that you can't accept"),
-            'security_context' :sc.context_agent.obj,
-            'tags' : sc.get_tags()
-            }, context_instance=RequestContext(request))
+                'msg' : _("You don't have permission to accept this application into %(group)s" %{'group':application.group}),
+                'user' : request.user,
+                'resource' : "an application you can't see"
+                }, context_instance=RequestContext(request))
+
+
+@login_required
+@transaction.commit_on_success
+def reject_application(request, resource_id, application_id, template_name="plus_contacts/applicant_list.html", **kwargs):
+    application = Application.objects.plus_get(request.user, id=application_id, interface_names=['Viewer', 'Reject'])
+    application.reject(request.user, request.get_host())
+    return HttpResponseRedirect(reverse('plus_groups:list_open_applications', args=[application.group.id]))
+
 
 
 def split_name(username):
@@ -111,13 +96,12 @@ def split_name(username):
 
 
 @login_required
-@transaction.commit_on_success
 @site_context
 def site_invite(request, site, template_name='plus_contacts/invite_non_member.html', **kwargs) :
     if request.POST:
         form = InviteForm(request.POST)
 
-        if form.is_valid() :
+        if form.is_valid():
             form.clean()
             email_address = form.cleaned_data['email_address']
             if Contact.objects.filter(email_address=email_address):
@@ -133,7 +117,7 @@ def site_invite(request, site, template_name='plus_contacts/invite_non_member.ht
                                     email_address = email_address, 
                                     first_name=first_name,
                                     last_name=last_name,
-                                    status=WAITING_USER_SIGNUP)
+                                    status=ACCEPTED_PENDING_USER_SIGNUP)
 
 
             if form.cleaned_data['group'] :
@@ -157,10 +141,4 @@ def site_invite(request, site, template_name='plus_contacts/invite_non_member.ht
             }, context_instance=RequestContext(request))
                               
 
-@login_required
-@transaction.commit_on_success
-@secure_resource(Application, required_interfaces=['Reject','Viewer'])
-def reject_application(request, application, template_name="plus_contacts/applicant_list.html", **kwargs) :
-    application.reject()
-    return HttpResponseRedirect(reverse('list_open_applications'))
  
