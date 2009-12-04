@@ -1,0 +1,74 @@
+{% extends "site_base.html" %}
+
+{% load i18n %}
+{% load avatar_tags %}
+
+{% block head_title %}{% trans "Settings" %}{% endblock %}
+{% block page_title %}{% trans "Settings" %}{% endblock %}
+
+{% block body %}
+
+<div class="block">
+
+<form class="full_block" action="" method="POST">
+
+    <h4>{% trans "Edit your site settings" %}</h4>
+    <p>{% trans "Change your main email address and forwarding options." %}</p>
+
+    <fieldset>
+      <ul>
+
+	<li>
+	  <div class="label">
+	    <label for="id_first_name">{% trans "First Name" %}</label>
+	  </div>
+	  <div class="input">
+	    {{form.first_name}} {{form.first_name.errors}}
+	  </div>
+	</li>
+
+        <li>
+          <div class="label">
+            <label for="id_last_name">{% trans "Last Name" %}</label>
+          </div>
+
+          <div class="input">
+            {{form.last_name}} {{form.last_name.errors}}
+          </div>
+
+        </li>
+
+        <li>
+          <div class="label">
+	    <label for="id_email"><abbr class="required" title="required">* </abbr>{% trans "Email" %}</label>
+          </div>
+          <div class="input">
+	    {{form.email}}
+	    {{form.email.errors}}
+	  </div>
+        </li>
+
+        <li class="unlabelled">
+	  
+          <div class="input checkboxes">
+
+            <div class="label">
+	      <label for="id_cc_email">{% trans "Forward my messages" %}</label>
+              <p class="note">Get a copy of site messages sent to your email.</p>
+	      {{form.cc_email.errors}}
+            </div>
+	    {{form.cc_email}}
+	  </div>
+        </li>
+
+      </ul>
+    </fieldset>
+
+    <fieldset class="buttons">
+      <input class="button" type="submit" value="{% trans 'Save' %}" />
+    </fieldset>
+
+</form>
+
+</div>
+{% endblock %}

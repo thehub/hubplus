@@ -1,6 +1,8 @@
 from django.conf import settings
 
 from django.shortcuts import render_to_response, get_object_or_404
+from django.http import Http404
+
 from django.http import HttpResponseRedirect, HttpResponseForbidden, Http404, HttpResponse
 from django.db.models import Q
 from django.contrib.auth import authenticate
@@ -135,6 +137,8 @@ from apps.plus_permissions.api import TemplateSecureWrapper
 @secure_resource(TgGroup)
 def view_wiki_page(request, group, page_name, template_name="plus_wiki/wiki.html", current_app='plus_groups', **kwargs):
 
+    if not group :
+        raise Http404(_('This group does not exist'))
     try:
         obj = WikiPage.objects.plus_get(request.user, name=page_name, in_agent=group.get_ref())
     except WikiPage.DoesNotExist:

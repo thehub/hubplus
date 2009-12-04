@@ -335,6 +335,8 @@ class ChangeLanguageForm(AccountForm):
         self.user.message_set.create(message=ugettext(u"Language successfully updated."))
 
 
+
+
 # @@@ these should somehow be moved out of account or at least out of this module
 
 from account.models import OtherServiceInfo, other_service, update_other_services
@@ -427,3 +429,35 @@ class HubPlusApplicationForm(forms.Form):
         return group
         
 
+class SettingsForm(forms.Form) :
+    cc_email = forms.BooleanField(required=False)
+    email = forms.EmailField(required=False)
+
+    first_name = forms.RegexField(regex=alnum_re, label=_("First Name"), max_length=30, widget=forms.TextInput(), 
+                                  error_messages={'invalid': 'Name must only contain alphabetic character'})
+    last_name = forms.RegexField(regex=alnum_re, label=_("Last Name"), max_length=30, widget=forms.TextInput(), 
+                                 error_messages={'invalid': 'Name must only contain alphabetic character'})
+
+
+    def clean_email(self) :
+        email = self.cleaned_data['email']
+        if not email :
+            raise forms.ValidationError(_("Email address is empty."))
+
+        try :
+            self.user
+            # someone has injected a user in from outside,
+            # so we can validate whether the email address belongs to this user
+            user = self.user
+        except :
+            user = None
+
+        if user :
+            users = User.objects.filter(email_address=email)
+            if users:
+                if users[0].username == self.user.username :
+                    return email
+                raise forms.ValidationError(_("There is already a user with that email address. Please choose another."))
+
+
+        return email

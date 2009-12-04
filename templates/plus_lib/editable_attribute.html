@@ -1,10 +1,12 @@
 {% load i18n %}
 {% if show %}
-    <dl class="editable_set">
-        <dt>{% trans label %}</dt>
-        <dd>
-             <a class="bt_edit icon_button" id="{{obj.edit_key}}{{name}}_trigger" title="edit">Edit</a>
-             <div {% if edit %} class='editable' {% endif %} id='{{obj.edit_key}}{{name}}'>{% if no_escape %}{% autoescape off %}{{value}}{% endautoescape %}{% else  %}{{value}}{% endif %}</div>
-        </dd>
-    </dl>
+<li class="editable_set{% if edit %} edit_hover{% endif %}">
+	<div class="label">
+		{% trans label %}
+	</div>
+	<div class="value">
+		<a class="bt_edit icon_button" id="{{obj.edit_key}}{{name}}_trigger" title="edit">Edit</a>
+		<div {% if edit %} class='editable' {% endif %} id='{{obj.edit_key}}{{name}}'>{% if no_escape %}{% autoescape off %}{{value}}{% endautoescape %}{% else  %}{{value}}{% endif %}</div>
+	</div>
+</li>
 {% endif %}

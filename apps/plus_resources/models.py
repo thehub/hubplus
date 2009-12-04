@@ -125,6 +125,14 @@ class Resource(models.Model):
         pass
         # dummy, for testing
 
+    def delete(self) :
+        ref = self.get_ref()
+        ref.delete()
+        super(Resource,self).delete()
+
+
+
+
 def get_or_create(user, owner, **kwargs):
     
     resources = Resource.objects.filter(in_agent=owner.get_ref(), name=kwargs['name'])

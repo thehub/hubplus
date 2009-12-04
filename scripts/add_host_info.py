@@ -5,13 +5,14 @@ def patch_user_permission_default(user) :
 
     sc = user.get_security_context()
     print sc.get_target()
-    print sc.get_slider_level('User.Viewer'), sc.get_slider_level('Profile.Editor')
+    print sc.get_slider_level('User.Viewer'), sc.get_slider_level('Profile.Editor'),sc.get_slider_level('Profile.EmailAddressViewer')
 
     sc.switch_permission_prototype('public')
     print user.get_ref().permission_prototype
-    print sc.get_slider_level('User.Viewer'), sc.get_slider_level('Profile.Editor'), sc.get_slider_level('HostInfo.Viewer')
+    print sc.get_slider_level('User.Viewer'), sc.get_slider_level('Profile.Editor'), sc.get_slider_level('Profile.EmailAddressViewer'),sc.get_slider_level('HostInfo.Viewer')
 
 if __name__ == '__main__' :
     for u in User.objects.all() :
         if u.username=='anon' : continue
+        if u.username=='admin' : continue
         patch_user_permission_default(u)

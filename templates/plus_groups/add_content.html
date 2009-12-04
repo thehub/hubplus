@@ -16,7 +16,7 @@
 					<div class="label">
 						<label for="title"><abbr class="required" title="required">* </abbr>{% trans "Title" %}</label>
 					</div>
-					<div class="input">
+					<div class="value">
 						<input name="title" id="title" class="text" type="text" value="{{form.data.title}}" />
 						{% if form.errors.title %}<p class="error">{{form.errors.title|safe}}<p>{% endif %}
 					</div>
@@ -33,7 +33,7 @@
 					<div class="label">
 						<label><abbr class="required" title="required">* </abbr>{% trans "Add this to" %}</label>
 					</div>
-					<div class="input">
+					<div class="value">
 						<ul class="checkboxes">
 							<li {% if can_add %}{% else %}class="hidden"{% endif %}>
 								<div class="label_extended">
@@ -62,7 +62,7 @@
 					<div class="label">
 						<label><abbr class="required" title="required">* </abbr>{% trans "Type of content" %}</label>
 					</div>
-					<div class="input checkboxes">
+					<div class="value checkboxes">
 						<ul id="choose_type">
 							{% for create_interface, label, sub_title, active in possible_interfaces %}
 							<li id="{{create_interface}}" {% if active %}{% else %}class="cannot_add" disabled="disabled"{% endif %}>

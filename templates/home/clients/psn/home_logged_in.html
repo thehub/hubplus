@@ -3,6 +3,7 @@
 {% load i18n %}
 {% load listings %}
 {% load microblogging_tags %}
+{% load avatar_tags %}
 
 {% block head_title %}{% trans "Home" %}{% endblock %}
 
@@ -38,25 +39,12 @@
 
 <div id="status" class="block">
 
-	<h3>{{STATUS_COPY}}</h3>  
-	<div class="thumb tiny"><img src="../../site_media/images/member.jpg"/></div>
-
-	<form method="post" action="{% url home %}">
-		<textarea id="new_tweet" name="text" cols="50" rows="2"></textarea>
-		
-		<div class="buttons">
-			<input type="submit" class="button" value="{% trans 'Share' %}" />
-			<!-- or <a href="#">Cancel</a>-->
-		</div>
-
-	</form>
-
+  <h3>{{STATUS_COPY}}</h3>
+  <div class="thumb tiny">{% avatar request.user 30 %}</div>
+  {% microblogging_form request.user  %}
 </div>
 
-
-
 {% include HOME_TABS %}
-
 
 {% endblock %}
 

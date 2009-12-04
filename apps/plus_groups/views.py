@@ -1,4 +1,5 @@
 from django.shortcuts import render_to_response, get_object_or_404
+from django.http import Http404 
 from django.template import RequestContext
 from django.contrib.auth.models import User
 from django.http import HttpResponse, HttpResponseRedirect, HttpResponseForbidden
@@ -10,7 +11,7 @@ from django.utils.encoding import smart_str
 from django.db import transaction
 from django.utils import simplejson
 
-from apps.plus_groups.models import TgGroup
+from apps.plus_groups.models import TgGroup, get_hubs
 from django.core.urlresolvers import reverse
 
 from django.template import defaultfilters
@@ -69,11 +70,15 @@ def resources(group, tags=[], order=None, search=''):
 @secure_resource(TgGroup)
 def group(request, group, template_name="plus_groups/group.html", current_app='plus_groups', **kwargs):
 
+    if not group :
+        raise Http404(_('There is no group with this id'))
+
     user = request.user
     if not user.is_authenticated():
         user = get_anon_user()
         request.user = user 
             
+    
     members = group.get_users()[:10]
     member_count = group.get_no_members()
 
@@ -147,14 +152,19 @@ def group(request, group, template_name="plus_groups/group.html", current_app='p
         else:
             has_accept = False
 
+    # XXXX review this status section if we make it an editable attribute
     tweets = TweetInstance.objects.tweets_from(group).order_by("-sent") 
     if tweets :
         latest_status = tweets[0]
-        dummy_status = DisplayStatus(
-            defaultfilters.safe( defaultfilters.urlize(latest_status.html())),
-                                 defaultfilters.timesince(latest_status.sent) )
+        #dummy_status = DisplayStatus(
+        #    defaultfilters.safe( defaultfilters.urlize(latest_status.html())),
+        #                         defaultfilters.timesince(latest_status.sent) )
+        status_type = 'group'
+        status_since = defaultfilters.timesince(latest_status.sent)
     else:
-        dummy_status = DisplayStatus('No status', '')
+        status_type = ''
+        status_since = ''
+    
 
     try:
         group.get_all_sliders
@@ -178,7 +188,8 @@ def group(request, group, template_name="plus_groups/group.html", current_app='p
 
     return render_to_response(template_name, {
             "head_title" : "%s" % group.get_display_name(),
-            "head_title_status" : dummy_status,
+            "status_type" : 'group',
+            "status_since" : status_since,
             "group" : TemplateSecureWrapper(group),
             "target_class" : ContentType.objects.get_for_model(group.get_inner()).id,
             "target_id" : group.get_inner().id,
@@ -451,3 +462,14 @@ def autocomplete(request, j=None, current_app='plus_groups', **kwargs):
     options = [{'display_name':group.display_name, 'id':str(group.id), 'interfaces':[iface.split('.')[1] for iface in group._interfaces]} for group in groups]
     return options
 
+
+@json_view
+def group_type_ajax(request,**kwargs) :
+    return settings.GROUP_TYPES
+
+
+
+@json_view
+def ajax_hub_list(request,**kwargs) :    
+    xs = [(t.id, t.display_name) for t in get_hubs()]
+    return xs

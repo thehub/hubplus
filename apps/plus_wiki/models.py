@@ -40,6 +40,14 @@ class WikiPage(models.Model):
         at the moment, used for permission testing"""
         pass
 
+
+    def delete(self) :
+        ref = self.get_ref()
+        ref.delete()
+        super(WikiPage,self).delete()
+
+
+
 import reversion
 try:
     reversion.register(WikiPage)

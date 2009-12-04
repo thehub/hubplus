@@ -1,3 +1,18 @@
+/* Forms: Header Status */
+
+#page_header #page_status {
+
+}
+
+#page_header #page_status dt {
+	display		: none;
+}
+
+#page_header #page_status dd .text {
+	width		: 612px;
+}
+
+
 /* Forms */
 
 form p {
@@ -84,7 +99,7 @@ form.page .label {
 	margin-right: 10px;
 }
 
-form.page .input {
+form.page .value {
 	float		: left;
 	width		: 70%;
 }
@@ -135,7 +150,7 @@ form.full_block fieldset p {
 }
 
 form.full_block .label p,
-form.full_block .input p {
+form.full_block .value p {
 	font-size	: .9em;
 	line-height	: 1.4em;
 }
@@ -151,29 +166,29 @@ form.full_block .label label {
 	font-size	: 1.1em;
 }
 
-form.full_block .input {
+form.full_block .value {
 	float		: left;
 	width		: 208px;
 }
 
-form.full_block .input .text,
-form.full_block .input textarea {
+form.full_block .value .text,
+form.full_block .value textarea {
 	width		: 208px;
 	max-width   : 208px;
 }
 
-form.full_block .input select {
+form.full_block .value select {
 	width		: 100%;
 }
 
-form.full_block .input.checkboxes .label {
+form.full_block .value.checkboxes .label {
 	float		: right;
 	padding		: 0;
 	text-align	: left;
 	width		: 190px;
 }
 
-form.full_block .input .note {
+form.full_block .value .note {
 	margin-bottom   : 0;
 	padding-bottom	: 3px;
 }
@@ -203,14 +218,14 @@ form.full_block input#page_title {
 	width		: 612px;
 }
 
-form.full_block {
-	width		: 612px;
+form.full_block #content {
+	width		: 620px;
 }
 
 
 /* Forms: Tag Manageer */
 
-form.full_block .input.tag_manager .text {
+form.full_block .value.tag_manager .text {
 	width		: 130px;
 }
 
@@ -254,7 +269,7 @@ form.full select {
 }
 
 form.full input.submit,
-form.full .input_extension {
+form.full .value_extension {
 	margin-left	: 240px;
 }
 
@@ -288,7 +303,7 @@ form.full .custom_labels label .extra {
 	display		: inline;
 }
 
-form.full .custom_labels .input_extended label {
+form.full .custom_labels .value_extended label {
 	padding-left: 0;
 	width		: 248px
 }
@@ -390,7 +405,7 @@ form .label_permissions {
 
 /* Edit in Place */
 
-.editable_set {
+.editable_set.edit_hover {
 	border		: 1px solid transparent;
 	border-width: 1px 0;
 }
@@ -497,3 +512,41 @@ form .label_permissions {
 #search #current input {
 	margin-bottom	: 3px;
 }
+
+.yui-editor-container {
+	border		: 1px solid #bbb !important;
+	border-color: #aaa #bbb #ddd #aaa !important;
+}
+
+.yui-editor-container .yui-toolbar-titlebar {
+	height		: 20px !important;
+}
+
+.yui-editor-container .yui-toolbar-titlebar h2 {
+	display		: none;
+}
+
+form.full_block .yui-editor-container fieldset {
+	padding		: 0 !important;
+}
+
+.yui-editor-container .yui-toolbar-subcont {
+	padding		: 3px 3px 0 !important;
+}
+
+.yui-editor-container .yui-toolbar-subcont h3 {
+	display		: none;
+}
+
+.yui-editor-container .yui-toolbar-subcont ul {
+	padding-bottom	: 0px !important;
+}
+
+.yui-editor-container .yui-toolbar-group {
+	margin		: 0 3px 3px 0 !important;
+}
+
+.yui-editor-container .dompath {
+	border-top	: 1px solid #ddd !important;
+}
+

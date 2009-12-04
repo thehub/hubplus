@@ -10,7 +10,7 @@
 
 {% block body %}
 
-<div id="intro" class="block">
+<div class="block">
 
   <h4>About your {{name_of_created}}</h4>
   <p class="note">Please enter your details below to create a new {{name_of_created}}.</p>
@@ -32,7 +32,7 @@
           <div class="label">
             <label for="name"><span class="required">*</span> {% trans "Name" %}</label>
           </div>
-          <div class="input">
+          <div class="value">
             <input  id="name" name="name" class="text" type="text" value="{{form.data.name}}" />
             {{form.name.errors}}
           </div>
@@ -44,7 +44,7 @@
           <div class="label">
             <label for="group_type"><span class="required">*</span> {% trans "Type" %}</label>
           </div>
-          <div class="input">
+          <div class="value">
             <select id="group_type" name="group_type">
               <option value="interest">Interest group</option>
               <option value="organisation">Organisation</option>
@@ -59,9 +59,8 @@
         <li>
           <div class="label">
             <label for="descripton"><span class="required">*</span> Description</label>
-             <p class="note">what is this group about?</p>
           </div>
-          <div class="input">
+          <div class="value">
             <textarea id="description" name="description" rows="5">{{form.data.description}}</textarea>
             {{form.description.errors}}	
           </div>
@@ -73,7 +72,7 @@
             <label for="location">Location</label>
             <p class="note">postcode, country</p>
           </div>
-          <div class="input">
+          <div class="value">
             <input  id="location" class="text" name="location" type="text" />
             {{form.location.errors}}
           </div>
@@ -84,7 +83,7 @@
           <div class="label">
             <label for="about"><span class="required">*</span> What is the group about?</label>
           </div>
-          <div class="input">
+          <div class="value">
             <span style="color:red">(Use existing tag functionality here)</span>
           </div>
         </li>
@@ -93,7 +92,7 @@
           <div class="label">
             <label for="skills">What are the group's skills?</label>
           </div>
-          <div class="input">
+          <div class="value">
             <span style="color:red">(Use existing tag functionality here)</span>
           </div>
         </li>
@@ -102,7 +101,7 @@
           <div class="label">
             <label for="needs">What are the group's needs?</label>
           </div>
-          <div class="input">
+          <div class="value">
             <span style="color:red">(Use existing tag functionality here)</span>
           </div>
         </li>
@@ -120,7 +119,7 @@
             <label><span class="required">*</span> <span class="label_permissions">Permissions</span></label>
             <p class="note">These settings that can be customised once your group has been created</p>
           </div>
-          <div class="input checkboxes">
+          <div class="value checkboxes">
             <ul>
               <li>
                 <input  id="public" name="permissions_set" class="radio" type="radio" value="public" checked="checked" />
@@ -169,7 +168,7 @@
     <div class="label_extended">
       <input  id="link_title" class="text" type="text" value="Website" />
     </div>
-    <div class="input_extended">
+    <div class="value_extended">
       <input  id="link_url" class="text" type="text" value="www.mysite.com" />
       <button class="button add_link">X</button>
     </div>
@@ -178,7 +177,7 @@
     <div class="label_extended">
       <input  id="link_title" class="text" type="text" />
     </div>
-    <div class="input_extended">
+    <div class="value_extended">
       <input  id="link_url" class="text" type="text" />
       <button class="button add_link">Add</button>
     </div>
@@ -187,7 +186,7 @@
     <div class="label_extended">
       <label for="link_title"><span class="extra">Title ('Website', 'Flickr')</span></label>
     </div>
-    <div class="input_extended">
+    <div class="value_extended">
       <label for="link_url"><span class="extra">Website ('www.mysite.com')</span></label>
     </div>
         </li>
@@ -198,7 +197,7 @@
     <div class="label_extended">
       <input  id="link_title" class="text" type="text" />
     </div>
-    <div class="input_extended">
+    <div class="value_extended">
       <input  id="link_url" class="text" type="text" />
       <button class="button add_link">Add</button>
     </div>
@@ -207,7 +206,7 @@
     <div class="label_extended">
       <label for="link_title"><span class="extra">Title ('Phone', 'Skype')</span></label>
     </div>
-    <div class="input_extended">
+    <div class="value_extended">
       <label for="link_url"><span class="extra">Username/Group ('Meme2009')</span></label>
           </div>
         </li>
@@ -218,7 +217,7 @@
     <div class="label_extended">
       <input  id="link_title" class="text" type="text" />
     </div>
-    <div class="input_extended">
+    <div class="value_extended">
       <input  id="link_url" class="text" type="text" />
       <button class="button add_link">Add</button>
     </div>
@@ -227,7 +226,7 @@
     <div class="label_extended">
       <label for="link_title"><span class="extra">Title ('Email')</span></label>
     </div>
-    <div class="input_extended">
+    <div class="value_extended">
       <label for="link_url"><span class="extra">Email address ('me@domain.com')</span></label>
     </div>
         </li>

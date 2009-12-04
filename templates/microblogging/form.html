@@ -1,7 +1,25 @@
-<form name='' method="POST" id="tweet_form">
-<input type="hidden" name="sender_class" value="{{sender_class}}"/>
-<input type="hidden" name="sender_id" value="{{sender_id}}"/>
-<input id="new_tweet" name="new_tweet" value=""/>
-<input type="submit" value="Update"/>
-<input type="cancel" value="Cancel"/>
-</form>
+{% load i18n %}
+<div class="status_form">
+  <form method="post" action="{% url status_post %}">
+
+    <div class="show">
+      <span class="status_text">{{status_text}}</span>&nbsp;&nbsp;
+      <span class="label_time">{{status_since}} {% if status_since %}{% trans "ago"%}.{% endif %}</span>
+    </div>
+    <div class="toggle">Update</div>
+    
+    <div class="edit">
+      <input type="hidden" name="starts_hidden" class="starts_hidden" value="{{starts_hidden}}"/>
+      <input type="hidden" name="sender_class" value="{{sender_class}}"/>
+      <input type="hidden" name="sender_id" value="{{sender.id}}"/>
+      <input type="hidden" name="next" value="{{path}}"/>
+      <textarea id="new_tweet" name="text" cols="50" rows="2"></textarea>
+      <div class="no_chars">140</div>
+      
+      <div class="buttons">
+	<input type="submit" class="button" value="{% trans 'Share' %}" />
+      </div>
+    </div>
+
+  </form>
+</div>

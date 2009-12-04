@@ -7,6 +7,7 @@
 {% load plus_tags %}
 {% load plus_url %}
 {% load editable_attribute %}
+{% load ajax_select %}
 {% block body %}
 
 <div id="intro" class="block">
@@ -24,7 +25,6 @@
       </ul>
       {% endif %}
     </div>
-
     
     <div id="page_image" class="image member">
       {% avatar other_user 180 %}
@@ -38,62 +38,91 @@
       <li class="first"><a href="/tweets/toggle_follow/{{other_user.username}}/">{% if is_following %}Unfollow {% else %}Follow {% endif %}{{other_user.get_display_name}}</a></li>
       {% endif %}
       <li class="last"><a href="{% url messages_all_to other_user.username %}#tabview=compose">Message {{other_user.get_display_name}}</a></li>
-    </ul> 
+    </ul>
+    
   </div>
   
   <div id="info" class="block_column">
+    
     {% if permissions %}
     <ul class="icon_text_button_set">
       <li><a href="#overlay" class="icon_text_button bt_permissions" rel="#overlay" id="{{other_user.edit_key}}permissionedit">Permissions</a></li>
     </ul>
     {% endif %}
+    
     <ul>
-      <li>
-	<dl>
-	  {% plus_tag 'Interests' 'interests'  profile  other_user %}
-	</dl>
-      </li>  
-      <li>
-	<dl class="disabled"><dt >{% trans "Region" %}</dt>
-	  <dd>
-	    <a href="hub.html" class='editable_temp_off' id='{{profile.edit_key}}hub'>{{profile.get_hub}}</a>
-	</dd></dl>
-      </li>
+
+	{% editable "First Name" profile 'first_name' '' %}	
+	{% editable "Last Name" profile 'last_name' '' %}
+
+	<li>
+	{% if can_tag %}
+	{% plus_tag 'Interests' 'interests'	profile	other_user %}
+	{% else %}
+	{% view_plus_tag 'Interests' 'interests' profile '' %}
+	{% endif %}
+	</li>
+      
+	<li>
+	  <div id='ajax_select_list_url_Profile-{{profile.id}}-homehub_widget' 
+	       href='{% url ajax_hub_list %}'></div>
+	</li>
+        {% editable "Main Region" profile 'homehub' '' %}
+	
+      
+      <!--li>
+	  <dl class="disabled"><dt >{% trans "Region" %}</dt>
+	    <dd>
+	      <a href="hub.html" class='editable_temp_off' id='{{profile.edit_key}}hub'>{{profile.get_hub}}</a>
+	    </dd>
+	  </dl>
+      </li-->
+      
+      
       {% if member_of %}
       <li>
-	<dl>
-	  <dt>{% trans "Groups" %}</dt>
-	  <dd>
-	    {% for reverse_g, g in member_of %}
-	      <a href="{% plus_url reverse_g g.pk %}">{{g.get_permission_agent_name}}</a>{% if forloop.last %}{% else %}, {% endif %}
-	    {% endfor %}
-	  </dd>
-	</dl>
+	<div class="label">
+	  {% trans "Groups" %}
+	</div>
+	<div class="value">
+	  {% for reverse_g, g in member_of %}
+	  <a href="{% plus_url reverse_g g.pk %}">{{g.get_permission_agent_name}}</a>{% if forloop.last %}{% else %}, {% endif %}
+	  {% endfor %}
+	</div>
       </li>
       {% endif %}
-      <li>
-	   {% editable "Organisation" profile 'organisation' 'Your organisation' %}
-      </li>
-      <li>
-	   {% editable "Role" profile 'role' 'Your role' %}
-      </li>
+      
+      {% if profile.should_show_organisation %}
+      {% editable "Organisation" profile 'organisation' 'Your organisation' %}
+      {% endif %}
+      
+      {% if profile.should_show_role %}
+	{% editable "Role" profile 'role' 'Your role' %}
+      {% endif %}
+      
+
+      {% if profile.should_show_place %}
       <li class="place">
-	   {% editable "Location" profile 'place' 'Your Location' %}
-      </li>	
+	<ul>
+	  {% editable "Location" profile 'place' 'London' %}
+	</ul>
+      </li>
+      {% endif %}
+      
     </ul>
   </div>
 </div>
+
 {% include "profiles/tabbed_subs.html" %}
 
 {% endblock %}
-
 
 {% block side_bar %}
 
 {% include "plus_explore/side_search.html" %}
 <div id="feature_explore" class="site_block">
-  <h3>{% trans "Explore members" %}</h3>
-  {% tag_cloud 25 '' search_types 'profile_list_tag' %}
+	<h3>{% trans "Explore members" %}</h3>
+	{% tag_cloud 25 '' search_types 'profile_list_tag' %}
 </div>
 
 {% include "add.html" %}

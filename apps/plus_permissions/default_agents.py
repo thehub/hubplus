@@ -63,7 +63,7 @@ def get_anon_user():
 
 def set_all_members_group():
     admin_user = get_admin_user()
-    return TgGroup.objects.get_or_create(group_name='all_members', display_name='All Members', place=get_or_create_root_location(), level='member', user=admin_user)
+    return TgGroup.objects.get_or_create(group_name='all_members', display_name=settings.ALL_MEMBERS_NAME, place=get_or_create_root_location(), level='member', user=admin_user)
            
 def get_all_members_group():
     #XXXchange this to use the a group ID configured in local_settings.py
@@ -74,6 +74,13 @@ def get_all_members_group():
         all_members = all_members[0] # filter returns a QuerySet
     return all_members
 
+def get_virtual_members_group() :
+    virtual_members= TgGroup.objects.filter(group_name=settings.VIRTUAL_MEMBERS_GROUP_NAME)
+    if virtual_members :
+        return virtual_members[0]
+    admin = get_admin_user()
+    return TgGroup.objects.get_or_create(group_name=settings.VIRTUAL_MEMBERS_GROUP_NAME, display_name=settings.VIRTUAL_MEMBERS_DISPLAY_NAME, place=get_or_create_root_location(), level='member', user=admin)
+    
 
 
 class CreatorMarker(models.Model) :

@@ -21,8 +21,11 @@ class ProfileViewer:
     place = InterfaceReadProperty
     website = InterfaceReadProperty
     homeplace = InterfaceReadProperty
+    homehub = InterfaceReadProperty
     organisation = InterfaceReadProperty
     role = InterfaceReadProperty
+    first_name = InterfaceReadProperty
+    last_name = InterfaceReadProperty
 
     address = InterfaceReadProperty
     country = InterfaceReadProperty
@@ -30,7 +33,7 @@ class ProfileViewer:
     display_name = InterfaceReadProperty
     title = InterfaceReadProperty
     get_display_name = InterfaceCallProperty
-
+    status = InterfaceReadProperty
     cc_messages_to_email = InterfaceReadProperty
 
 class ProfileEmailAddressViewer:
@@ -66,6 +69,8 @@ class ProfileEditor:
     organisation = InterfaceWriteProperty
     role = InterfaceWriteProperty
 
+    status = InterfaceWriteProperty
+
     display_name = InterfaceWriteProperty
     title = InterfaceWriteProperty
 
@@ -81,6 +86,10 @@ class ProfileEditor:
     skype_id = InterfaceWriteProperty
     sip_id = InterfaceWriteProperty
     homeplace = InterfaceWriteProperty
+    homehub = InterfaceWriteProperty
+
+    first_name = InterfaceWriteProperty
+    last_name = InterfaceWriteProperty
 
     cc_messages_to_email = InterfaceWriteProperty
 
