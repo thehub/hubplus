@@ -103,9 +103,9 @@ class NotViewable(object):
     @classmethod
     def __str__(cls):
         return ""
-    @classmethod
-    def __unicode__(cls):
-        return u""
+    #@classmethod
+    #def __unicode__(cls):
+    #    return u""
     @classmethod
     def __repr__(cls):
         return u""
