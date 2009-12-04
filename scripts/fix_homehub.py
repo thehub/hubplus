@@ -11,6 +11,7 @@ for p in Profile.objects.all() :
             # we can't currently infer from, say, Nepal to Asia
             print "not virtual ... "
         else :
+            print "virtual "
             virtual_members.add_member(p.user)
             p.homehub = virtual_members
             p.save()
