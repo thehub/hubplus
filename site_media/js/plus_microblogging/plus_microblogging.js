@@ -13,6 +13,7 @@ function status_form(ele) {
     var show = jq(manager.find('.show'));
     var toggle = jq(manager.find('.toggle'));
     var ta = jq(edit.find('#new_tweet'));
+    var click_show = jq(manager.find('.click_show'));
     
     jq(ta).val('');
 
@@ -33,9 +34,12 @@ function status_form(ele) {
 	    toggle.hide();
 	} );
 
-    show.click(function(e) {
-	    toggle_all();
+   
+    click_show.click(function(e) {
+	toggle_all();
+	toggle.hide();
 	});
+
     
     ta.keypress(function(e) {
 	    var s = jq(this).val();

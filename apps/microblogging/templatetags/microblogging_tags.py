@@ -5,6 +5,7 @@ from django.contrib.contenttypes.models import ContentType
 from django.conf import settings
 from django.template import defaultfilters
 
+from apps.plus_permissions.api import secure_wrap
 
 register = template.Library()
 
@@ -30,6 +31,8 @@ def sent_tweet_listing(context, user, prefix_sender, are_mine):
 def microblogging_form(context, sender, starts_hidden=False) :
     sender_class = ContentType.objects.get_for_model(sender)
     tweets = TweetInstance.objects.tweets_from(sender).order_by("-sent")
+    user = context['request'].user
+
     if tweets :
         latest_status = tweets[0]
         status_since = defaultfilters.timesince(latest_status.sent)
@@ -39,7 +42,20 @@ def microblogging_form(context, sender, starts_hidden=False) :
         status_text = ''
 
     path = context['request'].path
+    
+    can_update_status = False
+    if sender.__class__.__name__ == 'User' :
+        secure = secure_wrap(sender.get_profile(), user)
+        can_update_status = secure.has_interface('Profile.Editor')
+    else :
+        try :
+            sender.get_inner()
+            secure = sender
+        except :
+            secure = secure_wrap(sender, user)
+        can_update_status = secure.has_interface(secure.get_inner().__class__.__name__ + '.Editor') 
 
+        
     return {
         'sender':sender,
         'path':path,
@@ -47,4 +63,5 @@ def microblogging_form(context, sender, starts_hidden=False) :
         'status_since':status_since,
         'sender_class':sender_class,
         'starts_hidden':starts_hidden,
+        'can_update_status':can_update_status,
         }
