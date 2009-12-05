@@ -94,6 +94,7 @@ def group(request, group, template_name="plus_groups/group.html", current_app='p
     add_link = False
     can_tag = False
     can_change_avatar = False
+    has_accept = False
 
     if user.is_authenticated():
         if user.is_direct_member_of(group.get_inner()):
@@ -153,7 +154,11 @@ def group(request, group, template_name="plus_groups/group.html", current_app='p
             has_accept = False
 
     # XXXX review this status section if we make it an editable attribute
+    
     tweets = TweetInstance.objects.tweets_from(group).order_by("-sent") 
+    
+    # XXX this is probably deprecated as we now do the most recent status on a group page from the 
+    # microblogging templatetag ... can probably remove this when we have a spare moment
     if tweets :
         latest_status = tweets[0]
         #dummy_status = DisplayStatus(
