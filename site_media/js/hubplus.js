@@ -206,14 +206,9 @@ var setup_user_lists = function () {
 
 
 var setup_maps = function () {
-    console.log('setting up maps');
     jq("[id$='-place']").each(function () {
-	    console.log('in place');
-	    console.log(this);
-	    console.log(plot_point);
 	create_map(jq(this), plot_point);
     });
-    console.log('fin maps');
 };
 
 
