@@ -302,7 +302,9 @@ EMAIL_USE_TLS=False
 
 HMAC_KEY = "XXXXXXXXX"
 
-GOOGLE_MAP_KEY = "XXXXXXXXXXXX"
+# REPLACE FOR YOUR OWN SERVER
+GOOGLE_MAP_KEY = "ABQIAAAAiA7tLHdzZr8yhGAEbo5FGxS_srkAJTD0j5T3EF3o06M_52NTAhQM2w0ugG9dZdoyPl3s9RqydGrzpQ"
+
 
 # a local_settings file can over-ride the above
 try:

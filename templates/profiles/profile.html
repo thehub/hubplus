@@ -104,6 +104,9 @@
       {% if profile.should_show_place %}
       <li class="place">
 	<ul>
+	  <li>
+	    <div id="google_map_key" href="{{GOOGLE_MAP_KEY}}"></div>
+	  </li>
 	  {% editable "Location" profile 'place' 'London' %}
 	</ul>
       </li>
