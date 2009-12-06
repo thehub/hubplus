@@ -6,10 +6,9 @@ DATABASE_HOST = ''             # Set to empty string for localhost. Not used wit
 DATABASE_PORT = ''             # Set to empty string for default. Not used with sqlite3.
 
 SESSION_COOKIE_DOMAIN = None # ".the-hub.net"
-HUBSPACE_COMPATIBLE = True
 ROOT_URLCONF = 'hubplus.urls'
 
-PROJECT_NAME="Hub+"
+
 PROJECT_THEME='plus'
 COPYRIGHT_HOLDER='HubWorld'
 
@@ -20,5 +19,6 @@ EMAIL_PORT=''
 EMAIL_USE_TLS=False
 
 
+GOOGLE_MAP_KEY = "ABQIAAAAUO5htA3plE0mHcReh9HGtxS_srkAJTD0j5T3EF3o06M_52NTAhS5z_4HyMj1VVfc-7jrnMrs_e_CBA"
 
 HMAC_KEY = "189261893294393751924178342983367596516"
