@@ -94,6 +94,7 @@ def edit_resource(request, group, resource_name,
 def view_resource(request, group, resource_name, template_name="plus_resources/view.html",
                    current_app='plus_groups', **kwargs):
 
+
     if not group :
         raise Http404(_('This group does not exist'))
 
