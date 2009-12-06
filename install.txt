@@ -1,13 +1,58 @@
-Put main installation instructions here. i.e. Pinax installation. and any configuration changes 
+Application setup
+-----------------
 
 
-Copy libs.txt and external_apps.txt from "hubplus" to src/pinax/requirements.
+# create psn user
+useradd -m -s /bin/bash psn 
 
-Make sure you have the absolute newest version of django-haystack from git repository (as of Oct 5th 2009 ). Delete the existing one from src/django-haystack and then do:
+# get python dev
+apt-cache search python-dev
+sudo apt-get install python-dev git-core curl emacs22-nox python-psycopg2 libxslt1-dev gcc python-imaging
 
-pip install --requirement requirements/external_apps.txt
+
+# create directory
+cd /
+sudo mkdir opt/apphomes
+sudo mkdir opt/apphomes/mhpss
+
+cd opt/apphomes
+sudo chown -R psn:adm mhpss/ 
+cd mhpss 
+
+# become psn user
+sudo -i -u psn
+
+# get pinax
+git clone git://github.com/pinax/pinax.git
+
+#check the tags available
+git-tag -l 
+
+# NOTE that this makes a new branch called mhpss (containing the tag version 0.7beta3
+git checkout -b mhpss 0.7beta3
+
+# edit pinax-boot.py --> comment out django 1.0.4 and add 1.1
+
+python scripts/pinax-boot.py --development --django-version=1.1 /opt/apphomes/mhpss/pinax     
+
+source ./pinax-env/bin/activate
+
+git clone git://github.com/thehub/hubplus.git hubplus
+
+cp local_settings_example.py local_settings.py
+
+pip install --requirement src/pinax/requirements/external_apps.txt
+
+git checkout -b mhpss2 0.7beta2
 
 
+Database setup
+--------------
+
+
+
+Fulltext indexing
+-----------------
 HubPlus' fulltext search uses Django-Haystack so in theory you could use lots of different backends but we have chosen to go with the Solr backend since it seems to be the most supported. To install a Solr server on Linux do the following in pinax-env/src:
 
 
