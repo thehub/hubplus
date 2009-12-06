@@ -6,6 +6,10 @@ PROJECT_NAME=_("Mental Health and Psychosocial Support Network")
 COPYRIGHT_HOLDER=_('Psychosocial Support Network')
 
 VIRTUAL_HUB_NAME = 'MHPSS Network'
+ALL_MEMBERS_NAME = 'All Members'
+VIRTUAL_MEMBERS_GROUP_NAME = 'virtual_members'
+VIRTUAL_MEMBERS_DISPLAY_NAME = 'MHPSS Network'
+
 EXPLORE_NAME = _('Resources')
 
 SITE_NAME = _("Psychosocial Support Network")
@@ -19,8 +23,6 @@ GROUP_TYPES = (
     (u'hub', u'Main Region'),
 )
 
-CONTACT_EMAIL= "info@psychosocialnetwork.net"
-SUPPORT_EMAIL = "support@psychosocialnetwork.net"
 
 HUB_NAME = _('Region')
 HUB_NAME_PLURAL = _('Regions')
@@ -43,12 +45,6 @@ Dear {{first_name}} {{last_name}},
 
 Join and enter a worldwide community of people and organizations concerned with mental health & psychosocial support. Discover and learn about new Resources, Members, Groups and Regions from the worldwide network."""
 
-APPLICATION_REJECT_TEMPLATE = """
-Dear {{first_name}} {{last_name}},
-
-Unfortunately, we can not accept you to become a member of MHPSS network at this time.
-
-"""
 
 PASSWORD_RESET_TEMPLATE = """
 Dear %(display_name)s,
@@ -60,4 +56,41 @@ Your username, in case you've forgotten : %(username)s
 You should log in as soon as possible and change your password.
 
 Thanks for using our site!
+"""
+#ALL THESE MESSAGES SHOULD BE DJANGO TEMPLATES LIKE THE ONE BELOW
+
+APPLICATION_MESSAGE = """
+You have received an application to: {{group_name}}
+
+Please <a href="{{review_url}}">review applications to this group</a>
+
+from: {{first_name}} {{last_name}}, {{organisation}}
+email:{{email_address}}
+{% if find_out %}
+{{first_name}} {{last_name}} found out about {{group_name}} by:
+
+{{find_out}}
+{% endif %}
+{{first_name}} {{last_name}} wants to join {{group_name}} because:
+
+{{request}}
+"""
+
+
+ACCEPTED_TO_GROUP = _("""
+Dear %(applicant)s,
+
+Your application to join %(group_name)s has been accepted. Please go to <a href="%(group_url)s">%(group_name)s</a> to get started.
+
+%(accepted_by)s
+""")
+
+
+APPLICATION_REJECT_TEMPLATE = """
+Dear {{applicant}},
+
+Unfortunately, we can not accept you to become a member of {{group_name}} at this time.
+
+{{rejected_by}}
+
 """

@@ -11,7 +11,7 @@ from django.db import models
 
 from django.contrib.auth.models import AnonymousUser
 
-from apps.plus_permissions.default_agents import get_anonymous_group, get_anon_user
+from apps.plus_permissions.default_agents import get_anonymous_group, get_anon_user, get_all_members_group
 
 from apps.plus_groups.models import TgGroup
 
@@ -21,7 +21,7 @@ from apps.account.forms import SignupForm, AddEmailForm, LoginForm, \
     ChangePasswordForm, SetPasswordForm, ResetPasswordForm, \
     ChangeTimezoneForm, ChangeLanguageForm, TwitterForm, ResetPasswordKeyForm
 
-from forms import HubPlusApplicationForm
+from forms import HubPlusApplicationForm, SettingsForm
 
 from emailconfirmation.models import EmailAddress, EmailConfirmation
 
@@ -30,7 +30,7 @@ from apps.microblogging.views import TweetInstance
 from microblogging.utils import twitter_account_for_user, twitter_verify_credentials
 
 from django.utils.translation import ugettext_lazy as _
-
+from apps.plus_permissions.api import has_interface, secure_wrap, has_access
 
 def home(request, success_url=None):
     """
@@ -60,6 +60,13 @@ def home(request, success_url=None):
         if reply:
             form.fields['text'].initial = u"@%s " % reply
     tweets = TweetInstance.objects.tweets_for(request.user).order_by("-sent")
+    all_members_group = get_all_members_group()
+
+    if has_access(request.user, None, 'Application.Accept', all_members_group.get_security_context()):
+        has_accept = True
+    else:
+        has_accept = False
+        
     return render_to_response(template_name, {
         "head_title" : "Home",
         "head_title_status" : '',
@@ -67,12 +74,33 @@ def home(request, success_url=None):
         "reply": reply,
         "tweets": tweets,
         "twitter_authorized": twitter_verify_credentials(twitter_account),
+        "site_members_group":all_members_group,
+        "has_accept":has_accept
     }, context_instance=RequestContext(request))
 
 
 @login_required
 def site_settings(request, template_name='account/settings.html'):
-    return render_to_response(template_name, {}, context_instance=RequestContext(request))
+    if request.method=='POST' :
+
+        form = SettingsForm(request.POST)
+        form.user = request.user
+
+        if form.is_valid() :
+            request.user.cc_messages_to_email = form.cleaned_data['cc_email']
+            request.user.email_address=form.cleaned_data['email']
+            request.user.first_name=form.cleaned_data['first_name']
+            request.user.last_name=form.cleaned_data['last_name']
+            request.user.save()
+
+    else:
+        form = SettingsForm(initial={
+                'email': request.user.email_address, 
+                'cc_email':request.user.cc_messages_to_email,
+                'first_name':request.user.first_name,
+                'last_name':request.user.last_name,
+                })
+    return render_to_response(template_name, {'form':form}, context_instance=RequestContext(request))
 
 
 def login(request, form_class=LoginForm,
@@ -333,41 +361,35 @@ def other_services_remove(request):
     return HttpResponseRedirect(reverse("acct_other_services"))
 other_services_remove = login_required(other_services_remove)
 
+from apps.plus_lib.utils import get_hubs, get_virtual_groups
 
-
-def apply(request, form_class=HubPlusApplicationForm,
-        template_name="account/apply_form.html"):
+def apply(request, form_class=HubPlusApplicationForm, template_name="account/apply_form.html"):
 
     user = request.user
-    if user.__class__ == AnonymousUser :
+    if user.__class__ == AnonymousUser:
         user = get_anon_user()
         
-    # XXX there's a dedicated function for this, replace
-    hubs = TgGroup.objects.filter(level='member').exclude(place__name=settings.VIRTUAL_HUB_NAME)
+    hubs = get_hubs()
 
     if request.method == "POST":
         form = form_class(request.POST)
         if form.is_valid():
-            contact, application, group = form.save(user)
+            application_to = form.save(user)
             return render_to_response('plus_contacts/application_thanks.html',{
-                    'group' : group,
-                    "head_title" : _('Thanks for your application'),
-                    "head_title_status" : '',
- 
-            },context_instance=RequestContext(request))
-
-        else :
-            pass
+                    'application_to': application_to,
+                    "head_title": _('Thanks for your application'),
+                    "head_title_status": ''
+                    }, context_instance=RequestContext(request))
     else:
         form = form_class()
+    default_country = form.data.get('country', False) and form.data['country'] or "UK"
+    country_field = form.fields['country'].widget.render("country", default_country)
     return render_to_response(template_name, {
         "form": form,
+        'country_field':country_field,
         "hubs":hubs,
         "head_title": _("Like to join us?"),
         "head_title_status" : '',
  
     }, context_instance=RequestContext(request))
-
-
-    
 

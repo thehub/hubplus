@@ -271,6 +271,10 @@ AVATAR_DEFAULT_HUB_URL = "/site_media/images/hub.jpg"
 
 # local_settings.py can be used to override environment-specific settings
 # like database and email that differ between development and production.
+CONTACT_EMAIL = "world.tech.plus@the-hub.net"
+SUPPORT_EMAIL = "world.tech.plus@the-hub.net"
+DOMAIN_NAME = "plusdemo.the-hub.net"
+
 SYNC_ENABLED = False
 HUBPLUSSVCUID = "hubplus"
 HUBPLUSSVCPASS = "SECRET"
@@ -284,6 +288,8 @@ DATABASE_PASSWORD = ''         # Not used with sqlite3.
 DATABASE_HOST = ''             # Set to empty string for localhost. Not used with sqlite3.
 DATABASE_PORT = ''             # Set to empty string for default. Not used with sqlite3.
 
+
+
 SESSION_COOKIE_DODMAIN = ".XXX.net"
 HUBSPACE_COMPATIBLE = True # is this running against a HUBSPACE database?
 ROOT_URLCONF = 'XXX.urls'
@@ -295,6 +301,10 @@ EMAIL_PORT='25'
 EMAIL_USE_TLS=False
 
 HMAC_KEY = "XXXXXXXXX"
+
+# REPLACE FOR YOUR OWN SERVER
+GOOGLE_MAP_KEY = "ABQIAAAAiA7tLHdzZr8yhGAEbo5FGxS_srkAJTD0j5T3EF3o06M_52NTAhQM2w0ugG9dZdoyPl3s9RqydGrzpQ"
+
 
 # a local_settings file can over-ride the above
 try:

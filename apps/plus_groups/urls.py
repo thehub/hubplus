@@ -4,8 +4,13 @@ urlpatterns = patterns('',
                        url(r'^create/$', 'plus_groups.views.create_group', name='create_group'),
                        url(r'^create_hub/$', 'plus_groups.views.create_group', {'is_hub':True}, name='create_hub'),
                        url(r'^create_object/$', 'plus_groups.views.add_content_object', name="add_content_object"),
+                       
+                       url(r'^group_type_ajax/$', 'plus_groups.views.group_type_ajax', name='group_type_ajax'),
+
+
                        url(r'^(?P<resource_id>[\d]+)/page/', include('apps.plus_wiki.urls')),
                        url(r'^(?P<resource_id>[\d]+)/upload/', include('apps.plus_resources.urls')),
+                       url(r'^(?P<resource_id>[\d]+)/applications/', include('apps.plus_contacts.urls')),
                        url(r'^(?P<resource_id>[\d]+)/add_content/$', 'plus_groups.views.add_content_form', name="add_content"),
                        url(r'^(?P<resource_id>[\w\._-]+)/add_member/(?P<username>[\w\._-]+)/$', 'plus_groups.views.add_member', name='add_member'),
                        url(r'^autocomplete/$', 'plus_groups.views.autocomplete', name="autocomplete_group"),
@@ -19,5 +24,6 @@ urlpatterns = patterns('',
                        url(r'^tags/(?P<tag_string>[\w\+\. _-]+)/$', 'plus_groups.views.groups', name='groups_tag'),
                        url(r'^(?P<resource_id>[\d]+)/resources/$', 'plus_groups.views.group_resources', name='group_resources'),
                        url(r'^(?P<resource_id>[\d]+)/resources/tag/(?P<tag_string>[\w\+\. _-]+)/$', 'plus_groups.views.group_resources', name='group_resources_tag'),
+                       url(r'^group_type_ajax/$', 'plus_groups.views.group_type_ajax', name='group_type_ajax'),
                        )
 

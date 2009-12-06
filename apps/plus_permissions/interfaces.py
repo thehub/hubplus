@@ -29,6 +29,23 @@ class TemplateSecureWrapper:
         if name.startswith("has_write_"):
             write_attr = name.split('has_write_')[1]
             return self.can_write(write_attr)
+
+        if name.startswith("should_show_"):
+            # YES we do need this because the criteria is not simply permission
+            # it's the OR of edit permission and having a displayable value
+            # which can't be tested in the template
+            show_attr = name.split('should_show_')[1]
+            if self.can_write(show_attr) :
+                return True
+            val = self.__getattr__(show_attr)
+            if val == NotViewable :
+                # need a separate test because the *class* NotViewable evaluates to True, 
+                # even though an instance of it, evaluates to false
+                return False
+            if val :
+                return True
+            return False
+
         try:
             return getattr(self.SecureWrapper, name)
         except:
@@ -36,6 +53,7 @@ class TemplateSecureWrapper:
 
     def obj(self):
         return self.SecureWrapper._inner
+
 
     def can_write(self, name):
         return self.SecureWrapper.has_permission(name, InterfaceReadWriteProperty) or self.SecureWrapper.has_permission(name, InterfaceWriteProperty)
@@ -75,9 +93,24 @@ class EmptyString(type):
         return ""
     def __unicode__(cls):
         return u""
+    def __repr__(cls):
+        return u""
+    def __nonzero__(cls) :
+        return False
 
 class NotViewable(object):
     __metaclass__= EmptyString
+    @classmethod
+    def __str__(cls):
+        return ""
+    #@classmethod
+    #def __unicode__(cls):
+    #    return u""
+    @classmethod
+    def __repr__(cls):
+        return u""
+    def __nonzero__(self) :
+        return False
 
 def is_not_viewable(obj,attr_name) :
     x = getattr(obj,attr_name) 
@@ -120,6 +153,10 @@ class SecureWrapper:
 
     def get_inner_class(self) :
         return self.get_inner().__class__
+
+    def has_interface(self,i_str) :
+        # string representation of interface ie. "Profile.Viewer"
+        return i_str in self._interfaces
 
     def load_interfaces_for(self, agent, interface_names=None) :
         """Load interfaces for the wrapped inner content that are available to the agent"""

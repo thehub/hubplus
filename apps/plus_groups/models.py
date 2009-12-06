@@ -1,18 +1,20 @@
+
 from django.db import models
 from django.db.models.signals import post_save
 from itertools import chain
 from django.contrib.auth.models import User, UserManager, check_password
-
-from django.contrib.contenttypes.models import ContentType
-from django.contrib.contenttypes import generic
-
 from django.conf import settings
 
-from apps.plus_contacts.status_codes import WAITING_USER_SIGNUP
+from apps.plus_contacts.status_codes import ACCEPTED_PENDING_USER_SIGNUP
 from apps.plus_permissions.proxy_hmac import attach_hmac 
 import datetime
 
 from django.utils.translation import ugettext_lazy as _
+from django.db import transaction
+from apps.plus_lib.status import StatusDescriptor
+from django.contrib.contenttypes.models import ContentType
+
+
 
 
 class Location(models.Model):
@@ -208,6 +210,8 @@ try :
 
         active = models.BooleanField()
 
+        status = StatusDescriptor() 
+
         def add_member(self, user_or_group):
             if isinstance(user_or_group, User) and not self.users.filter(id=user_or_group.id):
                 self.users.add(user_or_group)
@@ -225,8 +229,10 @@ try :
             self.add_member(user)
             return user
 
-        def apply(self, user):
-            pass
+        def apply(self, user, applicant=None, about_and_why=''):
+            if not applicant:
+                raise ValueError('there must be an applicant')
+            self.create_Application(user, applicant=applicant, request=about_and_why, group=self)
 
         def change_avatar(self) :
             pass
@@ -256,7 +262,7 @@ try :
 
         def invite_member(self, invited, special_message, invited_by, url_root ) : 
             invite = MemberInvite(invited=invited, invited_by=invited_by, 
-                                  group=self, status=WAITING_USER_SIGNUP)
+                                  group=self, status=ACCEPTED_PENDING_USER_SIGNUP)
             invite_url = invite.make_accept_url(url_root)
             if special_message :
                 message = """<p>%s</p>""" % special_message
@@ -317,8 +323,7 @@ try :
             return self.groupextras
         
         def __str__(self) : 
-            return "<TgGroup : %s>" % self.group_name
-        
+            return self.display_name        
 
         child_groups = models.ManyToManyField('self', symmetrical=False, related_name='parent_groups')
 
@@ -334,6 +339,70 @@ try :
             group_app_label = group_label + 's'
             return group_app_label
 
+        @transaction.commit_on_success
+
+        def delete(self) :
+ 
+            sc = self.get_security_context()
+            ref = self.get_ref()
+
+            # remove members
+            for m in self.get_members() :
+                self.remove_member(m)
+            
+            # remove tags, now moved to GenericReference.delete()
+
+            content_type = ContentType.objects.get_for_model(self)
+
+            # remove statuses
+            from apps.microblogging.models import TweetInstance, Tweet, Following
+
+            for ti in TweetInstance.objects.tweets_from(self) :
+                ti.delete()
+            for ti in TweetInstance.objects.tweets_for(self) :
+                ti.delete()
+
+            for t in Tweet.objects.filter(sender_type=content_type, sender_id=self.id) :
+                t.delete()
+            for f in Following.objects.filter(follower_content_type=content_type,follower_object_id=self.id) :
+                f.delete()
+            for f in Following.objects.filter(followed_content_type=content_type,followed_object_id=self.id) :
+                f.delete() 
+
+            # remove comments
+            from threadedcomments.models import ThreadedComment
+            for c in ThreadedComment.objects.filter(content_type=content_type, object_id=self.id) :
+                c.delete()
+
+            # remove resource (WikiPage)
+                
+            from apps.plus_wiki.models import WikiPage
+            for p in WikiPage.objects.filter(in_agent=ref) :
+                p.delete()
+
+            # remove resource (Uploads)
+            from apps.plus_resources.models import Resource
+            for r in Resource.objects.filter(in_agent=ref) :
+                r.delete()
+
+
+            # permissions
+            
+            sc.target.clear()
+
+            # a) delete security tags
+            for t in sc.get_tags() :
+                t.delete()
+                # does this delete the relation between other GenRefs and the tag?
+
+            # b) delete this agent as security_context
+            sc.delete()
+
+            # remove the genref to this
+            ref.delete()
+
+            # remove the group
+            super(TgGroup,self).delete()
 
     
 except Exception, e:
@@ -413,7 +482,7 @@ def get_permission_agent_name(self) :
 
 # Move MemberInvite (to group) here
 class MemberInvite(models.Model) :
-    # Actually, it's useful to have a generic invited member,                                                                
+    # Actually, it's useful to have a generic invited member,
     invited = models.ForeignKey(User, related_name='invited_member')
     invited_by = models.ForeignKey(User, related_name='member_is_invited_by')
     group = models.ForeignKey(TgGroup)
@@ -425,3 +494,7 @@ class MemberInvite(models.Model) :
         return 'http://%s%s' % (site_root, url)
 
 
+def get_hubs() :
+    # one place to define the "get list of hubs" we need for region dropdown
+    return (t for t in TgGroup.objects.filter(level='member') if t.is_hub_type())
+ 

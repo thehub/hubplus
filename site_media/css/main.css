@@ -16,7 +16,7 @@ h2,
 }
 
 #page_header #section_intro,
-#page_header #head_title_status {
+#page_header #page_status {
 	width			: 620px;
 }
 
@@ -852,7 +852,7 @@ li.place div.editable {
 
 #intro #info ul,
 #group_intro #info ul,
-#upload_viewer ul{
+#upload_viewer ul {
 	clear		: both;
 	list-style	: none;
 	padding-bottom	: 1em;
@@ -870,18 +870,40 @@ li.place div.editable {
 }
 
 
-/* Block: About */
-
-#about_block dl {
+#intro li,
+#group_intro li,
+#upload_viewer li {
 	overflow	: hidden;
 }
 
-#about_block dt {
+#intro .label,
+#group_intro .label,
+#upload_viewer .label {
 	float		: left;
 	width		: 30%;
 }
 
-#about_block dd {
+#intro .value,
+#group_intro .value,
+#upload_viewer .value {
+	float		: left;
+	width		: 70%;
+}
+
+
+
+/* Block: About */
+
+#about_block li {
+	overflow	: hidden;
+}
+
+#about_block .label {
+	float		: left;
+	width		: 30%;
+}
+
+#about_block .value {
 	float		: left;
 	width		: 70%;
 }
@@ -949,20 +971,19 @@ li.place div.editable {
 
 #content,
 #preview_content {
+	border-bottom	: 1px solid #ddd;
 	clear		: both;
-	margin-bottom	: 25px;
+	padding-bottom	: 20px;
 }
 
 #preview_content {
-	border-bottom	: 1px solid #ddd;
-	padding-bottom	: 20px;
+	margin-bottom	: 20px;
 }
 
 
 /* Content Extra */
 
 #content_extra {
-	border-top	: 1px solid #ddd;
 	padding		: 5px 0 10px;
 }
 

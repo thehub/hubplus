@@ -1,4 +1,5 @@
 from django.shortcuts import render_to_response, get_object_or_404
+from django.http import Http404 
 from django.template import RequestContext
 from django.contrib.auth.models import User
 from django.http import HttpResponse, HttpResponseRedirect, HttpResponseForbidden
@@ -10,7 +11,7 @@ from django.utils.encoding import smart_str
 from django.db import transaction
 from django.utils import simplejson
 
-from apps.plus_groups.models import TgGroup
+from apps.plus_groups.models import TgGroup, get_hubs
 from django.core.urlresolvers import reverse
 
 from django.template import defaultfilters
@@ -23,13 +24,14 @@ from apps.plus_lib.search import side_search_args, listing_args
 from apps.plus_permissions.models import SecurityTag, GenericReference
 from apps.plus_permissions.interfaces import PlusPermissionsNoAccessException, SecureWrapper, secure_wrap, TemplateSecureWrapper
 from apps.plus_permissions.types.TgGroup import *
+
 from django.contrib.auth.decorators import login_required
 
 
 from apps.plus_groups.forms import TgGroupForm, TgGroupMemberInviteForm, AddContentForm, TgGroupMessageMemberForm
 
-from apps.plus_permissions.api import secure_resource, site_context
-from apps.plus_permissions.default_agents import get_anon_user, get_site
+from apps.plus_permissions.api import secure_resource, site_context, has_access
+from apps.plus_permissions.default_agents import get_anon_user, get_site, get_all_members_group
 
 from apps.plus_permissions.proxy_hmac import hmac_proxy
 
@@ -68,11 +70,15 @@ def resources(group, tags=[], order=None, search=''):
 @secure_resource(TgGroup)
 def group(request, group, template_name="plus_groups/group.html", current_app='plus_groups', **kwargs):
 
+    if not group :
+        raise Http404(_('There is no group with this id'))
+
     user = request.user
     if not user.is_authenticated():
         user = get_anon_user()
         request.user = user 
             
+    
     members = group.get_users()[:10]
     member_count = group.get_no_members()
 
@@ -88,10 +94,11 @@ def group(request, group, template_name="plus_groups/group.html", current_app='p
     add_link = False
     can_tag = False
     can_change_avatar = False
+    has_accept = False
 
     if user.is_authenticated():
         if user.is_direct_member_of(group.get_inner()):
-            if not user.is_admin_of(group.get_inner()) or group.get_inner().get_admin_group() == group.get_inner() :
+            if not user.is_admin_of(group.get_inner()) or group.get_inner().get_admin_group() == group.get_inner():
                 # can't leave a group you're the admin of *unless* the group is its own admin
                 # (without the second clause, you'd be trapped there forever)
                 leave = True
@@ -140,16 +147,29 @@ def group(request, group, template_name="plus_groups/group.html", current_app='p
             can_change_avatar  = True
         except Exception, e:
             pass
+        
+        if has_access(request.user, None, 'Application.Accept', group._inner.get_security_context()):
+            has_accept = True
+        else:
+            has_accept = False
 
-
+    # XXXX review this status section if we make it an editable attribute
+    
     tweets = TweetInstance.objects.tweets_from(group).order_by("-sent") 
+    
+    # XXX this is probably deprecated as we now do the most recent status on a group page from the 
+    # microblogging templatetag ... can probably remove this when we have a spare moment
     if tweets :
         latest_status = tweets[0]
-        dummy_status = DisplayStatus(
-            defaultfilters.safe( defaultfilters.urlize(latest_status.html())),
-                                 defaultfilters.timesince(latest_status.sent) )
+        #dummy_status = DisplayStatus(
+        #    defaultfilters.safe( defaultfilters.urlize(latest_status.html())),
+        #                         defaultfilters.timesince(latest_status.sent) )
+        status_type = 'group'
+        status_since = defaultfilters.timesince(latest_status.sent)
     else:
-        dummy_status = DisplayStatus('No status', '')
+        status_type = ''
+        status_since = ''
+    
 
     try:
         group.get_all_sliders
@@ -173,7 +193,8 @@ def group(request, group, template_name="plus_groups/group.html", current_app='p
 
     return render_to_response(template_name, {
             "head_title" : "%s" % group.get_display_name(),
-            "head_title_status" : dummy_status,
+            "status_type" : 'group',
+            "status_since" : status_since,
             "group" : TemplateSecureWrapper(group),
             "target_class" : ContentType.objects.get_for_model(group.get_inner()).id,
             "target_id" : group.get_inner().id,
@@ -197,7 +218,8 @@ def group(request, group, template_name="plus_groups/group.html", current_app='p
             'resource_listing_args':resource_listing_args,
             'group_id':group.id,
             'search_types':search_types,
-            'tagged_url':current_app + ':groups_tag'
+            'tagged_url':current_app + ':groups_tag',
+            'has_accept':has_accept
             }, context_instance=RequestContext(request, current_app=current_app)
     )
 
@@ -267,15 +289,23 @@ def join(request, group,  template_name="plus_groups/group.html", current_app='p
     return HttpResponseRedirect(reverse(current_app + ':group',args=(group.id,)))
 
 
-@login_required
-@secure_resource(TgGroup, required_interfaces=['Apply','Viewer'])
-def apply(request, group_id, current_app='plus_groups', **kwargs):
-    group.apply(request.user)
-    return HttpResponseRedirect(reverse(current_app + ':apply_to_group',args=(group.id)))            
+from apps.plus_contacts.status_codes import PENDING
+
+@secure_resource(TgGroup, required_interfaces=['Viewer'])
+def apply(request, group, current_app='plus_groups', **kwargs):
+    if request.user == get_anon_user():
+        return HttpResponseRedirect(reverse('acct_apply'))
+    if Application.objects.filter(status=PENDING, group=group, applicant_object_id=request.user.id, applicant_content_type=ContentType.objects.get_for_model(User)).count():
+        request.user.message_set.create(message=_("You have already have a pending application to %(group_name)s.") % {'group_name': group.get_display_name()})        
+    else:
+        group.apply(request.user, request.user) # add reason for applying form here
+        request.user.message_set.create(message=_("Application to %(group_name)s sent.") % {'group_name': group.get_display_name()})
+
+    return HttpResponseRedirect(reverse(current_app + ':group', args=(group.id,)))            
     
 
 @login_required
-@secure_resource(TgGroup, required_interfaces=['Join','Viewer']) 
+@secure_resource(TgGroup, required_interfaces=['Viewer']) 
 def leave(request, group, template_name="plus_groups/group.html", current_app='plus_groups', **kwargs):
     group.leave(request.user)
     return HttpResponseRedirect(reverse(current_app + ':group',args=(group.id,)))
@@ -437,3 +467,14 @@ def autocomplete(request, j=None, current_app='plus_groups', **kwargs):
     options = [{'display_name':group.display_name, 'id':str(group.id), 'interfaces':[iface.split('.')[1] for iface in group._interfaces]} for group in groups]
     return options
 
+
+@json_view
+def group_type_ajax(request,**kwargs) :
+    return settings.GROUP_TYPES
+
+
+
+@json_view
+def ajax_hub_list(request,**kwargs) :    
+    xs = [(t.id, t.display_name) for t in get_hubs()]
+    return xs

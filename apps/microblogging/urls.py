@@ -1,3 +1,4 @@
+
 from django.conf.urls.defaults import *
 
 urlpatterns = patterns('',
@@ -12,7 +13,6 @@ urlpatterns = patterns('',
 
     url(r'^ajax_form/(?P<target_type>[\w\.\_]+)/(?P<target_id>[\w\.\_]+)/$', 'microblogging.views.ajax_tweet_form', name='ajax_tweet_form'),
     
-    url(r'^ajax_post/$', 'microblogging.views.ajax_post', name='ajax_post'),
-
+    url(r'^post/$', 'microblogging.views.post', name='status_post'),
 
 )

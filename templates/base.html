@@ -1,6 +1,9 @@
 {% load i18n %}
 {% load intro_box %}
 
+{% load editable_attribute %}
+{% load microblogging_tags %}
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" dir="{% if LANGUAGE_BIDI %}rtl{% else %}ltr{% endif %}" xml:lang="{{ LANGUAGE_CODE }}" lang="{{ LANGUAGE_CODE }}">
 
@@ -41,7 +44,7 @@
 	<script type="text/javascript" src="{{ MEDIA_URL }}js/jquery.autocomplete.min.js" charset="utf-8"></script>
 	<script type="text/javascript" src="{{ MEDIA_URL }}js/tools.overlay-1.0.4.min.js" charset="utf-8"></script>
 	<script type="text/javascript" src="{{ MEDIA_URL }}js/json2.js" charset="utf-8"></script>
-
+	
 	<!-- SCRIPT: YUI -->
 	<link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}js/yui2/build/editor/assets/skins/sam/editor.css" />
 	<!-- <link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}js/yui2/build/fonts/fonts-min.css" /> -->
@@ -94,6 +97,7 @@
 	<script type="text/javascript" src="{{ MEDIA_URL }}js/plus_links/plus_links.js"></script>
 	<script type="text/javascript" src="{{ MEDIA_URL }}js/listings.js"></script>
 	<script type="text/javascript" src="{{ MEDIA_URL }}js/home.js"></script>
+	<script type="text/javascript" src="{{ MEDIA_URL }}js/plus_microblogging/plus_microblogging.js"></script>
 
 	<!-- SCRIPT: SITE READY (Put your "on load" functions that fire it all off in here) -->
 	<script type="text/javascript" src="{{ MEDIA_URL }}js/ready.js"></script>
@@ -140,17 +144,26 @@
 
 			<!-- page_header -->
 			<div id="page_header">
-			  {% block page_header %}
 
+			  {% block page_header %}
 			  <h2 id="page_title">{% block page_title %}{{head_title}}{% endblock %}</h2>
                             {% if intro_box_override %}
                                {% intro_box %}
                             {% else %}
-				<div id="head_title_status">
-				{% if head_title_status %}
-			           <p>{% autoescape off %}{{head_title_status}}{% endautoescape %} - <span class="label_time">{{head_title_status.time}}</span>
-<span id="new_status"></span></p>
-				{% endif %}
+				<div id="page_status">
+				  {% if status_type %}
+				      {% autoescape off %}
+				      {% ifequal status_type 'group' %}
+				          {% microblogging_form group 'True' %}
+				      {% endifequal %}
+
+				      {% ifequal status_type 'profile' %}
+				          {% microblogging_form profile.user 'True' %}
+				      {% endifequal %}
+				      {% endautoescape %} 
+				      
+				  {% endif %}
+
 				</div>
 		            {% endif %}
 			  {% endblock %}

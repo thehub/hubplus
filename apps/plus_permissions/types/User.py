@@ -7,6 +7,7 @@ from django.contrib.auth.models import User
 from django.db.models.signals import post_save
 
 from apps.profiles.models import Profile, HostInfo
+from apps.plus_links.models import Link
 
 import datetime
 
@@ -64,13 +65,16 @@ class UserViewer:
     get_profile = InterfaceCallProperty
     get_display_name = InterfaceCallProperty
     display_name = InterfaceReadProperty 
+    is_site_admin = InterfaceCallProperty
 
 class SetManagePermissions:
     pass
 
+
 UserInterfaces = {
     'Viewer':UserViewer,
-    'SetManagePermissions':SetManagePermissions
+    'SetManagePermissions':SetManagePermissions,
+
     }
 
 add_type_to_interface_map(User, UserInterfaces)
@@ -109,7 +113,7 @@ child_types = [Profile, HostInfo]
 # ChildTypes are used to determine what types of objects can be created in this security context (and acquire security context from this). These are used when creating an explicit security context for an object of this type.
 
 if User not in PossibleTypes :
-    child_types = [Profile, HostInfo]
+    child_types = [Profile, HostInfo, Link]
     SetPossibleTypes(User, child_types)
     SetVisibleTypes(content_type, [Profile, HostInfo])
     SetTypeLabels(content_type, 'User')
@@ -124,6 +128,7 @@ AgentDefaults = {'public':
                                 'Viewer': 'all_members_group',
                                 'SetManagePermissions': 'context_admin',
                                 'ManagePermissions':'context_admin',
+                                'CreateLink': 'context_admin',
                                 'Unknown': 'context_agent'
                                 },                           
                            'constraints':
@@ -133,15 +138,15 @@ AgentDefaults = {'public':
                        {'defaults':
                         {'Viewer': 'anonymous_group',
                          'Editor': 'context_agent',
-                         'EmailAddressViewer' : 'context_agent',
-                         'HomeViewer' : 'context_agent',
-                         'WorkViewer' : 'context_agent',
-                         'MobileViewer' : 'context_agent',
-                         'FaxViewer' : 'context_agent',
-                         'AddressViewer' : 'context_agent',
-                         'SkypeViewer' : 'context_agent',
-                         'SipViewer' : 'context_agent',
-                         'ManagePermissions':'context_admin',
+                         'EmailAddressViewer' : 'all_members_group',
+                         'HomeViewer' : 'all_members_group',
+                         'WorkViewer' : 'all_members_group',
+                         'MobileViewer' : 'all_members_group',
+                         'FaxViewer' : 'all_members_group',
+                         'AddressViewer' : 'all_memebers_group',
+                         'SkypeViewer' : 'all_members_group',
+                         'SipViewer' : 'all_members_group',
+                         'ManagePermissions':'context_agent',
                          'Unknown' : 'context_agent',
                          },
                         'constraints':['Viewer>=Editor', 'Editor<$anonymous_group', 'Editor>=$context_agent']
@@ -149,7 +154,8 @@ AgentDefaults = {'public':
                       'Link': 
                           {'defaults': {'Viewer':'all_members_group',
                                         'Manager':'context_agent',
-                                        'ManagePermissions':'context_admin'},
+                                        'ManagePermissions':'context_agent',
+                                        'Unknown' : 'context_agent'},
                            'constraints':['Viewer>=Manager']
                            },
                       'HostInfo':

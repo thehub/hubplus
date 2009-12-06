@@ -4,7 +4,7 @@
 {% load avatar_tags %}
 
 {% load uni_form %}
-
+{% load inbox %}
 {% block page_title %}
 {% trans "Invite " %}{% if SITE_NAME %}{% trans "to " %}{{ SITE_NAME }}{% endif %}
 {% endblock %}
@@ -13,7 +13,7 @@
 
 <div id="invite_to_site" class="block">
 	
-  <form class="full uniForm" id="invite_non_member_form" method="post" action="{% url site_invite %}">
+  <form class="full uniForm" id="invite_non_member_form" method="post" action="{% invite_url "" %}">
 
     <p>{% blocktrans %}Please enter the name and email of someone to invite to {% endblocktrans %}{% if SITE_NAME %}{{ SITE_NAME }}{% else %}site{% endif %}</p>
     <fieldset>

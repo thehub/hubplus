@@ -4,6 +4,9 @@ from django.conf.urls.defaults import *
 urlpatterns = patterns('',
     # XXX the following autocomplete is deprecated, need to get rid of it for upgrading to later django
     url(r'^username_autocomplete/$', 'misc.views.username_autocomplete_friends', name='profile_username_autocomplete'),
+
+    url(r'^ajax_hub_list/$', 'plus_groups.views.ajax_hub_list', name='ajax_hub_list'),
+
     url(r'^$', 'profiles.views.profiles', name='profile_list'),
     url(r'^tags/(?P<tag_string>[\w\+\. _-]+)/$', 'profiles.views.profiles', name='profile_list_tag'),
     url(r'^(?P<username>[\w\._-]+)/$', 'profiles.views.profile', name='profile_detail'),

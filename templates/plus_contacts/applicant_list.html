@@ -5,8 +5,7 @@
 
 {% load uni_form %}
 
-{% block head_title %}{% trans 'Site Applications' %}{% endblock %}
-{% block page_title %}{% trans 'Site Applications' %}{% endblock %}
+{% block page_title %}{% blocktrans %}Applications to: {{title}}{% endblocktrans %}{% endblock %}
 
 {% block body %}
 
@@ -37,11 +36,11 @@
   </td>
   <td>{{app.date}}</td>
   <td>
-    <form class="authorize" method="POST" action="/contacts/accept_application/{{app.id}}/">
+    <form class="authorize" method="POST" action="{% url plus_groups:accept_application app.group.id app.id %}">
       <input type="submit" class="button" value="{% trans 'accept' %}"/>
     </form>
-    {% if app.reject %}
-    <form class="authorize" method="POST" action="{% url site_reject app.id %}">
+    {% if reject %}
+    <form class="authorize" method="POST" action="{% url plus_groups:site_reject app.group.id app.id %}">
       <input type="submit" class="button" value="{% trans 'Decline' %}"/>
     </form>
     {% endif %}

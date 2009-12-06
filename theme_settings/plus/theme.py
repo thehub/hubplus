@@ -6,10 +6,17 @@ PROJECT_NAME=_("Hub+")
 COPYRIGHT_HOLDER=_('Hub World Ltd')
 
 VIRTUAL_HUB_NAME = 'HubPlus'
+ALL_MEMBERS_NAME = 'HubPlus'
+VIRTUAL_MEMBERS_GROUP_NAME = 'virtual_members'
+VIRTUAL_MEMBERS_DISPLAY_NAME = 'Hub+ Virtual'
+
+
 EXPLORE_NAME = _('Explore')
 
 SITE_NAME = _("Hub+")
 SITE_NAME_SHORT = _("Hub+")
+
+
 
 GROUP_TYPES = (
     (u'interest', u'Interest'),
@@ -19,8 +26,6 @@ GROUP_TYPES = (
     (u'hub', u'Hub'),
 )
 
-CONTACT_EMAIL = "world.tech.plus@the-hub.net"
-SUPPORT_EMAIL = "world.tech.plus@the-hub.net"
 
 HUB_NAME = 'Hub'
 HUB_NAME_PLURAL = 'Hubs'

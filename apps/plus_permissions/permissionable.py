@@ -48,16 +48,17 @@ class PermissionableManager(models.Manager):
             if required_interfaces:
                 try:
                     check_interfaces(wrapped, resource.__class__, required_interfaces=required_interfaces, all_or_any=all_or_any)
+                    wrapped_resources.append(wrapped)
                 except PlusPermissionsNoAccessException:
-                    continue
-            wrapped_resources.append(wrapped)
-            
+                    pass
+            else:
+                wrapped_resources.append(wrapped)
         return wrapped_resources
 
 
-    def plus_get(self, p_user, **kwargs) :
+    def plus_get(self, p_user, interface_names=None, **kwargs) :
         a = super(self.__class__, self).get(**kwargs)
-        return secure_wrap(a, p_user)
+        return secure_wrap(a, p_user, interface_names=interface_names)
  
     def plus_count(self, p_user, **kwargs) :
         count = 0

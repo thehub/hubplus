@@ -71,7 +71,6 @@ urlpatterns = patterns('',
     (r'^feeds/bookmarks/(.*)/?$', 'django.contrib.syndication.views.feed', bookmarks_feed_dict),
 
     (r'^signup/', include('signup_codes.urls')),
-    (r'^contacts/', include('plus_contacts.urls')),
 
     (r'^notices/', include('notification.urls')),
 

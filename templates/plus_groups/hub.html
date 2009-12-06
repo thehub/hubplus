@@ -1,0 +1,148 @@
+{% extends "site_base.html" %}
+
+{% load i18n %}
+{% load avatar_tags %}
+
+{% load uni_form %}
+{% load plus_tags %}
+{% load plus_links %}
+{% load editable_attribute %}
+{% load threadedcommentstags %}
+{% load listings %}
+{% block body_id %}{% trans "group" %}{% endblock %}
+
+{% block body %}
+
+<div id="group_intro" class="block">
+  <div id="info" class="block_column">
+    {% if permissions %}
+    <ul class="icon_text_button_set">
+      <li><a href="#overlay" class="icon_text_button bt_permissions" rel="#overlay" id="{{group.edit_key}}permissionedit">Permissions</a></li>
+    </ul>
+    {% endif %}
+    <h3>{% trans "About" %}</h3>
+
+    <ul>
+      <li>
+	<div id='ajax_select_list_url' href='{% url groups:group_type_ajax %}'/>
+	{% editable "Type" group 'group_type' 'Type of Group' %}
+      </li>
+
+      <li class="yui-skin-sam">
+	{% autoescape off %}
+	{% editable "Description" group 'description' 'Description of the group' %}
+	{% endautoescape %}
+      </li>  
+
+      <li>
+	{% editable "Address" group 'address' 'Address' %}
+      </li>
+    </ul>
+    
+    <h3>{% trans "Links" %}</h3>
+    {% plus_links target_class target_id %}
+    
+    
+    <h3>{% trans "Skills and Needs" %}</h3>
+    <ul>
+      <li>
+	<dl>
+	  {% if can_tag %}
+    	      {% plus_tag 'Skills <span class="extra">What does the group specialise in? (eg. 'nutrition')</span>' 'skills'  group user %}
+	  {% else %}
+	      {% view_plus_tag 'Skills' 'skills' group user %}
+	  {% endif %}
+	</dl>
+      </li>
+    </ul>
+
+    <ul>
+      <li>
+	<dl>
+	  {% if can_tag %}
+	      {% plus_tag 'Needs <span class="extra">What skills are the group looking for from other members? (eg. 'marketing')</span>' 'needs'  group  user %}
+	  {% else %}
+	      {% view_plus_tag 'Needs' 'needs' group user %}
+          {% endif %}
+	</dl>
+      </li>
+    </ul>
+    
+    <h3>{% trans "Members" %}</h3>
+    <ul>
+      <li><dl><dt>{% trans "Members" %}</dt><dd>
+	    <ul id="members_list">
+	      {% for member in members %}
+	      <li><a href="{% url profile_detail member.username %}" class="thumb small" title="{% if member.display_name %}{{member.display_name}}{% else %}{{member.username}}{%endif%}">
+		  {% avatar member 40 %}
+		</a>
+	      </li>
+	      {% endfor %}
+	    </ul>
+	    <a href="#" class='disabled'>Show all ({{member_count}})</a>
+      </dd></dl>
+      </li>
+    <li>
+      <dl>
+	<dt>{% trans "Group Hosts" %}</dt>
+	<dd>
+	  {% for host in hosts %}
+	  <a href="{% url profile_detail host.username %}" class="thumb small" title=" {% if host.display_name %}{{host.display_name}}{% else %}{{host.username}}{% endif %}">
+		{% avatar host 40 %}
+	  </a>
+	  {% endfor %}
+	  <br /><a href="#" class='disabled'>{% trans "Show all ({{host_count}})" %}</a>
+	</dd>
+      </dl>
+    </li>
+    </ul>
+  </div>
+
+  <div id="extra" class="block_column">
+    <div id="page_image" class="image group">
+      {% avatar group 180 %}
+      {% if can_change_avatar %}
+      <a href="{% url group_avatar_change group.id%}" id="avatar_replace" class="bt_edit icon_button">(replace)</a>
+      {% endif %}
+      <!-- img id="group_image" src="/site_media/images/group.jpg" / -->
+    </div>
+    <ul id="actions" class="link_list">
+      {% if message %}
+      <li class="first"><a href="{% url plus_groups:message_members group.id %}">Message members</a></li>
+      {% endif %}
+      {% if invite %}
+      <li><a href="{% url plus_groups:invite_to_group group.id %}">Invite members</a></li>
+      {% endif %}
+      {% if can_join %}
+      <li><a href="{% url plus_groups:join_group group.id %}">Join {{GROUP_OR_HUB}}</a></li>
+      {% endif %}
+      {% if apply %}
+      <li><a href="{% url plus_groups:apply_group group.id %}/">Apply to {{GROUP_OR_HUB}}</a></li>
+      {% endif %}
+      {% if leave %}
+      <li><a href="{% url plus_groups:leave_group group.id %}">Leave {{GROUP_OR_HUB}}</a></li>
+      {% endif %}
+      <li class="disabled last"><a href="#">Follow {{GROUP_OR_HUB}} ?</a></li>
+    </ul>
+  </div>
+</div>
+<!--div id="section_tab_navigation" class="section"-->
+{% include "plus_groups/tabbed_subs.html" %}
+<!--/div-->  
+
+
+{% endblock %}
+
+
+{% block side_bar %}
+{% side_search side_search_args %}
+<div id="feature_explore" class="site_block">
+  <h3>{% blocktrans %}Explore {% endblocktrans %}{{side_search_args.search_type_label}}</h3>
+  {% tag_cloud 25 '' search_types tagged_url %}
+</div>
+
+{% include "add.html" %}
+
+{% include "my_hub.html" %}
+
+{% endblock %}
