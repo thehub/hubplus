@@ -2,6 +2,14 @@ from django import forms
 import html5lib
 from html5lib import sanitizer, serializer, treebuilders, treewalkers
 
+from apps.plus_groups.models import TgGroup
+import settings
+
+def get_virtual_groups():
+    return TgGroup.objects.filter(place__name=settings.VIRTUAL_HUB_NAME, level='member')
+
+def get_hubs() :
+    return TgGroup.objects.filter(level='member').exclude(place__name=settings.VIRTUAL_HUB_NAME)
 
 class HTMLField(forms.CharField):
     def __init__(self, *args, **kwargs):
@@ -80,7 +88,7 @@ def message_user(sender, recipient, subject, body, domain) :
 
     if recipient.cc_messages_to_email :
         # recipient wants emails cc-ed
-        link = 'http://'+domain+reverse('messages_all')
+        link = 'http://' + domain + reverse('messages_all')
         message = _("""
 %(sender)s has sent you a new message on %(account_name)s .
 

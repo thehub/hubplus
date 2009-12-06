@@ -1,0 +1,9 @@
+<div id="{{name}}_select_div" class="ajax_select">
+<form name="" action="">
+<select name='{{name}}_select'>
+{% for value, name in options %}
+<option value="{{value}}" {% ifequal value current %}selected="true"{% endifequal %}>{{name}}</option>
+{% endfor %}
+</select>
+</form>
+</div>

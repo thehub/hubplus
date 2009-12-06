@@ -1,6 +1,8 @@
 from django import forms
 from profiles.models import Profile, HostInfo
 from apps.plus_lib.utils import HTMLField
+from django.conf import settings
+from apps.plus_groups.models import get_hubs, TgGroup
 
 
 class ProfileInfoForm(forms.Form):
@@ -37,7 +39,14 @@ class ProfileForm(forms.ModelForm):
     sip_id = forms.CharField(max_length=100)
     website = forms.URLField(required=False)
     homeplace = forms.CharField(max_length=100)
+    homehub = forms.ModelChoiceField(queryset=TgGroup.objects.filter(level='member'),required=False)
     place = forms.CharField(max_length=100)
+
+    def clean_homehub(self) :
+        hs = TgGroup.objects.filter(self.cleaned_data['homehub'])
+        if not hs :
+            raise forms.ValidationError(_('Not a valid %(hub_name)s')%settings.HUB_NAME)
+        return hs[0]
 
 class HostInfoForm(forms.ModelForm) :
     class Meta:

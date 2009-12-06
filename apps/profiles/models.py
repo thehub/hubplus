@@ -10,6 +10,7 @@ from apps.plus_permissions.default_agents import get_admin_user, get_site
 
 from timezones.fields import TimeZoneField
 
+
 import itertools
 
 class DelegateToUser(object) :
@@ -20,12 +21,25 @@ class DelegateToUser(object) :
        setattr(obj.user,self.attr_name,val)
        #print "Getting from inner %s" % getattr(obj.user,self.attr_name)
 
+class ProfileStatusDescriptor(object):
+    # XXXX Bah! There has to be a better way than this, but
+    # because we're using the Profile, we have to get the user 
+
+    def __get__(self,profile,typ=None):
+        from apps.microblogging.models import TweetInstance
+        return TweetInstance.objects.tweets_from(profile.user).order_by("-sent")[0].text
+
+    def __set__(self,profile,val):
+        from apps.microblogging.models import send_tweet
+        send_tweet(profile.user,val)
+
+
 class Profile(models.Model):    
    user = models.ForeignKey(User, unique=True, verbose_name=_('user'))
    def content(self):
       return """
 %s
-%s""" % (self.about,self.get_display_name())
+%s""" % (self.get_display_name(), self.about)
    about = DelegateToUser('description')
    email_address = DelegateToUser('email_address')
    name = DelegateToUser('username')
@@ -38,17 +52,23 @@ class Profile(models.Model):
    home = DelegateToUser('home')
    work = DelegateToUser('work')
    fax = DelegateToUser('fax')
-   
+   post_or_zip = DelegateToUser('post_or_zip')   
+   country = DelegateToUser('country')
    email2 = DelegateToUser('email2')
    address = DelegateToUser('address')
    skype_id = DelegateToUser('skype_id')
    sip_id = DelegateToUser('sip_id')
    website = DelegateToUser('website')
    homeplace = DelegateToUser('homeplace')
+   homehub = DelegateToUser('homehub')
+
    place = DelegateToUser('place')
    
    invited_by = models.ForeignKey(User, related_name='invited_users', null=True)
    accepted_by = models.ForeignKey(User, related_name='accepted_users', null=True)
+
+   status = ProfileStatusDescriptor()
+
 
    def __unicode__(self):
        return self.user.username

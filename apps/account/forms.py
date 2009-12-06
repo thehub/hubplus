@@ -335,6 +335,8 @@ class ChangeLanguageForm(AccountForm):
         self.user.message_set.create(message=ugettext(u"Language successfully updated."))
 
 
+
+
 # @@@ these should somehow be moved out of account or at least out of this module
 
 from account.models import OtherServiceInfo, other_service, update_other_services
@@ -358,7 +360,8 @@ class TwitterForm(UserForm):
 
 
 # hubplus alternatives
-
+from apps.plus_permissions.default_agents import get_all_members_group
+from apps.plus_lib.countryfield import COUNTRIES
 class HubPlusApplicationForm(forms.Form):
 
     #username = forms.RegexField(regex=ascii_re, label=_("Username"), max_length=30, widget=forms.TextInput(), error_messages={'invalid': 'Username must only contain a-z, 0-9 and "."'})
@@ -366,11 +369,14 @@ class HubPlusApplicationForm(forms.Form):
     last_name = forms.RegexField(regex=alnum_re, label=_("Last Name"), max_length=30, widget=forms.TextInput(), error_messages={'invalid': 'Name must only contain alphabetic character'})
     email_address = forms.EmailField(label=_("Email (required)"), required=True, widget=forms.TextInput())
 
-    organisation = forms.CharField(label=_("Organisation"),required=False,widget=forms.TextInput())
-    location = forms.CharField(label=_("Location"),required=False,widget=forms.TextInput())
+    organisation = forms.CharField(label=_("Organisation"), required=False, widget=forms.TextInput())
+    address = forms.CharField(label=_("Address"), required=True, widget=forms.TextInput())
+    country = forms.ChoiceField(label=_("Country"), required=True, widget=forms.Select(), choices=COUNTRIES)
+    post_or_zip = forms.CharField(label=_("Zip/Postcode"), required=True, widget=forms.TextInput())
     about_and_why = forms.CharField(
         label=_("Tell us a bit about yourself what you do and why you're interested in the Hub?"),
-        required=True, widget=forms.TextInput())
+        required=True, widget=forms.TextInput()
+        )
     find_out = forms.CharField(label=_("How did you find out about the Hub?"), required=True, widget=forms.TextInput())
     group = forms.CharField(label=_("A group you'd like to join (Optional)"), required=False, widget=forms.TextInput())
 
@@ -398,7 +404,7 @@ class HubPlusApplicationForm(forms.Form):
         email = self.cleaned_data['email_address']
         users = User.objects.filter(email_address=email)
         if users:
-            raise forms.ValidationError(_("That email is already taken. Please choose another."))
+            raise forms.ValidationError(_("There is already a user with that email address. Please choose another."))
         return email
 
     def clean(self):
@@ -406,26 +412,52 @@ class HubPlusApplicationForm(forms.Form):
 
     def save(self, user):
         site = get_site(get_admin_user())
-        ##see validator "clean_email_address" this cannot happen
-        #if Contact.objects.filter(email_address=email).count() < 1 :
         group = self.cleaned_data.pop('group')
-        about_and_why = self.cleaned_data.pop("about_and_why"),
+        about_and_why = self.cleaned_data.pop("about_and_why")
         contact= site.create_Contact(user, **self.cleaned_data)
-        #contact = contact.get_inner()
-        #contact.first_name = self.cleaned_data['first_name']
-        #contact.last_name = self.cleaned_data['last_name']
-        #contact.find_out = self.cleaned_data["find_out"]
-        #contact.email_address = self.cleaned_data["email_address"]
-        #contact.location = self.cleaned_data["location"]
-        #contact.save()
-        #else :
-        #    contact = Contact.objects.get(email_address=email)
 
-
-        application = site.create_Application(user, applicant=contact,
-                                       request=about_and_why,
-                                       group=group)
-
-        return contact, application, group
+        members_group = get_all_members_group()
+        site_application = members_group.apply(user, 
+                                               applicant=contact,
+                                               about_and_why=about_and_why)
+        if group:
+            group.apply(user, 
+                        applicant=contact,
+                        about_and_why=about_and_why)
+        if not group:
+            group = members_group
+        return group
         
 
+class SettingsForm(forms.Form) :
+    cc_email = forms.BooleanField(required=False)
+    email = forms.EmailField(required=False)
+
+    first_name = forms.RegexField(regex=alnum_re, label=_("First Name"), max_length=30, widget=forms.TextInput(), 
+                                  error_messages={'invalid': 'Name must only contain alphabetic character'})
+    last_name = forms.RegexField(regex=alnum_re, label=_("Last Name"), max_length=30, widget=forms.TextInput(), 
+                                 error_messages={'invalid': 'Name must only contain alphabetic character'})
+
+
+    def clean_email(self) :
+        email = self.cleaned_data['email']
+        if not email :
+            raise forms.ValidationError(_("Email address is empty."))
+
+        try :
+            self.user
+            # someone has injected a user in from outside,
+            # so we can validate whether the email address belongs to this user
+            user = self.user
+        except :
+            user = None
+
+        if user :
+            users = User.objects.filter(email_address=email)
+            if users:
+                if users[0].username == self.user.username :
+                    return email
+                raise forms.ValidationError(_("There is already a user with that email address. Please choose another."))
+
+
+        return email

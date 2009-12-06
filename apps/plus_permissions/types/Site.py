@@ -40,7 +40,7 @@ SetSliderOptions(Site, SliderOptions)
 
 # ChildTypes are used to determine what types of objects can be created in this security context (and acquire security context from this). These are used when creating an explicit security context for an object of this type. 
 
-child_types = [TgGroup, Application, Contact]
+child_types = [TgGroup, Contact]
 SetPossibleTypes(Site, child_types)
 
 

@@ -20,7 +20,7 @@ from profiles.forms import ProfileForm, HostInfoForm
 
 from avatar.templatetags.avatar_tags import avatar
 
-from apps.plus_lib.models import DisplayStatus, add_edit_key
+from apps.plus_lib.models import add_edit_key
 
 from apps.plus_permissions.api import secure_resource, secure_wrap, TemplateSecureWrapper, PlusPermissionsNoAccessException, PlusPermissionsReadOnlyException, get_anon_user
 
@@ -34,6 +34,7 @@ from django.db.models import Q
 from itertools import chain
 from django.template import defaultfilters
 from apps.plus_explore.forms import SearchForm
+from apps.plus_links.models import get_links_for
 
 #from gravatar.templatetags.gravatar import gravatar as avatar
 
@@ -72,6 +73,16 @@ def profiles(request, tag_string='', template_name="plus_explore/explore_filtere
                                               'search':search_dict,
                                               'intro_box_override':True}, context_instance=RequestContext(request))
 
+
+
+def show_section(profile, attribute_list) :
+    # if none of the list of attributes are visible to this viewer, hide them all
+    def test_att(name) :
+        if profile.__getattr__('should_show_'+name) :
+            return True
+        return False
+
+    return any((test_att(name) for name in attribute_list))
 
 
 
@@ -131,20 +142,6 @@ def profile(request, username, template_name="profiles/profile.html"):
     previous_invitations_to = FriendshipInvitation.objects.filter(to_user=other_user, from_user=request.user)
     previous_invitations_from = FriendshipInvitation.objects.filter(to_user=request.user, from_user=other_user)
     
-    #if is_me:
-    #    if request.method == "POST":
-    #        if request.POST["action"] == "update":
-    #            profile_form = ProfileForm(request.POST, instance=other_user.get_profile())
-    #            if profile_form.is_valid():
-    #                profile = profile_form.save(commit=False)
-    #                profile.user = other_user
-    #                profile.save()
-    #        else:
-    #            profile_form = ProfileForm(instance=other_user.get_profile())
-    #    else:
-    #        profile_form = ProfileForm(instance=other_user.get_profile())
-    #else:
-    #    profile_form = None
 
     interests = get_tags(tagged=other_user.get_profile(), tagged_for=other_user, tag_type='interest')
     skills = get_tags(tagged = other_user.get_profile(), tagged_for=other_user, tag_type='skill')
@@ -153,19 +150,21 @@ def profile(request, username, template_name="profiles/profile.html"):
     profile = other_user.get_profile()
     user = request.user
 
-
     if not user.is_authenticated():
         user = get_anon_user()
 
     user_type = ContentType.objects.get_for_model(other_user)
-    other_user_tweets = Tweet.objects.filter(sender_type=user_type, sender_id=other_user.id).order_by("-sent") # other_user
-    if other_user_tweets :
-        latest_status = other_user_tweets[0]
-        dummy_status = DisplayStatus(
-            defaultfilters.safe( defaultfilters.urlize(latest_status.html())),
-                                 defaultfilters.timesince(latest_status.sent) )
-    else : 
-        dummy_status = DisplayStatus('No status', '')
+
+    # new style statuses
+    tweets = TweetInstance.objects.tweets_from(user).order_by("-sent")
+    if tweets :
+        latest_status = tweets[0]
+        status_type = 'profile'
+        status_since = defaultfilters.timesince(latest_status.sent)
+    else:
+        status_type = ''
+        status_since = ''
+
     profile = secure_wrap(profile, user)
     try:
         profile.get_all_sliders
@@ -179,21 +178,31 @@ def profile(request, username, template_name="profiles/profile.html"):
     search_types_len = len(search_types)
     search_type_label = search_types[0][1][2]
 
+
     host_info = other_user.get_profile().get_host_info()
     host_info = secure_wrap(host_info, user)
 
     see_host_info = False
-
     try :
         host_info.user 
         see_host_info = True
     except :
         pass # can't see host_info
-
     host_info = TemplateSecureWrapper(host_info)
+
 
     member_of = [(g.group_app_label() + ':group', g) for g in other_user.get_enclosures(levels=['member']).exclude(group_name='all_members')]
     host_of = [(g.group_app_label() + ':group', g) for g in other_user.get_enclosures(levels=['host']).exclude(group_name='all_members_hosts')]
+
+    see_about = is_me or show_section(profile, ('about',))
+    see_contacts = is_me or show_section(profile,('mobile','home','work','fax','website','address','email_address'))
+    
+    see_links = is_me
+    links = get_links_for(other_user,RequestContext(request))
+    if links :
+        see_links = True
+
+    can_tag = profile.has_interface('Profile.Editor')
 
     return render_to_response(template_name, {
             "is_me": is_me,
@@ -206,12 +215,13 @@ def profile(request, username, template_name="profiles/profile.html"):
             "previous_invitations_to": previous_invitations_to,
             "previous_invitations_from": previous_invitations_from,
             "head_title" : "%s" % other_user.get_profile().get_display_name(),
-            "head_title_status" : dummy_status,
+            "status_type" : status_type,
+            "status_since" : status_since,
             "host_info" : other_user.get_profile().get_host_info(),
             "skills" : skills,
             "needs" : needs,
             "interests" : interests,
-            "other_user_tweets" : other_user_tweets,
+            "other_user_tweets" : tweets,
             "permissions":perms_bool,
             "member_of":member_of,
             "host_of":host_of,
@@ -221,6 +231,12 @@ def profile(request, username, template_name="profiles/profile.html"):
             "search_types_len":search_types_len,
             "host_info":host_info, 
             "see_host_info":see_host_info,
+            "see_about":see_about,
+            "see_contacts":see_contacts,
+            "see_links":see_links,
+            "other_user_class":user_type.id,
+            "other_user_id":other_user.id,
+            "can_tag":can_tag,
             }, context_instance=RequestContext(request))
 
 

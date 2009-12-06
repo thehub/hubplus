@@ -394,6 +394,20 @@ class GenericReference(models.Model):
     # If there are only these, we can add a choice to this field, but I'm not 100% certain yet.
     permission_prototype = models.CharField(max_length=10, null=True)
 
+
+    def delete(self) :
+        # remove the generic reference
+        # try not to call this directly, but via deleting a group etc. (which we'll wrap in a transaction)
+
+        # remove tags                                                                                                    
+        from apps.plus_tags.models import TagItem, tag_item_delete
+        for ti in TagItem.objects.filter(ref=self) :
+            tag_item_delete(ti)
+
+        super(GenericReference,self).delete()
+
+        
+
 def ref(agent) :
     # if we're sent ordinary agent (group etc.) get the ref, if we've already got a ref, just return it
     if agent.__class__ != GenericReference :
@@ -510,22 +524,24 @@ def secure_filter(agent, objects, interface):
     pass
 
 
-def has_access(agent, resource, interface) :
+def has_access(agent, resource, interface, sec_context=None) :
     """Does the agent have access to this interface in this resource. All the special casing below will make it hard to refactor this method and for instance make it work for a whole lot of objects
     """
     
-    # make sure we've stripped resource from any SecureWrappers
-    if resource.__class__.__name__ == "SecureWrapper":
-        resource = resource.get_inner()
-
     # make sure we've stripped agent from any SecureWrappers
     if agent.__class__.__name__ == "SecureWrapper":
         agent = agent.get_inner()
  
-    # we're always interested in the security_context of this resource
 
-    context = resource.get_security_context()
+    if not sec_context:
+        # make sure we've stripped resource from any SecureWrappers
+        if resource.__class__.__name__ == "SecureWrapper":
+            resource = resource.get_inner()
 
+
+        context = resource.get_security_context()
+    else:
+        context = sec_context
 
     # which agents have access?
 
@@ -554,10 +570,11 @@ def has_access(agent, resource, interface) :
         #that user is in the "anyone" group
         return True
 
-    if get_creator_agent().obj in allowed_agents :
-        actual_creator = resource.get_ref().creator
-        if agent == actual_creator:
-            return True
+    if resource:
+        if get_creator_agent().obj in allowed_agents :
+            actual_creator = resource.get_ref().creator
+            if agent == actual_creator:
+                return True
 
     if agent.__class__ == AnonymousUser :
         # we clearly shouldn't be seeing this - sure but is this a security issue - t.s.

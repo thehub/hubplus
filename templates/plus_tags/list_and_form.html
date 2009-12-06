@@ -1,7 +1,7 @@
 <div class="label">
 	{{label}}
 </div>
-<div class="input tag_manager" id="{{tag_type}}">
+<div class="value tag_manager" id="{{tag_type}}">
   <ul class="tag_list">
     {% for t in tags %}
     <li {% if forloop.first %}class="first"{% endif %}><a href="{% url explore_filtered  t.keyword  %}" class="tag option">{{t.keyword}}</a>

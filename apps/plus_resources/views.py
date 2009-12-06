@@ -1,6 +1,8 @@
 from __future__ import with_statement
 
 from django.shortcuts import render_to_response, get_object_or_404
+from django.http import Http404
+
 from django.template import RequestContext
 from django.contrib.auth.models import User
 from django.http import HttpResponse, HttpResponseRedirect, HttpResponseForbidden,  Http404
@@ -40,6 +42,9 @@ from apps.plus_tags.models import get_tags_for_object, tag_item_delete, TagItem
 def edit_resource(request, group, resource_name,  
                   template_name='plus_resources/upload.html', success_url=None, current_app="plus_groups", **kwargs) :
 
+    if not group :
+        raise Http404(_('This group does not exist'))
+ 
     try:
         secure_upload = Resource.objects.plus_get(request.user, name=resource_name, in_agent=group.get_ref())
     except Resource.DoesNotExist:
@@ -88,6 +93,10 @@ def edit_resource(request, group, resource_name,
 @secure_resource(TgGroup)
 def view_resource(request, group, resource_name, template_name="plus_resources/view.html",
                    current_app='plus_groups', **kwargs):
+
+    if not group :
+        raise Http404(_('This group does not exist'))
+
     try:
         obj = Resource.objects.plus_get(request.user, name=resource_name, in_agent=group.get_ref())
     except Resource.DoesNotExist:

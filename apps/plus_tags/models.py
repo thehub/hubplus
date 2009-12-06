@@ -182,7 +182,7 @@ def tag_add(tagged, tag_type, tag_value, tagged_by, tagged_for=None):
     if not tagged_for:
         tagged_for = tagged_by.get_ref()
 
-    keyword = tag_value.lower()
+    keyword = tag_value.lower().strip()
     #does the tag already exist?
     try:
         tag = Tag.objects.get(tag_type=tag_type,

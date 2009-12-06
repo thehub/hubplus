@@ -26,7 +26,7 @@
           <div class="label">
             <label for="name">Name</label>
           </div>
-          <div class="input">
+          <div class="value">
             {{display_name}}
           </div>
         </li>
@@ -35,7 +35,7 @@
           <div class="label">
             <label for="username"><abbr class="required" title="required">* </abbr>Username</label>
           </div>
-          <div class="input">
+          <div class="value">
             <input  id="username" name="username" class="text" type="text" value="{{form.data.username}}"/>
             {{form.username.errors}}
           </div>
@@ -45,7 +45,7 @@
           <div class="label">
             <label for="password1"><abbr class="required" title="required">* </abbr>Password</label>
           </div>
-          <div class="input">
+          <div class="value">
             <input  id="password1" name="password1" class="text" type="password" />
             {{form.password1.errors}}
           </div>
@@ -55,7 +55,7 @@
           <div class="label">
             <label for="password2"><abbr class="required" title="required">* </abbr>Re-enter password</label>
           </div>
-          <div class="input">
+          <div class="value">
             <input  id="password2" name="password2" class="text" type="password" />
             {{form.password2.errors}}
           </div>

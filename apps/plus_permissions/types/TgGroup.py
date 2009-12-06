@@ -108,7 +108,8 @@ class TgGroupViewer:
     get_admin_group = InterfaceCallProperty
     homeplace = InterfaceReadProperty
     get_group_type_display = InterfaceReadProperty
-
+    status = InterfaceReadProperty
+    is_hub_type = InterfaceCallProperty
 
 class TgGroupEditor: 
     pk = InterfaceReadProperty
@@ -119,7 +120,9 @@ class TgGroupEditor:
     message_members = InterfaceCallProperty
     add_link = InterfaceCallProperty
     change_avatar = InterfaceCallProperty
-
+    status = InterfaceWriteProperty
+    group_type = InterfaceWriteProperty
+    address = InterfaceWriteProperty
 
 class TgGroupJoin:
     pk = InterfaceReadProperty
@@ -362,9 +365,9 @@ def setup_defaults() :
     
 
     AgentDefaults = {'public':public_defaults,
-                 'private':private_defaults,
-                 'open' : open_defaults,
-                 'invite' : invite_defaults}
+                     'private':private_defaults,
+                     'open' : open_defaults,
+                     'invite' : invite_defaults}
 
     return AgentDefaults
 

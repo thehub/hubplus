@@ -47,7 +47,7 @@
 				<div class="label">
 					<label for="license">License <span class="extra">('©2009', 'GPL')</span></label>
 				</div>
-				<div class="input">
+				<div class="value">
 					<input name="license" id="license" class="text" type="text" value="{% if data.license %}{{data.license}}{% else %}{{page.license}}{% endif %}" />
 					{% if errors.license %}<span class="error">{{errors.license}}<span>{% endif %}
 				</div>
@@ -58,7 +58,7 @@
 				<div class="label">
 					<label for="what_changed">What's changed? <span class="extra">describe what you've just changed</span></label>
 				</div>
-				<div class="input">
+				<div class="value">
 					<textarea id="what_changed" name="what_changed" class="text">{{data.what_changed}}</textarea>
 					{% if errors.what_changed %}<span class="error">{{errors.what_changed}}<span>{% endif %}
 				</div>

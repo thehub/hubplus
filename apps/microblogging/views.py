@@ -11,6 +11,9 @@ from apps.microblogging.utils import twitter_account_for_user, twitter_verify_cr
 from apps.microblogging.models import Tweet, TweetInstance, Following
 from apps.microblogging.forms import TweetForm
 
+from account.utils import get_default_redirect
+
+
 if "notification" in settings.INSTALLED_APPS:
     from notification import models as notification
 else:
@@ -130,6 +133,17 @@ def ajax_tweet_form(request, sender_class, sender_id) :
                               {'sender_class':sender_class,
                                'sender_id':sender_id})
 
+@login_required
+def post(request, success_url=None) :
+    if success_url is None:
+        success_url = get_default_redirect(request)
 
-def ajax_post(request) :
-    pass
+    if request.POST :
+       form = TweetForm(request.user, request.POST)
+       if form.is_valid():
+           form.save()
+       else :
+           # what to do here? We weren't planning to show the form again ... :-(
+           request.user.message_set.create(_("We are sorry, but we cannot update your status at the moment"))
+           
+    return HttpResponseRedirect(success_url)

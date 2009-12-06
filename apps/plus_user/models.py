@@ -148,11 +148,15 @@ def patch_user_class():
     User.add_to_class('created',models.DateTimeField(default=datetime.datetime.now))
     User.add_to_class('email2',models.CharField(max_length=255))
     User.add_to_class('email3',models.CharField(max_length=255))
-    User.add_to_class('address',models.TextField())
     User.add_to_class('skype_id',models.TextField())
     User.add_to_class('sip_id',models.TextField())
     User.add_to_class('website',models.TextField())
     User.add_to_class('homeplace', models.ForeignKey(Location, null=True))
+    User.add_to_class('address', models.TextField())
+    User.add_to_class('post_or_zip', models.CharField(null=True, default="", max_length=30))
+    User.add_to_class('country', models.CharField(null=True, default="", max_length=2))
+
+    User.add_to_class('homehub', models.ForeignKey("plus_groups.TgGroup", null=True)) # we need this for PSN, XXX need to decide how to make it compatible with hubspace for hub+ 
 
     User.add_to_class('psn_id', models.CharField(max_length=50,null=True))
     User.add_to_class('psn_password_hmac_key', models.CharField(max_length=50, null=True)) #this is just for the bizare hmacing of psn passwords by a field formly known as "fullname"
@@ -170,6 +174,11 @@ def patch_user_class():
     User.save = user_save
 
     User.is_admin_of = lambda self, group : self.is_member_of(group.get_admin_group())
+
+    def is_site_admin(self) :
+       from apps.plus_permissions.default_agents import get_all_members_group
+       return self.is_admin_of(get_all_members_group())
+    User.is_site_admin = is_site_admin
    
     print "Monkey Patched User Class ... gulp!"
 
