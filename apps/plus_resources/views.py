@@ -16,7 +16,7 @@ from apps.plus_resources.models import Resource, get_or_create
 from django.contrib.auth.decorators import login_required
 
 from apps.plus_permissions.decorators import secure_resource
-from apps.plus_permissions.api import TemplateSecureWrapper, has_access
+from apps.plus_permissions.api import TemplateSecureWrapper, has_access, get_anon_user
 
 from apps.plus_groups.models import TgGroup
 from django.core.urlresolvers import reverse
@@ -102,6 +102,10 @@ def view_resource(request, group, resource_name, template_name="plus_resources/v
         obj = Resource.objects.plus_get(request.user, name=resource_name, in_agent=group.get_ref())
     except Resource.DoesNotExist:
         raise Http404
+
+    if not request.user.is_authenticated():
+        request.user = get_anon_user()
+
 
     try:
         obj.get_all_sliders
