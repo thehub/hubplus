@@ -74,9 +74,11 @@ def group(request, group, template_name="plus_groups/group.html", current_app='p
         raise Http404(_('There is no group with this id'))
 
     user = request.user
-    if not user.is_authenticated():
-        user = get_anon_user()
-        request.user = user 
+
+    # XXX deprecated ... our middleware should do this
+    #if not user.is_authenticated():
+    #    user = get_anon_user()
+    #    request.user = user 
             
     
     members = group.get_users()[:10]
