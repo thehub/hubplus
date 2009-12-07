@@ -8,7 +8,7 @@ useradd -m -s /bin/bash psn
 
 # get python dev
 apt-cache search python-dev
-sudo apt-get install python-dev git-core curl emacs22-nox python-psycopg2 libxslt1-dev gcc python-imaging
+sudo apt-get install python-dev git-core curl emacs22-nox python-psycopg2 libxslt1-dev gcc python-imaging rsync postgresql-client-8.3
 
 
 # create directory
@@ -135,6 +135,8 @@ To reindex your data
 --------------------
 
 python manage.py rebuild_index   
+
+
 
 Supervisord
 -----------
