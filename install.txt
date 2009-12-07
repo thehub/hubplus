@@ -93,16 +93,16 @@ sudo apt-get install git-core curl emacs22-nox jetty python-setuptools
 sudo /etc/init.d/jetty stop
 sudo rm /etc/rc2.d/S20jetty
 
-# create the directory for the index
 cd /opt
-mkdir indexhome/
-chown -R psn:adm indexhome
-cd indexhome
+sudo mkdir homeapps
+sudo mkdir homeapps/solr 
 
- 
+chown -R psn:adm homeapps
+
 # become psn user
 sudo -i -u psn
 
+cd homeapps/solr
 
 # get the tarball for solr
 curl -O http://apache.mirrors.tds.net/lucene/solr/1.3.0/apache-solr-1.3.0.tgz
