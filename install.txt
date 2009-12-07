@@ -8,7 +8,7 @@ useradd -m -s /bin/bash psn
 
 # get python dev
 apt-cache search python-dev
-sudo apt-get install python-dev git-core curl emacs22-nox python-psycopg2 libxslt1-dev gcc python-imaging
+sudo apt-get install python-dev git-core curl emacs22-nox python-psycopg2 libxslt1-dev gcc python-imaging rsync postgresql-client-8.3
 
 
 # create directory
@@ -40,6 +40,10 @@ source ./pinax-env/bin/activate
 
 git clone git://github.com/thehub/hubplus.git hubplus
 
+# init the submodules containing YUI
+git-submodule init
+git submodule update
+
 cp local_settings_example.py local_settings.py
 
 pip install --requirement src/pinax/requirements/external_apps.txt
@@ -67,6 +71,15 @@ sudo sed -e "s/^#\(listen_addresses =\) 'localhost'/\1 '172.24.2.72'/" -i /etc/p
 echo "#Allow access from local VMs with username and password"        | sudo tee -a /etc/postgresql/8.3/main/pg_hba.conf
 echo "host    all         all          188.40.250.64/27          md5" | sudo tee -a /etc/postgresql/8.3/main/pg_hba.conf
 
+# we need to change the	  existing line in pg_hba.conf for local access
+
+local   all         all                               ident sameuser
+
+# to
+
+local   all         all                               md5
+
+
 # Restart Postgresql
 sudo /etc/init.d/postgresql-8.3 restart
 
@@ -77,6 +90,53 @@ sudo netstat -nlp46
 createuser -S -d -R -P psn
 createdb psn
 # set local_settings.py in hubplus accordingly
+
+Pulling the data from plus_demo
+-------------------------------
+
+Exporting the database to a file :
+
+pg_dump -U thehub -Fc psn > new.dump
+
+On mhpss-db :
+
+# as admin
+cd 
+rcp phil@pinaxdev.the-hub.net:/home/phil/test/pinax-env/psn_demo/new.dump .
+
+# make sure you copy to somewhere where admin can write and user postgres can read
+
+# become postgres
+sudo -i -u postgres 
+
+dropdb psn
+createdb psn
+
+pg_restore -O -U psn -d psn new.dump
+
+# find the password for user psn in the local_settings on the app server
+
+
+Pulling files 
+-------------
+
+You'll probably need to do this as admin in a directory where you have write permission, then copy to the actual server 
+but if you have permission go to opt/apphomes/mhpss
+
+rsync -avz phil@pinaxdev.the-hub.net:/home/phil/test/pinax-env/psn_demo/site_media/avatars .
+rsync -avz phil@pinaxdev.the-hub.net:/home/phil/test/pinax-env/psn_demo/site_media/members_res .
+
+if we're still using members_resources 
+
+rsync -avz phil@pinaxdev.the-hub.net:/home/phil/test/pinax-env/psn_demo/site_media/members_resources .
+
+but this should be deprecated within a day or two
+
+
+
+
+
+
 
 
 
@@ -97,16 +157,16 @@ sudo apt-get install git-core curl emacs22-nox jetty python-setuptools
 sudo /etc/init.d/jetty stop
 sudo rm /etc/rc2.d/S20jetty
 
-# create the directory for the index
 cd /opt
-mkdir indexhome/
-chown -R psn:adm indexhome
-cd indexhome
+sudo mkdir homeapps
+sudo mkdir homeapps/solr 
 
- 
+chown -R psn:adm homeapps
+
 # become psn user
 sudo -i -u psn
 
+cd homeapps/solr
 
 # get the tarball for solr
 curl -O http://apache.mirrors.tds.net/lucene/solr/1.3.0/apache-solr-1.3.0.tgz
@@ -139,6 +199,8 @@ To reindex your data
 --------------------
 
 python manage.py rebuild_index   
+
+
 
 Supervisord
 -----------
