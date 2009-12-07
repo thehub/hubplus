@@ -6,6 +6,8 @@ import pinax
 
 from django.utils.translation import ugettext_lazy as _
 
+
+FORCE_SCRIPT_NAME = ''
 PROJECT_THEME = 'plus'  
 # PROJECT_THEME should be over-ridden in local_settings for an alternative theme, 
 # and should correspond to one of the directories in theme_settings etc.
