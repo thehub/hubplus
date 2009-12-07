@@ -16,7 +16,7 @@ from apps.plus_resources.models import Resource, get_or_create
 from django.contrib.auth.decorators import login_required
 
 from apps.plus_permissions.decorators import secure_resource
-from apps.plus_permissions.api import TemplateSecureWrapper, has_access
+from apps.plus_permissions.api import TemplateSecureWrapper, has_access, get_anon_user
 
 from apps.plus_groups.models import TgGroup
 from django.core.urlresolvers import reverse
@@ -103,6 +103,10 @@ def view_resource(request, group, resource_name, template_name="plus_resources/v
     except Resource.DoesNotExist:
         raise Http404
 
+    if not request.user.is_authenticated():
+        request.user = get_anon_user()
+
+
     try:
         obj.get_all_sliders
         perms_bool = True
@@ -115,7 +119,7 @@ def view_resource(request, group, resource_name, template_name="plus_resources/v
     except PlusPermissionsNoAccessException:
         can_comment=False
 
-    edit = has_access(request.user, obj, 'WikiPage.Editor')
+    edit = has_access(request.user, obj, 'WikiPage.Editor') # XXX shouldn't this be Resource.Editor?
     tags = get_tags_for_object(obj, request.user)
 
     if obj.get_inner().created_by :
