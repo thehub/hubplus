@@ -24,6 +24,7 @@ SERVE_MEDIA = True # DEBUG
 
 ADMINS = (
      ('phil jones', 'phil.jones@the-hub.net'),
+     ('tom salfield', 'tom.salfield@the-hub.net'),
 )
 
 MANAGERS = ADMINS
@@ -80,6 +81,7 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.auth.middleware.AuthenticationMiddleware',
 
     'apps.django403.middleware.Django403Middleware',
+    'apps.plus_user.middleware.AnonUserMiddleware',
     'django_openid.consumer.SessionConsumer',
     'account.middleware.LocaleMiddleware',
     'django.middleware.doc.XViewMiddleware',
