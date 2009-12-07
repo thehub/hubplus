@@ -1,4 +1,4 @@
-When deploying hubplus we should try and do multisite django http://effbot.org/zone/django-multihost.htm - this will allow us to use a single indexing server for multiple sites too.
+LWhen deploying hubplus we should try and do multisite django http://effbot.org/zone/django-multihost.htm - this will allow us to use a single indexing server for multiple sites too.
 
 Application setup
 -----------------
@@ -50,6 +50,10 @@ pip install --requirement src/pinax/requirements/external_apps.txt
 
 git checkout -b mhpss2 0.7beta2
 
+
+#run as fcgi
+
+python manage.py runfcgi method=prefork host=127.0.0.1 port=3033
 
 Database setup
 --------------
