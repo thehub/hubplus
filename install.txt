@@ -105,6 +105,7 @@ rcp phil@pinaxdev.the-hub.net:/home/phil/test/pinax-env/psn_demo/new.dump .
 # become postgres
 sudo -i -u postgres 
 
+# 
 dropdb psn
 createdb psn
 
@@ -208,3 +209,7 @@ On the index server
 # Install 
 sudo easy_install supervisor
 
+# 
+
+# restart supervisor
+sudo /etc/init.d/supervisord restart
