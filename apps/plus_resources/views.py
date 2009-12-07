@@ -119,7 +119,7 @@ def view_resource(request, group, resource_name, template_name="plus_resources/v
     except PlusPermissionsNoAccessException:
         can_comment=False
 
-    edit = has_access(request.user, obj, 'WikiPage.Editor')
+    edit = has_access(request.user, obj, 'WikiPage.Editor') # XXX shouldn't this be Resource.Editor?
     tags = get_tags_for_object(obj, request.user)
 
     if obj.get_inner().created_by :
