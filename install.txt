@@ -1,6 +1,7 @@
+When deploying hubplus we should try and do multisite django http://effbot.org/zone/django-multihost.htm - this will allow us to use a single indexing server for multiple sites too.
+
 Application setup
 -----------------
-
 
 # create psn user
 useradd -m -s /bin/bash psn 
@@ -48,18 +49,68 @@ git checkout -b mhpss2 0.7beta2
 
 Database setup
 --------------
+# Install Postgresql
+sudo apt-get install postgresql
+
+# Save Postgresql's default config,
+sudo cp -a /etc/postgresql/8.3/main/postgresql.conf /etc/postgresql/8.3/main/postgresql.conf.ORIG
+sudo cp -a /etc/postgresql/8.3/main/pg_hba.conf     /etc/postgresql/8.3/main/pg_hba.conf.ORIG
+
+# In Postgresql's config, set directive "listen_addresses" to 
+# the local *private* IP address
+sudo sed -e "s/^#\(listen_addresses =\) 'localhost'/\1 '172.24.2.72'/" -i /etc/postgresql/8.3/main/postgresql.conf
+
+echo "#Allow access from local VMs with username and password"        | sudo tee -a /etc/postgresql/8.3/main/pg_hba.conf
+echo "host    all         all          188.40.250.64/27          md5" | sudo tee -a /etc/postgresql/8.3/main/pg_hba.conf
+
+# Restart Postgresql
+sudo /etc/init.d/postgresql-8.3 restart
+
+# Check that Postgresql binds to right IP address:
+sudo netstat -nlp46
+
+# as user postgres...
+createuser -S -d -R -P psn
+createdb psn
+# set local_settings.py in hubplus accordingly
+
 
 
 
 Fulltext indexing
------------------
+----------------
 HubPlus' fulltext search uses Django-Haystack so in theory you could use lots of different backends but we have chosen to go with the Solr backend since it seems to be the most supported. To install a Solr server on Linux do the following in pinax-env/src:
 
+Go to the index server :
 
+# create psn user
+useradd -m -s /bin/bash psn 
+
+# get python dev (including jetty) 
+sudo apt-get install git-core curl emacs22-nox jetty python-setuptools
+
+# stop standard jetty server (we don't want it to become a public web-server)
+sudo /etc/init.d/jetty stop
+sudo rm /etc/rc2.d/S20jetty
+
+# create the directory for the index
+cd /opt
+mkdir indexhome/
+chown -R psn:adm indexhome
+cd indexhome
+
+ 
+# become psn user
+sudo -i -u psn
+
+
+# get the tarball for solr
 curl -O http://apache.mirrors.tds.net/lucene/solr/1.3.0/apache-solr-1.3.0.tgz
 tar xvzf apache-solr-1.3.0.tgz
 cd apache-solr-1.3.0
 cd example
+
+# this now runs the indexer  ... do it this way initially to test
 java -jar start.jar
 
 
@@ -69,15 +120,29 @@ java -jar start.jar
 When installing or revising your schema / search indexes
 --------------------------------------------------------
 
+Back on the application server in the pinax application directory :
+
 python manage.py build_solr_schema
 
-1. Take the output from that command and place it in apache-solr-1.3.0/example/solr/conf/schema.xml. 
+1. Take the output from that command and place it in apache-solr-1.3.0/example/solr/conf/schema.xml on the index server
+
 2. Change the line: <schema name="default" version="1.1"> to <schema name="example" version="1.1"> Or to the name of the directory you actually run the start.jar from.
+
 3. Then restart Solr.
 
 
 To reindex your data
 --------------------
 
-python manage.py reindex   
+python manage.py rebuild_index   
+
+Supervisord
+-----------
+
+The supervisord is a python program to manage a number of processes, which we'll use for the the indexer and django server
+
+On the index server
+
+# Install 
+sudo easy_install supervisor
 
