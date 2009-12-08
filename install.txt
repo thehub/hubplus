@@ -181,6 +181,7 @@ java -jar start.jar
 ** We should make the hubplus start script automatically start this service if it isn't running. **
 
 
+
 When installing or revising your schema / search indexes
 --------------------------------------------------------
 
