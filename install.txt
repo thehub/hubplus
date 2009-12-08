@@ -120,25 +120,24 @@ pg_restore -O -U psn -d psn new.dump
 
 Pulling files 
 -------------
+Login to mhpss-app as admin-xx (eg. admin-pj)
 
-You'll probably need to do this as admin in a directory where you have write permission, then copy to the actual server 
-but if you have permission go to opt/apphomes/mhpss
+cd /tmp
+sudo mkdir /mnt/hubplus-static/mhpss
 
+# copy avatars and members
 rsync -avz phil@pinaxdev.the-hub.net:/home/phil/test/pinax-env/psn_demo/site_media/avatars .
-rsync -avz phil@pinaxdev.the-hub.net:/home/phil/test/pinax-env/psn_demo/site_media/members_res .
+rsync -avz phil@pinaxdev.the-hub.net:/home/phil/test/pinax-env/psn_demo/site_media/member_res .
 
-if we're still using members_resources 
+sudo mv avatars/ /mnt/hubplus-static/mhpss/
+sudo mv member_res/ /mnt/hubplus-static/mhpss/
 
-rsync -avz phil@pinaxdev.the-hub.net:/home/phil/test/pinax-env/psn_demo/site_media/members_resources .
+# make the symbolic links from our directory
+cd /opt/apphomes/mhpss/pinax/hubplus/site_media
+ln -s /mnt/hubplus-static/mhpss/avatars/ avatars
+ln -s /mnt/hubplus-static/mhpss/member_res/ member_res
 
-but this should be deprecated within a day or two
-
-
-
-
-
-
-
+# you now have django seeing both the member_res and avatar directories through symlinks to the shared mount
 
 
 
@@ -204,7 +203,7 @@ python manage.py rebuild_index
 
 
 Supervisord
------------
+===========
 
 The supervisord is a python program to manage a number of processes, which we'll use for the the indexer and django server
 
