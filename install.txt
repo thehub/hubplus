@@ -135,6 +135,7 @@ sudo mv member_res/ /mnt/hubplus-static/mhpss/
 sudo mkdir /mnt/hubplus-static/mhpss/themes
 sudo mkdir /mnt/hubplus-static/mhpss/css
 sudo mkdir /mnt/hubplus-static/mhpss/images
+sudo mkdir /mnt/hubplus-static/mhpss/js
 
 # make the symbolic links from our directory
 cd /opt/apphomes/mhpss/pinax/hubplus/site_media
@@ -144,12 +145,10 @@ ln -s /mnt/hubplus-static/mhpss/member_res/ member_res
 ln -s /mnt/hubplus-static/mhpss/themes/ themes
 ln -s /mnt/hubplus-static/mhpss/css/ css
 ln -s /mnt/hubplus-static/mhpss/images/ images
-
-# soon
-# ln -s /mnt/hubplus-static/mhpss/js/ js
+ln -s /mnt/hubplus-static/mhpss/js/ js
 
 
-# you now have django seeing both the member_res and avatar directories through symlinks to the shared mount
+# you now have django seeing the static file directories through symlinks to the shared mount
 
 
 
