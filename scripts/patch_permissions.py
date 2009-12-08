@@ -11,12 +11,16 @@ def change_user(user) :
 
 
 def change_group(group) :
-    print group.group_name, group.get_ref().permission_prototype
-    sc = group.get_security_context()
+    pp = group.get_ref().permission_prototype
+    if pp == 'private' :
+        print group.id, group.group_name, group.get_ref().permission_prototype
+
+        sc = group.get_security_context()
     
-    print sc.get_slider_level('TgGroup.Viewer'), sc.get_slider_level('WikiPage.Viewer')
-    sc.switch_permission_prototype(group.get_ref().permission_prototype)
-    print sc.get_slider_level('TgGroup.Viewer'), sc.get_slider_level('WikiPage.Viewer')
+        print sc.get_slider_level('TgGroup.Viewer'), sc.get_slider_level('WikiPage.Viewer')
+    
+        sc.switch_permission_prototype(group.get_ref().permission_prototype)
+        print sc.get_slider_level('TgGroup.Viewer'), sc.get_slider_level('WikiPage.Viewer')
 
 import ipdb
 
