@@ -1,4 +1,4 @@
-LWhen deploying hubplus we should try and do multisite django http://effbot.org/zone/django-multihost.htm - this will allow us to use a single indexing server for multiple sites too.
+When deploying hubplus we should try and do multisite django http://effbot.org/zone/django-multihost.htm - this will allow us to use a single indexing server for multiple sites too.
 
 Application setup
 -----------------
@@ -132,10 +132,22 @@ rsync -avz phil@pinaxdev.the-hub.net:/home/phil/test/pinax-env/psn_demo/site_med
 sudo mv avatars/ /mnt/hubplus-static/mhpss/
 sudo mv member_res/ /mnt/hubplus-static/mhpss/
 
+sudo mkdir /mnt/hubplus-static/mhpss/themes
+sudo mkdir /mnt/hubplus-static/mhpss/css
+sudo mkdir /mnt/hubplus-static/mhpss/images
+
 # make the symbolic links from our directory
 cd /opt/apphomes/mhpss/pinax/hubplus/site_media
 ln -s /mnt/hubplus-static/mhpss/avatars/ avatars
 ln -s /mnt/hubplus-static/mhpss/member_res/ member_res
+
+ln -s /mnt/hubplus-static/mhpss/themes/ themes
+ln -s /mnt/hubplus-static/mhpss/css/ css
+ln -s /mnt/hubplus-static/mhpss/images/ images
+
+# soon
+# ln -s /mnt/hubplus-static/mhpss/js/ js
+
 
 # you now have django seeing both the member_res and avatar directories through symlinks to the shared mount
 
@@ -218,6 +230,17 @@ sudo easy_install supervisor
 # restart supervisor
 sudo /etc/init.d/supervisord restart
 
+# supervisor shell
+sudo supervisorctl
+
+# or run a supervisor directly
+sudo supervisorctl help
+
+sudo supervisorctl restart hubplus-mhpss
+
+
+
+
 Configuring Lighttpd
 ====================
 
@@ -229,3 +252,5 @@ Configuring Lighttpd
   
 lighttpd -t -f /etc/lighttpd/lighttpd.conf
 
+# restart lighty (or reload could be faster)
+sudo /etc/init.d/lighttpd restart
