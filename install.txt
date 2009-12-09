@@ -1,4 +1,4 @@
-LWhen deploying hubplus we should try and do multisite django http://effbot.org/zone/django-multihost.htm - this will allow us to use a single indexing server for multiple sites too.
+When deploying hubplus we should try and do multisite django http://effbot.org/zone/django-multihost.htm - this will allow us to use a single indexing server for multiple sites too.
 
 Application setup
 -----------------
@@ -9,7 +9,6 @@ useradd -m -s /bin/bash psn
 # get python dev
 apt-cache search python-dev
 sudo apt-get install python-dev git-core curl emacs22-nox python-psycopg2 libxslt1-dev gcc python-imaging rsync postgresql-client-8.3
-
 
 # create directory
 cd /
@@ -49,6 +48,7 @@ cp local_settings_example.py local_settings.py
 pip install --requirement src/pinax/requirements/external_apps.txt
 
 git checkout -b mhpss2 0.7beta2
+
 
 
 #run as fcgi
@@ -120,25 +120,35 @@ pg_restore -O -U psn -d psn new.dump
 
 Pulling files 
 -------------
+Login to mhpss-app as admin-xx (eg. admin-pj)
 
-You'll probably need to do this as admin in a directory where you have write permission, then copy to the actual server 
-but if you have permission go to opt/apphomes/mhpss
+cd /tmp
+sudo mkdir /mnt/hubplus-static/mhpss
 
+# copy avatars and members
 rsync -avz phil@pinaxdev.the-hub.net:/home/phil/test/pinax-env/psn_demo/site_media/avatars .
-rsync -avz phil@pinaxdev.the-hub.net:/home/phil/test/pinax-env/psn_demo/site_media/members_res .
+rsync -avz phil@pinaxdev.the-hub.net:/home/phil/test/pinax-env/psn_demo/site_media/member_res .
 
-if we're still using members_resources 
+sudo mv avatars/ /mnt/hubplus-static/mhpss/
+sudo mv member_res/ /mnt/hubplus-static/mhpss/
 
-rsync -avz phil@pinaxdev.the-hub.net:/home/phil/test/pinax-env/psn_demo/site_media/members_resources .
+sudo mkdir /mnt/hubplus-static/mhpss/themes
+sudo mkdir /mnt/hubplus-static/mhpss/css
+sudo mkdir /mnt/hubplus-static/mhpss/images
+sudo mkdir /mnt/hubplus-static/mhpss/js
 
-but this should be deprecated within a day or two
+# make the symbolic links from our directory
+cd /opt/apphomes/mhpss/pinax/hubplus/site_media
+ln -s /mnt/hubplus-static/mhpss/avatars/ avatars
+ln -s /mnt/hubplus-static/mhpss/member_res/ member_res
+
+ln -s /mnt/hubplus-static/mhpss/themes/ themes
+ln -s /mnt/hubplus-static/mhpss/css/ css
+ln -s /mnt/hubplus-static/mhpss/images/ images
+ln -s /mnt/hubplus-static/mhpss/js/ js
 
 
-
-
-
-
-
+# you now have django seeing the static file directories through symlinks to the shared mount
 
 
 
@@ -182,6 +192,7 @@ java -jar start.jar
 ** We should make the hubplus start script automatically start this service if it isn't running. **
 
 
+
 When installing or revising your schema / search indexes
 --------------------------------------------------------
 
@@ -204,7 +215,7 @@ python manage.py rebuild_index
 
 
 Supervisord
------------
+===========
 
 The supervisord is a python program to manage a number of processes, which we'll use for the the indexer and django server
 
@@ -217,3 +228,28 @@ sudo easy_install supervisor
 
 # restart supervisor
 sudo /etc/init.d/supervisord restart
+
+# supervisor shell
+sudo supervisorctl
+
+# or run a supervisor directly
+sudo supervisorctl help
+
+sudo supervisorctl restart hubplus-mhpss
+
+
+
+
+Configuring Lighttpd
+====================
+
+# Nils has created a config file on the shared mount which is included in the lighttpd config.
+# make mhpss web-server config changes there
+
+
+# After any change, always run syntax checking
+  
+lighttpd -t -f /etc/lighttpd/lighttpd.conf
+
+# restart lighty (or reload could be faster)
+sudo /etc/init.d/lighttpd restart

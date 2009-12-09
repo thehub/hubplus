@@ -21,9 +21,6 @@ PINAX_THEME = 'default'
 DEBUG = True
 TEMPLATE_DEBUG = False # DEBUG
 
-# tells Pinax to serve media through django.views.static.serve.
-SERVE_MEDIA = True # DEBUG
-
 ADMINS = (
      ('phil jones', 'phil.jones@the-hub.net'),
      ('tom salfield', 'tom.salfield@the-hub.net'),
@@ -293,7 +290,6 @@ DATABASE_HOST = ''             # Set to empty string for localhost. Not used wit
 DATABASE_PORT = ''             # Set to empty string for default. Not used with sqlite3.
 
 
-
 SESSION_COOKIE_DODMAIN = ".XXX.net"
 HUBSPACE_COMPATIBLE = True # is this running against a HUBSPACE database?
 ROOT_URLCONF = 'XXX.urls'
@@ -304,11 +300,15 @@ EMAIL_HOST_USER=''
 EMAIL_PORT='25'
 EMAIL_USE_TLS=False
 
+# for signing invites
 HMAC_KEY = "XXXXXXXXX"
 
-# REPLACE FOR YOUR OWN SERVER
+# for profile maps
 GOOGLE_MAP_KEY = "ABQIAAAAiA7tLHdzZr8yhGAEbo5FGxS_srkAJTD0j5T3EF3o06M_52NTAhQM2w0ugG9dZdoyPl3s9RqydGrzpQ"
 
+# tells Pinax to serve media through django.views.static.serve. 
+SERVE_MEDIA = True # DEBUG 
+PERMISSION_UPLOADS_THROUGH_X_SENDFILE =False # override on a production server
 
 # a local_settings file can over-ride the above
 try:

@@ -22,4 +22,10 @@ DEVELOPMENT=False   # use compiled js and css if DEVELOPMENT = False. Set to Tru
 
 GOOGLE_MAP_KEY = "ABQIAAAAUO5htA3plE0mHcReh9HGtxS_srkAJTD0j5T3EF3o06M_52NTAhS5z_4HyMj1VVfc-7jrnMrs_e_CBA"
 
+<<<<<<< HEAD:local_settings_example.py
 HMAC_KEY="189261893294393751924178342983367596516"
+=======
+HMAC_KEY = "189261893294393751924178342983367596516"
+
+PERMISSION_UPLOADS_THROUGH_X_SENDFILE =False # override on a production server                                               
+>>>>>>> 484b5ede41c525e614039a72f1205e544ebef7e0:local_settings_example.py

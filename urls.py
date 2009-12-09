@@ -124,10 +124,17 @@ urlpatterns += patterns('',
     url('^bookmarks/friends_bookmarks/$', 'friends_app.views.friends_objects', kwargs=friends_bookmarks_kwargs, name="friends_bookmarks"),
 )
 
+
+if settings.PERMISSION_UPLOADS_THROUGH_X_SENDFILE :
+    urlpatterns += patterns('',
+        (r'^site_media/members_res/(?P<path>.*)$', 'plus_permissions.permissioned_static.serve')
+    )
+
 if settings.SERVE_MEDIA:
-    urlpatterns += patterns('', 
+    urlpatterns += patterns('',
         (r'^site_media/(?P<path>.*)$', 'staticfiles.views.serve')
     )
+
 
 import synced.urls
 urlpatterns += synced.urls.urlpatterns

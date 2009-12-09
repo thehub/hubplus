@@ -1,0 +1,12 @@
+#!/bin/bash
+
+echo "Running Git post-merge hook"
+echo "Copying static files from site_media_src to site_media"
+
+# this would be nice but doesn't work
+# cp -au ./site_media_src/{images,css,themes}/ ./site_media/
+
+for dir in images css themes js; do
+    cp -au ./site_media_src/${dir}/* ./site_media/${dir}/
+done
+

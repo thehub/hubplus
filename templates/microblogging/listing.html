@@ -16,7 +16,9 @@
 
         <div class="tweet" id="t{{ tweet.id }}">
             {% if prefix_sender %}<a href="{% simple_url tweet.sender %}"><b>{{ tweet.sender.get_display_name }} :</b></a>{% endif %}
-            {{ tweet.html|safe|oembed|urlize }}
+
+	    {{tweet.html|safe|oembed:""|urlize}} 
+	    
             <span class="label_time">{% blocktrans with tweet.sent|timesince as tweet_age %}{{ tweet_age }} ago{% endblocktrans %}</span>
 	    <!--XXX reply to tweets not working. comment and fix -->
             <!--a class="reply" href="{% url tweets_you_follow %}?reply={{ tweet.sender }}">{% trans "reply" %}</a-->
