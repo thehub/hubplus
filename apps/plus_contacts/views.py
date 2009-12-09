@@ -83,17 +83,6 @@ def reject_application(request, resource_id, application_id, template_name="plus
 
 
 
-def split_name(username):
-    # XXX this should be deleted and not used below
-    if username.find(' ') > 0 :
-        first_name, last_name = (username.split(' ')) # note that if users need > 2 names, we have to do something
-        username = '%s.%s' % (first_name,last_name)
-    else : 
-        first_name=username
-        last_name = ''
-    return username, first_name, last_name
-
-
 
 @login_required
 @site_context
@@ -108,7 +97,6 @@ def site_invite(request, site, template_name='plus_contacts/invite_non_member.ht
              
                 contact = Contact.objects.plus_get(request.user, email_address=email_address)
             else :
-             
                 username, first_name, last_name = split_name(form.cleaned_data['username'])
                 # we don't really want to give "create_Contact" in general to this user
                 # just convenient to have a contact now ... hence site.get_inner

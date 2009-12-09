@@ -56,7 +56,11 @@ def configs(context):
             'HUB_SEARCH_TITLE' : settings.HUB_SEARCH_TITLE,
             'TAG_SEARCH_TITLE' : settings.TAG_SEARCH_TITLE,
             'SIDE_SEARCH_TITLE' : settings.SIDE_SEARCH_TITLE,
-
+            'DEVELOPMENT': settings.DEVELOPMENT,
+            'JS_VERSION_NO': settings.JS_VERSION_NO,
+            'CSS_VERSION_NO':settings.CSS_VERSION_NO,
+            'CSS_FILES':settings.CSS_FILES,
+            'JS_FILES':settings.JS_FILES,
             'GROUPS_INTRO_BOX' : 'groups_intro_bar',
             'MEMBERS_INTRO_BOX' : 'clients/%s/intro_box.html' % settings.PROJECT_THEME,
             'EXPLORE_INTRO_BOX' : 'explore_intro_bar', 

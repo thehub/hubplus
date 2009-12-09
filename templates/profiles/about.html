@@ -64,12 +64,11 @@
       <li>
          {% editable 'Zip/Postcode' profile 'post_or_zip' 'Zip or Postcode' %} 
       </li>
-      <!-- Country here -->
-     
-       <li>
-         {% editable 'Email <span class="extra">This is our main contact email for you.</span>' profile 'email_address' 'My email' 'url'%} 
-      </li> 
-
+	<li>
+	  <div id='ajax_select_list_url_Profile-{{profile.id}}-country_widget' 
+	       href='{% url ajax_hub_list %}'></div>
+	</li>
+        { % editable "Country" profile 'country' 'Your Country' % }     
       {% endif %}
 
     </ul>

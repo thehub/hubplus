@@ -14,6 +14,8 @@ var widget_map = {
 	       'project_stage':'text_wysiwyg',
 	       'place': 'gmap',
 	       'homehub':'new_select',
+	       'country':'new_select',
+	       'address':'text_large'
     },
     'HostInfo':{'find_out':'text_wysiwyg',
                 'project_stage':'text_wysiwyg',
@@ -159,7 +161,7 @@ var user_list = function (ele) {
 
     manager.find('.add_user').click(function () {
 	    var compound_name = manager.find('.username_or_full_name').val();
-	    append_name_to_list(compound_name); 
+	    append_name_to_list(compound_name);
 	    manager.find('.username_or_full_name').val('');
 	    return false;
 	});
@@ -170,11 +172,11 @@ var user_list = function (ele) {
 	    return false;
 	});
 
-    // find if there's a message compose form 
-    // if there is, we're going to 
-    // a) hack the submit button to 
+    // find if there's a message compose form
+    // if there is, we're going to
+    // a) hack the submit button to
     // b) fill the "to" field from our list of names
-    
+
     compose_manager = jq('#compose');
     if (compose_manager) {
 	compose_manager.find(':submit').click(function() {
@@ -319,9 +321,9 @@ var profile_ready = function () {
 
     if (jq('li.place .editable').length) {
 	// the-hub.net key ABQIAAAAUO5htA3plE0mHcReh9HGtxS_srkAJTD0j5T3EF3o06M_52NTAhS5z_4HyMj1VVfc-7jrnMrs_e_CBA
-	
+
        var g_url = "http://maps.google.com/maps?file=api&v=2.x&key=ABQIAAAAUO5htA3plE0mHcReh9HGtxS_srkAJTD0j5T3EF3o06M_52NTAhS5z_4HyMj1VVfc-7jrnMrs_e_CBA&async=2&callback=setup_maps"
-	   
+
 	jq.getScript(g_url);
 	// original key
 	/* jq.getScript("http://maps.google.com/maps?file=api&v=2.x&key=ABQIAAAAiA7tLHdzZr8yhGAEbo5FGxS_srkAJTD0j5T3EF3o06M_52NTAhQM2w0ugG9dZdoyPl3s9RqydGrzpQ&async=2&callback=setup_maps"); */

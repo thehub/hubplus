@@ -12,42 +12,51 @@
 {% block body %}
 
 <div id="invite_to_site" class="block">
-	
   <form class="full uniForm" id="invite_non_member_form" method="post" action="{% invite_url "" %}">
-
     <p>{% blocktrans %}Please enter the name and email of someone to invite to {% endblocktrans %}{% if SITE_NAME %}{{ SITE_NAME }}{% else %}site{% endif %}</p>
     <fieldset>
       <ul>
 	<li>
-	  <label for="id_username"><span class="required">*</span> {% trans "Name" %}</label>
-	  <input  id="id_username" name="username" class="text" type="text" />
-	  {{ form.username.errors }}
+	  <label for="id_first_name"><span class="required">*</span> {% trans "First Name" %}</label>
+	  <input  id="id_first_name" name="username" class="text" type="text" />
+	  {{ form.first_name.errors }}
+	</li>
+	<li>
+	  <label for="id_last_name"><span class="required">*</span> {% trans "Last Name" %}</label>
+	  <input  id="id_last_name" name="username" class="text" type="text" />
+	  {{ form.last_name.errors }}
 	</li>
 	<li>
 	  <label for="id_email_address"><span class="required">*</span> {% trans "Email" %}</label>
-	  <input id="email_address" name="email_address" class="text" type="text" />
+	  <input id="id_email_address" name="email_address" class="text" type="text" />
 	  {{ form.email_address.errors}}
  	</li>
-
-	<li class="checkboxes">
-	  <label>&nbsp;</label>
-	  <input id="physical_hub" name="physical_hub_check" class="checkbox" type="checkbox">
-	  <div class="label_extended">
-	    {{ form.which_hub.errors }}
-	    <label for="physical_hub">{% blocktrans %}Invite to a specific {{HUB_NAME}}{% endblocktrans %}.</label>
-	    <select id="group" name="group">
-	      <option value="" readonly="readonly" selected="selected">Please select a {{HUB_NAME}}...</option>
-	      {% for h in hubs %}
-	      <option value="{{h.group_name}}">{{h.display_name}}</option>
-	      {% endfor %}
-	    </select>
-
+	<li>
+	  <label for="id_message"><span class="required">*</span> {% trans "Message" %}</label>
+	  <textarea id="id_message" name="message" class="text" type="text"></textarea>
+	  {{ form.message.errors}}
+ 	</li>
+	<li>
+	  <div class="value checkboxes">
+	    <div class="label">
+		{{ form.which_hub.errors }}
+	      <label for="physical_hub">{% blocktrans %}Invite to a specific {{HUB_NAME}}{% endblocktrans %}.</label>
+	      <input id="physical_hub" name="physical_hub_check" class="checkbox" type="checkbox" {% ifequal form.data.physical_hub_check 'on'  %}checked="checked"{% endifequal %} >
+	      <select id="which_hub" name="group" style="display:none;">
+		<option value="" readonly="readonly">{% blocktrans %}Please select a {{HUB_NAME}}...{% endblocktrans %}</option>
+                {% for h in hubs %}
+                <option value="{{h.group_name}}" {% ifequal h.group_name form.data.group %} selected="selected"{% endifequal %}>{{h.display_name}}</option>
+                {% endfor %}
+	      </select>
+	    </div>
 	  </div>
+	    
 	</li>
       </ul>
     </fieldset>
-    <input class="submit button" type="submit" value="{% trans "Invite to" %} {% if SITE_NAME %}{{ SITE_NAME }}{% else %}site{% endif %}" />
-    
+    <fieldset class="buttons">
+      <input class="submit button" type="submit" value="{% trans "Invite to" %} {% if SITE_NAME %}{{ SITE_NAME }}{% else %}site{% endif %}" />
+    </fieldset>	      
   </form>
 
 </div>        
@@ -59,13 +68,18 @@
     {% load jquery_validation %}
     {% include_validation %}
     <script type="text/javascript">
-        $(function(){
-	    $("#physical_hub").checked(function() {
-	      $("#which_hub").class("disabled");
-	    });
-            $('#signup_form').validate('{% url signup_form_validate %}', {type: 'table', fields: ['username'], dom: $('#id_username'), event: 'change'});
-            $("#id_username").focus();
-	    
-        });
+       jq(document).ready(function() {
+          if(jq("#physical_hub:checked").length===1) {
+             jq("#which_hub").show();
+          }
+          jq("#physical_hub").click(function() {
+              jq("#which_hub").toggle();
+              if(jq("#physical_hub:checked").length===0) {
+                 jq("#which_hub").find("option:first").attr("selected", "selected");
+              }
+          });
+          /* jq('#signup_form').validate('{% url signup_form_validate %}', {type: 'table', fields: ['username'], dom: jq('#id_username'), event: 'change'});
+          jq("#id_username").focus(); */
+       });
     </script>
 {% endblock %}

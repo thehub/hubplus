@@ -201,9 +201,12 @@
           }
           jq("#physical_hub").click(function() {
               jq("#which_hub").toggle();
+              if(jq("#physical_hub:checked").length===0) {
+                 .find("option:first").attr("selected", "selected");
+              }
           });
-          jq('#signup_form').validate('{% url signup_form_validate %}', {type: 'table', fields: ['username'], dom: jq('#id_username'), event: 'change'});
-          jq("#id_username").focus();
+          /* jq('#signup_form').validate('{% url signup_form_validate %}', {type: 'table', fields: ['username'], dom: jq('#id_username'), event: 'change'});
+          jq("#id_username").focus(); */
        });
     </script>
 {% endblock %}
