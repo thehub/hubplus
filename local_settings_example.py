@@ -19,7 +19,7 @@ EMAIL_HOST_USER=''
 EMAIL_PORT=''
 EMAIL_USE_TLS=False
 
-DEVELOPMENT=False  # use compiled js and css if Development = False
+DEVELOPMENT=False   # use compiled js and css if DEVELOPMENT = False. Set to True to do js / css development 
 
 
 HMAC_KEY="189261893294393751924178342983367596516"
