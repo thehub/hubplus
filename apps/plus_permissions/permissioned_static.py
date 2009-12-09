@@ -14,6 +14,11 @@ from django.utils.http import http_date
 from django.views.static import was_modified_since, directory_index
 from django.conf import settings
 
+from plus_permissions.api import secure_wrap, PlusPermissionsNoAccessException
+from plus_resources.models import Resource
+
+
+
 SITE_MEDIA_ROOT = getattr(settings, 'MEDIA_ROOT',
     os.path.join(settings.PROJECT_ROOT, 'site_media'))
 PINAX_MEDIA_ROOT = os.path.join(settings.PINAX_ROOT, 'media', settings.PINAX_THEME)
@@ -56,6 +61,20 @@ def get_media_path(path):
                     if os.path.exists(media):
                         return media
     return None
+
+
+def serve_upload(request, group_id, upload_id, path) :
+    rs = Resource.objects.filter(id=upload_id)
+    if not rs : 
+        raise Http404('File does not exist')
+    else :
+        upload = secure_wrap(rs[0],request.user,interface_names=['Viewer'])
+        if upload.has_interface('Resource.Viewer') :
+            path =  'member_res/tg group/%s/%s/%s' % (group_id, upload_id, path)
+            return serve(request, path) 
+        else :
+            raise PlusPermissionsNoAccessException(Resource,upload_id,"Can't access file %s %s" % (upload.id, upload.path))
+
 
 def serve(request, path, show_indexes=False):
     """
