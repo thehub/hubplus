@@ -6,6 +6,8 @@ import pinax
 
 from django.utils.translation import ugettext_lazy as _
 
+
+FORCE_SCRIPT_NAME = ''
 PROJECT_THEME = 'plus'  
 # PROJECT_THEME should be over-ridden in local_settings for an alternative theme, 
 # and should correspond to one of the directories in theme_settings etc.
@@ -24,6 +26,7 @@ SERVE_MEDIA = True # DEBUG
 
 ADMINS = (
      ('phil jones', 'phil.jones@the-hub.net'),
+     ('tom salfield', 'tom.salfield@the-hub.net'),
 )
 
 MANAGERS = ADMINS
@@ -80,6 +83,7 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.auth.middleware.AuthenticationMiddleware',
 
     'apps.django403.middleware.Django403Middleware',
+    'apps.plus_user.middleware.AnonUserMiddleware',
     'django_openid.consumer.SessionConsumer',
     'account.middleware.LocaleMiddleware',
     'django.middleware.doc.XViewMiddleware',
@@ -301,6 +305,10 @@ EMAIL_PORT='25'
 EMAIL_USE_TLS=False
 
 HMAC_KEY = "XXXXXXXXX"
+
+# REPLACE FOR YOUR OWN SERVER
+GOOGLE_MAP_KEY = "ABQIAAAAiA7tLHdzZr8yhGAEbo5FGxS_srkAJTD0j5T3EF3o06M_52NTAhQM2w0ugG9dZdoyPl3s9RqydGrzpQ"
+
 
 # a local_settings file can over-ride the above
 try:

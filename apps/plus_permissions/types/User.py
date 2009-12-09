@@ -146,7 +146,7 @@ AgentDefaults = {'public':
                          'AddressViewer' : 'all_memebers_group',
                          'SkypeViewer' : 'all_members_group',
                          'SipViewer' : 'all_members_group',
-                         'ManagePermissions':'context_admin',
+                         'ManagePermissions':'context_agent',
                          'Unknown' : 'context_agent',
                          },
                         'constraints':['Viewer>=Editor', 'Editor<$anonymous_group', 'Editor>=$context_agent']

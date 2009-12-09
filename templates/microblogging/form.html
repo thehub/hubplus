@@ -2,12 +2,15 @@
 <div class="status_form">
   <form method="post" action="{% url status_post %}">
 
-    <div class="show">
+    <div class="show {% if can_update_status %}click_show{% endif %}">
       <span class="status_text">{{status_text}}</span>&nbsp;&nbsp;
       <span class="label_time">{{status_since}} {% if status_since %}{% trans "ago"%}.{% endif %}</span>
     </div>
+
+    {% if can_update_status %}
     <div class="toggle">Update</div>
-    
+    {% endif %}
+
     <div class="edit">
       <input type="hidden" name="starts_hidden" class="starts_hidden" value="{{starts_hidden}}"/>
       <input type="hidden" name="sender_class" value="{{sender_class}}"/>
@@ -20,6 +23,7 @@
 	<input type="submit" class="button" value="{% trans 'Share' %}" />
       </div>
     </div>
+
 
   </form>
 </div>

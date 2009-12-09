@@ -32,4 +32,4 @@ html5lib
 #-e hg+https://html5lib.googlecode.com/hg/@python#egg=html5lib  -- this version is newer but unfortunately puts its setup.py in a subdirectory so won't install properly
 
 http://codespeak.net/lxml/lxml-2.2.2.tgz
-
+flup

@@ -101,15 +101,15 @@ class Resource(models.Model):
         new_file_name = '.'.join(parts)
         self.rename_file(new_file_name)
 
-    def rename_file(self, new_file_name) :
+    def rename_file(self, new_file_name,sep='/') :
         # NB: only changes the actual file name
         file = self.resource.file
-        file_path = file.name.split('/')
+        file_path = file.name.split(sep)
         old_name = file_path[-1]
         print old_name, ' to ', new_file_name
         
         file_path[-1]=new_file_name
-        new_path = '/'.join(file_path)
+        new_path = sep.join(file_path)
 
         try :
             f = File(open(file.name,'rb'))

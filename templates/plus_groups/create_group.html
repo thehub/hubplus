@@ -5,8 +5,8 @@
 
 {% load uni_form %}
 
-{% block head_title %}{% trans "Create new Group" %}{% endblock %}
-{% block page_title %}{% trans "Create new Group" %}{% endblock %}
+{% block head_title %}{% trans "Create New" %} {{name_of_created}}{% endblock %}
+{% block page_title %}{% trans "Create New" %} {{name_of_created}}{% endblock %}
 
 {% block body %}
 
@@ -117,7 +117,7 @@
           <div class="label">
             {{form.permissions_set.errors}}
             <label><span class="required">*</span> <span class="label_permissions">Permissions</span></label>
-            <p class="note">These settings that can be customised once your group has been created</p>
+            <p class="note">{% blocktrans %}These settings can be customised once your {{name_of_created}} has been created{% endblocktrans %}</p>
           </div>
           <div class="value checkboxes">
             <ul>

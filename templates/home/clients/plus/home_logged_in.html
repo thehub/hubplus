@@ -54,7 +54,7 @@
 	{% include "plus_explore/side_search.html" %}
 	{% include "add.html" %}
 	<ul>
-		<li><a href="{% url list_open_applications %}">{% trans "View recent applicants" %}</a></li>
+		<li><a href="{% url plus_groups:list_open_applications site_members_group.id %}">{% trans "View recent applicants" %}</a></li>
 	</ul>
 
 {% endblock %}

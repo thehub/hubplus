@@ -71,6 +71,7 @@ def configs(context):
             'HUB_APP_NAME' : get_hub_app_name(settings.PROJECT_THEME),
 
             'STATUS_COPY' : settings.STATUS_COPY,
+            'GOOGLE_MAP_KEY' : settings.GOOGLE_MAP_KEY,
 
             }
 

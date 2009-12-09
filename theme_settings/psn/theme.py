@@ -94,3 +94,7 @@ Unfortunately, we can not accept you to become a member of {{group_name}} at thi
 {{rejected_by}}
 
 """
+
+# You should define the following in your local_settings.py file for your server.
+# 
+# GOOGLE_MAP_KEY = "ABQIAAAAUO5htA3plE0mHcReh9HGtxRH5sEjhzJfKqlMpdJ6oyx9YbCawRTJnbhBF8LBDrQ-Dos5hRa7KzIX4A"

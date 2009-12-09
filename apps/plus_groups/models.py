@@ -12,6 +12,8 @@ import datetime
 from django.utils.translation import ugettext_lazy as _
 from django.db import transaction
 from apps.plus_lib.status import StatusDescriptor
+from django.contrib.contenttypes.models import ContentType
+
 
 
 

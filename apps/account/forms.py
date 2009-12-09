@@ -361,7 +361,7 @@ class TwitterForm(UserForm):
 
 # hubplus alternatives
 from apps.plus_permissions.default_agents import get_all_members_group
-from apps.plus_contacts.countryfield import COUNTRIES
+from apps.plus_lib.countryfield import COUNTRIES
 class HubPlusApplicationForm(forms.Form):
 
     #username = forms.RegexField(regex=ascii_re, label=_("Username"), max_length=30, widget=forms.TextInput(), error_messages={'invalid': 'Username must only contain a-z, 0-9 and "."'})
