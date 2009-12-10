@@ -74,12 +74,6 @@ def group(request, group, template_name="plus_groups/group.html", current_app='p
         raise Http404(_('There is no group with this id'))
 
     user = request.user
-
-    # XXX deprecated ... our middleware should do this
-    #if not user.is_authenticated():
-    #    user = get_anon_user()
-    #    request.user = user 
-            
     
     members = group.get_users()[:10]
     member_count = group.get_no_members()
@@ -97,6 +91,7 @@ def group(request, group, template_name="plus_groups/group.html", current_app='p
     can_tag = False
     can_change_avatar = False
     has_accept = False
+    editable_group_type = group.group_type != settings.HUB_NAME
 
     if user.is_authenticated():
         if user.is_direct_member_of(group.get_inner()):
@@ -221,7 +216,8 @@ def group(request, group, template_name="plus_groups/group.html", current_app='p
             'group_id':group.id,
             'search_types':search_types,
             'tagged_url':current_app + ':groups_tag',
-            'has_accept':has_accept
+            'has_accept':has_accept,
+            'editable_group_type':editable_group_type,
             }, context_instance=RequestContext(request, current_app=current_app)
     )
 
@@ -472,7 +468,7 @@ def autocomplete(request, j=None, current_app='plus_groups', **kwargs):
 
 @json_view
 def group_type_ajax(request,**kwargs) :
-    return settings.GROUP_TYPES
+    return settings.GROUP_TYPES[0:-1] # miss off the last, because it's the Hub type
 
 
 

@@ -37,8 +37,15 @@
     <div id='ajax_select_list_url_TgGroup-{{group.id}}-group_type_widget' href='{% url groups:group_type_ajax %}'></div>
     
     <ul class="yui-skin-sam">
-      {% if group.should_show_group_type %}
-      {% editable "Type" group 'group_type' 'Type of Group' %}
+      {% if editable_group_type %}
+          {% if group.should_show_group_type %}
+              {% editable "Type" group 'group_type' 'Type of Group' %}
+          {% endif %}
+      {% else %}
+          <li>
+	    <div class="label">{% trans "Type" %}</div>
+            <div class="value">{{group.group_type}}</div>
+	  </li>
       {% endif %}
       
       {% if group.should_show_description %}
