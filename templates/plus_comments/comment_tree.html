@@ -21,7 +21,8 @@
     {% if can_comment %}
     <h3>{% trans "Comment on this"%} {{target_type}}</h3>
     <div class="thumb small">
-      <img src="{{SITE_MEDIA}}images/member.jpg"/>
+      {% avatar user 40 %}
+
     </div>
     <form method="POST" action="{% get_comment_url target %}">
       <ul>
