@@ -217,7 +217,8 @@ To reindex your data
 --------------------
 
 python manage.py rebuild_index   
-
+# or once the index has been created
+python manage.py update_index 
 
 
 Supervisord
@@ -250,7 +251,8 @@ Configuring Lighttpd
 ====================
 
 # Nils has created a config file on the shared mount which is included in the lighttpd config.
-# make mhpss web-server config changes there
+# make mhpss web-server config changes there. There's a copy of this file in the "etc" directory in
+# our pinax directory
 
 
 # After any change, always run syntax checking
