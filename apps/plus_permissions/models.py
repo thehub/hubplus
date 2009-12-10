@@ -1,3 +1,4 @@
+
 from django.db import models
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes import generic
@@ -387,7 +388,8 @@ class GenericReference(models.Model):
     acquired_scontext = models.ForeignKey(SecurityContext, related_name="controlled", null=True)
     explicit_scontext = models.ForeignKey(SecurityContext, related_name="target", null=True, unique=True)
 
-    creator = models.ForeignKey(User, related_name='created_objects', null=True)
+    #this should be null=True
+    creator = models.ForeignKey(User, related_name='created_objects', null=True, default=get_admin_user())
     
     # at the moment, the permission_prototype will hold what family or broad class of permissions this falls 
     # into ... for example, groups are public, private, invite etc.

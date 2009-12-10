@@ -125,10 +125,10 @@ urlpatterns += patterns('',
 )
 
 
-if settings.PERMISSION_UPLOADS_THROUGH_X_SENDFILE :
-    urlpatterns += patterns('',
-        (r'^site_media/member_res/tg.+group/(?P<group_id>[\d]+)/(?P<upload_id>[\d]+)/(?P<path>.*)$', 'plus_permissions.permissioned_static.serve_upload')
-    )
+#if settings.PERMISSION_UPLOADS_THROUGH_X_SENDFILE :
+#    urlpatterns += patterns('',
+#        (r'^site_media/member_res/tg.+group/(?P<group_id>[\d]+)/(?P<upload_id>[\d]+)/(?P<path>.*)$', 'plus_permissions.permissioned_static.serve_upload')
+#    )
 
 if settings.SERVE_MEDIA:
     urlpatterns += patterns('',

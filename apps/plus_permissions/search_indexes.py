@@ -4,9 +4,9 @@ from haystack import site
 
 
 class GenericIndex(indexes.SearchIndex):
-    title = indexes.CharField(model_attr='obj__display_name')
+    title = indexes.CharField(model_attr='obj__get_display_name')
     content = indexes.CharField(document=True, use_template=True)
-    author = indexes.CharField(model_attr='creator__display_name')
+    author = indexes.CharField(model_attr='creator__get_display_name')
     content_type = indexes.CharField(model_attr='content_type__model')
 
     #object_id = indexes.IntegerField(model_attr='object_id')

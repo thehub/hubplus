@@ -37,7 +37,13 @@ python scripts/pinax-boot.py --development --django-version=1.1 /opt/apphomes/mh
 
 source ./pinax-env/bin/activate
 
+# get our hub+ repo
 git clone git://github.com/thehub/hubplus.git hubplus
+
+# and run the startup the following script which adds a git-hook to your repo. May do more in future 
+
+./on_clone/RUNME.sh
+
 
 # init the submodules containing YUI
 git-submodule init
