@@ -122,8 +122,11 @@ def serve(request, path, show_indexes=False):
         return HttpResponseNotModified()
     mimetype = mimetypes.guess_type(fullpath)[0] or 'application/octet-stream'
     contents = open(fullpath, 'rb').read()
-    response = HttpResponse(contents, mimetype=mimetype)
+    response = HttpResponse(mimetype=mimetype)
     response["Last-Modified"] = http_date(statobj[stat.ST_MTIME])
     response["Content-Length"] = len(contents)
+    response['X-Sendfile'] = fullpath
+    new_filename=fullpath.split('/')[-1]
+    response['Content-Disposition'] = 'attachment;filename=%s'%new_filename
     return response
 
