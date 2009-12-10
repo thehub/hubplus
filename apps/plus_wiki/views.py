@@ -84,6 +84,7 @@ def create_wiki_page(request, group, page_name, template_name="plus_wiki/create_
         title = form.cleaned_data['title']
         content = form.cleaned_data['content']
         license = form.cleaned_data['license']
+        copyright_holder = form.cleaned_data['copyright_holder']
         name = form.cleaned_data['name']
         if request.POST.get('preview', None):
             return render_to_response(template_name, 
@@ -108,6 +109,7 @@ def create_wiki_page(request, group, page_name, template_name="plus_wiki/create_
             obj.set_name(name)
             obj.content = content
             obj.license = license
+            obj.copyright_holder = copyright_holder
             obj.stub = False
             obj.save()
             return HttpResponseRedirect(reverse(current_app + ':view_WikiPage', args=[group.id, obj.name]))
@@ -144,11 +146,11 @@ def view_wiki_page(request, group, page_name, template_name="plus_wiki/wiki.html
     except WikiPage.DoesNotExist:
         raise Http404
 
-    if not request.user.is_authenticated():
-        user = get_anon_user()
-        request.user = user
-
-    
+    if obj.stub :
+        # we don't want to show the wikipage at this point, but what do we do instead?
+        request.user.message_set.create(message=_('The page you tried to visit has not yet been published by the creator.')%{})
+        return HttpResponseRedirect(reverse(current_app + ':group', args=[group.id]))
+        
     version_list = Version.objects.get_for_object(obj._inner)
     try:
         version = Version.objects.get_for_date(obj._inner, datetime.now())

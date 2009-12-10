@@ -36,6 +36,7 @@ class WikiPageViewer:
     title = InterfaceReadProperty
     content = InterfaceReadProperty
     license = InterfaceReadProperty
+    copyright_holder = InterfaceReadProperty
     links_to = InterfaceReadProperty
     in_agent = InterfaceReadProperty
     stub = InterfaceReadProperty
@@ -48,6 +49,7 @@ class WikiPageEditor:
     title = InterfaceWriteProperty
     content = InterfaceWriteProperty
     license = InterfaceWriteProperty
+    copyright_holder = InterfaceWriteProperty
     stub = InterfaceWriteProperty
     author = InterfaceWriteProperty
 
