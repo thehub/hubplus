@@ -389,7 +389,7 @@ class GenericReference(models.Model):
     explicit_scontext = models.ForeignKey(SecurityContext, related_name="target", null=True, unique=True)
 
     #this should be null=True
-    creator = models.ForeignKey(User, related_name='created_objects', null=True, default=get_admin_user())
+    creator = models.ForeignKey(User, related_name='created_objects', null=True) #, default=get_admin_user())
     
     # at the moment, the permission_prototype will hold what family or broad class of permissions this falls 
     # into ... for example, groups are public, private, invite etc.

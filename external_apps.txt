@@ -44,5 +44,5 @@ http://django-photologue.googlecode.com/files/photologue-2.1.zip
 # hubplus dependency packages
 
 django-reversion
-django-haystack==1.0
+django-haystack==1.0.1_final
 # -e git://github.com/toastdriven/django-haystack.git#egg=django-haystack
