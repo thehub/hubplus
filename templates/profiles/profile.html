@@ -34,11 +34,15 @@
     </div>
     
     <ul id="actions" class="link_list">
-      {% if is_me %}{% else %}
-      <li class="first"><a href="/tweets/toggle_follow/{{other_user.username}}/">{% if is_following %}Unfollow {% else %}Follow {% endif %}{{other_user.get_display_name}}</a></li>
+      {% if request.user.is_authenticated %}
+        {% if is_me %}{% else %}
+          <li class="first"><a href="/tweets/toggle_follow/{{other_user.username}}/">{% if is_following %}Unfollow {% else %}Follow {% endif %}{{other_user.get_display_name}}</a></li>
+	  {% endif %}
       {% endif %}
       <li class="last"><a href="{% url messages_all_to other_user.username %}#tabview=compose">Message {{other_user.get_display_name}}</a></li>
+
     </ul>
+
     
   </div>
   
