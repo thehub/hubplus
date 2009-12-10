@@ -8,6 +8,7 @@ from apps.plus_wiki.models import WikiPage
 class EditWikiForm(forms.Form):
     title = forms.CharField(max_length=100)
     license = forms.CharField(max_length=100, required=False)
+    copyright_holder = forms.CharField(max_length=100, required=False)
     content = HTMLField()
     what_changed = forms.CharField(required=False)
     author = forms.CharField(required=False) # copyright purposes

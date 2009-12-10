@@ -28,7 +28,10 @@ class WikiPage(models.Model):
         return self.title
 
     stub = models.BooleanField(default=True)
+
+    copyright_holder = models.CharField(max_length=100, default='',null=True) 
     license = models.CharField(max_length=100)
+
     content = models.TextField(blank=True)  # html field
     links_to = models.ManyToManyField(GenericReference, related_name="back_links")
     in_agent = models.ForeignKey(GenericReference, related_name="wiki_pages")

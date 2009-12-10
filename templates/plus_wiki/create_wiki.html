@@ -44,14 +44,24 @@
 				{% endif %}
 			</li>
 			<li>
-				<div class="label">
-					<label for="license">License <span class="extra">('©2009', 'GPL')</span></label>
-				</div>
-				<div class="value">
-					<input name="license" id="license" class="text" type="text" value="{% if data.license %}{{data.license}}{% else %}{{page.license}}{% endif %}" />
-					{% if errors.license %}<span class="error">{{errors.license}}<span>{% endif %}
-				</div>
+			  <div class="label">
+			    <label for="copyright">Copyright Holder</label>
+			  </div>
+			  <div class="value">
+			    <input name="copyright_holder" id="copyright_holder" class="text" type="text" value="{% if data.copyright_holder %}{{data.copyright_holder}}{% else %}{{page.copyright_holder}}{% endif %}" />
+			    {% if errors.copyright_holder%}<span class="error">{{errors.license}}</span>{% endif %}
+			  </div>
 			</li>
+			<li>
+			  <div class="label">
+			    <label for="license">License <span class="extra">('©2009', 'GPL')</span></label>
+			  </div>
+			  <div class="value">
+			    <input name="license" id="license" class="text" type="text" value="{% if data.license %}{{data.license}}{% else %}{{page.license}}{% endif %}" />
+			    {% if errors.license %}<span class="error">{{errors.license}}<span>{% endif %}
+			  </div>
+			</li>
+			
 			{% if page.stub %}
 			{% else %}
 			<li class="changes_set">	
