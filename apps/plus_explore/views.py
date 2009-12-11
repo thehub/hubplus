@@ -4,6 +4,7 @@ from django.shortcuts import render_to_response, get_object_or_404
 from django.utils.translation import ugettext_lazy as _
 from apps.plus_tags.models import get_resources_for_tag_intersection, get_intersecting_tags, scale_tag_weights
 from apps.plus_groups.models import TgGroup
+from apps.profiles.models import Profile
 from django.core.urlresolvers import reverse
 from haystack.query import RelatedSearchQuerySet, EmptySearchQuerySet
 from apps.plus_permissions.models import GenericReference
@@ -87,7 +88,14 @@ def filter(request, tag_string, template_name='plus_explore/explore_filtered.htm
                                                   'search_args':side_search,}, context_instance=RequestContext(request))
 
 
+object_type_filters = {Resource:{'stub':False},
+                       WikiPage:{'stub':False},
+                       Profile:{},
+                       TgGroup:{}}
+
 def plus_search(tags, search, search_types, order=None, in_group=None, extra_filter=None):
+
+
     items = get_resources_for_tag_intersection(tags)
     q = None
     for typ, info in search_types:
@@ -101,12 +109,27 @@ def plus_search(tags, search, search_types, order=None, in_group=None, extra_fil
             q = typ_items
         else:
             q = q | typ_items
+
     if extra_filter:
         q = q & Q(**extra_filter)
+        
     if q:
         items = items.filter(q)
 
+    included = None
+    for obj_class, included_filter in object_type_filters.items():
+        objs = obj_class.objects.filter(**included_filter)
+        included_search = {'content_type__model':obj_class.__name__.lower(),
+                           'object_id__in':objs}
+        
+        if not included:
+            included = Q(**included_search)
+        included = included | Q(**included_search)
+
+    items = items.filter(included)
+
     if in_group:
+        # this should be implemented using the code just above and an external search filter arg
         page_ids = WikiPage.objects.filter(in_agent=in_group)
         wikipages = Q(**{'content_type__model':'wikipage',
                          'object_id__in':page_ids})
@@ -116,14 +139,15 @@ def plus_search(tags, search, search_types, order=None, in_group=None, extra_fil
 
         q = resources | wikipages
         items = items.filter(q)
-                   
+ 
     results_map = {}
     tag_intersection = []
     if search:
         results = RelatedSearchQuerySet().auto_query(search)
         results_map = {}
         if results:
-            all_results = results.load_all()
+            all_results = results.load_all()  # this bit is quite evil and makes things really inefficient for large searches
+                                              # a better approach would be to get all the ids directly from the fulltext index and use them as a filter for GenericReferences 
             all_results = all_results.load_all_queryset(GenericReference, items)
             results_map['All'] = [item.object for item in all_results]   #we really really shouldn't do this                
         else:
@@ -152,4 +176,5 @@ def plus_search(tags, search, search_types, order=None, in_group=None, extra_fil
         results_map = {'All':EmptySearchQuerySet()}
 
     search_types = [(typ, data[2], results_map[typ], len(results_map[typ])) for typ, data in search_types if results_map.has_key(typ)]
+
     return {'All':results_map['All'], 'items_len':len(results_map['All']), 'search_types':search_types, 'tag_intersection':tag_intersection}
