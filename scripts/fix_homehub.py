@@ -5,7 +5,11 @@ rootloc = get_or_create_root_location()
 virtual_members = get_virtual_members_group()
 
 for p in Profile.objects.all() :
-    print p.user.username, p.first_name.encode('utf-8'), p.last_name.encode('utf-8'), p.homehub, p.homeplace.name
+    print p.user.username, p.first_name.encode('utf-8'), p.last_name.encode('utf-8'), p.homehub,
+    if p.homeplace : 
+        print p.homeplace.name
+    else :
+        print
     if not p.homehub :
         if p.homeplace != rootloc:
             # we can't currently infer from, say, Nepal to Asia

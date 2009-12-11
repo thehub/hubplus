@@ -27,7 +27,7 @@ import ipdb
 if __name__ == '__main__' :
     for u in User.objects.all() :
         if u.username in ['anon','admin'] : continue
-        #change_user(u)
+        change_user(u)
     
     for g in TgGroup.objects.all() :
         try:
