@@ -421,6 +421,7 @@ form .label_permissions {
 
 .editable_set .bt_edit {
 	display: none;
+	z-index:100;
 }
 
 .icon_text_button_set {
