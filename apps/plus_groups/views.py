@@ -156,16 +156,16 @@ def group(request, group, template_name="plus_groups/group.html", current_app='p
     
     # XXX this is probably deprecated as we now do the most recent status on a group page from the 
     # microblogging templatetag ... can probably remove this when we have a spare moment
-    if tweets :
-        latest_status = tweets[0]
+    #if tweets :
+    #    latest_status = tweets[0]
         #dummy_status = DisplayStatus(
         #    defaultfilters.safe( defaultfilters.urlize(latest_status.html())),
         #                         defaultfilters.timesince(latest_status.sent) )
-        status_type = 'group'
-        status_since = defaultfilters.timesince(latest_status.sent)
-    else:
-        status_type = ''
-        status_since = ''
+    #    status_type = 'group'
+    #    status_since = defaultfilters.timesince(latest_status.sent)
+    #else:
+    #    status_type = ''
+    #    status_since = ''
     
 
     try:
@@ -190,8 +190,8 @@ def group(request, group, template_name="plus_groups/group.html", current_app='p
 
     return render_to_response(template_name, {
             "head_title" : "%s" % group.get_display_name(),
-            "status_type" : 'group',
-            "status_since" : status_since,
+            #"status_type" : 'group',
+            #"status_since" : status_since,
             "group" : TemplateSecureWrapper(group),
             "target_class" : ContentType.objects.get_for_model(group.get_inner()).id,
             "target_id" : group.get_inner().id,
