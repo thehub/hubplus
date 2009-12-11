@@ -38,9 +38,12 @@
     <li class="sort"> 
       <label>{% trans "Sort by" %}:</label>
       <select size="1" name="order">
-	<!--<option value="relevance">Relevance</option>-->
+	{% if listing_args.search_terms %}
+	<option value="relevance" {% ifequal listing_args.order "relevance" %}selected="selected"{% endifequal %}>{% trans "Relevance" %}</option>
+	{% endif %}
 	<option value="date" {% ifequal listing_args.order "date" %}selected="selected"{% endifequal %}>{% trans "Most recent" %}</option>
-	<!--<option value="view">Most views</option>-->
+	<!--<option value="view">Most popular</option>-->
+	<!--<option value="view">Highest rated</option>-->
 	<option value="name" {% ifequal listing_args.order "name" %}selected="selected"{% endifequal %}>{% trans "A-Z" %}</option>
       </select>
     </li>
@@ -61,15 +64,18 @@
 </div>
 {% else %}
 <ul class="display_options">
-  <li class="sort"> 
-    <label>{% trans "Sort by" %}:</label>
-    <select size="1" name="order">
-      <!--<option value="relevance">Relevance</option>-->
-      <option value="date" {% ifequal listing_args.order "date" %}selected="selected"{% endifequal %}>{% trans "Most recent" %}</option>
-      <!--<option value="view">Most views</option>-->
-      <option value="name" {% ifequal listing_args.order "name" %}selected="selected"{% endifequal %}>{% trans "A-Z" %}</option>
-    </select>
-  </li>
+    <li class="sort"> 
+      <label>{% trans "Sort by" %}:</label>
+      <select size="1" name="order">
+	{% if listing_args.search_terms %}
+	<option value="relevance" {% ifequal listing_args.order "relevance" %}selected="selected"{% endifequal %}>{% trans "Relevance" %}</option>
+	{% endif %}
+	<option value="date" {% ifequal listing_args.order "date" %}selected="selected"{% endifequal %}>{% trans "Most recent" %}</option>
+	<!--<option value="view">Most popular</option>-->
+	<!--<option value="view">Highest rated</option>-->
+	<option value="name" {% ifequal listing_args.order "name" %}selected="selected"{% endifequal %}>{% trans "A-Z" %}</option>
+      </select>
+    </li>
   </ul>
 <div id="results_all" class="page_content" >
   {% listing search.All "All" listing_args.order listing_args.search_terms listing_args %}

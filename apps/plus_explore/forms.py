@@ -6,7 +6,6 @@ ORDERS = (
     ('name', _('A-Z')),
     ('relevance', _('Relevance')),
     ('date', _('Recently Created')),
-    ('modified', _('Recently Modified'))
 )
 
 AREAS = (
