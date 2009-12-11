@@ -310,6 +310,10 @@ GOOGLE_MAP_KEY = "ABQIAAAAiA7tLHdzZr8yhGAEbo5FGxS_srkAJTD0j5T3EF3o06M_52NTAhQM2w
 SERVE_MEDIA = True # DEBUG 
 PERMISSION_UPLOADS_THROUGH_X_SENDFILE =False # override on a production server
 
+# serve js src files
+DEVELOPMENT = False
+
+
 # a local_settings file can over-ride the above
 try:
     from local_settings import *
@@ -366,7 +370,6 @@ try:
     compile(CSS_FILES, 'site_media/css', 'hubplus_core.css')
     JS_VERSION_NO = get_version_no("hubplus_core.js", 'site_media/js')
     CSS_VERSION_NO = get_version_no("hubplus_core.css", 'site_media/css')
-    DEVELOPMENT = False
 except ImportError, e:
     print `e`
 
