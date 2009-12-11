@@ -15,6 +15,17 @@
     <h4>{% trans "Edit your site settings" %}</h4>
     <p>{% trans "Change your main email address and forwarding options." %}</p>
 
+    <div id='messages'>
+      {% if messages %}
+      <ul>
+        {% for message in messages %}
+        <li>{{ message }}</li>
+        {% endfor %}
+      </ul>
+      {% endif %}
+    </div>
+
+
     <fieldset>
       <ul>
 

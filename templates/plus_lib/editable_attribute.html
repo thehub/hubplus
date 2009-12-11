@@ -6,6 +6,21 @@
 	</div>
 	<div class="value">
 		<a class="bt_edit icon_button" id="{{obj.edit_key}}{{name}}_trigger" title="edit">Edit</a>
+
+		{% comment %} XXX - temporary "fix". 
+		We need to rethink the javascript / css for the "trigger" button in the 
+		editable attribute, because in the case of google maps, the map 
+		obscures the button.
+		
+		As a temporary measure (until we can get jesson back on the case, or more 
+		time, I'm just dropping the map with a couple of <br/> tags. 
+		
+		{% endcomment %}
+		
+		{% ifequal name 'place' %}<br/>&nbsp;<br/>{% endifequal %}
+
+		{% comment %} XXX hack ends {% endcomment %}
+
 		<div {% if edit %} class='editable' {% endif %} id='{{obj.edit_key}}{{name}}'>{% if no_escape %}{% autoescape off %}{{value}}{% endautoescape %}{% else  %}{{value}}{% endif %}</div>
 	</div>
 </li>
