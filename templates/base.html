@@ -40,7 +40,7 @@
 	<link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}css/jit.css">
 	<script type="text/javascript" src="{{ MEDIA_URL }}js/jit-example.js" charset="utf-8"></script>-->
    	   {% for js_file_path in JS_FILES %}
-              <script src="{{ MEDIA_URL }}js/{{js_file_path}}" charset="utf-8"></script>-->
+              <script src="{{ MEDIA_URL }}js/{{js_file_path}}" charset="utf-8"></script>
            {% endfor %}
 	{% else %}
 	   <script type="text/javascript" src="{{ MEDIA_URL }}js/hubplus_core{{JS_VERSION_NO}}.js"></script> 
