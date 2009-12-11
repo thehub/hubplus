@@ -11,7 +11,7 @@ licenses = (('',''),
 
 
 class UploadFileForm(forms.Form):
-    title = forms.CharField(max_length=50)
+    title = forms.CharField(max_length=60)
     resource  = forms.FileField(required=False)
     description = forms.CharField(required=True)
     license = forms.CharField(required=False)
