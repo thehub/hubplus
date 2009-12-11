@@ -43,7 +43,7 @@ if "notification" in settings.INSTALLED_APPS:
 else:
     notification = None
 
-from apps.plus_explore.views import plus_search, get_search_types
+from apps.plus_explore.views import plus_search, get_search_types, set_search_order
 from apps.plus_lib.search import side_search_args, listing_args
 
 def narrow_search_types():
@@ -53,8 +53,7 @@ def narrow_search_types():
 def profiles(request, tag_string='', template_name="plus_explore/explore_filtered.html"):
     form = SearchForm(request.GET)
     if form.is_valid():
-        search = form.cleaned_data.get('search', '')
-        order = form.cleaned_data.get('order', '')
+        search, order = set_search_order(request, form)
     else:
         search = ''
         order = ''

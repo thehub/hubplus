@@ -65,13 +65,36 @@ def goto_tag(request):
 # XXX pagination - separated per tab
 
 
+
+def set_search_order(request, form):
+    search = form.cleaned_data.get('search', '')
+    order = form.cleaned_data.get('order', '')
+    if not order:
+        order = request.session.get('order', 'date')
+
+    was_search = request.session.get('was_search', False)
+    if search:
+        if not was_search:
+            order = 'relevance'
+            request.session['was_search'] = True
+            HttpResponseRedirect(request.path + '?order=' + order + '&search=' + search)
+        request.session['was_search'] = True
+    else:
+        if was_search:
+            order = 'date'
+            request.session['was_search'] = False
+            HttpResponseRedirect(request.path + '?order=' + order)
+        request.session['was_search'] = False
+
+    request.session['order'] = order 
+    return search, order
+
 def filter(request, tag_string, template_name='plus_explore/explore_filtered.html'):
     """ this should be integrated with index into a single method - probably
     """
     form = SearchForm(request.GET)
     if form.is_valid():
-        search = form.cleaned_data.get('search', '')
-        order = form.cleaned_data.get('order', '')
+        search, order = set_search_order(request, form)
     else:
         search = ''
         order = ''
@@ -83,9 +106,9 @@ def filter(request, tag_string, template_name='plus_explore/explore_filtered.htm
     search_dict = plus_search(listing_args_dict['tag_filter'], search, search_types, order)
     
     return render_to_response(template_name, {'head_title':head_title, 
-                                                  'listing_args':listing_args_dict,
-                                                  'search':search_dict,
-                                                  'search_args':side_search,}, context_instance=RequestContext(request))
+                                              'listing_args':listing_args_dict,
+                                              'search':search_dict,
+                                              'search_args':side_search,}, context_instance=RequestContext(request))
 
 
 object_type_filters = {Resource:{'stub':False},
@@ -94,7 +117,7 @@ object_type_filters = {Resource:{'stub':False},
                        TgGroup:{}}
 
 def plus_search(tags, search, search_types, order=None, in_group=None, extra_filter=None):
-
+    
 
     items = get_resources_for_tag_intersection(tags)
     q = None

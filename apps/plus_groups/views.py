@@ -222,7 +222,7 @@ def group(request, group, template_name="plus_groups/group.html", current_app='p
     )
 
 from apps.plus_lib.utils import hub_name_plural, hub_name
-from apps.plus_explore.views import plus_search, get_search_types
+from apps.plus_explore.views import plus_search, get_search_types, set_search_order
 from apps.plus_explore.forms import SearchForm
 
 def narrow_search_types(type_name):
@@ -233,8 +233,7 @@ def narrow_search_types(type_name):
 def groups(request, site, tag_string='', type='other', template_name='plus_explore/explore_filtered.html', current_app='plus_groups'):
     form = SearchForm(request.GET)
     if form.is_valid():
-        search = form.cleaned_data.get('search', '')
-        order = form.cleaned_data.get('order', '')
+        search, order = set_search_order(request, form)
     else:
         search = ''
         search_type = ''
