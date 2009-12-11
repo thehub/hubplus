@@ -130,10 +130,10 @@ def plus_search(tags, search, search_types, order=None, in_group=None, extra_fil
 
     if in_group:
         # this should be implemented using the code just above and an external search filter arg
-        page_ids = WikiPage.objects.filter(in_agent=in_group)
+        page_ids = WikiPage.objects.filter(in_agent=in_group, stub=False)
         wikipages = Q(**{'content_type__model':'wikipage',
                          'object_id__in':page_ids})
-        resource_ids = Resource.objects.filter(in_agent=in_group)
+        resource_ids = Resource.objects.filter(in_agent=in_group, stub=False)
         resources = Q(**{'content_type__model':'resource',
                          'object_id__in':resource_ids})
 
