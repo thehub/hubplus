@@ -92,7 +92,7 @@ def site_settings(request, template_name='account/settings.html'):
             request.user.first_name=form.cleaned_data['first_name']
             request.user.last_name=form.cleaned_data['last_name']
             request.user.save()
-
+            request.user.message_set.create(message=_("""Your settings were successfully updated.""")%{})
     else:
         form = SettingsForm(initial={
                 'email': request.user.email_address, 
