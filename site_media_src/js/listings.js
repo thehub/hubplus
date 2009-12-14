@@ -3,7 +3,6 @@ var listing_ready = function () {
 	var form = jq(this); //.closest('form');
 	console.log(form.serialize())  ;
 	jq('.tabbed_content #resources').load(form.attr('action') + ' form', form.serialize());
-		console.log("here");
 	return false;
     });
     jq('.order_list').live('change', function () {
@@ -11,3 +10,4 @@ var listing_ready = function () {
 	return false;
     });
 };
+
