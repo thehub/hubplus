@@ -7,7 +7,7 @@ from django.conf import settings
 
 from apps.plus_contacts.status_codes import ACCEPTED_PENDING_USER_SIGNUP
 from apps.plus_permissions.proxy_hmac import attach_hmac 
-import datetime
+from datetime import datetime
 
 from django.utils.translation import ugettext_lazy as _
 from django.db import transaction
@@ -340,7 +340,6 @@ try :
             return group_app_label
 
         @transaction.commit_on_success
-
         def delete(self) :
  
             sc = self.get_security_context()
@@ -404,6 +403,14 @@ try :
             # remove the group
             super(TgGroup,self).delete()
 
+        def save(self):
+            ref = self.get_ref()
+            ref.modified = datetime.now()
+            ref.display_name = self.get_display_name()
+            ref.save()
+            super(TgGroup, self).save()
+
+   
     
 except Exception, e:
     print "##### %s" % e

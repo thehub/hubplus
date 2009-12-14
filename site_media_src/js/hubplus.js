@@ -307,14 +307,6 @@ var profile_ready = function () {
 	jq('.tabbed_content #resources').load(jq(this).attr('href') + ' form');
 	return false;
     });
-    jq('.tabbed_content #resources #submit_search').live('click', function () {
-	var form = jq(this).closest('form');
-	jq('.tabbed_content #resources').load(form.attr('action') + ' form', form.serialize());
-	return false;
-    });
-
-
-
     if (jq('li.place .editable').length) {
 	var google_map_key=jq('#google_map_key').attr('href');
 	var g_url = "http://maps.google.com/maps?file=api&v=2.x&key="+google_map_key+"&async=2&callback=setup_maps";
