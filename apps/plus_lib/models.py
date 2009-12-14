@@ -24,40 +24,42 @@ def add_get_display_name(cls) :
     # using get_display_name rather than display name because some model classes already have attributes called 
     # display_name and we don't want to hide it 
     def get_display_name(self) :
-        try : 
+        try: 
             if self.first_name and self.last_name:
                 return '%s %s' % (self.first_name, self.last_name)
-        except :
+        except:
             pass
         
-        try :
-            if self.display_name :
+        try:
+            if self.display_name:
+                if hasattr(self.display_name, '__call__'):
+                    return self.display_name()
                 return self.display_name
-        except :
+        except:
             pass
  
-        try :
-            if self.name :
+        try:
+            if self.name:
                 return self.name
-        except :
+        except:
             pass
         
         try:
             if not self.display_name and self.group_name:
                 return self.group_name
-        except :
+        except:
             pass
 
-        if self.__class__.__name__ == 'User' :
-            try :
+        if self.__class__.__name__ == 'User':
+            try:
                 return self.get_profile().get_display_name()
-            except :
+            except:
                 # may fail if we're still setting up the user
                 pass
 
-        try :
+        try:
             return self.title
-        except :
+        except:
             pass
         return '(class: %s, pk: %s)' % (self.__class__.__name__, self.pk)
 

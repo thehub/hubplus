@@ -1,7 +1,7 @@
 from django.db import models
 from apps.plus_permissions.models import GenericReference
 from django.contrib.auth.models import User
-
+from datetime import datetime
 
 class WikiPage(models.Model):
     class Meta:
@@ -49,6 +49,12 @@ class WikiPage(models.Model):
         ref.delete()
         super(WikiPage,self).delete()
 
+    def save(self):
+        ref = self.get_ref()
+        ref.modified = datetime.now()
+        ref.display_name = self.get_display_name()
+        ref.save()
+        super(WikiPage, self).save()
 
 
 import reversion

@@ -3,9 +3,9 @@ from django.utils.translation import ugettext_lazy as _
 
 
 ORDERS = (
-    ('name', _('A-Z')),
+    ('display_name', _('A-Z')),
     ('relevance', _('Relevance')),
-    ('date', _('Recently Created')),
+    ('modified', _('Most recent')),
 )
 
 AREAS = (

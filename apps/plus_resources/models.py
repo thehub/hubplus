@@ -5,7 +5,7 @@ from django.contrib.contenttypes.models import ContentType
 from apps.plus_groups.models import name_from_title
 from django.contrib.auth.models import User
 from apps.plus_permissions.models import GenericReference
-
+from datetime import datetime
 from apps.plus_lib.models import extract
 from django.core.files.base import File
 
@@ -130,6 +130,12 @@ class Resource(models.Model):
         ref.delete()
         super(Resource,self).delete()
 
+    def save(self):
+        ref = self.get_ref()
+        ref.modified = datetime.now()
+        ref.display_name = self.get_display_name()
+        ref.save()
+        super(Resource, self).save()
 
 
 

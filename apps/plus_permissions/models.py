@@ -380,6 +380,9 @@ class GenericReference(models.Model):
     class Meta:
         unique_together = (("content_type", "object_id"),)
 
+    display_name = models.CharField(max_length=255, default="", null=True)
+    modified = models.DateTimeField(auto_now_add=True, default=datetime.datetime.now(), null=True) #
+
     content_type = models.ForeignKey(ContentType, related_name='security_tag_agent') # this related name makes no sense, is it used anywhere or can we change it?
     object_id = models.PositiveIntegerField()
     obj = generic.GenericForeignKey()

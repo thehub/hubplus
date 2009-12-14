@@ -48,8 +48,11 @@ import itertools
 @secure_resource(TgGroup)
 def group_resources(request, group, tag_string='', template_name='plus_explore/explore_filtered.html', current_app='plus_groups', **kwargs):
     tags = tag_string.split('+')
-    search = request.GET.get('search', '')
-    order = request.GET.get('order', '')
+    form = SearchForm(request.GET)
+    if form.is_valid():
+        search, order = set_search_order(request, form)
+    else:
+        search, order = set_search_order(request, form)
 
     resource_listing_args = listing_args(current_app + ':group_resources', current_app + ':group_resources_tag', tag_string=tag_string, search_terms=search, multitabbed=False, order=order, template_base='plus_lib/listing_frag.html')
     resource_listing_args['group_id'] = group.id

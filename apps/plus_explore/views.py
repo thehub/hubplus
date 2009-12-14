@@ -70,7 +70,7 @@ def set_search_order(request, form):
     search = form.cleaned_data.get('search', '')
     order = form.cleaned_data.get('order', '')
     if not order:
-        order = request.session.get('order', 'date')
+        order = request.session.get('order', 'modified')
 
     was_search = request.session.get('was_search', False)
     if search:
@@ -81,7 +81,7 @@ def set_search_order(request, form):
         request.session['was_search'] = True
     else:
         if was_search:
-            order = 'date'
+            order = 'modified'
             request.session['was_search'] = False
             HttpResponseRedirect(request.path + '?order=' + order)
         request.session['was_search'] = False
@@ -117,8 +117,6 @@ object_type_filters = {Resource:{'stub':False},
                        TgGroup:{}}
 
 def plus_search(tags, search, search_types, order=None, in_group=None, extra_filter=None):
-    
-
     items = get_resources_for_tag_intersection(tags)
     q = None
     for typ, info in search_types:
@@ -169,18 +167,32 @@ def plus_search(tags, search, search_types, order=None, in_group=None, extra_fil
         results = RelatedSearchQuerySet().auto_query(search)
         results_map = {}
         if results:
-            #all_results = results.load_all()  # this bit is quite evil and makes things really inefficient for large searches
+            all_results = results.load_all_queryset(GenericReference, items)
+            if order == 'relevance':
+                all_results = all_results.load_all()  # this bit is quite evil and makes things really inefficient for large searches
                                               # a better approach would be to get all the ids directly from the fulltext index and use them as a filter for GenericReferences 
-            #all_results = all_results.load_all_queryset(GenericReference, items)
-            search_results = [result.pk for result in results]
-
-            results_map['All'] = items.filter(id__in=search_results)
-            #results_map['All'] = [item.object for item in all_results]   #we really really shouldn't do this                
+                results_map['All'] = [item.object for item in all_results]   #we really really shouldn't do this 
+                items_len = len(results_map['All'])
+            else:
+                search_results = [result.pk for result in all_results]
+                results_map['All'] = items.filter(id__in=search_results).order_by(order)
+                items_len = results_map['All'].count()
         else:
             results_map = {'All':EmptySearchQuerySet()}
+            items_len = 0
     else:
         if items:
+            items = items.order_by('creator')
+            items_len = items.count()
             results_map['All'] = items
+        else:
+            items_len = 0
+            
+
+    if order == 'modified':
+        results_map['All'] = results_map['All'].order_by('-' + order)
+    elif order == 'display_name':
+        results_map['All'] = results_map['All'].order_by(order)        
 
     if 'All' in results_map:
         tag_intersection = get_intersecting_tags(results_map['All'], n=15)
@@ -188,19 +200,26 @@ def plus_search(tags, search, search_types, order=None, in_group=None, extra_fil
         if len(search_types) > 1:
             for typ, info in search_types:
                 if info[0]:
-                    typ_items = results_map['All'].filter(**info[0])
+                    typ_items = items.filter(**info[0])
                 if info[1]:
-                    typ_items = results_map['All'].exclude(**info[1])
-                if search and results:
-                    pass
-                    # why do this again when we could just separate results using python
-                    #typ_items = all_results.load_all_queryset(GenericReference, typ_items)
-                    #typ_items = [item.object for item in typ_items] #we really really shouldn't do this
+                    typ_items = items.exclude(**info[1])
+                if search and results and order == 'relevance':
+                        # why do this again when we could just separate results using python
+                        typ_items = all_results.load_all_queryset(GenericReference, typ_items)
+                        typ_items = [item.object for item in typ_items] #we really really shouldn't do this
                 if typ_items:
                     results_map[typ] = typ_items
     else:
         results_map = {'All':EmptySearchQuerySet()}
 
-    search_types = [(typ, data[2], results_map[typ], results_map[typ].count()) for typ, data in search_types if results_map.has_key(typ)]
+    search_type_data = []
+    for typ, data in search_types:
+        if results_map.has_key(typ):
+            try:
+                type_len = results_map[typ].count()
+            except TypeError:
+                type_len = len(results_map[typ])
+            
+            search_type_data.append((typ, data[2], results_map[typ], type_len))
 
-    return {'All':results_map['All'], 'items_len':results_map['All'].count(), 'search_types':search_types, 'tag_intersection':tag_intersection}
+    return {'All':results_map['All'], 'items_len':items_len, 'search_types':search_type_data, 'tag_intersection':tag_intersection}
