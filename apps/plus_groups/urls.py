@@ -4,10 +4,7 @@ urlpatterns = patterns('',
                        url(r'^create/$', 'plus_groups.views.create_group', name='create_group'),
                        url(r'^create_hub/$', 'plus_groups.views.create_group', {'is_hub':True}, name='create_hub'),
                        url(r'^create_object/$', 'plus_groups.views.add_content_object', name="add_content_object"),
-                       
                        url(r'^group_type_ajax/$', 'plus_groups.views.group_type_ajax', name='group_type_ajax'),
-
-
                        url(r'^(?P<resource_id>[\d]+)/page/', include('apps.plus_wiki.urls')),
                        url(r'^(?P<resource_id>[\d]+)/upload/', include('apps.plus_resources.urls')),
                        url(r'^(?P<resource_id>[\d]+)/applications/', include('apps.plus_contacts.urls')),

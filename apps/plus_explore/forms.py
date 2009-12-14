@@ -12,7 +12,8 @@ AREAS = (
     ('regions:groups', _('Regions')),
     ('hubs:groups', _('Hubs')),
     ('groups:groups', _('Groups')),
-    ('profile_list', _('Members'))
+    ('profile_list', _('Members')),
+    ('resources', _('Resources'))
 )
 
 class SearchForm(forms.Form):

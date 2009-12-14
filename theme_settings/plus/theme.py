@@ -10,8 +10,12 @@ ALL_MEMBERS_NAME = 'HubPlus'
 VIRTUAL_MEMBERS_GROUP_NAME = 'virtual_members'
 VIRTUAL_MEMBERS_DISPLAY_NAME = 'Hub+ Virtual'
 
-
+HUB_NAME_PLURAL = 'Hubs'
 EXPLORE_NAME = _('Explore')
+HUB_APP_NAME = 'hubs:groups'
+
+TOP_LEVEL_TABS = [(_('Home'), 'home', ''), (EXPLORE_NAME, 'explore', 'explore'), (_('Members'), 'profile_list', 'members'),  (_("Groups"), 'groups:groups', 'groups'), (HUB_NAME_PLURAL, HUB_APP_NAME, 'hubs')]
+
 
 SITE_NAME = _("Hub+")
 SITE_NAME_SHORT = _("Hub+")
@@ -28,7 +32,7 @@ GROUP_TYPES = (
 
 
 HUB_NAME = 'Hub'
-HUB_NAME_PLURAL = 'Hubs'
+
 MAIN_HUB_NAME = 'Main Hub'
 
 EXPLORE_SEARCH_TITLE = _('explore search title')

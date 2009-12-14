@@ -42,12 +42,9 @@
 		-->
 
 		<ul id="main_navigation">
-			<li class="first{% ifequal CURRENT_AREA ''%} active{% endifequal %}"><a href="{% url home %}">{% trans "Home" %}</a></li>
-			<li {% ifequal CURRENT_AREA 'explore' %}class="active"{% endifequal %}><a href="{% url explore %}">{% trans EXPLORE_NAME %}</a></li>
-			<!--li><a href="{% url explore %}">Explore</a></li-->
-			<li {% ifequal CURRENT_AREA 'members' %}class="active"{% endifequal %}><a href="{% url profile_list %}">{% trans "Members" %}</a></li>
-			<li {% ifequal CURRENT_AREA 'groups' %}class="active"{% endifequal %}><a href="{% url groups:groups %}">{% trans "Groups" %}</a></li>
-			<li class="last{% ifequal CURRENT_AREA 'hubs'%} active{% endifequal %}"><a href="{% plus_url HUB_APP_NAME %}">{{HUB_NAME_PLURAL}}</a></li>
+		  {% for title, url_name, current_area in TOP_LEVEL_TABS %}
+		  <li class="{% if forloop.first %}first{% endif %}{% ifequal CURRENT_AREA current_area%} active{% endifequal %}"><a href="{% plus_url url_name %}">{{title}}</a></li>
+		  {% endfor %}
 		</ul>
 
 	</div>

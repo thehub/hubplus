@@ -1,4 +1,5 @@
 
+
 from django.conf import settings
 from utils import hub_name,  hub_name_plural, main_hub_name
 
@@ -13,11 +14,6 @@ def get_group_or_hub_name(context) :
     else :
         return hub_name()
 
-def get_hub_app_name(theme) :
-    if theme == 'psn' :
-        return 'regions:groups'
-    else :
-        return 'hubs:groups'
 
 def configs(context):
     # This function is a context processor to load the base.html template with some other standard 
@@ -54,6 +50,7 @@ def configs(context):
             'MEMBER_SEARCH_TITLE' : settings.MEMBER_SEARCH_TITLE,
             'GROUP_SEARCH_TITLE' : settings.GROUP_SEARCH_TITLE,
             'HUB_SEARCH_TITLE' : settings.HUB_SEARCH_TITLE,
+            'RESOURCE_SEARCH_TITLE' : settings.RESOURCE_SEARCH_TITLE,
             'TAG_SEARCH_TITLE' : settings.TAG_SEARCH_TITLE,
             'SIDE_SEARCH_TITLE' : settings.SIDE_SEARCH_TITLE,
             'DEVELOPMENT': settings.DEVELOPMENT,
@@ -68,8 +65,8 @@ def configs(context):
 
             'HOST_INFO_FORM' : 'profiles/clients/%s/host_info.html' % settings.PROJECT_THEME,
             
-            'HUB_APP_NAME' : get_hub_app_name(settings.PROJECT_THEME),
-
+            'HUB_APP_NAME' : settings.HUB_APP_NAME,
+            'TOP_LEVEL_TABS' : settings.TOP_LEVEL_TABS,
             'STATUS_COPY' : settings.STATUS_COPY,
             'GOOGLE_MAP_KEY' : settings.GOOGLE_MAP_KEY,
 

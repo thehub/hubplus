@@ -122,7 +122,7 @@ def area_from_path(path) :
               'hub':'hub',
               'region':'hub',
               'explore':'explore',
-              'resource':'explore'}
+              'resources':'resources'}
 
     for k,v in lookup.iteritems() :
         if k in path :
@@ -140,6 +140,8 @@ def search_caption_from_path(path) :
         caption = settings.HUB_SEARCH_TITLE
     elif area == 'explore' :
         caption= settings.EXPLORE_SEARCH_TITLE
+    elif area == 'resources' :
+        caption= settings.RESOURCE_SEARCH_TITLE
     else :
         caption = ''
     return caption

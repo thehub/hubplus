@@ -5,12 +5,24 @@ from django.utils.translation import ugettext_lazy as _
 PROJECT_NAME=_("Mental Health and Psychosocial Support Network")
 COPYRIGHT_HOLDER=_('Psychosocial Support Network')
 
+EXPLORE_NAME = _('Search')
+
+HUB_NAME = _('Region')
+HUB_NAME_PLURAL = _('Regions')
+MAIN_HUB_NAME = _('Main Region')
+
+# format: Title, url_name, current_area
+
+HUB_APP_NAME = 'regions:groups'
+
+
+TOP_LEVEL_TABS = [(_('Home'), 'home', ''), (_('Resources'), 'resources', 'resources'), (_('Members'), 'profile_list', 'members'),  (_("Groups"), 'groups:groups', 'groups'), (HUB_NAME_PLURAL, HUB_APP_NAME, 'hubs')]
+
 VIRTUAL_HUB_NAME = 'MHPSS Network'
 ALL_MEMBERS_NAME = 'All Members'
 VIRTUAL_MEMBERS_GROUP_NAME = 'virtual_members'
 VIRTUAL_MEMBERS_DISPLAY_NAME = 'MHPSS Network'
 
-EXPLORE_NAME = _('Resources')
 
 SITE_NAME = _("Psychosocial Support Network")
 SITE_NAME_SHORT = _("MHPSS Network")
@@ -24,14 +36,12 @@ GROUP_TYPES = (
 )
 
 
-HUB_NAME = _('Region')
-HUB_NAME_PLURAL = _('Regions')
-MAIN_HUB_NAME = _('Main Region')
 
-EXPLORE_SEARCH_TITLE = _('explore search title')
+EXPLORE_SEARCH_TITLE = _('Search Site')
 MEMBER_SEARCH_TITLE = _('Search Members')
 GROUP_SEARCH_TITLE = _('Search Groups')
 HUB_SEARCH_TITLE = _('Search Regions')
+RESOURCE_SEARCH_TITLE = _('Search Resources')
 
 TAG_SEARCH_TITLE = _('Find a Tag')
 SIDE_SEARCH_TITLE = _('side search title')
