@@ -50,11 +50,12 @@ class WikiPage(models.Model):
         super(WikiPage,self).delete()
 
     def save(self):
+        super(WikiPage, self).save()
         ref = self.get_ref()
         ref.modified = datetime.now()
         ref.display_name = self.get_display_name()
         ref.save()
-        super(WikiPage, self).save()
+
 
 
 import reversion

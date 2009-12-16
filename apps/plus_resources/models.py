@@ -2,7 +2,7 @@ from django.db import models
 from django.conf import settings
 from django.contrib.contenttypes import generic
 from django.contrib.contenttypes.models import ContentType
-from apps.plus_groups.models import name_from_title
+
 from django.contrib.auth.models import User
 from apps.plus_permissions.models import GenericReference
 from datetime import datetime
@@ -144,12 +144,11 @@ class Resource(models.Model):
         super(Resource,self).delete()
 
     def save(self):
+        super(Resource, self).save()
         ref = self.get_ref()
         ref.modified = datetime.now()
         ref.display_name = self.get_display_name()
         ref.save()
-        super(Resource, self).save()
-
 
 
 def get_or_create(user, owner, **kwargs):
