@@ -79,14 +79,14 @@ var editing = function () {
 ///// Tags
 var tag_list = function (ele) {
     var manager = jq(ele);
-    var delete_url = manager.find('ul .first a.delete_tag').attr('href');
+    var delete_url = manager.find('ul').attr('id');
     var tag_type = manager.find('.tag_type').val();
     var tagged_id = manager.find('.tagged_id').val();
     var tagged_class = manager.find('.tagged_class').val();
 
     var append_tag = function (data) {
 	if (data.added === false && !data.error_message) {
-	    manager.find('.error_message').html("You have already tagged " + data.tagged + " as having the " + data.tag_type + " <em>" +  data.keyword + "</em>");
+	    manager.find('.error_message').html("You have already tagged <em>" + data.tagged + "</em> as having the " + data.tag_type + " <em>" +  data.keyword + "</em>");
 	    return;
 	} else if (data.error_message) {
 	    manager.find('.error_message').html(data.error_message);

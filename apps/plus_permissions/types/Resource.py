@@ -17,7 +17,7 @@ class ResourceViewer :
     
     stub = InterfaceReadProperty
     name = InterfaceReadProperty
-
+    get_display_name = InterfaceReadProperty
     in_agent = InterfaceReadProperty
 
 class ResourceEditor :
