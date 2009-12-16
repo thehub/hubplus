@@ -17,6 +17,7 @@ EMAIL_HOST_PASSWORD=''
 EMAIL_HOST_USER=''
 EMAIL_PORT=''
 EMAIL_USE_TLS=False
+SERVER_EMAIL = "no-reply@mydomain.com"
 
 DEVELOPMENT=False   # use compiled js and css if DEVELOPMENT = False. Set to True to do js / css development 
 
