@@ -14,23 +14,22 @@ for t in Tag.objects.all() :
             print "deleting %s" % new_key
             t.delete()
         else :
-            if not Tag.objects.filter(keyword=new_key,tagged_for=t.tagged_for) :
+
+            ts = Tag.objects.filter(keyword=new_key,tagged_for=t.tagged_for,tag_type=t.tag_type)
+            if not ts.count() :
                 t.keyword = new_key
                 t.save()
             else :
-                continue
                 # use the other tag
+                other_tag= ts[0]
                 for item in t.items.all() :
-                    if len(t.tagitem_set.all()) != 1:
-                        ipdb.set_trace()
-                    else : 
-                        tagged_by = t.tagitem_set.all()[0].obj  
-                        tag_add(item, t.tag_type, new_key, tagged_by, tagged_for = t.tagged_for)
-                        t.delete()
+                    item.tag = other_tag
+                    item.keyword = new_key
+                    item.save()
+                print 'deleting %s' % t.keyword.encode('utf-8')
+                t.delete()
                 
-        
-        print t.keyword.encode('utf-8')
-
+ 
 print "Bad Groups"
 for g in TgGroup.objects.all() :
     if bad_name(g.group_name) :

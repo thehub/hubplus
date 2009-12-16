@@ -3,9 +3,10 @@ from django.utils.translation import ugettext_lazy as _
 
 choices = (
     ('tag','tag'),
-    ('interest','interest'),
-    ('skill','skill'),
-    ('need','need')
+    ('interests','interests'),
+    ('skills','skills'),
+    ('needs','needs'),
+    ('',''),
 )
 
 class AddTagForm(forms.Form):
