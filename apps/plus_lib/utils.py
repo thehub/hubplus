@@ -111,7 +111,7 @@ def clean_tag(tag) :
     tag = tag.strip()
     tag = sub_under(tag)
     tag = strip_chars(tag)
-    #tag = tag.strip('_')
+    tag = tag.strip('_')
     tag = tag.strip('-')
     return tag
 
