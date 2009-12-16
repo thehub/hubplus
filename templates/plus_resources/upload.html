@@ -85,6 +85,7 @@
 					<input name="license" id="license" class="text" type="text" value="{% if data.license %}{{data.license}}{% else %}{{upload.license}}{% endif %}" />
 					{% if errors.license %}<span class="error">{{errors.license}}<span>{% endif %}
 				</div>
+				<input type="hidden" name="new_parent_group" value=""/><!-- needed for form validation. expand to select box later -->
 			</li>
 		</ul>
 
