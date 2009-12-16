@@ -24,12 +24,6 @@ class Location(models.Model):
     name = models.CharField(unique=True, max_length=200)
 
 
-
-def name_from_title(title):
-    return title.lower().replace(' ', '_').replace('/', '').strip()
-
-
-
 #patch django orm's "create_many_related_manager"
 from django.db.models.fields.related import *
 import django.db.models.fields.related
@@ -404,12 +398,11 @@ try :
             super(TgGroup,self).delete()
 
         def save(self):
+            super(TgGroup, self).save()
             ref = self.get_ref()
             ref.modified = datetime.now()
             ref.display_name = self.get_display_name()
             ref.save()
-            super(TgGroup, self).save()
-
    
     
 except Exception, e:
