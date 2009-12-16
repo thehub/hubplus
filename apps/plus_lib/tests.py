@@ -1,6 +1,6 @@
 
 from apps.plus_lib.models import extract
-from apps.plus_lib.utils import make_name, overlay
+from apps.plus_lib.utils import title_to_name, overlay
 
 import unittest
 
@@ -13,8 +13,8 @@ class TestExtract(unittest.TestCase) :
         self.assertEquals(d,{'b':2})
 
 
-    def test_make_name(self):
-        self.assertEquals(make_name('hello world'),u'hello_world')
+    def test_title_to_name(self):
+        self.assertEquals(title_to_name('hello world'),u'hello_world')
         
 
     def test_overlay(self) :
