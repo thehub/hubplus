@@ -50,7 +50,7 @@ def plus_tag(label, tag_type, tagged, tagged_for) :
     if tagged_for == '' :
         tagged_for = None
     if tag_type == '' :
-        tag_type = None
+        tag_type = 'tag'
     tags = get_tags(tagged=tagged, tagged_for=tagged_for, tag_type=tag_type)
 
     return {'label':label,
