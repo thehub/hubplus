@@ -1,12 +1,19 @@
 import ipdb
-from apps.plus_tags.models import Tag, tag_add
+from apps.plus_tags.models import Tag, tag_add, tag_stop_words
 from apps.plus_lib.utils import bad_name, clean_tag, clean_name
 from apps.plus_groups.models import TgGroup
 from apps.plus_wiki.models import WikiPage
 from apps.plus_resources.models import Resource
 
 print "Bad tags"
+print tag_stop_words
+exit()
 for t in Tag.objects.all() :
+    
+    if t.keyword in tag_stop_words :
+        print "deleting tag %s" % t.keyword
+        t.delete()
+
     if bad_name(t.keyword) :
         print t.keyword.encode('utf-8'),
         new_key = clean_tag(t.keyword)
@@ -29,7 +36,10 @@ for t in Tag.objects.all() :
                 print 'deleting %s' % t.keyword.encode('utf-8')
                 t.delete()
                 
- 
+
+print set([t.keyword for t in Tag.objects.all()])
+quit() 
+
 print "Bad Groups"
 for g in TgGroup.objects.all() :
     if bad_name(g.group_name) :

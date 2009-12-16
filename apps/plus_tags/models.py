@@ -233,4 +233,6 @@ def tag_item_delete(tag_item):
         tag.delete()
 
 
-    
+# these are the words which shouldn't be tags
+
+tag_stop_words = ['into', 'your', 'el', 'our', 'own', 'non', 'end', 'some', 'of','the','and','in','at','for','&','after','le','la','dans','les','with','to','de','against','all','or','set','up','lets','are','from','','1', '2', '3 - 30' , 'about', 'info', 'advisory', 'including', 'inform', 'global', 'materials', 'seminars'] + ['%s' % r for r in range(0,99)] + [a for a in 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ']
