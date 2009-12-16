@@ -24,8 +24,12 @@
       <li><a class="icon_text_button bt_rss" href="#">RSS feed</a></li>
       <li><a class="icon_text_button bt_pdf" href="#">Download PDF</a></li>
     </ul> -->
-    <ul id="meta">      
-      <li>{% trans "Created by" %} <a href="{% url profile_detail created_by.username %}">{{page.created_by}}</a> {% trans "at" %} {{page.creation_time|time}} {% trans "on" %} {{page.creation_time|date}} {% trans "and last edited by" %} <a href="{% url profile_detail version.revision.user.username %}">{{version.revision.user}}</a> {{version.revision.date_created|timesince}} {% trans "ago" %}. </li>
+    <ul id="meta">
+      {% if created_by.username %}
+      <li>
+	{% trans "Created by" %} <a href="{% url profile_detail created_by.username %}">{{page.created_by}}</a>
+	{% trans "at" %} {{page.creation_time|time}} {% trans "on" %} {{page.creation_time|date}} {% trans "and last edited by" %} <a href="{% url profile_detail version.revision.user.username %}">{{version.revision.user}}</a> {{version.revision.date_created|timesince}} {% trans "ago" %}. </li>
+      {% endif %}
       <li>{% if page.copyright_holder %}Copyright {{page.copyright_holder}}, {% endif %}{% trans "Licensed under" %} {{page.license}}.</li>	
     </ul> 
   </div>
