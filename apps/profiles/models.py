@@ -106,11 +106,12 @@ class Profile(models.Model):
       return hi
 
    def save(self):
+      super(Profile, self).save()
       ref = self.get_ref()
       ref.modified = datetime.now()
       ref.display_name = self.get_display_name()
       ref.save()
-      super(Profile, self).save()
+
 
    class Meta:
       verbose_name = _('profile')

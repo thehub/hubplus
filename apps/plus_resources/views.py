@@ -33,7 +33,12 @@ def handle_uploaded_file(user, owner, form, f_data) :
     resource = get_or_create(user, owner, **kwargs)
     resource.stub = False
     resource.save()
+    return resource
 
+def change_parent(user, resource, new_parent, form) :
+    if new_parent.has_interface('TgGroup.CreateResource') :
+        current = secure_wrap(resource.in_agent.obj, user)
+        
 
 from apps.plus_tags.models import get_tags_for_object, tag_item_delete, TagItem
 
@@ -59,11 +64,14 @@ def edit_resource(request, group, resource_name,
     if request.POST:
         post_kwargs = request.POST.copy()
         post_kwargs['obj'] = secure_upload
-        form = UploadFileForm(post_kwargs, request.FILES)
+        form = UploadFileForm(post_kwargs, request.FILES, user=request.user)
         if form.is_valid():
             if form.cleaned_data['resource']:
-                handle_uploaded_file(request.user, group, form, form.cleaned_data['resource'])
-
+                resource = handle_uploaded_file(request.user, group, form, form.cleaned_data['resource'])
+            
+            if form.cleaned_data['new_parent_group'] :
+                change_parent(request.user, resource, form.cleaned_data['new_parent_group'], form)
+            
             if not success_url :
                 success_url = reverse(current_app + ':view_Resource', args=(group.id, secure_upload.name))
 

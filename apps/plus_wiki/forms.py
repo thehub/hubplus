@@ -1,7 +1,7 @@
 from django import forms
 from apps.plus_lib.utils import HTMLField
 from apps.plus_groups.forms import validate_name_url
-from apps.plus_groups.models import name_from_title
+from apps.plus_lib.utils import title_to_name
 from apps.plus_wiki.models import WikiPage
 
 
@@ -23,7 +23,7 @@ class EditWikiForm(forms.Form):
             return self.cleaned_data
 
         # should use validate_name_url from plus_groups form
-        self.cleaned_data['name'] = name_from_title(self.cleaned_data['title'])
+        self.cleaned_data['name'] = title_to_name(self.cleaned_data['title'])
         if self.cleaned_data['name'] != obj.name:
             try:
                 WikiPage.objects.get(name=self.cleaned_data['name'], in_agent=obj.in_agent)

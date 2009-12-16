@@ -401,38 +401,41 @@ var inplace_editor = function (element_id, url, special_options) {
                });
            }
         } else if (options.ui_type === 'gmap') {
-           form.before(js_widget[0].html(data));
-           var geocoder = new GClientGeocoder();
-           var set_address = function (address) {
-                if (address.Status.code === 200) {
-                    editField.val(address.Placemark[0].address);
-                    //release the lock after 0.4 seconds
-                }
-                setTimeout(release_lock, 400);
-           };
-           var new_point = function (map, point) {
-               if (lock === true) {
-                   return false;
-               }
-               lock = true;
-               geocoder.getLocations(point, function (address) {
-                      set_address(address);
-               });
+	   if (data) { // don't try to show if no value
+               form.before(js_widget[0].html(data));
+               var geocoder = new GClientGeocoder();
+               var set_address = function (address) {
+                   if (address.Status.code === 200) {
+                       editField.val(address.Placemark[0].address);
+                       //release the lock after 0.4 seconds
+                   }
+                   setTimeout(release_lock, 400);
+               };
+
+               var new_point = function (map, point) {
+		   if (lock === true) {
+                       return false;
+		   }
+		   lock = true;
+		   geocoder.getLocations(point, function (address) {
+					     set_address(address);
+					 });
+	       };
+               var editable_point = function (map, point) {
+		   map.setCenter(point, 15);
+		   map.addControl(new GLargeMapControl());
+		   var marker = new GMarker(point, {'draggable': true});
+		   map.addOverlay(marker);
+		   GEvent.addListener(marker, 'drag', function (point) {
+					  new_point(map, point);
+				      });
+		   GEvent.addListener(marker, 'dragend', function (point) {
+					  map.panTo(point);
+				      });
+               };
+               var marker = create_map(js_widget[0], editable_point);
+               js_widget[0].after(js_widget[1]);
 	   };
-           var editable_point = function (map, point) {
-               map.setCenter(point, 15);
-               map.addControl(new GLargeMapControl());
-               var marker = new GMarker(point, {'draggable': true});
-               map.addOverlay(marker);
-               GEvent.addListener(marker, 'drag', function (point) {
-                   new_point(map, point);
-               });
-               GEvent.addListener(marker, 'dragend', function (point) {
-                   map.panTo(point);
-               });
-           };
-           var marker = create_map(js_widget[0], editable_point);
-           js_widget[0].after(js_widget[1]);
            editField.val(data);
         } else if (options.ui_type === 'text_large') {
             editField.val(data);
@@ -717,12 +720,19 @@ var plot_point = function(map, point) {
 var create_map = function (map_ele, callback) {
     if (GBrowserIsCompatible()) {
 	var location_str = map_ele.html();
-	map_ele.html("");
-	var map = new GMap2(map_ele.get(0));
-	var geocoder = new GClientGeocoder();
-	geocoder.getLatLng(location_str, function (point) {
-	    callback(map, point);
-	});
+	if (location_str) {
+	    //map_ele.html("");
+	    //var map = new GMap2(map_ele.get(0));
+	    var geocoder = new GClientGeocoder();
+	    geocoder.getLatLng(location_str, function (point) {
+				   if (point) {
+				       map_ele.html("");
+				       var map = new GMap2(map_ele.get(0));
+
+				       callback(map, point);
+				   }
+			       });
+	}
     }
 };
 

@@ -2,7 +2,7 @@ from django.db import models
 from django.conf import settings
 from django.contrib.contenttypes import generic
 from django.contrib.contenttypes.models import ContentType
-from apps.plus_groups.models import name_from_title
+
 from django.contrib.auth.models import User
 from apps.plus_permissions.models import GenericReference
 from datetime import datetime
@@ -24,6 +24,9 @@ def upload_to(instance, file_name) :
     owner_class = ContentType.objects.get_for_model(owner)
     owner_id = owner.id
     return "member_res/%s/%s/%s/%s" % (owner_class, owner_id, instance.id, file_name)
+
+class NameConflictException(Exception) :
+    pass
 
 class Resource(models.Model):
 
@@ -56,11 +59,21 @@ class Resource(models.Model):
     resource = models.FileField(upload_to=upload_to)
     created_by = models.ForeignKey(User, related_name="created_resource", null=True) 
 
-    # XXX 
-    # for compatibility with code
     stub = models.BooleanField(default=True) # for compatibility with content creation
     name = models.CharField(max_length=100)
 
+
+    def move_to_new_group(self, group) :
+        try : 
+            Resource.check_name(self.name, group.get_ref(), self)
+        except ValueError, e:
+            raise NameConflictException(_("Group %(group_name)s already has an upload called %(upload_name)")%{'group_name':group.group_name,'upload_name':name})
+        # change in_agent
+        self.in_agent = group.get_ref()
+        # change security_context
+        self.acquires_from(group)
+        self.save()
+        
 
     def download_url(self) :
         if self.resource :
@@ -131,12 +144,11 @@ class Resource(models.Model):
         super(Resource,self).delete()
 
     def save(self):
+        super(Resource, self).save()
         ref = self.get_ref()
         ref.modified = datetime.now()
         ref.display_name = self.get_display_name()
         ref.save()
-        super(Resource, self).save()
-
 
 
 def get_or_create(user, owner, **kwargs):

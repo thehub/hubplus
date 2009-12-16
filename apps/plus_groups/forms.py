@@ -9,9 +9,10 @@ from django.utils.translation import ugettext_lazy as _, ugettext
 from django.contrib.sites.models import Site
 from django.contrib.auth.models import User
 
-from apps.plus_lib.utils import make_name
-from apps.plus_groups.models import TgGroup, name_from_title, Location
-from apps.plus_lib.utils import HTMLField
+
+from apps.plus_groups.models import TgGroup, Location
+
+from apps.plus_lib.utils import HTMLField, title_to_name
 
 from django.conf import settings
 from apps.plus_permissions.default_agents import get_or_create_root_location
@@ -45,11 +46,14 @@ class AddContentForm(forms.Form):
     create_iface = forms.ChoiceField(choices=CREATE_INTERFACES)
         #ensure name is unique for group and type
     def clean(self):
+    
+        self.cleaned_data['name'] = title_to_name(self.cleaned_data['title'])
+        if not self.cleaned_data['name'] :
+            self._errors['title']=_('Title must include alphabetic and / or numeric characters.')
+
         if self._errors:
             return self.cleaned_data
-    
 
-        self.cleaned_data['name'] = name_from_title(self.cleaned_data['title'])
         self.cleaned_data['type_string'] = self.cleaned_data['create_iface'].split('Create')[1]
         cls = ContentType.objects.get(model=self.cleaned_data['type_string'].lower()).model_class()
         group = TgGroup.objects.get(id=self.cleaned_data['group'])
@@ -81,7 +85,7 @@ class TgGroupForm(forms.Form):
     
     def clean_name(self):
         name = self.cleaned_data['name']
-        group_name=make_name(name)
+        group_name=title_to_name(name)
         if TgGroup.objects.filter(group_name=group_name):
             raise forms.ValidationError(_("We already have a group with this name."))
 
