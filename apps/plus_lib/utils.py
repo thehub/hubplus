@@ -104,6 +104,7 @@ def clean_name(name) :
     name = name.strip()
     name = sub_under(name)
     name = strip_chars(name)
+    name = name.lower()
     return name
 
 def clean_tag(tag) :
