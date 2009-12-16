@@ -31,7 +31,7 @@ def add_tag(request, tagged, tagged_for=None, tag_string=None):
         tag_value = form.cleaned_data['tag_value']
         tag, added = tag_add(tagged, tag_type, tag_value, tagged_by, tagged_for)
         tag_url = reverse('explore_filtered', args=[tag.keyword])
-        data = simplejson.dumps({'keyword':tag.keyword, 'tag_type':tag.tag_type, 'tagged':'yourself', 'added':added, 'tag_url':tag_url}) #why yourself?
+        data = simplejson.dumps({'keyword':tag.keyword, 'tag_type':tag.tag_type, 'tagged':tagged.get_display_name(), 'added':added, 'tag_url':tag_url}) #why yourself?
     else:
         data = {}
         for key, err in form.errors.items():

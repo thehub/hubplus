@@ -43,6 +43,7 @@ class WikiPageViewer:
     created_by = InterfaceReadProperty
     creation_time = InterfaceReadProperty
     author = InterfaceReadProperty
+    get_display_name = InterfaceReadProperty
 
 class WikiPageEditor:
     set_name = InterfaceCallProperty
