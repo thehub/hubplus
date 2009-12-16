@@ -66,7 +66,9 @@
 	      <input type="radio" class="radio second" name="second" {% ifequal forloop.counter 2 %}checked="checked"{% endifequal %} />
 	    </td>
 	    <td>
-	      <h4>{{ver.revision.comment}}</h4> <span>{% trans "by" %} <a href="{% url profile_detail ver.revision.user.user_name %}">{{ver.revision.user.display_name}}</a></span>
+	      <h4>{{ver.revision.comment}}</h4> 
+	      {% if ver.revision.user.user_name %}
+	      <span>{% trans "by" %} <a href="{% url profile_detail ver.revision.user.user_name %}">{{ver.revision.user.display_name}}</a></span> {% endif %}
 	      <span class="label_time">{% trans "on" %} {{ ver.revision.date_created|date }} {% trans "at" %} {{ver.revision.date_created|time}}</span>
 	    </td>
 	    <td>
