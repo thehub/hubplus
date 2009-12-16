@@ -63,16 +63,60 @@ def i_debug(f):
     return g
 
 
-def make_name(s):
+import re
+def title_validation_regex_str() :
+    return u"^[\w_ \.\?]+$"
+
+def title_validation_regex() :
+    return re.compile(title_validation_regex_str(),re.UNICODE)
+
+def tag_validation_regex_str() :
+    return u"[\w]+$"
+
+def tag_validation_regex() :
+    return re.compile(tag_validation_regex_str(),re.UNICODE)
+
+def name_validation_regex_str() :
+    return u"^[\w]+$"
+
+def name_validation_regex() :
+    return re.compile(name_validation_regex_str(),re.UNICODE)
+
+def strip_chars(s) :
+    r = re.compile('[\W]')
+    return r.sub('',s)
+
+def sub_under(s) :
+    r = re.compile('[\/\\ \-&]')
+    return r.sub('_',s)
+
+def bad_name(s) :
+    if name_validation_regex().match(s) :
+        return False # name ok
+    return True # bad name
+    
+def bad_tag(s) :
+    if tag_validation_regex().match(s) :
+        return False # tag ok
+    return True # bad tag keyword
+
+def clean_name(name) :
+    name = name.strip()
+    name = sub_under(name)
+    name = strip_chars(name)
+    return name
+
+def clean_tag(tag) :
+    tag = tag.strip()
+    tag = sub_under(tag)
+    tag = strip_chars(tag)
+    #tag = tag.strip('_')
+    tag = tag.strip('-')
+    return tag
+
+def title_to_name(title) :    
     """Turn the argument into a name suitable for a URL """
-    s=s.strip()
-    s=s.replace(' ','_')
-    s=s.replace('/','_')
-    s=s.replace(',','')
-    s=s.lower()
-    if isinstance(s,str):
-        s = unicode(s,"utf-8")
-    return s
+    return clean_name(title)
 
 
 from messages.models import Message
