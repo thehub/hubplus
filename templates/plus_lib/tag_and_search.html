@@ -11,6 +11,7 @@
     {% endif %}
     <input type="text" class="text" name="search" value="{{listing_args.search_terms}}" />
     <input type="submit" class="button" id="submit_search" value="{% trans 'Search' %}" />
+    <p>Need <a href="{% url help %}#searching_site">help</a>?</p>
     <ul class="tag_list large">
       {% for tag, remove_link in remove_tag_links %}
       <li>
