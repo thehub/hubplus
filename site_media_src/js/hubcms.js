@@ -721,13 +721,16 @@ var create_map = function (map_ele, callback) {
     if (GBrowserIsCompatible()) {
 	var location_str = map_ele.html();
 	if (location_str) {
-	    map_ele.html("");
-	    var map = new GMap2(map_ele.get(0));
+	    //map_ele.html("");
+	    //var map = new GMap2(map_ele.get(0));
 	    var geocoder = new GClientGeocoder();
 	    geocoder.getLatLng(location_str, function (point) {
-				   console.log(point);
-				   alert(point);
-				   callback(map, point);
+				   if (point) {
+				       map_ele.html("");
+				       var map = new GMap2(map_ele.get(0));
+
+				       callback(map, point);
+				   }
 			       });
 	}
     }
