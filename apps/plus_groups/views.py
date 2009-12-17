@@ -171,6 +171,7 @@ def group(request, group, template_name="plus_groups/group.html", current_app='p
     #    status_since = ''
     
 
+
     try:
         group.get_all_sliders
         perms_bool = True
@@ -193,7 +194,7 @@ def group(request, group, template_name="plus_groups/group.html", current_app='p
 
     return render_to_response(template_name, {
             "head_title" : "%s" % group.get_display_name(),
-            #"status_type" : 'group',
+            "status_type" : 'group',
             #"status_since" : status_since,
             "group" : TemplateSecureWrapper(group),
             "target_class" : ContentType.objects.get_for_model(group.get_inner()).id,

@@ -8,7 +8,7 @@
     </div>
 
     {% if can_update_status %}
-    <input type="button" class="button toggle" value="Update"></input>
+    <input type="button" class="button toggle" value="{% if status_text %}{% trans "Update" %}{% else %}{% trans "Add Status" %}{% endif %}"></input>
     {% endif %}
 
     <div class="edit">
