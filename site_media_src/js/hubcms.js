@@ -721,17 +721,22 @@ var create_map = function (map_ele, callback) {
     if (GBrowserIsCompatible()) {
 	var location_str = map_ele.html();
 	if (location_str) {
-	    //map_ele.html("");
-	    //var map = new GMap2(map_ele.get(0));
+	    map_ele.html("");
+	    var map = new GMap2(map_ele.get(0));
 	    var geocoder = new GClientGeocoder();
 	    geocoder.getLatLng(location_str, function (point) {
 				   if (point) {
-				       map_ele.html("");
-				       var map = new GMap2(map_ele.get(0));
-
+				       // ugly ... we get the edit_button, and add a br to push the map out of the way
+				       map_ele.prev().after('<br/>');  
 				       callback(map, point);
+				   } else {
+				       map_ele.attr("style",""); // get rid of the grey box
+				       map_ele.html("<div class=\'errors\'>Google maps doesn't recognise a location : "+location_str+"</div>");
 				   }
 			       });
+	} else {
+	    
+	    map_ele.html("");
 	}
     }
 };
