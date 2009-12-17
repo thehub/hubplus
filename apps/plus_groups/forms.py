@@ -12,7 +12,7 @@ from django.contrib.auth.models import User
 
 from apps.plus_groups.models import TgGroup, Location
 
-from apps.plus_lib.utils import HTMLField, title_to_name
+from apps.plus_lib.utils import HTMLField, title_to_name, title_validation_regex
 
 from django.conf import settings
 from apps.plus_permissions.default_agents import get_or_create_root_location
@@ -61,6 +61,8 @@ class AddContentForm(forms.Form):
         return self.cleaned_data
     
 
+
+
 def validate_name_url(cls, group, cleaned_data):
     try:
         obj = cls.objects.get(name=cleaned_data['name'], in_agent=group.get_ref(), stub=False)
@@ -85,6 +87,8 @@ class TgGroupForm(forms.Form):
     
     def clean_name(self):
         name = self.cleaned_data['name']
+        if not title_validation_regex().match(name) :
+            raise forms.ValidationError(_("The name you have entered contains forbidden characters"))
         group_name=title_to_name(name)
         if TgGroup.objects.filter(group_name=group_name):
             raise forms.ValidationError(_("We already have a group with this name."))
@@ -92,6 +96,7 @@ class TgGroupForm(forms.Form):
         self.cleaned_data['display_name'] = name
         self.cleaned_data['group_name'] = group_name
         return group_name
+
 
     def clean_is_hub(self) :
         if self.cleaned_data['is_hub'] == 'True' : 
