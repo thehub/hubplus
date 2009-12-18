@@ -1,12 +1,13 @@
 var listing_ready = function () {
-    jq('.tabbed_content #resources form.order_list').live('submit', function () {
+    jq('.tabbed_content #resources form.order_list').submit(function () {
 	var form = jq(this); //.closest('form');
-	jq('.tabbed_content #resources').load(form.attr('action') + ' form', form.serialize());
+	jq('.tabbed_content #resources').load(form.attr('action') + ' form', form.serialize(), function () {
+	    listing_ready();
+	});
 	return false;
     });
-    jq('.order_list').live('change', function () {
+    jq('.order_list').change(function () {
 	jq(this).submit();
-	return false;
     });
 };
 
