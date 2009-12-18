@@ -151,37 +151,24 @@ class Resource(models.Model):
         ref.save()
 
 
-def get_or_create(user, owner, **kwargs):
-    
-    resources = Resource.objects.filter(in_agent=owner.get_ref(), name=kwargs['name'])
+def update_attributes(resource_obj, user, **kwargs) :
 
-    if resources.count() < 1 :
-        # when creating from an import script
-        resource = owner.create_Resource(user, in_agent=owner.get_ref(), 
-                                         title=kwargs['title'], description=kwargs['description'],
-                                         author=kwargs['author'], license=kwargs['license'],
-                                         created_by=user, name=kwargs['name'])
-        resource.save()
-        if kwargs.has_key('resource') :
-            resource.get_inner().resource = kwargs['resource']
-        resource.save()
-    elif resources.count() == 1:
-        resource = resources[0]
+    resource_obj.title = kwargs['title']
+    resource_obj.name = kwargs['name']
+    resource_obj.description= kwargs['description']
+    resource_obj.author = kwargs['author']
+    resource_obj.license = kwargs['license']
+
+    resource_obj.save()
+
+    if kwargs.has_key('resource') and kwargs['resource'] :
         try :
-            resource = resource.get_inner()
+            resource_obj = resource_obj.get_inner()
         except :
             pass
-        resource.set_name(kwargs['name'])
-        if 'name' in kwargs:
-            del kwargs['name']
-        resource.in_agent = owner.get_ref()
-        resource.created_by = user
-        if 'in_agent' in kwargs:
-            del kwargs['in_agent']
-        if 'created_by' in kwargs:
-            del kwargs['created_by']
-        for k,v in kwargs.iteritems() :
-            setattr(resource, k, v)
+        resource_obj.resource = kwargs['resource']
+        resource_obj.created_by = user
+        resource_obj.save()
 
-    resource.save()
-    return resource
+    return resource_obj
+

@@ -46,13 +46,13 @@ class UploadFileForm(forms.Form):
         if not self.cleaned_data['resource'] and not obj.resource:
             self._errors['resource'] = "You must upload a file"
 
-        self.cleaned_data['name'] = title_to_name(self.cleaned_data['title'])
+        self.cleaned_data['name'] = title_to_name(self.data['title'])
         # should use validate_name_url from plus_groups form
+
         if self.cleaned_data['name'] != obj.name:
-            try:
-                Resource.objects.get(name=self.cleaned_data['name'], in_agent=obj.in_agent)
-                self._errors['title'] = 'An Upload with the name/url %s already exists in %s' %(self.cleaned_data['name'], obj.in_agent.obj.display_name) 
-            except Resource.DoesNotExist:
-                pass
+            rs = Resource.objects.filter(name=self.cleaned_data['name'], in_agent=obj.in_agent)
+            if rs :
+                if rs[0].id != obj.id :
+                    self._errors['title'] = 'An Upload with the name/url %s already exists in %s' %(self.cleaned_data['name'], obj.in_agent.obj.display_name) 
         return self.cleaned_data
     

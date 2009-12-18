@@ -11,7 +11,7 @@ from django.core.exceptions import ValidationError
 from django.utils.translation import ugettext_lazy as _
 
 from apps.plus_resources.forms import UploadFileForm
-from apps.plus_resources.models import Resource, get_or_create
+from apps.plus_resources.models import Resource, update_attributes
 
 from django.contrib.auth.decorators import login_required
 
@@ -26,16 +26,10 @@ from django.core.files import File
 from apps.plus_permissions.exceptions import PlusPermissionsNoAccessException
 
 import os
-    
 
-def handle_uploaded_file(user, owner, form, f_data) :
-    kwargs = dict([(k,v) for k,v in form.cleaned_data.iteritems()])
-    resource = get_or_create(user, owner, **kwargs)
-    resource.stub = False
-    resource.save()
-    return resource
 
 def change_parent(user, resource, new_parent, form) :
+    # XXX not used yet
     if new_parent.has_interface('TgGroup.CreateResource') :
         current = secure_wrap(resource.in_agent.obj, user)
         
@@ -46,6 +40,7 @@ from apps.plus_tags.models import get_tags_for_object, tag_item_delete, TagItem
 @secure_resource(TgGroup)
 def edit_resource(request, group, resource_name,  
                   template_name='plus_resources/upload.html', success_url=None, current_app="plus_groups", **kwargs) :
+
 
     if not group :
         raise Http404(_('This group does not exist'))
@@ -62,18 +57,27 @@ def edit_resource(request, group, resource_name,
         perms_bool = False
 
     if request.POST:
+        
         post_kwargs = request.POST.copy()
         post_kwargs['obj'] = secure_upload
+
         form = UploadFileForm(post_kwargs, request.FILES, user=request.user)
+
         if form.is_valid():
-            if form.cleaned_data['resource']:
-                resource = handle_uploaded_file(request.user, group, form, form.cleaned_data['resource'])
-            
-            if form.cleaned_data['new_parent_group'] :
-                change_parent(request.user, resource, form.cleaned_data['new_parent_group'], form)
+            resource = update_attributes(secure_upload, request.user,
+                                         title = form.cleaned_data['title'],
+                                         name  = form.cleaned_data['name'],
+                                         license = form.cleaned_data['license'],
+                                         author = form.cleaned_data['author'],
+                                         description = form.cleaned_data['description'],
+                                         resource = form.cleaned_data['resource'])
+   
+            resource.stub = False
+            resource.in_agent = group.get_ref()
+            resource.save()
             
             if not success_url :
-                success_url = reverse(current_app + ':view_Resource', args=(group.id, secure_upload.name))
+                success_url = reverse(current_app + ':view_Resource', args=(group.id, resource.name))
 
             return HttpResponseRedirect(success_url)
         else:

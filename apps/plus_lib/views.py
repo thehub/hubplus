@@ -5,13 +5,14 @@ from apps.plus_groups.models import TgGroup
 from apps.profiles.forms import ProfileForm, HostInfoForm
 from apps.plus_groups.forms import TgGroupForm
 from django.shortcuts import render_to_response, get_object_or_404
-
+from apps.plus_resources.forms import UploadFileForm
 
 # Form classes which validate fields
 validation_mapping = {
     "Profile" : ProfileForm,
     "HostInfo" : HostInfoForm,
     "TgGroup" : TgGroupForm,
+    "Resource" : UploadFileForm,
 }
 
 
@@ -45,18 +46,13 @@ def field(request, default='', **kwargs) :
 
     new_val = request.POST['value']
 
-
     if validation_mapping.has_key(object.get_inner_class().__name__) :
         # there's a form class which may validate this field
         try:
-            try :
-                form = validation_mapping[object.get_inner_class().__name__]
-                field_validator = form.base_fields[fieldname]
-                new_val = field_validator.clean(new_val)
-            except Exception, e:
-                print e
-
-
+            form = validation_mapping[object.get_inner_class().__name__]
+            field_validator = form.base_fields[fieldname]
+            new_val = field_validator.clean(new_val)
+            
         except ValidationError, e:
             return HttpResponse('%s' % e, status=500)
 

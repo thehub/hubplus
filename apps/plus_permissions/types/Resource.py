@@ -27,6 +27,9 @@ class ResourceEditor :
     author = InterfaceWriteProperty
     license = InterfaceWriteProperty
     resource = InterfaceWriteProperty
+    stub = InterfaceWriteProperty
+    name= InterfaceWriteProperty
+    in_agent = InterfaceWriteProperty
     
 class ResourceManager :
     delete = InterfaceCallProperty
