@@ -372,7 +372,7 @@ class HubPlusApplicationForm(forms.Form):
     organisation = forms.CharField(label=_("Organisation"), required=False, widget=forms.TextInput())
     address = forms.CharField(label=_("Address"), required=True, widget=forms.TextInput())
     country = forms.ChoiceField(label=_("Country"), required=True, widget=forms.Select(), choices=COUNTRIES)
-    post_or_zip = forms.CharField(label=_("Zip/Postcode"), required=True, widget=forms.TextInput())
+    post_or_zip = forms.CharField(label=_("Zip/Postcode"), required=False, widget=forms.TextInput())
     about_and_why = forms.CharField(
         label=_("Tell us a bit about yourself what you do and why you're interested in the Hub?"),
         required=True, widget=forms.TextInput()

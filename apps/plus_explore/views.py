@@ -187,7 +187,7 @@ def plus_search(tags, search, search_types, order=None, in_group=None, extra_fil
             results_map['All'] = items
         else:
             items_len = 0
-            
+            results_map = {'All':EmptySearchQuerySet()}            
 
     if order == 'modified':
         results_map['All'] = results_map['All'].order_by('-' + order)

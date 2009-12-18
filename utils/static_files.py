@@ -39,11 +39,14 @@ def compile(path_or_filename_list, default_path="static/javascript", output_file
    """
    #get the descriptors
    file_list = get_file_list(path_or_filename_list, default_path)
-   compiled_js = ""
+   if minified:
+      compiled_js = "compiled = true;"
+   else:
+      compiled_js = ""
+
    for file_name in file_list:
       if minified:
-         compiled_js += minify(file_name)
-         compiled_js += "compiled = true;"
+         compiled_js += minify(file_name) + ';\n'
       else:
          compiled_js += open(file_name).read() + '\n'
 

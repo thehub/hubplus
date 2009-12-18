@@ -135,9 +135,9 @@
       {% if message %}
       <li class="first"><a href="{% url plus_groups:message_members group.id %}">Message members</a></li>
       {% endif %}
-      {% if invite %}
+<!--      {% if invite %}
       <li><a href="{% url plus_groups:invite_to_group group.id %}">Invite members</a></li>
-      {% endif %}
+      {% endif %} -->
       {% if can_join %}
       <li><a href="{% url plus_groups:join_group group.id %}">Join {{GROUP_OR_HUB}}</a></li>
       {% endif %}

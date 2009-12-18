@@ -233,7 +233,7 @@ def create_messages(sender, instance, **kwargs):
             else:
                 sender = get_admin_user()
 
-            review_url = reverse('plus_groups:list_open_applications', args=[application.group.id])
+            review_url = 'http://' + settings.DOMAIN_NAME + reverse('plus_groups:list_open_applications', args=[application.group.id])
 
             if application.group.id == get_all_members_group().id:
                 group_name = settings.SITE_NAME.encode('utf-8')

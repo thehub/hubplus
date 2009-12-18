@@ -2,13 +2,15 @@
 <div class='external_links'>
   <ul class="list_of_links">
     {% for l, l_del in links %}
-    {% if l.text %}
-    <dl id='links{{l.id}}'><dt>{{l.text}}</dt><dd><a href="{{l.url}}">{{l.url}}</a> 
-	{% if l_del %}<a class="remove_link button" href="" id="{% url remove_link l.id %}">X</a>{% endif %}
-    </dd></dl>
-    {% endif %}
+    <li>
+      {% if l.text %}
+      <dl id='links{{l.id}}'><dt>{{l.text}}</dt><dd><a href="{{l.url}}">{{l.url}}</a> 
+	  {% if l_del %}<a class="remove_link button" href="" id="{% url remove_link l.id %}">X</a>{% endif %}
+      </dd></dl>
+      {% endif %}
+    </li>
     {% endfor %}
-  </ul>
+    <li>
 
   {% if can_create %}
   <form target="{% url add_link %}" class="link_form">
@@ -22,10 +24,12 @@
 	  </tr>
 	  <tr>
 	    <td><input name="text" id="text" class="link_text text" value="{{form_data.text}}" /><span class="error_message">{{errors.text}}</span></td>
-	    <td><input name="url" id="url" class="url text" value="{{form_data.url}}" /><span class="error_message">{{errors.url}}</span></td>
+	    <td><input name="url" id="url" class="url_text text" value="{{form_data.url}}" /><span class="error_message">{{errors.url}}</span></td>
 	    <td><input type="submit" value="{% trans 'add' %}" class='submit_link button' /></td>
 	  </tr>
         </table>
   </form>
   {% endif %}
+    </li>
+    </ul>
 </div>

@@ -72,10 +72,12 @@ Thanks for using our site!
 APPLICATION_MESSAGE = """
 You have received an application to: {{group_name}}
 
-Please <a href="{{review_url}}">review applications to this group</a>
+Please review applications to this group at {{review_url}}.
 
 from: {{first_name}} {{last_name}}, {{organisation}}
-email:{{email_address}}
+
+email: {{email_address}}
+
 {% if find_out %}
 {{first_name}} {{last_name}} found out about {{group_name}} by:
 

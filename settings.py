@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 # Django settings for complete pinax project.
+# test comment
 
 import os.path
 import pinax
