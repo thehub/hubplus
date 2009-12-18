@@ -88,7 +88,7 @@ def show_section(profile, attribute_list) :
 def profile(request, username, template_name="profiles/profile.html"):
     other_user = get_object_or_404(User, username=username)
     other_user.save()
-    
+
     p = other_user.get_profile()
     p.save()
 
@@ -149,6 +149,7 @@ def profile(request, username, template_name="profiles/profile.html"):
     profile = other_user.get_profile()
     user = request.user
 
+    # should be deprecated
     if not user.is_authenticated():
         user = get_anon_user()
 
@@ -165,6 +166,9 @@ def profile(request, username, template_name="profiles/profile.html"):
         status_since = ''
 
     profile = secure_wrap(profile, user)
+    profile.user # trigger permission exception if no access
+    
+
     try:
         profile.get_all_sliders
         perms_bool = True
