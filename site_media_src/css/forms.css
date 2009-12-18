@@ -68,7 +68,15 @@ textarea {
 	border-color: #777 #bbb #ddd #aaa;
 	padding		: 3px 3px;
 }
-
+#about_block .link_form table {
+        width: 300px;
+}
+input.link_text {
+        width: 90%; 
+}
+input.url_text {
+        width: 90%; 
+}
 .large input.text,
 input.text.large {
 	font-size	: 1.3em;

@@ -20,15 +20,13 @@
 	<ul class="icon_text_button_set">
 		{% if permissions %}<li><a class="icon_text_button bt_permissions" href="#" rel="#overlay" id="{{upload.edit_key}}permissionedit">{% trans "Permissions" %}</a></li>{% endif %}
 	</ul>
-
 	<fieldset>
-
 		<ul>
 			<li id="description_area">
 				<div class="label">
 					<label for="description">{% trans "Description" %}<abbr class="required" title="required"> *</abbr></label>
 				</div>
-				<div class="input">
+				<div class="value">
 					<textarea id="description" class="text" name="description" rows="10" maxlength="200">{% if data.description %}{{data.description}}{% else %}{{upload.description}}{% endif %}</textarea>
 					{{errors.description}}
 				</div>
@@ -38,22 +36,21 @@
 				<div class="label">
 					<label for="resource">{% trans "Select resource" %}<abbr class="required" title="required"> *</abbr></label>
 				</div>
-				<div class="input">
+				<div class="value">
 					<input  id="resource" name="resource" class="file" type="file" />
 					{{errors.resource}}
 				</div>
 				{% else %}
-				{% if upload.download_url %}
-				<div class="label">
+				    {% if upload.download_url %}
+				    <div class="label">
 					<label for="resource"><abbr class="required" title="required">* </abbr>{% trans "File" %}</label>
-					<a href="{{upload.download_url}}" class="file_name">{{upload.get_file_name}}</a><span><a href="#" class="replace_file_button">{% trans "Replace File" %}</a></span>
-				</div>
-				<div class="input">
-					<input  id="resource" name="resource"  type="file" class="hidden replace_file" />
-					<span><a href="#" class="keep_existing hidden" >{% trans "Keep existing file" %}</a></span>
+				    </div>
+				    <div class="value">
+				        <a href="{{upload.download_url}}" class="file_name">{{upload.get_file_name}}</a><span> <a href="#" class="replace_file_button">- {% trans "Replace File" %}</a></span>
+					<span> <input  id="resource" name="resource"  type="file" class="hidden replace_file" /><a href="#" class="keep_existing hidden" >{% trans "Keep existing file" %}</a></span>
 					{{errors.resource}}
-				</div>
-				{% endif %}
+				    </div>
+				    {% endif %}
 				{% endif %}
 			</li>
 		</ul>
@@ -72,7 +69,7 @@
 				<div class="label">
 					<label for="author">{% trans "Copyright / Author" %}</label>
 				</div>
-				<div class="input">
+				<div class="value">
 					<input  id="author" name="author" class="text" type="text" value='{% if data.author %}{{data.author}}{% else %}{{upload.author}}{% endif %}'/>
 					{% if errors.author %}<span class="error">{{errors.author}}</span>{% endif %}
 				</div>
@@ -81,7 +78,7 @@
 				<div class="label">
 					<label for="license">{% trans "License" %} <span class="extra">('©2009', 'GPL')</span></label>
 				</div>
-				<div class="input">
+				<div class="value">
 					<input name="license" id="license" class="text" type="text" value="{% if data.license %}{{data.license}}{% else %}{{upload.license}}{% endif %}" />
 					{% if errors.license %}<span class="error">{{errors.license}}<span>{% endif %}
 				</div>
