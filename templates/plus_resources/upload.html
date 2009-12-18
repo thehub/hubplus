@@ -29,7 +29,7 @@
 					<label for="description">{% trans "Description" %}<abbr class="required" title="required"> *</abbr></label>
 				</div>
 				<div class="input">
-					<textarea id="description" class="text" name="description" rows="3" maxlength="20">{% if data.description %}{{data.description}}{% else %}{{upload.description}}{% endif %}</textarea>
+					<textarea id="description" class="text" name="description" rows="10" maxlength="200">{% if data.description %}{{data.description}}{% else %}{{upload.description}}{% endif %}</textarea>
 					{{errors.description}}
 				</div>
 			</li>
