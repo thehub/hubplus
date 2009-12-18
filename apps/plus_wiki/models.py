@@ -19,6 +19,19 @@ class WikiPage(models.Model):
         except WikiPage.DoesNotExist:
             pass
 
+    def move_to_new_group(self, group) :
+        # XXX need to refactor out commonalities between wikipages and uploads like check_nmae and move_to_new_group
+        try :
+            WikiPage.check_name(self.name, group.get_ref(), self)
+        except ValueError, e:
+            raise NameConflictException(_("Group %(group_name)s already has a page called %(page_name)")%{'group_name':group.group_name,'page_name':name})
+
+        self.in_agent = group.get_ref()
+        self.acquires_from(group)
+        self.save()
+
+
+
     def set_name(self, name):
         self.check_name(name, self.in_agent, obj=self)
         self.name = name
