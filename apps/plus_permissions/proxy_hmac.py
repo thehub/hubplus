@@ -4,7 +4,8 @@ from django.conf import settings
 from django.contrib.auth.models import User
 
 def attach_hmac(url, proxy):
-    # NB: url needs to be result of django request.get_full_path()
+    #proxy should be taken directly from request.user here
+
     if url.find('=') > 0 :
         url += '&'
     else :

@@ -42,13 +42,13 @@ def invite_url(parser, token):
     """
     group = token.split_contents()[1]
     try:
-        group = int(group)
+        group = str(int(group))
     except ValueError:
         group = None
 
     if group==None:
-        group = get_all_members_group().id
-    return UrlNode("groups:site_invite", args=[group])
+        group = str(get_all_members_group().id)
+    return UrlNode("acct_invite")
     
 
 register.tag('invite_url', invite_url)

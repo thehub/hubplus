@@ -14,8 +14,8 @@ from django.db import transaction
 from apps.plus_lib.status import StatusDescriptor
 from django.contrib.contenttypes.models import ContentType
 
-
-
+from django.template import Template, Context
+from django.contrib.contenttypes import generic
 
 class Location(models.Model):
     class Meta:
@@ -226,7 +226,24 @@ try :
         def apply(self, user, applicant=None, about_and_why=''):
             if not applicant:
                 raise ValueError('there must be an applicant')
-            self.create_Application(user, applicant=applicant, request=about_and_why, group=self)
+            self.create_Application(user, 
+                                    applicant=applicant, 
+                                    request=about_and_why, 
+                                    group=self)
+
+
+        def invite_member(self, user, invited, message=''):
+            if not invited:
+                raise ValueError('there must be an invitee')
+
+            invite = self.create_MemberInvite(user,
+                                              invited=invited, 
+                                              invited_by=user, 
+                                              group=self, 
+                                              status=ACCEPTED_PENDING_USER_SIGNUP)
+
+
+
 
         def change_avatar(self) :
             pass
@@ -252,31 +269,6 @@ try :
 
             if isinstance(user_or_group, self.__class__) and self.child_groups.filter(id=user_or_group.id):
                 self.child_groups.remove(user_or_group)
-
-
-        def invite_member(self, invited, special_message, invited_by, url_root ) : 
-            invite = MemberInvite(invited=invited, invited_by=invited_by, 
-                                  group=self, status=ACCEPTED_PENDING_USER_SIGNUP)
-            invite_url = invite.make_accept_url(url_root)
-            if special_message :
-                message = """<p>%s</p>""" % special_message
-            else :
-                message = """
-<p>%s is inviting you to join the %s group.</p>
-""" % (invited_by.get_display_name(), self.get_display_name())
-            message = message + """
-<p><a href="%s">Click here to accept</a>
-""" % invite_url
-
-            invite.message = message
-            invite.save()
-
-            from apps.plus_lib.utils import message_user 
-
-            message_user(invited_by, invited, 'Invitation to join %s' % self.get_display_name(), message)
-            message_user(invited_by, invited_by, "Invitation sent", """You have invited %s to join %s""" % 
-                         (invited.get_display_name(), self.get_display_name()))
-
         
         def get_users(self):
             return self.users.all()
@@ -478,24 +470,76 @@ def get_permission_agent_name(self) :
     return self.username
 
 
-# Now GenericReferences replace "Agents" to make a many-to-many relationship with agents such as 
-# Users and TgGroups
+from apps.plus_contacts.models import Contact
 
-
-
-# Move MemberInvite (to group) here
 class MemberInvite(models.Model) :
-    # Actually, it's useful to have a generic invited member,
-    invited = models.ForeignKey(User, related_name='invited_member')
+    invited_content_type = models.ForeignKey(ContentType, related_name='invited_type')
+    invited_object_id = models.PositiveIntegerField()
+    invited = generic.GenericForeignKey('invited_content_type', 'invited_object_id') # either user or contact
+
     invited_by = models.ForeignKey(User, related_name='member_is_invited_by')
     group = models.ForeignKey(TgGroup)
     message = models.TextField()
     status = models.IntegerField()
 
-    def make_accept_url(self, site_root) :
-        url = attach_hmac("/groups/%s/add_member/%s/" % (self.group.id, self.invited.username), self.invited_by)
-        return 'http://%s%s' % (site_root, url)
+    def make_accept_url(self):
+        if self.is_site_invitation():
+            url = attach_hmac("/signup/%s/add_member/%s/" % (self.group.id, self.invited.first_name + self.invited.last_name), self.invited_by)
+        else:
+            url = attach_hmac("/groups/%s/add_member/%s/" % (self.group.id, self.invited.username), self.invited_by)
+        return 'http://%s%s' % (settings.DOMAIN_NAME, url)
 
+    def is_site_invitation(self):
+        """ Is this an invitation to someone who's not yet a site-member and needs an User / Profile object created"""
+        
+        if isinstance(self.invited, Contact) and not self.invited.get_user():
+            return True
+        return False
+
+    def accept_invite(self, sponsor, site_root, **kwargs):
+        pass
+    
+    
+def invite_mail(invited, sponsor, invite):
+    message = Template(settings.INVITE_EMAIL_TEMPLATE).render(
+        Context({'sponsor':sponsor.get_display_name(),
+                 'first_name':invited.first_name, 
+                 'last_name':invited.last_name}))
+    return invited.send_link_email("Invite to join MHPSS", message, sponsor)
+
+
+def invite_messages(sender, instance, **kwargs):
+    from apps.plus_lib.utils import message_user
+    if instance is None:
+        return
+    member_invite = instance
+    if member_invite.is_site_invitation():
+        invite_mail(member_invite.invited, member_invite.invited_by, member_invite)
+    else:
+        invite_url = member_invite.make_accept_url()
+        if member_invite.message :
+            message = """<p>%s</p>""" % member_invite.message
+        else :
+            message = """
+<p>%s is inviting you to join the %s group.</p>
+""" % (member_invite.invited_by.get_display_name(), member_invite.group.get_display_name())
+
+            message = message + """
+<p><a href="%s">Click here to join %s</a>
+""" % (invite_url, member_invite.group.get_display_name())
+            
+            member_invite.message = message
+            member_invite.save()
+
+            from apps.plus_lib.utils import message_user 
+
+            message_user(user, member_invite.invited, 'Invitation to join %s' % member_invite.group.get_display_name(), message, settings.DOMAIN_NAME)
+            message_user(user, invited_by, "Invitation sent", """You have invited %s to join %s""" % 
+                         (member_invite.invited.get_display_name(), member_invite.group.get_display_name()), settings.DOMAIN_NAME)
+
+
+if "messages" in settings.INSTALLED_APPS:
+    post_save.connect(invite_messages, sender=MemberInvite, dispatch_uid="apps.plus_groups.models")
 
 def get_hubs() :
     # one place to define the "get list of hubs" we need for region dropdown

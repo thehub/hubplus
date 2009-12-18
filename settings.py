@@ -185,7 +185,6 @@ INSTALLED_APPS = (
     'projects',
     'misc',
     'photos',
-    'tag_app',
     'django.contrib.admin',
     'haystack',
     'django403',

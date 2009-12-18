@@ -1,3 +1,11 @@
+from django.utils.translation import ugettext
+from account.utils import get_default_redirect
+from forms import SignupForm, InviteForm,HubPlusApplicationForm, SettingsForm
+from apps.plus_permissions.api import secure_resource, secure_wrap
+from apps.plus_permissions.proxy_hmac import hmac_proxy
+from apps.plus_contacts.models import Application
+from django.db import transaction
+
 from django.conf import settings
 from django.shortcuts import render_to_response
 from django.http import HttpResponseRedirect, HttpResponseForbidden, Http404
@@ -21,7 +29,7 @@ from apps.account.forms import SignupForm, AddEmailForm, LoginForm, \
     ChangePasswordForm, SetPasswordForm, ResetPasswordForm, \
     ChangeTimezoneForm, ChangeLanguageForm, TwitterForm, ResetPasswordKeyForm
 
-from forms import HubPlusApplicationForm, SettingsForm
+
 
 from emailconfirmation.models import EmailAddress, EmailConfirmation
 
@@ -363,18 +371,13 @@ other_services_remove = login_required(other_services_remove)
 
 from apps.plus_lib.utils import get_hubs, get_virtual_groups
 
-def apply(request, form_class=HubPlusApplicationForm, template_name="account/apply_form.html"):
 
-    user = request.user
-    if user.__class__ == AnonymousUser:
-        user = get_anon_user()
-        
-    hubs = get_hubs()
 
+def apply(request, form_class=HubPlusApplicationForm, template_name="account/apply_form.html"):        
     if request.method == "POST":
         form = form_class(request.POST)
         if form.is_valid():
-            application_to = form.save(user)
+            application_to = form.save(request.user)
             return render_to_response('plus_contacts/application_thanks.html',{
                     'application_to': application_to,
                     "head_title": _('Thanks for your application'),
@@ -382,6 +385,9 @@ def apply(request, form_class=HubPlusApplicationForm, template_name="account/app
                     }, context_instance=RequestContext(request))
     else:
         form = form_class()
+
+    hubs = get_hubs()
+
     default_country = form.data.get('country', False) and form.data['country'] or "UK"
     country_field = form.fields['country'].widget.render("country", default_country)
     return render_to_response(template_name, {
@@ -391,5 +397,98 @@ def apply(request, form_class=HubPlusApplicationForm, template_name="account/app
         "head_title": _("Like to join us?"),
         "head_title_status" : '',
  
+    }, context_instance=RequestContext(request))
+
+
+
+
+
+@login_required
+def site_invite(request, template_name='account/invite_non_member.html', **kwargs) :
+    if request.POST:
+        form = InviteForm(request.POST)
+        if form.is_valid():
+            form.save(request.user)
+            return HttpResponseRedirect(reverse('messages_all'))
+        else:
+            form = InviteForm(request.POST)
+            
+    else :
+        form = InviteForm()
+        
+    return render_to_response(template_name, {
+            'form':form,
+            'hubs':get_hubs(),
+            }, context_instance=RequestContext(request))
+                              
+
+
+
+@transaction.commit_on_success
+@hmac_proxy
+@secure_resource(Application)
+def proxied_signup(request, application, form_class=SignupForm,
+                   template_name="account/accepted_signup.html", success_url=None):
+    # request.user is the user who has invited / authorized the signup
+    if success_url is None:
+        success_url = get_default_redirect(request)
+
+    # because this is a signup request that has an application object, we expect the application
+
+    display_name = "Visitor"
+    sponsor = request.user # the actual user who authorized this acceptance
+    if request.method == "POST":
+        form = form_class(request.POST)
+        
+        if form.is_valid():
+            username = form.cleaned_data['username']
+            password = form.cleaned_data['password1']
+
+            application.applicant.become_member(username, accepted_by=sponsor, password=password)
+            user = authenticate(username=username, password=password)
+            
+            auth_login(request, user)
+            user.message_set.create(
+                message=ugettext("Successfully logged in as %(username)s.") % {
+                'username': user.username
+            })
+
+            # Now, what happens if this application or invite came with a group?
+            if application.group :
+                group = secure_wrap(application.group, sponsor)
+                group.add_member(user)                   
+
+            #application.delete()
+            return HttpResponseRedirect(success_url)
+
+    else:
+
+        form = form_class()
+
+        applicant = application.get_inner().applicant
+        if applicant :
+            form.data['email_address'] = applicant.email_address
+            form.data['first_name'] = applicant.first_name
+            form.data['last_name'] = applicant.last_name 
+            form.data['username'] = applicant.first_name.lower() + '.' + applicant.last_name.lower()  #normalize and uniquify
+            display_name = form.data['first_name'] + ' ' + form.data['last_name']
+
+        else :
+            form.email_address = ''
+            form.username = ''
+            
+        
+
+    # the outstanding issue is how to make sure that the form we're rendering comes back here
+    # ie. with the hmac, let's pass it down as a "submit_url"
+
+    # we must now switch back to the original user (probably Anon) back ... otherwise it thinks we're
+    # logged in as the proxy, which circumvents showing the signup form
+    request.user = request.old_user         
+
+    return render_to_response(template_name, {
+        "form": form,
+        "submit_url" : request.build_absolute_uri(),
+        "display_name" : display_name        
     }, context_instance=RequestContext(request))
 

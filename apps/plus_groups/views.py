@@ -296,14 +296,10 @@ def apply(request, group, current_app='plus_groups', **kwargs):
     
 
 @login_required
-@secure_resource(TgGroup, required_interfaces=['Viewer']) 
-def leave(request, group, template_name="plus_groups/group.html", current_app='plus_groups', **kwargs):
-    group.leave(request.user)
-    return HttpResponseRedirect(reverse(current_app + ':group',args=(group.id,)))
-
-@login_required
 @secure_resource(TgGroup, required_interfaces=['Invite', 'Viewer'])
 def invite(request, group, template_name='plus_groups/invite.html', current_app='plus_groups', **kwargs):
+    if request.user == get_anon_user():
+        return HttpResponseRedirect(reverse('acct_invite'))
 
     if request.POST :
         form = TgGroupMemberInviteForm(request.POST)
@@ -319,6 +315,15 @@ def invite(request, group, template_name='plus_groups/invite.html', current_app=
             'group' : group,
             'group_id' : group.id,
             }, context_instance=RequestContext(request, current_app=current_app))
+
+
+
+@login_required
+@secure_resource(TgGroup, required_interfaces=['Viewer']) 
+def leave(request, group, template_name="plus_groups/group.html", current_app='plus_groups', **kwargs):
+    group.leave(request.user)
+    return HttpResponseRedirect(reverse(current_app + ':group',args=(group.id,)))
+
 
 
 @hmac_proxy

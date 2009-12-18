@@ -38,17 +38,25 @@ class Contact(models.Model):
     country = CountryField(null=True, max_length=2, default='')
     post_or_zip = models.CharField(null=True, max_length=30, default="")
     find_out = models.TextField()
-    invited_by = models.ForeignKey(User, null=True, related_name='invited_contact')
-
-    has_accepted_application = models.BooleanField(default=False)
     
+    has_accepted_application = models.BooleanField(default=False)
+    user = models.ForeignKey(User, null=True, related_name="user_contacts")
+
     def get_display_name(self):
         return self.first_name + " " + self.last_name
 
     def get_user(self):
-        if len( User.objects.filter(email_address=self.email_address) ) < 1 : 
-            return None
-        return User.objects.get(email_address=self.email_address)
+        if self.user:
+            return self.user
+        else:
+            try:
+                user_match = User.objects.get(email_address=self.email_address)
+                self.user = user_match
+                self.save()
+                return self.user
+            except User.DoesNotExist:
+                return None
+
 
     def become_member(self, username, invited_by=None, accepted_by=None, password=None):
         """Either a user accepts an invitation or their application is accepted.
@@ -66,8 +74,7 @@ class Contact(models.Model):
         p.post_or_zip = self.post_or_zip
         p.address = self.address
         p.country = self.country
-        if invited_by:
-            p.invited_by = invited_by
+
         if accepted_by:
             p.accepted_by = accepted_by
         h = p.get_host_info()
@@ -75,12 +82,28 @@ class Contact(models.Model):
         p.save()
         h.save()
         u.save()
+        
+        self.user = u
+        self.save()
+        self.update_applications()
+        self.update_invitations()
+        for contact in Contact.objects.filter(email_address=self.email_address):
+            contact.user = u
+            contact.update_applications()
+            contact.update_invitations()
+        return u
+
+
+    def update_invitations(self):
+        pass
+
+    def update_applications(self):
         # pending applications should have their "applicant" changed from this contact to the newly created user 
         # e.g. if the "contact" has applied to join a group/hub and this hasn't yet been accepted/rejected
         for application in Application.objects.filter(applicant_object_id=self.id, 
                                                       applicant_content_type=ContentType.objects.get_for_model(Contact),
                                                       status=PENDING):            
-            application.applicant = u
+            application.applicant = self.user
             application.save()
 
         
@@ -89,17 +112,16 @@ class Contact(models.Model):
         for application in Application.objects.filter(applicant_object_id=self.id, 
                                                       applicant_content_type=ContentType.objects.get_for_model(Contact),
                                                       status=ACCEPTED_PENDING_USER_SIGNUP):
-            application.applicant = u
+            application.applicant = self.user
             group = application.group
             application.status = ACCEPTED
-            group.join(u)
+            group.join(self.user)
             application.save()
         
 
-        return u
 
-
-    def send_link_email(self, title, message, sponsor, site_root, id):
+    def send_link_email(self, title, message, sponsor, id):
+        site_root = settings.DOMAIN_NAME
         url = attach_hmac("/signup/%s/" % id, sponsor)
         url = 'http://%s%s' % (site_root, url)
 
@@ -117,27 +139,16 @@ Dear %(first)s %(last)s
 We are delighted to confirm you have been accepted as a member of %(site)s
 """) % {'first':self.first_name, 'last':self.last_name, 'site':settings.SITE_NAME}
 
-        return self.send_link_email(_("Confirmation of account on %(site)s") % {'site':settings.SITE_NAME}, message, sponsor, site_root, application_id)
-
-    def invite_mail(self, sponsor, site_root, application_id):
-        message = Template(settings.INVITE_EMAIL_TEMPLATE).render(
-            Context({'sponsor':sponsor.get_display_name(),
-                     'first_name':self.first_name, 
-                     'last_name':self.last_name}))
-        return self.send_link_email("Invite to join MHPSS", message, sponsor, site_root, application_id)
+        return self.send_link_email(_("Confirmation of account on %(site)s") % {'site':settings.SITE_NAME}, message, sponsor, application_id)
 
 
 
-    def invite(self, site, sponsor, site_root, group=None):
-        # this called on a contact if someone is inviting them to join the site
-        # XXX revisit this get_inner
-        application = site.get_inner().create_Application(sponsor, applicant=self)
-        if group :
-            # this is an invitation, probably to a hub
-            application.group=group
-        return self.invite_mail(sponsor, site_root, application.id)
+
+
         
 class Application(models.Model):
+    """This should move to plus_groups
+    """
     applicant_content_type = models.ForeignKey(ContentType, related_name='applicant_type')
     applicant_object_id = models.PositiveIntegerField()
     applicant = generic.GenericForeignKey('applicant_content_type', 'applicant_object_id') # either user or contact
@@ -162,7 +173,7 @@ class Application(models.Model):
         if self.is_site_application():
             #applicant is a contact
             self.status = ACCEPTED_PENDING_USER_SIGNUP
-            self.applicant.save()
+            #self.applicant.save()  # wot?
         else:
             self.status = ACCEPTED
             self.group.join(self.applicant)

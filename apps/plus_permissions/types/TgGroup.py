@@ -1,6 +1,6 @@
 from apps.plus_permissions.interfaces import InterfaceReadProperty, InterfaceWriteProperty, InterfaceCallProperty
 from apps.plus_permissions.models import SetSliderOptions, SliderOptions, SetAgentDefaults, SetPossibleTypes, SetSliderAgents, PossibleTypes, get_interface_map, SetVisibleAgents, SetVisibleTypes, SetTypeLabels
-from apps.plus_groups.models import TgGroup
+from apps.plus_groups.models import TgGroup, MemberInvite
 from apps.plus_permissions.OurPost import OurPost
 from apps.plus_contacts.models import Application, Contact
 from apps.plus_wiki.models import WikiPage
@@ -102,6 +102,7 @@ class TgGroupViewer:
     group_type = InterfaceReadProperty
     address = InterfaceReadProperty
     apply = InterfaceCallProperty
+    invite_member = InterfaceCallProperty
     leave = InterfaceCallProperty
     get_users = InterfaceCallProperty
     get_no_members = InterfaceCallProperty
@@ -133,9 +134,6 @@ class TgGroupJoin:
 class TgGroupLeave:
     leave = InterfaceCallProperty
 
-class TgGroupInviteMember:
-    pk = InterfaceReadProperty
-    invite_member = InterfaceCallProperty
 
 class TgGroupComment:
     pk = InterfaceReadProperty
@@ -170,7 +168,6 @@ from apps.plus_permissions.models import add_type_to_interface_map
 if not get_interface_map(TgGroup):
     TgGroupInterfaces = {'Viewer': TgGroupViewer,
                          'Editor': TgGroupEditor,
-                         'Invite': TgGroupInviteMember,
                          'ManageMembers': TgGroupManageMembers,
                          'Join': TgGroupJoin,
                          'Leave': TgGroupLeave,
@@ -188,7 +185,7 @@ if not get_interface_map(TgGroup):
 # they don't need to be stored in the db
 if not SliderOptions.get(TgGroup, False):
     SetSliderOptions(TgGroup, 
-                     {'InterfaceOrder':['Viewer', 'Editor', 'Invite', 'Join', 'Uploader', 'Commentor', 'ManageMembers', 'ManagePermissions'], 
+                     {'InterfaceOrder':['Viewer', 'Editor', 'Join', 'Uploader', 'Commentor', 'ManageMembers', 'ManagePermissions'], 
                       'InterfaceLabels':{'Viewer':'View',
                                                   'Editor': 'Edit',
                                                   'Commentor': 'Comment',
@@ -198,7 +195,7 @@ if not SliderOptions.get(TgGroup, False):
 
 # ChildTypes are used to determine what types of objects can be created in this security context (and acquire security context from this). These are used when creating an explicit security context for an object of this type. 
 if TgGroup not in PossibleTypes:
-    child_types = [OurPost, Site, Application, Contact, Profile, WikiPage, Link, Resource]
+    child_types = [OurPost, Site, Application, Contact, Profile, WikiPage, Link, Resource, MemberInvite]
     SetPossibleTypes(TgGroup, child_types)
     SetVisibleTypes(content_type, [TgGroup, WikiPage, Resource, Application])
     SetTypeLabels(content_type, 'Group')
@@ -230,7 +227,6 @@ def setup_defaults() :
                        {'defaults':
                             {'Viewer':'anonymous_group', 
                              'Editor':'creator',
-                             'Invite':'context_agent',
                              'ManageMembers':'creator',
                              'Join':'all_members_group',
                              'Leave':'context_agent',
@@ -241,13 +237,14 @@ def setup_defaults() :
                              'CreateWikiPage':'context_agent',
                              'CreateResource':'context_agent',
                              'CreateApplication':'all_members_group',
+                             'CreateMemberInvite':'context_agent',
                              'Message':'context_agent',
                              'StatusViewer':'anonymous_group',
                              'GroupTypeEditor':'context_admin',
                              'Unknown': 'context_admin'
                              },
                         'constraints':
-                            ['Viewer>=Editor', 'Invite>=ManageMembers', 'Join>=ManageMembers', 'ManageMembers<=$anonymous_group', 'ManagePermissions<=$context_agent']
+                            ['Viewer>=Editor', 'Join>=ManageMembers', 'ManageMembers<=$anonymous_group', 'ManagePermissions<=$context_agent']
                         },
                    'WikiPage':
                        {'defaults':
@@ -283,8 +280,18 @@ def setup_defaults() :
                        {'defaults' :
                         {'Viewer':'context_admin',
                          'Editor':'creator',
-                         'Accept':'context_agent',
+                         'Accept':'context_admin',
                          'Reject':'context_admin',
+                         'ManagePermissions':'context_admin',
+                         'Unknown': 'context_admin',
+                         },
+                        'constraints':['Viewer>=Editor', 'Editor<$anonymous_group'] 
+                        },   
+                   'MemberInvite':
+                       {'defaults' :
+                        {'Viewer':'context_admin',
+                         'Editor':'creator',
+                         'Accept':'creator',
                          'ManagePermissions':'context_admin',
                          'Unknown': 'context_admin',
                          },
