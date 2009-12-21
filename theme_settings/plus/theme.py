@@ -73,3 +73,5 @@ You should log in as soon as possible and change your password.
 
 Thanks for using our site!
 """
+
+HIDDEN_GROUPS = []

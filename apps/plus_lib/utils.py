@@ -7,7 +7,11 @@ import settings
 
 def get_virtual_groups():
     from apps.plus_permissions.default_agents import get_all_members_group
-    return TgGroup.objects.filter(place__name=settings.VIRTUAL_HUB_NAME, level='member').exclude(id=get_all_members_group().id)
+    query =  TgGroup.objects.filter(place__name=settings.VIRTUAL_HUB_NAME, level='member').exclude(id=get_all_members_group().id)
+
+    for id in settings.HIDDEN_GROUPS :
+        query = query.exclude(id=id)
+    return query
 
 def get_hubs() :
     return TgGroup.objects.filter(level='member').exclude(place__name=settings.VIRTUAL_HUB_NAME)
