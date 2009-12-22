@@ -48,7 +48,9 @@
 				    <div class="value">
 				        <a href="{{upload.download_url}}" class="file_name">{{upload.get_file_name}}</a><span> <a href="#" class="replace_file_button">- {% trans "Replace File" %}</a></span>
 					<span> <input  id="resource" name="resource"  type="file" class="hidden replace_file" /><a href="#" class="keep_existing hidden" >{% trans "Keep existing file" %}</a></span>
-					{{errors.resource}}
+					{% if errors.resource %}
+					<p class="errors">{{errors.resource}}</p>
+					{% endif %}
 				    </div>
 				    {% endif %}
 				{% endif %}
