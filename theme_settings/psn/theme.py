@@ -112,4 +112,4 @@ Unfortunately, we can not accept you to become a member of {{group_name}} at thi
 # GOOGLE_MAP_KEY = "ABQIAAAAUO5htA3plE0mHcReh9HGtxRH5sEjhzJfKqlMpdJ6oyx9YbCawRTJnbhBF8LBDrQ-Dos5hRa7KzIX4A"
 
 # the following groups are to be hidden from the main group listing page
-HIDDEN_GROUPS = [28, 36, 4, 34]
+HIDDEN_GROUPS = [28, 36, 4, 34, 10, 40, 142]
