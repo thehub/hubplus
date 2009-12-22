@@ -84,7 +84,7 @@ def edit_resource(request, group, resource_name,
                 return HttpResponseRedirect(success_url)
             else :
                 #file name too long
-                form.errors['resource']=_("That file name is too long for our system. Please choose a shorter one. (< 70 characters)")
+                form.errors['resource']=_("That file name is too long for our system. Try reducing length of the file name and try again(< 70 characters)")
                 
                 
         else:
