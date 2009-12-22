@@ -123,7 +123,7 @@ def login(request, form_class=LoginForm,
                 success_url = openid_success_url or success_url
             return HttpResponseRedirect(success_url)
         else:
-            message = _('The email address or password you provided does not match our records.')
+            message = _('The username or password you provided does not match our records.')
     
     form = form_class()
 
