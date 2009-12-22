@@ -57,29 +57,36 @@ def edit_resource(request, group, resource_name,
         perms_bool = False
 
     if request.POST:
-        
+
         post_kwargs = request.POST.copy()
         post_kwargs['obj'] = secure_upload
 
         form = UploadFileForm(post_kwargs, request.FILES, user=request.user)
 
         if form.is_valid():
-            resource = update_attributes(secure_upload, request.user,
+            a_file = form.cleaned_data['resource']
+            if len(a_file.name) < 70 :
+                resource = update_attributes(secure_upload, request.user,
                                          title = form.cleaned_data['title'],
                                          name  = form.cleaned_data['name'],
                                          license = form.cleaned_data['license'],
                                          author = form.cleaned_data['author'],
                                          description = form.cleaned_data['description'],
-                                         resource = form.cleaned_data['resource'])
+                                         resource = a_file)
    
-            resource.stub = False
-            resource.in_agent = group.get_ref()
-            resource.save()
+                resource.stub = False
+                resource.in_agent = group.get_ref()
+                resource.save()
             
-            if not success_url :
-                success_url = reverse(current_app + ':view_Resource', args=(group.id, resource.name))
+                if not success_url :
+                    success_url = reverse(current_app + ':view_Resource', args=(group.id, resource.name))
 
-            return HttpResponseRedirect(success_url)
+                return HttpResponseRedirect(success_url)
+            else :
+                #file name too long
+                form.errors['resource']=_("That file name is too long for our system. Please choose a shorter one. (< 70 characters)")
+                
+                
         else:
             pass
 
