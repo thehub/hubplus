@@ -24,7 +24,7 @@ VIRTUAL_MEMBERS_GROUP_NAME = 'virtual_members'
 VIRTUAL_MEMBERS_DISPLAY_NAME = 'MHPSS Network'
 
 
-SITE_NAME = _("Psychosocial Support Network")
+SITE_NAME = _("Mental Health and Psychosocial Support Network")
 SITE_NAME_SHORT = _("MHPSS Network")
 
 GROUP_TYPES = (
