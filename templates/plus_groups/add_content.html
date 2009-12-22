@@ -17,10 +17,11 @@
 			<label for="title"><abbr class="required" title="required">* </abbr>{% trans "Title" %}</label>
 		      </div>
 		      <div class="value">
-			<input name="title" id="title" class="text" type="text" value="{{form.data.title}}" />
+			<input name="title" id="title" class="text" type="text" value="{{form.data.title}}" maxlength="60"/>
 			{% if form.errors.title %}<p class="error">{{form.errors.title|safe}}<p>{% endif %}
 			  <p>
 			    {% trans "Titles must be 60 characters or less." %}
+			    {% trans "Click" %} <a href="{% url help %}#adding_resources" target="help">here</a> {% trans "for more help." %}
 			  </p>
 		      </div>
 		    </li>
