@@ -76,6 +76,13 @@ def serve_upload(request, group_id, upload_id, path) :
             raise PlusPermissionsNoAccessException(Resource,upload_id,"Can't access file %s %s" % (upload.id, upload.path))
 
 
+
+def get_webserver_path(path) :
+    # need this alternative path from the lighttpd 
+    # XXX this is an emergency fix, when I get back from holiday,
+    # do it properly
+    return "/mnt/hubplus-static/mhpss/"+path
+
 def serve(request, path, show_indexes=False):
     """
     Serve static files below a given point in the directory structure.
@@ -125,7 +132,11 @@ def serve(request, path, show_indexes=False):
     response = HttpResponse(mimetype=mimetype)
     response["Last-Modified"] = http_date(statobj[stat.ST_MTIME])
     response["Content-Length"] = len(contents)
-    response['X-Sendfile'] = fullpath
+    
+    # lighttpd only
+    lighttpd_path = get_webserver_path(newpath)
+    response['X-Sendfile'] = lighttpd_path
+
     new_filename=fullpath.split('/')[-1]
     response['Content-Disposition'] = 'attachment;filename=%s'%new_filename
     return response
