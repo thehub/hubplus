@@ -29,10 +29,14 @@ def user_save(self) :
     if not self.created :
         self.created = datetime.date.today()
     super(User,self).save()
-    ref = self.get_profile().get_ref()
-    ref.modified = datetime.datetime.now()
-    ref.display_name = self.get_display_name()
-    ref.save()
+    try:
+       ref = self.get_profile().get_ref()
+       ref.modified = datetime.datetime.now()
+       ref.display_name = self.get_display_name()
+       ref.save()
+    except :
+       # profile not created yet
+       pass
 
 def to_db_encoding(s, encoding):
     if isinstance(s, str):
