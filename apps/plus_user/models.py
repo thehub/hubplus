@@ -31,12 +31,13 @@ def user_save(self) :
     super(User,self).save()
     try:
        ref = self.get_profile().get_ref()
-       ref.modified = datetime.datetime.now()
-       ref.display_name = self.get_display_name()
-       ref.save()
     except :
        # profile not created yet
-       pass
+       return 
+    ref.modified = datetime.datetime.now()
+    ref.display_name = self.get_display_name()
+    ref.save()
+    
 
 def to_db_encoding(s, encoding):
     if isinstance(s, str):
