@@ -589,6 +589,6 @@ def has_access(agent, resource, interface, sec_context=None) :
     if allowed_agents.intersection(agents_held):
         return True
 
-    print "has_access fails for %s, %s, %s, %s" %(interface, resource, context.context_agent.obj, agent)
+    #print "has_access fails for %s, %s, %s, %s" %(interface, resource, context.context_agent.obj, agent)
     return False
 
