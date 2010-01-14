@@ -12,7 +12,7 @@ register = template.Library()
 
 def show_group(context, group):
     #group = TemplateSecureWrapper(group)
-    no_of_members = group.get_no_members()
+    no_of_members = group.get_no_users()
     group_app_label = group.group_app_label()
     urlvar = group_app_label + u':group'
     group_url = reverse(urlvar, args=[group.id])

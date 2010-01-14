@@ -105,6 +105,7 @@ class TgGroupViewer:
     leave = InterfaceCallProperty
     get_users = InterfaceCallProperty
     get_no_members = InterfaceCallProperty
+    get_no_users = InterfaceCallProperty
     get_admin_group = InterfaceCallProperty
     homeplace = InterfaceReadProperty
     get_group_type_display = InterfaceReadProperty
