@@ -39,6 +39,8 @@ EXPLORE_SEARCH_TITLE = _('explore search title')
 MEMBER_SEARCH_TITLE = _('Search Members')
 GROUP_SEARCH_TITLE = _('Search Groups')
 HUB_SEARCH_TITLE = _('Search Hubs')
+RESOURCE_SEARCH_TITLE = _('Search Resources')
+
 
 TAG_SEARCH_TITLE = _('tag search title')
 
