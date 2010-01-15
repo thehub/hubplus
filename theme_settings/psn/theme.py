@@ -92,7 +92,7 @@ email: {{email_address}}
 ACCEPTED_TO_GROUP = _("""
 Dear %(applicant)s,
 
-Your application to join %(group_name)s has been accepted. Please go to <a href="%(group_url)s">%(group_name)s</a> to get started.
+Your application to join the Psychosocial Support Network has been accepted. Please go to <a href="http://psychosocialnetwork.net/">the Psychosocial Support Network</a> to get started.
 
 %(accepted_by)s
 """)
