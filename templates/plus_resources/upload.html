@@ -74,6 +74,10 @@
 				<div class="value">
 					<input  id="author" name="author" class="text" type="text" value='{% if data.author %}{{data.author}}{% else %}{{upload.author}}{% endif %}'/>
 					{% if errors.author %}<span class="error">{{errors.author}}</span>{% endif %}
+					<p>Please note that the author field is currently restricted to 100 characters.
+					  If you would like to add a citation to an academic journal, please use 
+					  the description field.
+					</p>
 				</div>
 			</li>
 			<li>
