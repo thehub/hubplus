@@ -1,7 +1,8 @@
 from django import forms
 from django.utils.translation import ugettext_lazy as _
-from apps.plus_lib.utils import tag_validation_regex_str
+from apps.plus_lib.utils import tag_validation_regex_str, clean_tag
 from apps.plus_tags.models import tag_stop_words
+
 choices = (
     ('tag','tag'),
     ('interests','interests'),
@@ -22,4 +23,5 @@ class AddTagForm(forms.Form):
         # assiming that the RegEx field already filtered according to our criteria, just want to remove the stop-words
         if self.data['tag_value'] in tag_stop_words :
             raise forms.ValidationError(_("Your tag was not considered sufficiently distinct or meaningful."))
-        return self.data['tag_value']
+        
+        return clean_tag(self.data['tag_value'])
