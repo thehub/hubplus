@@ -15,7 +15,7 @@ class UploadFileForm(forms.Form):
     resource  = forms.FileField(required=False)
     description = forms.CharField(required=True)
     license = forms.CharField(required=False)
-    author = forms.CharField(required=False) # copyright purposes
+    author = forms.CharField(required=False, max_length=99) # copyright purposes
 
     new_parent_group = forms.CharField(required=False) 
 
