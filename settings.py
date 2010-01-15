@@ -310,6 +310,7 @@ GOOGLE_MAP_KEY = "ABQIAAAAiA7tLHdzZr8yhGAEbo5FGxS_srkAJTD0j5T3EF3o06M_52NTAhQM2w
 # tells Pinax to serve media through django.views.static.serve. 
 SERVE_MEDIA = True # DEBUG 
 PERMISSION_UPLOADS_THROUGH_X_SENDFILE =False # override on a production server
+WEBSERVER_MEDIA_ROOT = "" # where the webserver that you've sent an x-sendfile to can find the files
 
 # serve js src files
 DEVELOPMENT = False
