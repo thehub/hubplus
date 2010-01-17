@@ -65,8 +65,8 @@ def edit_resource(request, group, resource_name,
 
         if form.is_valid():
             a_file = form.cleaned_data['resource']
-            if len(a_file.name) < 70 :
-                resource = update_attributes(secure_upload, request.user,
+
+            resource = update_attributes(secure_upload, request.user,
                                          title = form.cleaned_data['title'],
                                          name  = form.cleaned_data['name'],
                                          license = form.cleaned_data['license'],
@@ -74,19 +74,15 @@ def edit_resource(request, group, resource_name,
                                          description = form.cleaned_data['description'],
                                          resource = a_file)
    
-                resource.stub = False
-                resource.in_agent = group.get_ref()
-                resource.save()
+            resource.stub = False
+            resource.in_agent = group.get_ref()
+            resource.save()
             
-                if not success_url :
-                    success_url = reverse(current_app + ':view_Resource', args=(group.id, resource.name))
-
-                return HttpResponseRedirect(success_url)
-            else :
-                #file name too long
-                form.errors['resource']=_("That file name is too long for our system. Try reducing length of the file name and try again(< 70 characters)")
-                
-                
+            if not success_url :
+                success_url = reverse(current_app + ':view_Resource', args=(group.id, resource.name))
+           
+            return HttpResponseRedirect(success_url)
+                 
         else:
             pass
 
