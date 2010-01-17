@@ -78,7 +78,7 @@ def group(request, group, template_name="plus_groups/group.html", current_app='p
 
     user = request.user
     
-    members = group.get_users()[:10]
+    members = group.get_users()[:50]
     member_count = group.get_no_users()
 
     hosts = group.get_admin_group().get_users()[:10]
