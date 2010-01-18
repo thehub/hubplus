@@ -9,6 +9,8 @@ from datetime import datetime
 from apps.plus_lib.models import extract
 from django.core.files.base import File
 
+from apps.plus_tags.models import tag_item_delete, TagItem
+
 import os
 
 def get_resources_for(owner) :
@@ -139,6 +141,8 @@ class Resource(models.Model):
         # dummy, for testing
 
     def delete(self) :
+        for tag_item in TagItem.objects.filter(ref=self.get_ref()):
+            tag_item_delete(tag_item)
         ref = self.get_ref()
         ref.delete()
         super(Resource,self).delete()

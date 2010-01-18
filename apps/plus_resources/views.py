@@ -61,6 +61,11 @@ def edit_resource(request, group, resource_name,
         post_kwargs = request.POST.copy()
         post_kwargs['obj'] = secure_upload
 
+        if "delete_submit" in post_kwargs :
+            if post_kwargs.has_key('delete_check') :
+                secure_upload.delete()
+                return HttpResponseRedirect(reverse(current_app + ':group', args=[group.id]))
+
         form = UploadFileForm(post_kwargs, request.FILES, user=request.user)
 
         if form.is_valid():
@@ -164,3 +169,4 @@ def delete_stub_resource(request, group, resource_name, current_app='plus_groups
     except Resource.DoesNotExist:
         pass
     return HttpResponseRedirect(reverse(current_app + ':group', args=[group.id]))
+
