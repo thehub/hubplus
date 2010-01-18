@@ -91,8 +91,25 @@
 		or <a href="{% url plus_groups:view_WikiPage page.in_agent.obj.id page.name  %}">Cancel</a>
 		{% endif %}
 
-	</fieldset>
-		
+    </fieldset>
+	
+    {% if page.stub %}{% else %}
+    <fieldset class="buttons">
+      {% trans "Alternatively, you may delete this page." %}
+      <ul id="delete_buttons">
+	<li>
+          <label for="delete_check">{% trans "Check this box to confirm that you want to delete this page." %}</label>
+	  <input id="delete_check" name="delete_check" type="checkbox" value=""/>
+        </li>
+      </ul>
+      <ul>
+        <li class="delete_hide">
+          <input class="button" id="delete_submit" name="delete_submit" type="submit" value="Delete"/>
+        </li>
+      </ul>
+    </fieldset>
+    {% endif %}
+
 </div>
 {% endblock %}
    
