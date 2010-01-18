@@ -16,17 +16,24 @@
 	<h3>{% trans "What next?" %}</h3>
 	<ul>
 		<li class="first">
-			<dl>
-				<dt><a href="{% url explore %}" class="add_content">Share Resources</a></dt>
-				<dd>Create pages and upload documents to the site. Browse, search or tag materials already online</dd>
-			</dl>
+		  <dl>
+		    <dt><a href="{% url explore %}" class="add_content">Share Resources</a></dt>
+		    <dd>Create pages and upload documents to the site. Browse, search or tag materials already online</dd>
+		  </dl>
 		</li>
 		<li>
+		  <dl>
+		    <dt><a href="/groups/153/upload/haiti_coordination_matrix/view_resource/">Haiti Co-ordination Matrix</a>
+		    </dt>
+		    <dd>Edit our Excel sheet to provide co-ordination information</dd>
+		  </dl>
+		</li>
+	<!--	<li>
 			<dl>
 				<dt><a href="{% url groups:groups %}">Explore Groups</a>
 				<dd>Visit or join existing groups. Create a new group to bring together members with a shared purpose or interest.</dd>
 			</dl>
-		</li>
+		</li> -->
 		<li class="last">
 			<dl>
 				<dt><a href="{% url hubs:groups %}">Visit Regions</a>
