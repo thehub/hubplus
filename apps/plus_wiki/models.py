@@ -3,6 +3,8 @@ from apps.plus_permissions.models import GenericReference
 from django.contrib.auth.models import User
 from datetime import datetime
 
+from apps.plus_tags.models import tag_item_delete, TagItem
+
 class WikiPage(models.Model):
     class Meta:
         unique_together = (("name", "in_agent"),)
@@ -58,6 +60,8 @@ class WikiPage(models.Model):
 
 
     def delete(self) :
+        for tag_item in TagItem.objects.filter(ref=self.get_ref()):
+            tag_item_delete(tag_item)
         ref = self.get_ref()
         ref.delete()
         super(WikiPage,self).delete()

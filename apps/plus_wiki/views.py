@@ -80,6 +80,12 @@ def create_wiki_page(request, group, page_name, template_name="plus_wiki/create_
     post_kwargs['obj'] = obj
     form = EditWikiForm(post_kwargs)
 
+    if "delete_submit" in post_kwargs :
+        if post_kwargs.has_key('delete_check') :
+            obj.delete()
+            return HttpResponseRedirect(reverse(current_app + ':group', args=[group.id]))
+
+
     if form.is_valid():
         title = form.cleaned_data['title']
         content = form.cleaned_data['content']
