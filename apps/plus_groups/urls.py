@@ -22,5 +22,6 @@ urlpatterns = patterns('',
                        url(r'^(?P<resource_id>[\d]+)/resources/$', 'plus_groups.views.group_resources', name='group_resources'),
                        url(r'^(?P<resource_id>[\d]+)/resources/tag/(?P<tag_string>[\w\+\. _-]+)/$', 'plus_groups.views.group_resources', name='group_resources_tag'),
                        url(r'^group_type_ajax/$', 'plus_groups.views.group_type_ajax', name='group_type_ajax'),
+                       url(r'^delete/(?P<resource_id>[\d]+)/$', 'plus_groups.views.delete', name='delete_group'),
                        )
 

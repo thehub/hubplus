@@ -1,0 +1,38 @@
+{% extends "site_base.html" %}
+{% load i18n %}
+
+{% block head_title %}{% blocktrans %}Deleting group : &quot;{{group_name}}&quot;{% endblocktrans %}{% endblock %}
+{% block page_title %}{% blocktrans %}Deleting group : &quot;{{group_name}}&quot;{% endblocktrans %}{% endblock %}
+
+{% block body %}
+
+<div class="block copy">
+  <form action="" method="POST">
+    <p>{% trans "Deleting a group will delete all the wikipages it contains and all the files which have been uploaded to it. It will delete all membership information, all comments, all statuses and all links that are attached to it." %}</p>
+    
+    <p>{% trans "In other words, it is a very serious step to take. And there is no possibility to undo this." %}</p>
+    
+    <p>{% trans "If you are sure you want to delete the group, please check the following box and press the submit button" %}</p>
+    
+    <fieldset class="buttons">
+
+      <ul id="delete_buttons">
+	<li>
+	  <label for="delete_check">{% trans "Check this box to confirm that you want to delete the group." %}</label>
+          <input id="delete_check" name="delete_check" type="checkbox" value=""/>
+        </li>
+      </ul>
+      <ul>
+        <li class="delete_hide">
+	  <input class="button" id="delete_submit" name="delete_submit" type="submit" value="Delete"/>
+        </li>
+      </ul>
+    </fieldset>
+    
+    
+  </form>
+
+  
+</div>
+
+{% endblock %}

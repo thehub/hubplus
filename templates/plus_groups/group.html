@@ -155,6 +155,9 @@
 {% include "plus_groups/tabbed_subs.html" %}
 <!--/div-->	
 
+{% if can_delete %}
+<a href="{% url plus_groups:delete_group group_id %}">Delete this group</a>
+{% endif %}  
 
 {% endblock %}
 

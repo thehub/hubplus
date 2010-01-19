@@ -124,6 +124,7 @@ class TgGroupEditor:
     status = InterfaceWriteProperty
     group_type = InterfaceWriteProperty
     address = InterfaceWriteProperty
+    delete = InterfaceCallProperty
 
 class TgGroupJoin:
     pk = InterfaceReadProperty

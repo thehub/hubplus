@@ -94,13 +94,13 @@ def group(request, group, template_name="plus_groups/group.html", current_app='p
     can_tag = False
     can_change_avatar = False
     has_accept = False
+    can_delete = False
     editable_group_type = group.group_type != settings.HUB_NAME
 
     if user.is_authenticated():
         if user.is_direct_member_of(group.get_inner()):
-            if not user.is_admin_of(group.get_inner()) or group.get_inner().get_admin_group() == group.get_inner():
-                # can't leave a group you're the admin of *unless* the group is its own admin
-                # (without the second clause, you'd be trapped there forever)
+            # can now leave group if you aren't the last one out
+            if group.get_no_members() > 1 :
                 leave = True
             try :
                 group.invite_member
@@ -147,30 +147,19 @@ def group(request, group, template_name="plus_groups/group.html", current_app='p
             can_change_avatar  = True
         except Exception, e:
             pass
-        
+
+        try :
+            dummy = group.delete
+            can_delete = True
+        except :
+            pass
+
         if has_access(request.user, None, 'Application.Accept', group._inner.get_security_context()):
             has_accept = True
         else:
             has_accept = False
-
-    # XXXX review this status section if we make it an editable attribute
     
-    tweets = TweetInstance.objects.tweets_from(group).order_by("-sent") 
-    
-    # XXX this is probably deprecated as we now do the most recent status on a group page from the 
-    # microblogging templatetag ... can probably remove this when we have a spare moment
-    #if tweets :
-    #    latest_status = tweets[0]
-        #dummy_status = DisplayStatus(
-        #    defaultfilters.safe( defaultfilters.urlize(latest_status.html())),
-        #                         defaultfilters.timesince(latest_status.sent) )
-    #    status_type = 'group'
-    #    status_since = defaultfilters.timesince(latest_status.sent)
-    #else:
-    #    status_type = ''
-    #    status_since = ''
-    
-
+    tweets = TweetInstance.objects.tweets_from(group).order_by("-sent")     
 
     try:
         group.get_all_sliders
@@ -210,6 +199,7 @@ def group(request, group, template_name="plus_groups/group.html", current_app='p
             "add_link" : add_link,
             "can_tag" : can_tag,
             "can_change_avatar" : can_change_avatar,
+            "can_delete" : can_delete, 
             "hosts": hosts,
             "host_count": host_count,
             "tweets" : tweets,
@@ -474,8 +464,26 @@ def group_type_ajax(request,**kwargs) :
     return settings.GROUP_TYPES[0:-1] # miss off the last, because it's the Hub type
 
 
-
 @json_view
 def ajax_hub_list(request,**kwargs) :    
     xs = [(t.id, t.display_name) for t in get_hubs()]
     return xs
+
+
+@login_required
+@secure_resource(TgGroup)
+def delete(request, group, current_app='plus_groups', **kwargs) :
+    if request.POST :
+        # we're deleting
+        if request.POST.has_key('delete_check') :
+            group.delete()
+        
+        return HttpResponseRedirect(reverse(current_app + ':groups'))
+    else :
+        pass
+    return render_to_response("plus_groups/delete_confirmation.html",
+                              {
+                               'group': group,
+                               'group_name':group.get_inner().get_display_name(),
+                               'group_id': group.id}, context_instance=RequestContext(request, current_app=current_app))
+
