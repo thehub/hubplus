@@ -6,9 +6,8 @@ var listing_ready = function () {
 	});
 	return false;
     });
-    var evt = $.browser.msie ? "click" : "change";
+    var evt = jq.browser.msie ? "propertychange" : "change";
     jq('.order_list').bind(evt, function () {
 	jq(this).submit();
 	});
 };
-
