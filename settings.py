@@ -361,6 +361,7 @@ logging.basicConfig(
 )
 
 try:
+    #do this in a separate thread/process
     from utils.static_files import compile, get_version_no
     CSS_FILES = ["site.css", "header.css", "main.css", "serendipity.css", "footer.css", "forms.css", "tabview.css", "overlay.css", "permissions.css", "flickr.css", "list-edit-table.css", "jquery.autocomplete.css", "yui2/editor.css", "yui2/menu.css", "yui2/button.css", "yui2/container.css", "yui2/autocomplete.css", "yui2/slider.css"]
 
@@ -375,4 +376,6 @@ except ImportError, e:
     print `e`
 
 
-
+   
+#from trellis_cache.reactor_in_thread import TrellisThread
+#trellis = TrellisThread()

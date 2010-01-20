@@ -25,8 +25,25 @@ except Exception, e:
     import ipdb
     ipdb.set_trace()
 
+
+def hello(a):
+    print `a`
+
+
 sys.path.insert(0, join(settings.PINAX_ROOT, "apps"))
 sys.path.insert(0, join(settings.PROJECT_ROOT, "apps"))
+
+#from trellis_cache.eventloop import EventQueueSingleton
+from trellis_cache.reactor_in_thread import TrellisThread
+from mext.context import State
+
+#from settings import trellis
+
+#EventQueueSingleton.activate()
+# would be nice for testability to be able to do this before starting the reactor, but that would require EventQueue to be a (non-thread local) Singleton which doesn't seem to be possible in 'Contextual' :-(
+ 
+#trellis.startReactor()
+
 
 if __name__ == "__main__":
     execute_from_command_line()

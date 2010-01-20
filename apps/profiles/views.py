@@ -85,7 +85,13 @@ def show_section(profile, attribute_list) :
 
 
 
+#from settings import trellis
+
+def hello(a):
+    print `a` * 20
+
 def profile(request, username, template_name="profiles/profile.html"):
+    #trellis.callInEventLoop(hello, "Tom")
     other_user = get_object_or_404(User, username=username)
     other_user.save()
 

@@ -45,7 +45,7 @@ import itertools
 
 #separate params for searches
 
-@secure_resource(TgGroup)
+@secure_resource(TgGroup, required_interfaces=["Viewer"], with_interfaces=['Viewer'])
 def group_resources(request, group, tag_string='', template_name='plus_explore/explore_filtered.html', current_app='plus_groups', **kwargs):
     tags = tag_string.split('+')
     form = SearchForm(request.GET)
@@ -70,6 +70,8 @@ def resources(group, tags=[], order=None, search=''):
     return plus_search(tags, search, search_types, order, in_group=group.get_ref())
 
 
+#@secure_resource(TgGroup, required_interfaces=['Viewer'], with_interfaces=['Viewer'])
+# above is MUCH MUCH faster (whole request *10 faster), it shouldn't have to be this way
 @secure_resource(TgGroup)
 def group(request, group, template_name="plus_groups/group.html", current_app='plus_groups', **kwargs):
 

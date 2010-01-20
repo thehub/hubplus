@@ -542,13 +542,9 @@ def has_access(agent, resource, interface, sec_context=None) :
         # make sure we've stripped resource from any SecureWrappers
         if resource.__class__.__name__ == "SecureWrapper":
             resource = resource.get_inner()
-
-
         context = resource.get_security_context()
     else:
         context = sec_context
-
-    # which agents have access?
 
     if not SecurityTag.objects.filter(interface=interface, security_context=context):
         #lets create it if it is in defaults for the type -- this allows adding new interfaces to the type at runtime
@@ -561,6 +557,8 @@ def has_access(agent, resource, interface, sec_context=None) :
             sad = dict(slider_agents)
             context.setup_tag_from_defaults(interface, sad, agent_defaults)
 
+
+    # which agents have access?
     allowed_agents = SecurityTag.objects.get(interface=interface,
                                              security_context=context).agents
     
@@ -576,14 +574,10 @@ def has_access(agent, resource, interface, sec_context=None) :
         return True
 
     if resource:
-        if get_creator_agent().obj in allowed_agents :
+        if get_creator_agent().obj in allowed_agents:
             actual_creator = resource.get_ref().creator
             if agent == actual_creator:
                 return True
-
-    if agent.__class__ == AnonymousUser :
-        # we clearly shouldn't be seeing this - sure but is this a security issue - t.s.
-        return False
 
     agents_held = agent.get_enclosure_set()
     if allowed_agents.intersection(agents_held):

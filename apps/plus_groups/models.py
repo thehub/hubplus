@@ -219,6 +219,19 @@ try :
                 self.child_groups.add(user_or_group)
 
 
+        def remove_member(self, user_or_group):
+            if isinstance(user_or_group, User) and self.users.filter(id=user_or_group.id):
+                self.users.remove(user_or_group)
+
+                from apps.microblogging.models import send_tweet 
+                message = _("%(leaver)s left the group %(group)s") % (
+                    {'leaver':user_or_group.get_display_name(),'group':self.get_display_name()})
+                send_tweet(user_or_group, message)
+
+            if isinstance(user_or_group, self.__class__) and self.child_groups.filter(id=user_or_group.id):
+                self.child_groups.remove(user_or_group)
+
+
         def join(self, user):
             self.add_member(user)
             return user
@@ -258,17 +271,6 @@ try :
 
         def is_group(self) : return True
 
-        def remove_member(self, user_or_group):
-            if isinstance(user_or_group, User) and self.users.filter(id=user_or_group.id):
-                self.users.remove(user_or_group)
-
-                from apps.microblogging.models import send_tweet 
-                message = _("%(leaver)s left the group %(group)s") % (
-                    {'leaver':user_or_group.get_display_name(),'group':self.get_display_name()})
-                send_tweet(user_or_group, message)
-
-            if isinstance(user_or_group, self.__class__) and self.child_groups.filter(id=user_or_group.id):
-                self.child_groups.remove(user_or_group)
         
         def get_users(self):
             return self.users.all()

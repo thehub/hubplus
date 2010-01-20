@@ -155,7 +155,7 @@ class SecureWrapper:
         return self.get_inner().__class__
 
     def has_interface(self,i_str) :
-        # string representation of interface ie. "Profile.Viewer"
+        # string representation of interface e.g. "Profile.Viewer"
         return i_str in self._interfaces
 
     def load_interfaces_for(self, agent, interface_names=None) :
