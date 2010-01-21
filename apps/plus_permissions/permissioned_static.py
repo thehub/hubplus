@@ -25,6 +25,9 @@ PINAX_MEDIA_ROOT = os.path.join(settings.PINAX_ROOT, 'media', settings.PINAX_THE
 PROJECT_MEDIA_ROOT = os.path.join(settings.PROJECT_ROOT, 'media')
 PINAX_APP_MEDIA_DIRS = ('media', 'static', 'site_media')
 
+# media root from webserver, (if different to application)
+WEBSERVER_MEDIA_ROOT = getattr(settings, 'WEBSERVER_MEDIA_ROOT',PINAX_MEDIA_ROOT) 
+
 def get_media_path(path):
     """
     Traverses the following locations to find a requested media file in the
@@ -81,7 +84,8 @@ def get_webserver_path(path) :
     # need this alternative path from the lighttpd 
     # XXX this is an emergency fix, when I get back from holiday,
     # do it properly
-    return "/mnt/hubplus-static/mhpss/"+path
+    return WEBSERVER_MEDIA_ROOT + path
+    #return "/mnt/hubplus-static/mhpss/"+path
 
 def serve(request, path, show_indexes=False):
     """
@@ -113,6 +117,7 @@ def serve(request, path, show_indexes=False):
         newpath = os.path.join(newpath, part).replace('\\', '/')
     if newpath and path != newpath:
         return HttpResponseRedirect(newpath)
+    newpath = newpath.encode('utf-8')
     fullpath = get_media_path(newpath)
     if fullpath is None:
         raise Http404, '"%s" does not exist' % newpath
