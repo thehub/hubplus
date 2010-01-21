@@ -13,6 +13,7 @@ var setup_sliders = function(resource_id, resource_class, json){
     var initialising = 0;
     var change_slider = "/permissions/move/";
     jq('#overlay_content').html(json.html);
+
     var all_sliders = jq('#permissions_tabs');
     var sliders = {};
     jq.each(json.sliders, function(index, slider_set){
@@ -51,6 +52,7 @@ var setup_sliders = function(resource_id, resource_class, json){
 	var obj_class = slider_group.attr('id').split('-')[0];
 	var tbody = slider_group.find('tbody');
 	var heights = create_slider_points(tbody);
+	
 	var interface_levels = sliders[obj_class]['interface_levels'];
 	var constraints = sliders[obj_class]['constraints'];
 	var interface_limits_map = {};
@@ -156,7 +158,7 @@ var setup_sliders = function(resource_id, resource_class, json){
 	    interface_limits_map[_interface.split('_')[1]] = initialize_limits;
 	    follow_position_map[_interface.split('_')[1]] = follow_position;
 	    initialize_limits();
-	    var row = jq('#agent-{class}-{id}'.supplant({'class':level_agent.classname, 'id':level_agent.id}));
+	    var row = tbody.find('#agent-{class}-{id}'.supplant({'class':level_agent.classname, 'id':level_agent.id}));
 	    slider.setValue(row.data('slider').middle);
 	    initialising += 1;
 	    slider.subscribe("slideStart", function() {
@@ -189,6 +191,7 @@ var setup_sliders = function(resource_id, resource_class, json){
 		if (locked === 1) {
 		    return false;
 		}
+
 		heights.each(function (i, row) {
 		    if (offsetFromStart >= row.top && offsetFromStart < row.bottom) {
 			if (offsetFromStart != row.middle) {
