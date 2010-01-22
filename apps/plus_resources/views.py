@@ -10,7 +10,7 @@ from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.utils.translation import ugettext_lazy as _
 
-from apps.plus_resources.forms import UploadFileForm
+from apps.plus_resources.forms import UploadFileForm, MoveResourceForm
 from apps.plus_resources.models import Resource, update_attributes
 
 from django.contrib.auth.decorators import login_required
@@ -32,6 +32,7 @@ def change_parent(user, resource, new_parent, form) :
     # XXX not used yet
     if new_parent.has_interface('TgGroup.CreateResource') :
         current = secure_wrap(resource.in_agent.obj, user)
+        current.move_to_new_group(new_parent)
         
 
 from apps.plus_tags.models import get_tags_for_object, tag_item_delete, TagItem
@@ -65,6 +66,18 @@ def edit_resource(request, group, resource_name,
             if post_kwargs.has_key('delete_check') :
                 secure_upload.delete()
                 return HttpResponseRedirect(reverse(current_app + ':group', args=[group.id]))
+
+        if "move_resource_submit" in post_kwargs :
+            form = MoveResourceForm(post_kwargs)
+            form.user = request.user # essential, user is checked inside form validation
+            if form.is_valid() :
+                new_parent_group = form.cleaned_data['new_parent_group']
+                try :
+                    secure_upload.move_to_new_group(new_parent_group)
+                except Exception, e :
+                    print e
+
+                return HttpResponseRedirect(reverse(current_app + ':group', args=[form.cleaned_data['new_parent_group'].id]))
 
         form = UploadFileForm(post_kwargs, request.FILES, user=request.user)
 
