@@ -13,4 +13,7 @@ jq(document).ready(function () {
     if (jq('.upload_field').length==1) {
 	replace_file();
     }
+    if (jq('.autocomplete_uploadable_groups').length==1) {
+	autocomplete_uploadable_groups();
+    }
 });
