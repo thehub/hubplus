@@ -31,8 +31,10 @@ class ResourceEditor :
     name= InterfaceWriteProperty
     in_agent = InterfaceWriteProperty
     
+    
 class ResourceManager :
     delete = InterfaceCallProperty
+    move_to_new_group = InterfaceCallProperty
 
 class ResourceCommentor:
     comment = InterfaceCallProperty
