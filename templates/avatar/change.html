@@ -35,13 +35,14 @@
     {% endif %}
 
     <form id="avatar_add" enctype="multipart/form-data" method="POST" action="">
-    	<h4>{% trans "Upload a new one" %}</h4>
+    	<h4>{% trans "Upload a new picture" %}</h4>
         <fieldset>
 			<ul>
-				<li><input type="file" class="file" name="avatar" value="{% trans "Avatar Image" %}" /></li>
+				<li>Step 1: <input type="file" class="file" name="avatar" value="{% trans "Avatar Image" %}" /></li>
+				<li>Step 2: <input type="submit" class="button" value="{% trans "Upload picture" %}" /></li>
 			</ul>
         </fieldset
-        <input type="submit" class="button" value="{% trans "Upload picture" %}" />
+
     </form>
 
     {% ifequal target_type 'group' %}
