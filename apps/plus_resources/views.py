@@ -28,12 +28,6 @@ from apps.plus_permissions.exceptions import PlusPermissionsNoAccessException
 import os
 
 
-def change_parent(user, resource, new_parent, form) :
-    # XXX not used yet
-    if new_parent.has_interface('TgGroup.CreateResource') :
-        current = secure_wrap(resource.in_agent.obj, user)
-        current.move_to_new_group(new_parent)
-        
 
 from apps.plus_tags.models import get_tags_for_object, tag_item_delete, TagItem
 
@@ -50,7 +44,12 @@ def edit_resource(request, group, resource_name,
         secure_upload = Resource.objects.plus_get(request.user, name=resource_name, in_agent=group.get_ref())
     except Resource.DoesNotExist:
         raise Http404
- 
+
+    if secure_upload.name :
+        old_name = secure_upload.name
+    else :
+        old_name = ''
+
     try:
         secure_upload.get_all_sliders
         perms_bool = True
@@ -94,6 +93,10 @@ def edit_resource(request, group, resource_name,
    
             resource.stub = False
             resource.in_agent = group.get_ref()
+
+            # don't allow name to change as this affects the url
+            if old_name :
+                resource.name = old_name
             resource.save()
             
             if not success_url :
