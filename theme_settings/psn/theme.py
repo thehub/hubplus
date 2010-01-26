@@ -3,7 +3,7 @@
 from django.utils.translation import ugettext_lazy as _
 
 PROJECT_NAME=_("Mental Health and Psychosocial Support Network")
-COPYRIGHT_HOLDER=_('Psychosocial Support Network')
+COPYRIGHT_HOLDER=_('MHPSS Network')
 
 EXPLORE_NAME = _('Search')
 
