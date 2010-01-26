@@ -291,12 +291,12 @@ DATABASE_HOST = ''             # Set to empty string for localhost. Not used wit
 DATABASE_PORT = ''             # Set to empty string for default. Not used with sqlite3.
 
 
-SESSION_COOKIE_DODMAIN = ".XXX.net"
+SESSION_COOKIE_DOMAIN = ""
 HUBSPACE_COMPATIBLE = True # is this running against a HUBSPACE database?
-ROOT_URLCONF = 'XXX.urls'
+ROOT_URLCONF = 'hubplus.urls'
 
-EMAIL_HOST= 'XXX'
-EMAIL_HOST_PASSWORD='XXX_EMAIL_PASSWORD'
+EMAIL_HOST= 'localhost'
+EMAIL_HOST_PASSWORD=''
 EMAIL_HOST_USER=''
 EMAIL_PORT='25'
 EMAIL_USE_TLS=False

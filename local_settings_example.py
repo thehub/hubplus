@@ -5,7 +5,7 @@ DATABASE_PASSWORD = 'DBPASSWORD'         # Not used with sqlite3.
 DATABASE_HOST = ''             # Set to empty string for localhost. Not used with sqlite3.
 DATABASE_PORT = ''             # Set to empty string for default. Not used with sqlite3.
 
-SESSION_COOKIE_DOMAIN = None # ".the-hub.net"
+SESSION_COOKIE_DOMAIN = "" # ".the-hub.net"
 ROOT_URLCONF = 'hubplus.urls'
 
 
