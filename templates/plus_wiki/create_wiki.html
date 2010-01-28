@@ -29,7 +29,7 @@
 
 		<div id="content" class="yui-skin-sam">
 			<textarea name="content" rows="30">{% if data.content %}{{data.content}}{% else %}{{page.content}}{% endif %}</textarea>
-			{% if errors.content %}<span class="error">{{errors.content}}<span>{% endif %}
+			{% if errors.content %}<span class="error">{{errors.content}}</span>{% endif %}
 		</div>
 
 	</fieldset>
@@ -58,7 +58,7 @@
 			  </div>
 			  <div class="value">
 			    <input name="license" id="license" class="text" type="text" value="{% if data.license %}{{data.license}}{% else %}{{page.license}}{% endif %}" />
-			    {% if errors.license %}<span class="error">{{errors.license}}<span>{% endif %}
+			    {% if errors.license %}<span class="error">{{errors.license}}</span>{% endif %}
 			  </div>
 			</li>
 			
@@ -70,7 +70,7 @@
 				</div>
 				<div class="value">
 					<textarea id="what_changed" name="what_changed" class="text">{{data.what_changed}}</textarea>
-					{% if errors.what_changed %}<span class="error">{{errors.what_changed}}<span>{% endif %}
+					{% if errors.what_changed %}<span class="error">{{errors.what_changed}}</span>{% endif %}
 				</div>
 			</li>
 			{% endif %}
@@ -92,14 +92,33 @@
 		{% endif %}
 
     </fieldset>
-	
+
     {% if page.stub %}{% else %}
     <fieldset class="buttons">
-      {% trans "Alternatively, you may delete this page." %}
+      <h3>{% trans "Move this page to a new group" %}</h3>
+      <ul id="move_resource">
+        <li>
+          <label for="move_to">{% trans "Move to group" %}</label>
+          <input class="autocomplete_uploadable_groups" id="move_to" name="move_to" type="select" value=""/>
+          <input type="hidden" name="new_parent_group" value="" id="new_parent_group"/>
+        </li>
+      </ul>
+      <ul>
+        <li>
+          <input class="button" id="move_resource_submit" name="move_resource_submit" type="submit" value="Move"/>
+        </li>
+      </ul>
+    </fieldset>
+    {% endif %}
+    
+    
+    {% if page.stub %}{% else %}
+    <fieldset class="buttons">
+      <h3>{% trans "Alternatively, you may delete this page" %}.</h3>
       <ul id="delete_buttons">
-	<li>
+        <li>
           <label for="delete_check">{% trans "Check this box to confirm that you want to delete this page." %}</label>
-	  <input id="delete_check" name="delete_check" type="checkbox" value=""/>
+          <input id="delete_check" name="delete_check" type="checkbox" value=""/>
         </li>
       </ul>
       <ul>
@@ -109,7 +128,7 @@
       </ul>
     </fieldset>
     {% endif %}
-
+    
 </div>
 {% endblock %}
    

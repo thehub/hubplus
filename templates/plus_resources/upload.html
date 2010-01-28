@@ -108,9 +108,27 @@
 	</fieldset>
 	
 
-	{% if page.stub %}{% else %}
+	{% if upload.stub %}{% else %}
 	<fieldset class="buttons">
-	  {% trans "Alternatively, you may delete this upload." %}
+	  <h3>{% trans "Move this upload to a new group" %}</h3>
+	  <ul id="move_resource">
+	    <li>
+	      <label for="move_to">{% trans "Move to group" %}</label>
+	      <input class="autocomplete_uploadable_groups" id="move_to" name="move_to" type="select" value=""/>
+	      <input type="hidden" name="new_parent_group" value="" id="new_parent_group"/>
+	    </li>
+	  </ul>
+	  <ul>
+	    <li>
+	      <input class="button" id="move_resource_submit" name="move_resource_submit" type="submit" value="Move"/>
+	    </li>
+	    </ul>
+	</fieldset>
+	{% endif %}
+
+	{% if upload.stub %}{% else %}
+	<fieldset class="buttons">
+	  <h3>{% trans "Alternatively, you may delete this upload." %}</h3>
 	  <ul id="delete_buttons">
             <li>
               <label for="delete_check">{% trans "Check this box to confirm that you want to delete this upload." %}</label>

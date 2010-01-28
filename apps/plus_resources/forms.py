@@ -6,11 +6,10 @@ from apps.plus_lib.utils import title_to_name
 from apps.plus_resources.models import Resource
 from django.utils.translation import ugettext_lazy as _
 
+from apps.plus_groups.models import TgGroup 
 
 licenses = (('',''),
             ('',''))
-
-
 
 
 class UploadFileForm(forms.Form):
@@ -63,3 +62,5 @@ class UploadFileForm(forms.Form):
                     self._errors['title'] = 'An Upload with the name/url %s already exists in %s' %(self.cleaned_data['name'], obj.in_agent.obj.display_name) 
         return self.cleaned_data
     
+
+
