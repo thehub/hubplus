@@ -2,7 +2,7 @@
 
 from datetime import datetime
 from apps.plus_tags.models import tag_item_delete, TagItem
-
+from apps.plus_groups.models import TgGroup
 
 class NameConflictException(Exception) :
     pass
@@ -10,7 +10,6 @@ class NameConflictException(Exception) :
 def resource_common(cls) :
 
     def move_to_new_group(self, group) :
-
         try :
             self.check_name(self.name, group.get_ref(), self)
         except ValueError, e:
@@ -62,3 +61,28 @@ def resource_common(cls) :
     cls.display_type = display_type
 
     return cls
+
+
+# Forms
+from django import forms
+
+class MoveResourceForm(forms.Form) :
+    new_parent_group = forms.CharField()
+
+    def clean_new_parent_group(self) :
+        # allows the resource to be moved to a new parent
+        # assuming that the group_id is submitted.
+        # why id? because group_name is just as abstract for the user.
+        # and group display name is not necessarily unique
+        
+        parent_id = self.data['new_parent_group']
+        if parent_id :
+            # note that self.user needs to have been set on this form
+            groups = TgGroup.objects.plus_filter(self.user, id=parent_id)
+            if groups :
+                self.cleaned_data['new_parent_group'] = groups[0]
+            else :
+                raise forms.ValidationError(_("There is no group with the id you submitted."))
+        return self.cleaned_data['new_parent_group']
+
+
