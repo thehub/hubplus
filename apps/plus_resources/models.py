@@ -9,7 +9,7 @@ from datetime import datetime
 from apps.plus_lib.models import extract
 from django.core.files.base import File
 
-from apps.plus_tags.models import tag_item_delete, TagItem
+from apps.plus_groups.resources_common import resource_common
 
 import os
 
@@ -27,9 +27,6 @@ def upload_to(instance, file_name) :
     owner_id = owner.id
     return "member_res/%s/%s/%s/%s" % (owner_class, owner_id, instance.id, file_name)
 
-class NameConflictException(Exception) :
-    pass
-
 class Resource(models.Model):
 
     in_agent = models.ForeignKey(GenericReference, related_name="resources")
@@ -38,17 +35,6 @@ class Resource(models.Model):
     def display_name(self):
         return self.title
     
-    @classmethod
-    def check_name(self, name, in_agent, obj=None):
-        try:
-            res = Resource.objects.get(name=name, in_agent=in_agent)
-            if obj and obj.id==res.id:
-                pass
-            else:
-                raise ValueError("Can't change name to %s, a Resource of that name already exists in this group" % name)
-        except Resource.DoesNotExist:
-            pass
-
     def set_name(self, name):
         self.check_name(name, self.in_agent, obj=self)
         self.name = name
@@ -63,18 +49,6 @@ class Resource(models.Model):
 
     stub = models.BooleanField(default=True) # for compatibility with content creation
     name = models.CharField(max_length=100)
-
-
-    def move_to_new_group(self, group) :
-        try : 
-            Resource.check_name(self.name, group.get_ref(), self)
-        except ValueError, e:
-            raise NameConflictException(_("Group %(group_name)s already has an upload called %(upload_name)")%{'group_name':group.group_name,'upload_name':name})
-        # change in_agent
-        self.in_agent = group.get_ref()
-        # change security_context
-        self.acquires_from(group)
-        self.save()
         
 
     def download_url(self) :
@@ -140,20 +114,7 @@ class Resource(models.Model):
         pass
         # dummy, for testing
 
-    def delete(self) :
-        for tag_item in TagItem.objects.filter(ref=self.get_ref()):
-            tag_item_delete(tag_item)
-        ref = self.get_ref()
-        ref.delete()
-        super(Resource,self).delete()
-
-    def save(self):
-        super(Resource, self).save()
-        ref = self.get_ref()
-        ref.modified = datetime.now()
-        ref.display_name = self.get_display_name()
-        ref.save()
-
+Resource = resource_common(Resource)
 
 def update_attributes(resource_obj, user, **kwargs) :
 

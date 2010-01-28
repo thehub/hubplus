@@ -10,8 +10,10 @@ from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.utils.translation import ugettext_lazy as _
 
-from apps.plus_resources.forms import UploadFileForm, MoveResourceForm
+from apps.plus_resources.forms import UploadFileForm
 from apps.plus_resources.models import Resource, update_attributes
+from apps.plus_groups.resources_common import MoveResourceForm
+
 
 from django.contrib.auth.decorators import login_required
 
