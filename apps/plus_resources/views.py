@@ -12,6 +12,8 @@ from django.utils.translation import ugettext_lazy as _
 
 from apps.plus_resources.forms import UploadFileForm
 from apps.plus_resources.models import Resource, update_attributes
+from apps.plus_groups.resources_common import MoveResourceForm
+
 
 from django.contrib.auth.decorators import login_required
 
@@ -28,11 +30,6 @@ from apps.plus_permissions.exceptions import PlusPermissionsNoAccessException
 import os
 
 
-def change_parent(user, resource, new_parent, form) :
-    # XXX not used yet
-    if new_parent.has_interface('TgGroup.CreateResource') :
-        current = secure_wrap(resource.in_agent.obj, user)
-        
 
 from apps.plus_tags.models import get_tags_for_object, tag_item_delete, TagItem
 
@@ -49,7 +46,12 @@ def edit_resource(request, group, resource_name,
         secure_upload = Resource.objects.plus_get(request.user, name=resource_name, in_agent=group.get_ref())
     except Resource.DoesNotExist:
         raise Http404
- 
+
+    if secure_upload.name :
+        old_name = secure_upload.name
+    else :
+        old_name = ''
+
     try:
         secure_upload.get_all_sliders
         perms_bool = True
@@ -61,12 +63,29 @@ def edit_resource(request, group, resource_name,
         post_kwargs = request.POST.copy()
         post_kwargs['obj'] = secure_upload
 
+        if "delete_submit" in post_kwargs :
+            if post_kwargs.has_key('delete_check') :
+                secure_upload.delete()
+                return HttpResponseRedirect(reverse(current_app + ':group', args=[group.id]))
+
+        if "move_resource_submit" in post_kwargs :
+            form = MoveResourceForm(post_kwargs)
+            form.user = request.user # essential, user is checked inside form validation
+            if form.is_valid() :
+                new_parent_group = form.cleaned_data['new_parent_group']
+                try :
+                    secure_upload.move_to_new_group(new_parent_group)
+                except Exception, e :
+                    print e
+
+                return HttpResponseRedirect(reverse(current_app + ':group', args=[form.cleaned_data['new_parent_group'].id]))
+
         form = UploadFileForm(post_kwargs, request.FILES, user=request.user)
 
         if form.is_valid():
             a_file = form.cleaned_data['resource']
-            if len(a_file.name) < 70 :
-                resource = update_attributes(secure_upload, request.user,
+
+            resource = update_attributes(secure_upload, request.user,
                                          title = form.cleaned_data['title'],
                                          name  = form.cleaned_data['name'],
                                          license = form.cleaned_data['license'],
@@ -74,19 +93,19 @@ def edit_resource(request, group, resource_name,
                                          description = form.cleaned_data['description'],
                                          resource = a_file)
    
-                resource.stub = False
-                resource.in_agent = group.get_ref()
-                resource.save()
-            
-                if not success_url :
-                    success_url = reverse(current_app + ':view_Resource', args=(group.id, resource.name))
+            resource.stub = False
+            resource.in_agent = group.get_ref()
 
-                return HttpResponseRedirect(success_url)
-            else :
-                #file name too long
-                form.errors['resource']=_("That file name is too long for our system. Try reducing length of the file name and try again(< 70 characters)")
-                
-                
+            # don't allow name to change as this affects the url
+            if old_name :
+                resource.name = old_name
+            resource.save()
+            
+            if not success_url :
+                success_url = reverse(current_app + ':view_Resource', args=(group.id, resource.name))
+           
+            return HttpResponseRedirect(success_url)
+                 
         else:
             pass
 
@@ -168,3 +187,4 @@ def delete_stub_resource(request, group, resource_name, current_app='plus_groups
     except Resource.DoesNotExist:
         pass
     return HttpResponseRedirect(reverse(current_app + ':group', args=[group.id]))
+

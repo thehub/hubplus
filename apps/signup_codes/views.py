@@ -20,6 +20,7 @@ from apps.plus_permissions.proxy_hmac import hmac_proxy
 from apps.plus_contacts.models import Application
 
 from django.db import transaction
+from django.core.urlresolvers import reverse
 
 
 def signup(request, form_class=SignupForm,
@@ -77,15 +78,22 @@ def proxied_signup(request, application, form_class=SignupForm,
 
     # because this is a signup request that has an application object, we expect the application
 
+    applicant = application.get_inner().applicant
+    if applicant.__class__.__name__ == 'User' :
+        # this application was already accepted
+        return HttpResponseRedirect(reverse('home'))
+
+
     display_name = "Visitor"
     sponsor = request.user # the actual user who authorized this acceptance
+
     if request.method == "POST":
         form = form_class(request.POST)
         
         if form.is_valid():
             username = form.cleaned_data['username']
             password = form.cleaned_data['password1']
-
+            
             application.applicant.become_member(username, accepted_by=sponsor, password=password)
             user = authenticate(username=username, password=password)
             

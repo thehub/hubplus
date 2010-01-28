@@ -105,6 +105,7 @@ class TgGroupViewer:
     leave = InterfaceCallProperty
     get_users = InterfaceCallProperty
     get_no_members = InterfaceCallProperty
+    get_no_users = InterfaceCallProperty
     get_admin_group = InterfaceCallProperty
     homeplace = InterfaceReadProperty
     get_group_type_display = InterfaceReadProperty
@@ -123,6 +124,9 @@ class TgGroupEditor:
     status = InterfaceWriteProperty
     group_type = InterfaceWriteProperty
     address = InterfaceWriteProperty
+
+class TgGroupDelete:
+    delete = InterfaceCallProperty
 
 class TgGroupJoin:
     pk = InterfaceReadProperty
@@ -168,6 +172,7 @@ from apps.plus_permissions.models import add_type_to_interface_map
 if not get_interface_map(TgGroup):
     TgGroupInterfaces = {'Viewer': TgGroupViewer,
                          'Editor': TgGroupEditor,
+                         'Delete': TgGroupDelete,
                          'Invite': TgGroupInviteMember,
                          'ManageMembers': TgGroupManageMembers,
                          'Join': TgGroupJoin,
@@ -186,7 +191,7 @@ if not get_interface_map(TgGroup):
 # they don't need to be stored in the db
 if not SliderOptions.get(TgGroup, False):
     SetSliderOptions(TgGroup, 
-                     {'InterfaceOrder':['Viewer', 'Editor', 'Invite', 'Join', 'Uploader', 'Commentor', 'ManageMembers', 'ManagePermissions'], 
+                     {'InterfaceOrder':['Viewer', 'Editor', 'Invite', 'Join', 'Uploader', 'Commentor', 'ManageMembers', 'Delete', 'ManagePermissions'], 
                       'InterfaceLabels':{'Viewer':'View',
                                                   'Editor': 'Edit',
                                                   'Commentor': 'Comment',
@@ -228,6 +233,7 @@ def setup_defaults() :
                        {'defaults':
                             {'Viewer':'anonymous_group', 
                              'Editor':'creator',
+                             'Delete':'creator',
                              'Invite':'context_agent',
                              'ManageMembers':'creator',
                              'Join':'all_members_group',
@@ -252,7 +258,7 @@ def setup_defaults() :
                             {'Viewer':'anonymous_group',
                              'Editor':'context_agent',
                              'Creator':'creator',
-                             'Delete':'context_admin',
+                             'Manager':'context_admin',
                              'Commentor':'all_members_group',
                              'CommentViewer':'anonymous_group',
                              'Unknown':'context_admin',

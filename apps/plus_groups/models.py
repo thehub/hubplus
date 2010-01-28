@@ -281,6 +281,9 @@ try :
         def get_users(self):
             return self.users.all()
 
+        def get_no_users(self) :
+            return self.get_users().count()
+
         def get_member_groups(self):
             return self.child_groups.all()
 
@@ -292,7 +295,7 @@ try :
             return (x in self.get_members())
 
         def get_no_members(self) :
-            return self.get_users().count() + self.get_member_groups().count()
+            return self.get_no_users() + self.get_member_groups().count()
 
 
         def get_permission_agent_name(self) : 

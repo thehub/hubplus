@@ -4,7 +4,9 @@ from django.contrib.auth.models import User
 from apps.plus_groups.forms import validate_name_url
 from apps.plus_lib.utils import title_to_name
 from apps.plus_resources.models import Resource
+from django.utils.translation import ugettext_lazy as _
 
+from apps.plus_groups.models import TgGroup 
 
 licenses = (('',''),
             ('',''))
@@ -15,7 +17,7 @@ class UploadFileForm(forms.Form):
     resource  = forms.FileField(required=False)
     description = forms.CharField(required=True)
     license = forms.CharField(required=False)
-    author = forms.CharField(required=False) # copyright purposes
+    author = forms.CharField(required=False, max_length=99) # copyright purposes
 
     new_parent_group = forms.CharField(required=False) 
 
@@ -46,6 +48,10 @@ class UploadFileForm(forms.Form):
         if not self.cleaned_data['resource'] and not obj.resource:
             self._errors['resource'] = "You must upload a file"
 
+        if self.cleaned_data['resource'] :
+            if len( self.cleaned_data['resource'].name ) > 70 :
+                self._errors['resource']=_("That file name is too long for our system. Try reducing length of the file name and try again(< 70 characters)")
+
         self.cleaned_data['name'] = title_to_name(self.data['title'])
         # should use validate_name_url from plus_groups form
 
@@ -56,3 +62,5 @@ class UploadFileForm(forms.Form):
                     self._errors['title'] = 'An Upload with the name/url %s already exists in %s' %(self.cleaned_data['name'], obj.in_agent.obj.display_name) 
         return self.cleaned_data
     
+
+

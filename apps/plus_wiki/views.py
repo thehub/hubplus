@@ -28,6 +28,8 @@ from reversion.models import Version
 from datetime import datetime
 import simplejson as json
 
+from apps.plus_groups.resources_common import MoveResourceForm
+
 # HTMLDIFF
 # --------
 #http://codespeak.net/lxml/lxmlhtml.html#html-diff
@@ -79,6 +81,22 @@ def create_wiki_page(request, group, page_name, template_name="plus_wiki/create_
     post_kwargs = request.POST.copy()
     post_kwargs['obj'] = obj
     form = EditWikiForm(post_kwargs)
+
+    if "delete_submit" in post_kwargs :
+        if post_kwargs.has_key('delete_check') :
+            obj.delete()
+            return HttpResponseRedirect(reverse(current_app + ':group', args=[group.id]))
+
+    if "move_resource_submit" in post_kwargs :
+        form = MoveResourceForm(post_kwargs)
+        form.user = request.user # essential, user is checked inside form validation                                     
+        if form.is_valid() :
+            new_parent_group = form.cleaned_data['new_parent_group']
+            obj.move_to_new_group(new_parent_group)
+            revision.user = request.user
+            return HttpResponseRedirect(reverse(current_app + ':group', 
+                                                args=[form.cleaned_data['new_parent_group'].id]))
+
 
     if form.is_valid():
         title = form.cleaned_data['title']

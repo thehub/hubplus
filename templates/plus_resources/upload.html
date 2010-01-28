@@ -51,6 +51,7 @@
 					{% if errors.resource %}
 					<p class="errors">{{errors.resource}}</p>
 					{% endif %}
+					<p>{% trans "Please Note : Because not all members of the network will have access to the latest computers or software, we recommend that you use older, widely used file formats. If possible please stick to Word, Excel and Powerpoint files from Office 2003 or earlier, rather than Office 2007. .DOCX files are particularly likely to cause problems for some readers. Or use PDFs for brochures and final publications." %}</p>
 				    </div>
 				    {% endif %}
 				{% endif %}
@@ -74,6 +75,10 @@
 				<div class="value">
 					<input  id="author" name="author" class="text" type="text" value='{% if data.author %}{{data.author}}{% else %}{{upload.author}}{% endif %}'/>
 					{% if errors.author %}<span class="error">{{errors.author}}</span>{% endif %}
+					<p>Please note that the author field is currently restricted to 100 characters.
+					  If you would like to add a citation to an academic journal, please use 
+					  the description field.
+					</p>
 				</div>
 			</li>
 			<li>
@@ -82,7 +87,7 @@
 				</div>
 				<div class="value">
 					<input name="license" id="license" class="text" type="text" value="{% if data.license %}{{data.license}}{% else %}{{upload.license}}{% endif %}" />
-					{% if errors.license %}<span class="error">{{errors.license}}<span>{% endif %}
+					{% if errors.license %}<span class="error">{{errors.license}}</span>{% endif %}
 				</div>
 				<input type="hidden" name="new_parent_group" value=""/><!-- needed for form validation. expand to select box later -->
 			</li>
@@ -90,18 +95,54 @@
 
 	</fieldset>
 
-    <fieldset class="buttons">
+	<fieldset class="buttons">
 
-		{% if upload.stub %}     
-		<input class="button" id="edit_submit"  type="submit" value="Create"/>
-		or <a href="{% url plus_groups:deletestub_Resource upload.in_agent.obj.id upload.name  %}">Go back</a>
-		{% else %}
-		<input class="button" id="edit_submit"  type="submit" value="Save"/>
-		or  <a href="{% url plus_groups:view_Resource upload.in_agent.obj.id upload.name  %}">Cancel</a>
-		{% endif %}
-		
-    </fieldset>
+	  {% if upload.stub %}     
+	  <input class="button" id="edit_submit"  type="submit" value="Create"/>
+	  or <a href="{% url plus_groups:deletestub_Resource upload.in_agent.obj.id upload.name  %}">Go back</a>
+	  {% else %}
+	  <input class="button" id="edit_submit"  type="submit" value="Save"/>
+	  or  <a href="{% url plus_groups:view_Resource upload.in_agent.obj.id upload.name  %}">Cancel</a>
+	  {% endif %}
+	  
+	</fieldset>
+	
 
+	{% if upload.stub %}{% else %}
+	<fieldset class="buttons">
+	  <h3>{% trans "Move this upload to a new group" %}</h3>
+	  <ul id="move_resource">
+	    <li>
+	      <label for="move_to">{% trans "Move to group" %}</label>
+	      <input class="autocomplete_uploadable_groups" id="move_to" name="move_to" type="select" value=""/>
+	      <input type="hidden" name="new_parent_group" value="" id="new_parent_group"/>
+	    </li>
+	  </ul>
+	  <ul>
+	    <li>
+	      <input class="button" id="move_resource_submit" name="move_resource_submit" type="submit" value="Move"/>
+	    </li>
+	    </ul>
+	</fieldset>
+	{% endif %}
+
+	{% if upload.stub %}{% else %}
+	<fieldset class="buttons">
+	  <h3>{% trans "Alternatively, you may delete this upload." %}</h3>
+	  <ul id="delete_buttons">
+            <li>
+              <label for="delete_check">{% trans "Check this box to confirm that you want to delete this upload." %}</label>
+    	      <input id="delete_check" name="delete_check" type="checkbox" value=""/>
+            </li>
+	  </ul>
+	  <ul>
+            <li class="delete_hide">
+              <input class="button" id="delete_submit" name="delete_submit" type="submit" value="Delete"/>
+            </li>
+	  </ul>
+	</fieldset>
+	{% endif %}
+	
 </div>
 {% endblock %}
 

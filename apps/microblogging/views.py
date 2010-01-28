@@ -144,6 +144,6 @@ def post(request, success_url=None) :
            form.save()
        else :
            # what to do here? We weren't planning to show the form again ... :-(
-           request.user.message_set.create(_("We are sorry, but we cannot update your status at the moment"))
+           request.user.message_set.create(message=_("We are sorry, but we cannot update your status at the moment"))
            
     return HttpResponseRedirect(success_url)
