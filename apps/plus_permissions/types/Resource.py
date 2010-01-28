@@ -53,7 +53,7 @@ ResourceInterfaces = {
 add_type_to_interface_map(Resource, ResourceInterfaces)
 
 if not SliderOptions.get(Resource, False):
-    SetSliderOptions(Resource, {'InterfaceOrder':['Viewer', 'Editor', 'Commentor', 'Manager'], 'InterfaceLabels':{'Viewer':'View', 'Editor':'Edit', 'Commentor':'Comment', 'ManagePermissions':'Change Permissions'}})
+    SetSliderOptions(Resource, {'InterfaceOrder':['Viewer', 'Editor', 'Commentor', 'Manager'], 'InterfaceLabels':{'Viewer':'View', 'Editor':'Edit', 'Commentor':'Comment', 'Manager':'Manage (Move / Delete)', 'ManagePermissions':'Change Permissions'}})
 
 child_types = []
 SetPossibleTypes(Resource, child_types)
