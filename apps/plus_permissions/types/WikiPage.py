@@ -57,12 +57,12 @@ class WikiPageEditor:
 class WikiPageCreator:
     created_by = InterfaceWriteProperty
 
-class WikiPageDelete:
+class WikiPageManager:
     delete = InterfaceCallProperty
+    move_to_new_group = InterfaceCallProperty
 
 class WikiPageCommentor: 
     comment = InterfaceCallProperty
-
 
 class WikiPageCommentViewer:
     view_comments = InterfaceReadProperty
@@ -70,7 +70,7 @@ class WikiPageCommentViewer:
 if not get_interface_map(WikiPage):
     WikiPageInterfaces = {'Viewer':WikiPageViewer,
                           'Editor':WikiPageEditor,
-                          'Delete':WikiPageDelete,
+                          'Manager':WikiPageManager,
                           'Creator':WikiPageCreator,
                           "Commentor":WikiPageCommentor,
                           "ViewComments":WikiPageCommentViewer}
@@ -78,7 +78,7 @@ if not get_interface_map(WikiPage):
     add_type_to_interface_map(content_type, WikiPageInterfaces)
 
 if not SliderOptions.get(WikiPage, False):
-    SetSliderOptions(WikiPage, {'InterfaceOrder':['Viewer', 'Editor','Commentor', 'ManagePermissions'], 'InterfaceLabels':{'Viewer':'View', 'Editor':'Edit', 'Commentor':'Comment', 'ManagePermissions':'Change Permissions'}})
+    SetSliderOptions(WikiPage, {'InterfaceOrder':['Viewer', 'Editor','Commentor', 'Manager', 'ManagePermissions'], 'InterfaceLabels':{'Viewer':'View', 'Editor':'Edit', 'Commentor':'Comment', 'Manager':'Manage (Move / Delete)', 'ManagePermissions':'Change Permissions'}})
 
 
 

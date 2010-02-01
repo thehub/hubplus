@@ -6,13 +6,8 @@ var listing_ready = function () {
 	});
 	return false;
     });
-<<<<<<< HEAD:site_media_src/js/listings.js
-    jq('.order_list li.sort select').change(function () {
-	jq(this).submit();
-=======
     var evt = jq.browser.msie ? "click" : "change";
     jq('.order_list li.sort select').bind(evt, function () {
 	jq(this).closest('form').submit();
->>>>>>> listings.js sort fix:site_media_src/js/listings.js
     });
 };
