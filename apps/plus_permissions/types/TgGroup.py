@@ -171,7 +171,6 @@ if not get_interface_map(TgGroup):
     TgGroupInterfaces = {'Viewer': TgGroupViewer,
                          'Editor': TgGroupEditor,
                          'Delete': TgGroupDelete,
-                         'Invite': TgGroupInviteMember,
                          'ManageMembers': TgGroupManageMembers,
                          'Join': TgGroupJoin,
                          'Leave': TgGroupLeave,
@@ -189,7 +188,7 @@ if not get_interface_map(TgGroup):
 # they don't need to be stored in the db
 if not SliderOptions.get(TgGroup, False):
     SetSliderOptions(TgGroup, 
-                     {'InterfaceOrder':['Viewer', 'Editor', 'Invite', 'Join', 'Uploader', 'Commentor', 'ManageMembers', 'Delete', 'ManagePermissions'], 
+                     {'InterfaceOrder':['Viewer', 'Editor', 'Join', 'Uploader', 'Commentor', 'ManageMembers', 'Delete', 'ManagePermissions'], 
                       'InterfaceLabels':{'Viewer':'View',
                                                   'Editor': 'Edit',
                                                   'Commentor': 'Comment',
@@ -232,7 +231,6 @@ def setup_defaults() :
                             {'Viewer':'anonymous_group', 
                              'Editor':'creator',
                              'Delete':'creator',
-                             'Invite':'context_agent',
                              'ManageMembers':'creator',
                              'Join':'all_members_group',
                              'Leave':'context_agent',
