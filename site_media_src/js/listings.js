@@ -6,8 +6,8 @@ var listing_ready = function () {
 	});
 	return false;
     });
-    var evt = jq.browser.msie ? "click" : "change";
-    jq('.order_list li.sort select').bind(evt, function () {
+    jq('.order_list li.sort select').change(function () {
 	jq(this).closest('form').submit();
     });
 };
+
