@@ -1,6 +1,7 @@
 from apps.plus_groups.models import TgGroup
+from apps.plus_permissions.types.TgGroup import setup_group_security
 from apps.plus_permissions.default_agents import get_admin_user, get_all_members_group, get_or_create_root_location
-from apps.plus_permissions.views import setup_hubs_security, create_reference, setup_group_security
+from apps.plus_permissions.views import setup_hubs_security, create_reference
 from django.contrib.auth.models import User
 from apps.plus_permissions.types.User import setup_user_security
 
@@ -27,7 +28,7 @@ def patch_in_groups():
 
     for group in no_security_host:
         create_reference(TgGroup, group)
-        setup_group_security(group, group, group, admin_user)
+        setup_group_security(group, group, group, admin_user, 'private')
 
     print "patched %s hub group's security" % str(len(no_security_host))
 
@@ -40,6 +41,7 @@ def patch_in_profiles():
     site_members = site_members_group.users.all()
 
     users = User.objects.all()
+    users = []
     for user in users:
         if user not in site_members and user.username != 'anon':
             site_members_group.users.add(user)

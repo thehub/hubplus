@@ -32,9 +32,9 @@ def setup_hubs_security(group, creator):
     if group.level == 'member':
         admin_group = TgGroup.objects.get(place=group.place, level='host')
         setup_hubs_security(admin_group, creator)
-        setup_group_security(group, group, admin_group, creator)
+        setup_group_security(group, group, admin_group, creator, 'private')
     elif group.level == 'host':
-        setup_group_security(group, group, group, creator)
+        setup_group_security(group, group, group, creator, 'private')
     return group
 
 #@login_required

@@ -169,8 +169,9 @@ try :
             db_table = u'tg_group'
             ordering = ['display_name']
             
-        #the reverse lookups "group_instance.users" does not seem to work - probably would need to modify ReverseManyRelatedObjectsDescriptor in django.db.models.fields.related to configure the create_many_related_manager differently
-        users = models.ManyToManyField(User, through="User_Group") #through="User_Group" stops the add and remove functionality unnecessarily. Above we patch it back in. 
+        #users = models.ManyToManyField(User, through="User_Group") #'groups' attribute is removed in plus_user.models
+
+#through="User_Group" stops the add and remove functionality unnecessarily. Above we patch it back in. 
                                                                    #The reverse lookup of "user.groups" unfortunately still doesn't work, however you can get a reverse lookup on user.user_group_set from which the results could be inferred
                                                                    #db_table="user_group" doesn't use the right columns for lookup
 
@@ -440,7 +441,7 @@ def get_enclosures(self, levels=None) :
         levels = ['member', 'host']
 
     if isinstance(self, User):
-        return self.tggroup_set.filter(level__in=levels)
+        return self.groups.filter(level__in=levels)
     elif isinstance(self, TgGroup):
         return self.parent_groups.filter(level__in=levels)
 

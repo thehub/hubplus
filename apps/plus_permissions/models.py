@@ -148,10 +148,14 @@ class SecurityContext(models.Model):
 
 
      def setup_tag_from_defaults(self, interface_str, sad, agent_defaults):
-         typ, interface_name = interface_str.split('.')
-         self.create_security_tag(interface_str)
-         selected_agent = get_selected_agent(sad, agent_defaults, typ, interface_name)
-         self.move_slider(selected_agent, interface_str, skip_validation=True, no_user=True)
+         try:
+             st = SecurityTag.objects.get(security_context=self, interface=interface_str)
+         except SecurityTag.DoesNotExist:
+             typ, interface_name = interface_str.split('.')
+             self.create_security_tag(interface_str)
+             selected_agent = get_selected_agent(sad, agent_defaults, typ, interface_name)
+             self.move_slider(selected_agent, interface_str, skip_validation=True, no_user=True)
+         
 
 
      def is_agent(self, target):

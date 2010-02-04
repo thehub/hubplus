@@ -32,10 +32,17 @@ ALTER TABLE tg_user ADD "is_active" bool ; -- NOT NULL,
 ALTER TABLE tg_user ADD "is_superuser" bool  ; -- NOT NULL, 
 ALTER TABLE tg_user ADD "last_login" date  ; -- NOT NULL, 
 ALTER TABLE tg_user ADD "date_joined" date  ; -- NOT NULL, 
+ALTER TABLE tg_user ADD "place" character varying(150);
+ALTER TABLE tg_user ADD "homehub_id" integer;
+CREATE INDEX "tg_user_homehub_id" on tg_user (homehub_id);
+CREATE INDEX "tg_user_homeplace_id" on tg_user (homeplace_id);
+ALTER TABLE "tg_user" ADD FOREIGN KEY (homehub_id) REFERENCES tg_group(id) DEFERRABLE INITIALLY DEFERRED;
+Alter Table tg_user ADD "psn_id" varchar(100);
+Alter Table tg_user ADD "psn_password_hmac_key" varchar(100);
+Alter Table tg_user ADD "cc_messages_to_email" boolean; -- NOT NULL;
 
 update tg_user set username = user_name;
 update tg_user set email = email_address;
-
 update tg_user set is_staff = false, is_active = true, is_superuser = false;
 
 CREATE TABLE "tg_user_user_permissions" (
@@ -46,7 +53,7 @@ CREATE TABLE "tg_user_user_permissions" (
 )
 ;
 """
-patch_hubspace(sql_patch)
+
 
 
 patch2 = """
@@ -58,19 +65,12 @@ Alter Table tg_group ADD "title" varchar(60);
 Alter Table tg_group ADD "description" text;
 Alter Table tg_group ADD "body" text;
 Alter Table tg_group ADD "rights" text;
-"""
-
-patch_hubspace(patch2)
-
-patch3 = """
 Alter Table tg_group DROP CONSTRAINT "tg_group_level_check";
 Alter Table tg_group ADD CONSTRAINT "tg_group_level_check" CHECK (level::text = ANY (ARRAY['superuser'::character varying, 'director'::character varying, 'member'::character varying, 'host'::character varying, 'public'::character varying]::text[]));
+ALTER TABLE "tg_group" ADD COLUMN "active" boolean default True NOT NULL;
 """
 
-patch_hubspace(patch3)
-
-
-patch4 = """
+patch3 = """
 CREATE TABLE "tg_group_child_groups" (
     "id" serial NOT NULL PRIMARY KEY,
     "from_tggroup_id" integer NOT NULL REFERENCES "tg_group" ("id") DEFERRABLE INITIALLY DEFERRED,
@@ -79,10 +79,18 @@ CREATE TABLE "tg_group_child_groups" (
 );
 """
 
-patch_hubspace(patch4)
 
-patch5 = """
-ALTER TABLE "tg_group" ADD COLUMN "active" boolean default True NOT NULL;
+patch4 = """
+Alter table tg_group add column address character varying(255);
 """
 
-patch_hubspace(patch5)
+
+
+def main():
+    patch_hubspace(sql_patch)
+    patch_hubspace(patch2)
+    patch_hubspace(patch3)
+    patch_hubspace(patch4)
+
+if __name__ == "__main__":
+    main()

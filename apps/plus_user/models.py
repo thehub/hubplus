@@ -7,10 +7,9 @@ from django.db.models.signals import post_save
 import hashlib
 import datetime
 from apps.plus_groups.models import is_member_of,  is_direct_member_of,  get_enclosures, get_enclosure_set, Location
-
 """TODO:
-1. Bring in Location Data for Hub - define Hub as the Hub's members group object with an associated Location
-2. Implement the hubspace metadata framework - add typed metadata and language along the way
+1. Bring in Location Data for Hub
+2. add typed metadata and language along the way
 3. Implement the Hub Microsites list functionality
 """
 
@@ -131,18 +130,55 @@ class HubspaceAuthenticationBackend :
             return None
 
 
+def get_meta_data(obj, attr):
+   try:
+      return UserMetaData.objects.filter(user=obj.__dict__['id'], attr_name=attr)[0]
+   except IndexError:
+      return None
 
 
-def patch_user_class():    
+def getattr(self, attr):
+    try:
+       return self.__dict__[attr]
+    except KeyError:
+       return get_meta_data(self, attr).attr_value
+
+def setattr(self, attr_name, attr_value):
+    if attr_name in self._meta.get_all_field_names() or \
+           attr_name.endswith('_id') and attr_name[:-3] in self._meta.get_all_field_names() or \
+           attr_name.endswith('_cache') and attr_name[1:-6] in self._meta.get_all_field_names():
+       self.__dict__[attr_name] = attr_value
+    else:
+       meta_data = get_meta_data(self, attr_name)
+       import ipdb
+       ipdb.set_trace()
+       if meta_data:
+          meta_data.attr_value = attr_value
+          meta_data.save()
+       else:
+          UserMetaData(user=self, attr_name=attr_name, attr_value=attr_value)
+          
+
+
+
+def patch_user_class():  
+    from apps.plus_groups.models import TgGroup, User_Group  
     User._meta.db_table = 'tg_user'
-
     # Patching the User class
-
+    #User.add_to_class('__getattr__',  getattr)
+    #User.add_to_class('__setattr__',  setattr)
     User.add_to_class('user_name', UserNameField(unique=True, max_length=255))
     User.add_to_class('email_address', models.CharField(max_length=255,unique=True))
+
+    #remove the existing django groups relation  
+    gr = User._meta.get_field('groups')
+    User._meta.local_many_to_many.remove(gr)
     del User.groups
-    #User.add_to_class('active',models.SmallIntegerField(null=True)) # not shown
-    #User.add_to_class('display_name', models.CharField(max_length=255,null=True))
+    # add ours new relation for groups
+    User.add_to_class('groups', models.ManyToManyField(TgGroup, through=User_Group, related_name='users'))
+
+
+    #User.add_to_class('active', models.SmallIntegerField(null=True)) # not shown
 
     User.add_to_class('description', models.TextField())
     User.add_to_class('organisation', models.CharField(max_length=255)) 
@@ -161,8 +197,8 @@ def patch_user_class():
     User.add_to_class('website',models.TextField())
     User.add_to_class('homeplace', models.ForeignKey(Location, null=True))
     User.add_to_class('address', models.TextField())
-    User.add_to_class('post_or_zip', models.CharField(null=True, default="", max_length=30))
-    User.add_to_class('country', models.CharField(null=True, default="", max_length=2))
+    #User.add_to_class('post_or_zip', models.CharField(null=True, default="", max_length=30))
+    #User.add_to_class('country', models.CharField(null=True, default="", max_length=2))
 
     User.add_to_class('homehub', models.ForeignKey("plus_groups.TgGroup", null=True)) # we need this for PSN, XXX need to decide how to make it compatible with hubspace for hub+ 
 
@@ -180,7 +216,6 @@ def patch_user_class():
     User.get_enclosure_set = get_enclosure_set
     User.is_group = lambda(self) : False
     User.save = user_save
-
     User.is_admin_of = lambda self, group : self.is_member_of(group.get_admin_group())
 
     def is_site_admin(self) :
@@ -193,3 +228,24 @@ def patch_user_class():
     AnonymousUser.is_member_of = lambda *args, **kwargs : False
     AnonymousUser.is_direct_member_of = lambda *args, **kwarg : False
     # Finished the User Patch
+    
+
+
+
+#added from hubspace
+class UserMetaData(models.Model):
+    """Works the same as Selection above, but for storing free-text properties
+    """
+    class Meta:
+       db_table = 'user_meta_data'    
+    user = models.ForeignKey(User, null=True)
+    attr_name = models.CharField(max_length=50)
+    attr_value = models.TextField()
+
+
+class Selection(models.Model):
+    class Meta:
+       db_table = 'selection'
+    user = models.ForeignKey(User, null=True)
+    attr_name = models.CharField(max_length=50)
+    attr_value = models.IntegerField(default=None)
