@@ -3,7 +3,7 @@
 from django.utils.translation import ugettext_lazy as _
 
 PROJECT_NAME=_("Mental Health and Psychosocial Support Network")
-COPYRIGHT_HOLDER=_('Psychosocial Support Network')
+COPYRIGHT_HOLDER=_('MHPSS Network')
 
 EXPLORE_NAME = _('Search')
 
@@ -112,4 +112,4 @@ Unfortunately, we can not accept you to become a member of {{group_name}} at thi
 # GOOGLE_MAP_KEY = "ABQIAAAAUO5htA3plE0mHcReh9HGtxRH5sEjhzJfKqlMpdJ6oyx9YbCawRTJnbhBF8LBDrQ-Dos5hRa7KzIX4A"
 
 # the following groups are to be hidden from the main group listing page
-HIDDEN_GROUPS = [28, 36, 4, 34, 10, 40, 142]
+HIDDEN_GROUPS = [28, 4, 34, 10, 40, 142]
