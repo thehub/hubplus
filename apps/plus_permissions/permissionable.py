@@ -76,14 +76,27 @@ class TgGroupPermissionableManager(PermissionableManager) :
     """ NB: that this class allows us to search for "virtual" groups (ie. online groups) or 
         real "hubs". The name of the virtual group is now controlled by the setting "VIRTUAL_HUB_NAME".
         Database will have to be recreated or patched with this name"""
-    def plus_hub_filter(self, p_user, **kwargs) :
+
+    def virtual(self):
+        from apps.plus_permissions.default_agents import get_all_members_group
+        query = self.filter(level='member').exclude(group_type=settings.GROUP_HUB_TYPE).exclude(id=get_all_members_group().id)
+
+        for id in settings.HIDDEN_GROUPS :
+            query = query.exclude(id=id)
+        return query
+
+    def hubs(self) :
+        return self.filter(level='member',group_type=settings.GROUP_HUB_TYPE)
+
+
+#    def plus_hub_filter(self, p_user, **kwargs) :
         # bloody django templating language ... why does it work with comprehensions but not generator expressions?
         # XXX needs to be fixed when we work out our lazy filter
-        return [group for group in self.plus_filter(p_user, **kwargs) if group.get_inner().place.name != settings.VIRTUAL_HUB_NAME]
+#        return [group for group in self.plus_filter(p_user, **kwargs) if group.get_inner().place.name != settings.VIRTUAL_HUB_NAME]
 
-    def plus_virtual_filter(self, p_user, **kwargs) :
-        kwargs['place__name']=settings.VIRTUAL_HUB_NAME # adding another criteria to query
-        return self.plus_filter(p_user, **kwargs)
+#    def plus_virtual_filter(self, p_user, **kwargs) :
+#        kwargs['place__name']=settings.VIRTUAL_HUB_NAME # adding another criteria to query
+#        return self.plus_filter(p_user, **kwargs)
 
 
 

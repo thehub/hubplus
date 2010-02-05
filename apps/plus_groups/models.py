@@ -310,10 +310,7 @@ try :
             pass
 
         def is_hub_type(self) :
-            from apps.plus_permissions.default_agents import get_or_create_root_location
-            if self.place.name != get_or_create_root_location().name :
-                return True
-            return False
+            return self.group_type == settings.GROUP_HUB_TYPE
 
         def get_extras(self) :
             # if there are extras for this class, return them
@@ -497,7 +494,3 @@ class MemberInvite(models.Model) :
         return 'http://%s%s' % (site_root, url)
 
 
-def get_hubs() :
-    # one place to define the "get list of hubs" we need for region dropdown
-    return (t for t in TgGroup.objects.filter(level='member') if t.is_hub_type())
- 

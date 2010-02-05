@@ -11,7 +11,7 @@ from django.utils.encoding import smart_str
 from django.db import transaction
 from django.utils import simplejson
 
-from apps.plus_groups.models import TgGroup, get_hubs
+from apps.plus_groups.models import TgGroup
 from django.core.urlresolvers import reverse
 
 from django.template import defaultfilters
@@ -466,7 +466,7 @@ def group_type_ajax(request,**kwargs) :
 
 @json_view
 def ajax_hub_list(request,**kwargs) :    
-    xs = [(t.id, t.display_name) for t in get_hubs()]
+    xs = [(t.id, t.display_name) for t in TgGroup.objects.hubs()]
     return xs
 
 
