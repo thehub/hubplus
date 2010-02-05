@@ -28,11 +28,11 @@ SITE_NAME = _("Mental Health and Psychosocial Support Network")
 SITE_NAME_SHORT = _("MHPSS Network")
 
 GROUP_TYPES = (
-    (u'Interest', u'Interest'),
-    (u'Organisation', u'Organisation'),
-    (u'Project', u'Project'),
-    (u'Internal', u'Internal'),
-    (u'Region', u'Main Region'),
+    (u'interest', u'Interest'),
+    (u'organisation', u'Organisation'),
+    (u'project', u'Project'),
+    (u'internal', u'Internal'),
+    (u'region', u'Main Region'),
 )
 
 

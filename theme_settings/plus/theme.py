@@ -32,8 +32,8 @@ GROUP_TYPES = (
 
 
 HUB_NAME = 'Hub'
+MAIN_HUB_NAME = _('Home Hub')
 
-MAIN_HUB_NAME = 'Main Hub'
 
 EXPLORE_SEARCH_TITLE = _('explore search title')
 MEMBER_SEARCH_TITLE = _('Search Members')
@@ -77,3 +77,12 @@ Thanks for using our site!
 """
 
 HIDDEN_GROUPS = []
+
+GROUP_TYPES = (
+    (u'interest', u'Interest'),
+    (u'organisation', u'Organisation'),
+    (u'project', u'Project'),
+    (u'internal', u'Internal'),
+    (u'hub', u'Hub'),
+)
+

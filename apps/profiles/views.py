@@ -212,8 +212,7 @@ def profile(request, username, template_name="profiles/profile.html"):
         see_links = True
 
     can_tag = profile.has_interface('Profile.Editor')
-
-    return render_to_response(template_name, {
+    template_args = {
             "is_me": is_me,
             "is_friend": is_friend,
             "is_following": is_following,
@@ -246,7 +245,11 @@ def profile(request, username, template_name="profiles/profile.html"):
             "other_user_class":user_type.id,
             "other_user_id":other_user.id,
             "can_tag":can_tag,
-            }, context_instance=RequestContext(request))
+            }
+    labels = {'MAIN_HUB_LABEL':_('Main %s')%settings.HUB_NAME,
+              'MAIN_HUB_DEFAULT':_("No %s selected")%settings.HUB_NAME}
+    template_args.update(labels)
+    return render_to_response(template_name, template_args, context_instance=RequestContext(request))
 
 
 
