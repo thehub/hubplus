@@ -12,11 +12,7 @@ def show_profile(context, profile):
     if profile.homehub :
         homehub = profile.homehub 
     else :
-        # this is how it was being done, XXX deprecated?
-        try:
-            homehub = profile.homeplace.tggroup_set.filter(level='member')[0]
-        except:
-            homehub = TgGroup.objects.get(id=1)
+        homehub = None
         
     #profile = TemplateSecureWrapper(secure_wrap(profile, context['request'].user, interface_names=['Viewer'], required_interfaces=['Viewer']))
     user = profile.user

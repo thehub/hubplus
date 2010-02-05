@@ -78,8 +78,7 @@ class TgGroupPermissionableManager(PermissionableManager) :
         Database will have to be recreated or patched with this name"""
 
     def virtual(self):
-        from apps.plus_permissions.default_agents import get_all_members_group
-        query = self.filter(level='member').exclude(group_type=settings.GROUP_HUB_TYPE).exclude(id=get_all_members_group().id)
+        query = self.filter(level='member').exclude(group_type=settings.GROUP_HUB_TYPE)
 
         for id in settings.HIDDEN_GROUPS :
             query = query.exclude(id=id)
