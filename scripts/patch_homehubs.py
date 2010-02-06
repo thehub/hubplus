@@ -7,6 +7,7 @@ def patch_home_hubs() :
     for u in User.objects.all() :
         if (not u.homehub) or (u.homehub == all_members):
             u.homehub = default_home
+            default_home.join(u)
             print u.username, u.homeplace, u.homehub
             u.save()
 

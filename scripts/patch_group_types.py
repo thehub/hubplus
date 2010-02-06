@@ -18,3 +18,4 @@ def set_type(g, type) :
 set_type(get_all_members_group(),'internal')
 set_type(get_virtual_members_group(),settings.GROUP_HUB_TYPE)
 
+patch_groups()
