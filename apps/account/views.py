@@ -361,15 +361,13 @@ def other_services_remove(request):
     return HttpResponseRedirect(reverse("acct_other_services"))
 other_services_remove = login_required(other_services_remove)
 
-from apps.plus_lib.utils import get_hubs, get_virtual_groups
-
 def apply(request, form_class=HubPlusApplicationForm, template_name="account/apply_form.html"):
 
     user = request.user
     if user.__class__ == AnonymousUser:
         user = get_anon_user()
         
-    hubs = get_hubs()
+    hubs = TgGroup.objects.hubs()
 
     if request.method == "POST":
         form = form_class(request.POST)

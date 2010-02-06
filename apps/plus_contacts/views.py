@@ -26,7 +26,6 @@ from apps.plus_permissions.default_agents import get_all_members_group
 
 from apps.plus_groups.models import TgGroup
 
-from apps.plus_explore.views import get_hubs
 
 @login_required
 def list_of_applications(request, resource_id=None, template_name="plus_contacts/applicant_list.html", **kwargs):
@@ -125,7 +124,7 @@ def site_invite(request, site, template_name='plus_contacts/invite_non_member.ht
         
     return render_to_response(template_name, {
             'form':form,
-            'hubs':get_hubs(),
+            'hubs':TgGroup.objects.hubs(),
             }, context_instance=RequestContext(request))
                               
 

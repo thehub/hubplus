@@ -43,11 +43,11 @@ def index(request, template_name="plus_explore/explore.html"):
 
 
 
-from apps.plus_lib.utils import hub_name, hub_name_plural, get_hubs, get_virtual_groups
+from apps.plus_lib.utils import hub_name, hub_name_plural
 
 def get_search_types():
-    v_groups = get_virtual_groups()
-    hubs = get_hubs()
+    v_groups = TgGroup.objects.virtual()
+    hubs = TgGroup.objects.hubs()
     #('All', (None, None, _('All')))
     return (('Profile', ({'content_type__model':'profile'}, None, _('Members'))), 
             ('Group', ({'content_type__model':'tggroup', 'object_id__in':v_groups}, None, _('Groups'))), 
