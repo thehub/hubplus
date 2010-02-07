@@ -12,7 +12,8 @@ def show_profile(context, profile):
     if profile.homehub :
         homehub = profile.homehub 
     else :
-        homehub = None
+        from apps.plus_permissions.default_agents import get_virtual_members_group
+        homehub = get_virtual_members_group()
         
     #profile = TemplateSecureWrapper(secure_wrap(profile, context['request'].user, interface_names=['Viewer'], required_interfaces=['Viewer']))
     user = profile.user
