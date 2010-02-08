@@ -30,15 +30,29 @@ class AliasOf(object):
 def user_save(self) :
     if not self.created :
         self.created = datetime.date.today()
+
+    # ensure homeplace is up to date with homehub
+    # XXX should this be here? alternatives, have a general mechanism of hooks on attribute updates. 
+    # maybe in the DelegateToUser class defined in the Profiles app. Trade offs ... test every time we update 
+    # an attribute vs. every time we save. I'd guess not many times you update an attribute without saving or 
+    # save without updating an attribute. sybut worth thinking about ... 
+    if self.homehub and (self.homeplace != self.homehub.place) : 
+       self.homeplace = self.homehub.place
+
     super(User,self).save()
+
+    # profile
     try:
        ref = self.get_profile().get_ref()
     except :
        # profile not created yet
-       return 
+       return
+
+    # 
     ref.modified = datetime.datetime.now()
     ref.display_name = self.get_display_name()
     ref.save()
+
     
 
 def to_db_encoding(s, encoding):
