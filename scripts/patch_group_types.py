@@ -15,7 +15,14 @@ def set_type(g, type) :
     print g.display_name, g.group_type
     g.save()
 
-set_type(get_all_members_group(),'internal')
-set_type(get_virtual_members_group(),settings.GROUP_HUB_TYPE)
+set_type(get_all_members_group(),settings.GROUP_HUB_TYPE)
 
-patch_groups()
+import ipdb
+ipdb.set_trace()
+g = get_all_members_group()
+g.display_name = settings.ALL_MEMBERS_NAME
+g.save()
+
+set_type(get_virtual_members_group(),'internal')
+
+#patch_groups()
