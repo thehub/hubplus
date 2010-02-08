@@ -66,6 +66,7 @@ class UserViewer:
     get_display_name = InterfaceCallProperty
     display_name = InterfaceReadProperty 
     is_site_admin = InterfaceCallProperty
+    hubs = InterfaceCallProperty
 
 class SetManagePermissions:
     pass

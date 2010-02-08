@@ -465,9 +465,12 @@ def group_type_ajax(request,**kwargs) :
 
 
 @json_view
-def ajax_hub_list(request,**kwargs) :    
-    xs = [(t.id, t.display_name) for t in TgGroup.objects.hubs()]
-    return xs
+def ajax_hub_list(request, username=None, **kwargs) :    
+    if username :
+       return [(t.id, t.display_name) for t in User.objects.plus_get(request.user, username=username).hubs()]
+    else : 
+       return [(t.id, t.display_name) for t in TgGroup.objects.hubs()]
+
 
 
 @login_required
