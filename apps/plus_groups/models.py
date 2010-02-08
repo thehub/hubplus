@@ -250,8 +250,15 @@ try :
                     {'leaver':user_or_group.get_display_name(),'group':self.get_display_name()})
                 send_tweet(user_or_group, message)
 
+                # if I was the homehome for this user, change 
+                if user_or_group.homehub == self :
+                    from apps.plus_permissions.default_agents import get_all_members_group
+                    user_or_group.homehub = get_all_members_group()
+                    user_or_group.save()
+
             if isinstance(user_or_group, self.__class__) and self.child_groups.filter(id=user_or_group.id):
                 self.child_groups.remove(user_or_group)
+
 
 
         def invite_member(self, invited, special_message, invited_by, url_root ) : 
@@ -437,6 +444,9 @@ TgGroup.is_member_of = is_member_of
 
 # to be added to User class
 def get_enclosures(self, levels=None) :
+    # XXX TO-DO given that this is now different for Users and Groups 
+    # no need to have one function assigned to both with a different test
+    # just put different versions into respective classes
     """Give us all the things of which this user/group is a member_of
     """
     if levels == None:
