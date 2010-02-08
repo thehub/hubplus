@@ -8,6 +8,8 @@ import hashlib
 import datetime
 from apps.plus_groups.models import is_member_of,  is_direct_member_of,  get_enclosures, get_enclosure_set, Location
 
+from django.conf import settings 
+
 """TODO:
 1. Bring in Location Data for Hub - define Hub as the Hub's members group object with an associated Location
 2. Implement the hubspace metadata framework - add typed metadata and language along the way
@@ -188,6 +190,9 @@ def patch_user_class():
        return self.is_admin_of(get_all_members_group())
     User.is_site_admin = is_site_admin
    
+    User.hubs = lambda self : self.get_enclosures().filter(group_type=settings.GROUP_HUB_TYPE)
+
+
     print "Monkey Patched User Class ... gulp!"
 
     AnonymousUser.is_member_of = lambda *args, **kwargs : False
