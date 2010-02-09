@@ -8,6 +8,10 @@ from django.db.models.signals import post_save
 import hashlib
 import datetime
 from apps.plus_groups.models import is_member_of,  is_direct_member_of,  get_enclosures, get_enclosure_set, Location
+
+from django.conf import settings 
+
+
 """TODO:
 1. Bring in Location Data for Hub
 2. add typed metadata and language along the way
@@ -28,15 +32,29 @@ class AliasOf(object):
 def user_save(self) :
     if not self.created :
         self.created = datetime.date.today()
+
+    # ensure homeplace is up to date with homehub
+    # XXX should this be here? alternatives, have a general mechanism of hooks on attribute updates. 
+    # maybe in the DelegateToUser class defined in the Profiles app. Trade offs ... test every time we update 
+    # an attribute vs. every time we save. I'd guess not many times you update an attribute without saving or 
+    # save without updating an attribute. sybut worth thinking about ... 
+    if self.homehub and (self.homeplace != self.homehub.place) : 
+       self.homeplace = self.homehub.place
+
     super(User,self).save()
+
+    # profile
     try:
        ref = self.get_profile().get_ref()
     except :
        # profile not created yet
-       return 
+       return
+
+    # 
     ref.modified = datetime.datetime.now()
     ref.display_name = self.get_display_name()
     ref.save()
+
     
 
 def to_db_encoding(s, encoding):
@@ -260,6 +278,9 @@ def patch_user_class():
        return self.is_admin_of(get_all_members_group())
     User.is_site_admin = is_site_admin
    
+    User.hubs = lambda self : self.get_enclosures().filter(group_type=settings.GROUP_HUB_TYPE)
+
+
     print "Monkey Patched User Class ... gulp!"
 
     AnonymousUser.is_member_of = lambda *args, **kwargs : False

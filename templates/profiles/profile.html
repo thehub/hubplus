@@ -69,7 +69,8 @@
       
 	<li>
 	  <div id='ajax_select_list_url_Profile-{{profile.id}}-homehub_widget' 
-	       href='{% url ajax_hub_list %}'></div>
+	       href='{% url ajax_hub_list_for_user profile.user.username %}'>
+	  </div>
 	</li>
         {% editable MAIN_HUB_LABEL profile 'homehub' MAIN_HUB_DEFAULT %}
 	

@@ -227,23 +227,31 @@ try :
                 self.child_groups.add(user_or_group)
 
 
+
+
+
         def remove_member(self, user_or_group):
             if isinstance(user_or_group, User) and self.users.filter(id=user_or_group.id):
                 from apps.plus_permissions.types.Profile import ProfileInterfaces
 
                 self.users.remove(user_or_group)
-
+                
                 # remove host permissions on profile when join/leave Hub
                 if self.group_type == 'hub':
                     for prof in ProfileInterfaces:
                         user.get_security_context().remove_arbitrary_agent(self.get_admin_group(), 'Profile.%s' % prof, admin)
 
+                if user_or_group.homehub == self :
+                    from apps.plus_permissions.default_agents import get_all_members_group
+                    user_or_group.homehub = get_all_members_group()
+                    user_or_group.save()
 
                 from apps.microblogging.models import send_tweet 
                 message = _("%(leaver)s left the group %(group)s") % (
                     {'leaver':user_or_group.get_display_name(),'group':self.get_display_name()})
                 send_tweet(user_or_group, message)
 
+                
             if isinstance(user_or_group, self.__class__) and self.child_groups.filter(id=user_or_group.id):
                 self.child_groups.remove(user_or_group)
 
@@ -261,6 +269,7 @@ try :
                                     group=self)
 
 
+
         def invite_member(self, user, invited, message=''):
             if not invited:
                 raise ValueError('there must be an invitee')
@@ -270,7 +279,6 @@ try :
                                               invited_by=user, 
                                               group=self, 
                                               status=ACCEPTED_PENDING_USER_SIGNUP)
-
 
 
 
@@ -286,6 +294,8 @@ try :
                 message_user(sender, member, message_header, message_body, domain)
 
         def is_group(self) : return True
+
+
 
         
         def get_users(self):
@@ -320,10 +330,7 @@ try :
             pass
 
         def is_hub_type(self) :
-            from apps.plus_permissions.default_agents import get_or_create_root_location
-            if self.place.name != get_or_create_root_location().name :
-                return True
-            return False
+            return self.group_type == settings.GROUP_HUB_TYPE
 
         def get_extras(self) :
             # if there are extras for this class, return them
@@ -450,6 +457,9 @@ TgGroup.is_member_of = is_member_of
 
 # to be added to User class
 def get_enclosures(self, levels=None) :
+    # XXX TO-DO given that this is now different for Users and Groups 
+    # no need to have one function assigned to both with a different test
+    # just put different versions into respective classes
     """Give us all the things of which this user/group is a member_of
     """
     if levels == None:
@@ -559,7 +569,3 @@ def invite_messages(sender, instance, **kwargs):
 if "messages" in settings.INSTALLED_APPS:
     post_save.connect(invite_messages, sender=MemberInvite, dispatch_uid="apps.plus_groups.models")
 
-def get_hubs() :
-    # one place to define the "get list of hubs" we need for region dropdown
-    return (t for t in TgGroup.objects.filter(level='member') if t.is_hub_type())
- 

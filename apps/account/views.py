@@ -24,7 +24,7 @@ from apps.plus_permissions.default_agents import get_anonymous_group, get_anon_u
 from apps.plus_groups.models import TgGroup
 
 from account.utils import get_default_redirect
-from account.models import OtherServiceInfo
+from account.models import OtherServiceInfo, PasswordReset
 from apps.account.forms import SignupForm, AddEmailForm, LoginForm, \
     ChangePasswordForm, SetPasswordForm, ResetPasswordForm, \
     ChangeTimezoneForm, ChangeLanguageForm, TwitterForm, ResetPasswordKeyForm
@@ -288,17 +288,26 @@ def password_reset(request, form_class=ResetPasswordForm,
 def password_reset_from_key(request, key, form_class=ResetPasswordKeyForm,
         template_name="account/password_reset_from_key.html"):
 
+
+    key_already_used = False
     if request.method == "POST":
         password_reset_key_form = form_class(request.POST)
         if password_reset_key_form.is_valid():
             password_reset_key_form.save()
             password_reset_key_form = None
     else:
+
+        try:
+            PasswordReset.objects.get(temp_key=key,reset=False)
+        except PasswordReset.DoesNotExist: 
+            key_already_used = True
         password_reset_key_form = form_class(initial={"temp_key": key})
-    
+  
+  
     return render_to_response(template_name, {
         "form": password_reset_key_form,
         'temp_key':key,
+        'key_already_used':key_already_used,
     }, context_instance=RequestContext(request))
     
 
@@ -369,11 +378,15 @@ def other_services_remove(request):
     return HttpResponseRedirect(reverse("acct_other_services"))
 other_services_remove = login_required(other_services_remove)
 
-from apps.plus_lib.utils import get_hubs, get_virtual_groups
 
 
+def apply(request, form_class=HubPlusApplicationForm, template_name="account/apply_form.html"):
+    user = request.user
+    if user.__class__ == AnonymousUser:
+        user = get_anon_user()
+        
+    hubs = TgGroup.objects.hubs()
 
-def apply(request, form_class=HubPlusApplicationForm, template_name="account/apply_form.html"):        
     if request.method == "POST":
         form = form_class(request.POST)
         if form.is_valid():
@@ -385,8 +398,6 @@ def apply(request, form_class=HubPlusApplicationForm, template_name="account/app
                     }, context_instance=RequestContext(request))
     else:
         form = form_class()
-
-    hubs = get_hubs()
 
     default_country = form.data.get('country', False) and form.data['country'] or "UK"
     country_field = form.fields['country'].widget.render("country", default_country)

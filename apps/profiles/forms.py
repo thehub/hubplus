@@ -2,7 +2,7 @@ from django import forms
 from profiles.models import Profile, HostInfo
 from apps.plus_lib.utils import HTMLField
 from django.conf import settings
-from apps.plus_groups.models import get_hubs, TgGroup
+from apps.plus_groups.models import TgGroup
 
 
 class ProfileInfoForm(forms.Form):

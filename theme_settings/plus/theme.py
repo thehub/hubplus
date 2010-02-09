@@ -30,6 +30,7 @@ GROUP_TYPES = (
     (u'hub', u'Hub'),
 )
 
+GROUP_HUB_TYPE = "hub"
 
 HUB_NAME = 'Hub'
 MAIN_HUB_NAME = _('Home Hub')
@@ -54,6 +55,40 @@ Dear {{first_name}} {{last_name}},
 {{sponsor}} has invited you to become a member of Hub+.
 
 Join and enter a worldwide community of social entrepreneurs and organizations concerned with making the world a better place."""
+
+APPLICATION_MESSAGE = """
+You have received an application to: {{group_name}}
+
+Please review applications to this group at {{review_url}}.
+
+from: {{first_name}} {{last_name}}, {{organisation}}
+
+email: {{email_address}}
+
+{% if find_out %}
+
+{{first_name}} {{last_name}} found out about {{group_name}} by:
+
+{{find_out}}
+
+{% endif %}
+
+{{first_name}} {{last_name}} wants to join {{group_name}} because:
+
+{{request}}
+
+"""
+
+ACCEPTED_TO_GROUP = _("""
+
+Dear %(applicant)s,
+
+Your application to join Hub+ has been accepted. Please go to <a href="http://plusdev.the-hub.net/">Hub+</a> to get started.
+
+%(accepted_by)s 
+
+""")
+
 
 
 APPLICATION_REJECT_TEMPLATE = """                                                    
