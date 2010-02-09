@@ -1,0 +1,16 @@
+{% load i18n %}
+{% load editable_attribute %}
+
+<dev class="host_info">
+
+  <h3>{% trans "Private Questions" %}</h3>
+    <ul class="yui-skin-sam">
+      <li>
+         {% editable 'How did you find out about The Hub?' host_info 'find_out' 'I heard about The Hub ...' %}
+         {% editable "What project are you working on?" host_info 'project' 'I am working on ...' %}
+         {% editable "What stage is your project at?" host_info 'project_stage' 'I am currently ...' %}
+
+      </li>
+    </ul>
+
+</dev>
