@@ -29,6 +29,7 @@ from plus_contacts.models import Contact, Application
 from plus_permissions.default_agents import get_site, get_admin_user
 
 from plus_groups.models import TgGroup
+from django.utils.translation import ugettext, ugettext_lazy as _
 
 
 alnum_re = re.compile(r'^[\w\s]+$')
@@ -417,7 +418,7 @@ class HubPlusApplicationForm(forms.Form):
         site = get_site(get_admin_user())
         group = self.cleaned_data.pop('group')
         about_and_why = self.cleaned_data.pop("about_and_why")
-        contact= site.create_Contact(user, **self.cleaned_data)
+        contact = group.create_Contact(user, **self.cleaned_data)
 
         members_group = get_all_members_group()
         site_application = members_group.apply(user, 
@@ -431,6 +432,52 @@ class HubPlusApplicationForm(forms.Form):
             group = members_group
         return group
         
+
+
+class InviteForm(forms.Form):
+    first_name = forms.RegexField(regex=alnum_re, label=_("First Name"), max_length=30, widget=forms.TextInput(), error_messages={'invalid': 'Name must only contain alphabetic character'})
+    last_name = forms.RegexField(regex=alnum_re, label=_("Last Name"), max_length=30, widget=forms.TextInput(), error_messages={'invalid': 'Name must only contain alphabetic character'})
+    email_address = forms.EmailField(label=_("Email (required)"), required=True, widget=forms.TextInput())
+    message = forms.CharField(label=_("Invite Message"), required=True, widget=forms.TextInput())
+
+    group = forms.CharField(label=_("A group you'd like to join (Optional)"), required=False, widget=forms.TextInput())
+
+    def clean_group(self) :
+        if self.cleaned_data['group'] == '' :
+            return None
+        groups = TgGroup.objects.filter(group_name=self.cleaned_data['group'])
+        if groups :
+            return groups[0]
+        else :
+            raise forms.ValidationError(_("There is no group called %s"%self.cleaned_data['group']))
+
+    def clean_email_address(self) :
+        email = self.cleaned_data['email_address']
+        users = User.objects.filter(email_address=email)
+        if users:
+            raise forms.ValidationError(_("There is already a user with that email address. Please choose another."))
+        return email
+
+    def clean(self):
+        return self.cleaned_data
+
+    def save(self, user):
+        group = self.cleaned_data.pop('group')
+        members_group = get_all_members_group()
+        if not group:
+            group = members_group
+        invitee = group.create_Contact(user, 
+                                       email_address = self.cleaned_data['email_address'], 
+                                       first_name=self.cleaned_data['first_name'],
+                                       last_name=self.cleaned_data['last_name'])
+
+        group.invite_member(user, 
+                            invitee,
+                            message=self.cleaned_data['message'])
+        if not group:
+            group = members_group
+        return group
+    
 
 class SettingsForm(forms.Form) :
     cc_email = forms.BooleanField(required=False)

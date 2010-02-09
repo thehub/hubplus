@@ -1,0 +1,11 @@
+shutdown signals with autoreload on
+
+Pull in data - http://www.bartoszptaszynski.com/2008/08/non-blocking-use-of-django-models-api.html
+store in collections - http://peak.telecommunity.com/DevCenter/TrellisCollections
+
+create task for calling in user - group data,  http://peak.telecommunity.com/DevCenter/TrellisActivity
+return data from the task.
+
+Turn it into a cache - push out old data
+
+time tick - its not ticking - though not necessary for this task
