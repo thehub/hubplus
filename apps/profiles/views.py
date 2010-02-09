@@ -90,14 +90,16 @@ def show_section(profile, attribute_list) :
 def hello(a):
     print `a` * 20
 
+
+
 def profile(request, username, template_name="profiles/profile.html"):
     #trellis.callInEventLoop(hello, "Tom")
+
+    #come on this is crap, we are opening up a common perhaps the most commonly read view with two writes. and why?
     other_user = get_object_or_404(User, username=username)
     other_user.save()
-
     p = other_user.get_profile()
     p.save()
-
     if request.user.is_authenticated():
 
         is_friend = Friendship.objects.are_friends(request.user, other_user)
@@ -152,7 +154,7 @@ def profile(request, username, template_name="profiles/profile.html"):
     skills = get_tags(tagged = other_user.get_profile(), tagged_for=other_user, tag_type='skill')
     needs = get_tags(tagged = other_user.get_profile(), tagged_for=other_user, tag_type='need')
 
-    profile = other_user.get_profile()
+
     user = request.user
 
     # should be deprecated
@@ -171,9 +173,9 @@ def profile(request, username, template_name="profiles/profile.html"):
         status_type = ''
         status_since = ''
 
-    profile = secure_wrap(profile, user)
+
+    profile = secure_wrap(p, user)     #interfaces = ['Viewer', 'Editor', 'EmailAddressViewer', 'HomeViewer', 'WorkViewer', 'MobileViewer', 'FaxViewer', 'AddressViewer', 'SkypeViewer', 'SipViewer']
     profile.user # trigger permission exception if no access
-    
 
     try:
         profile.get_all_sliders
@@ -188,8 +190,8 @@ def profile(request, username, template_name="profiles/profile.html"):
     search_type_label = search_types[0][1][2]
 
 
-    host_info = other_user.get_profile().get_host_info()
-    host_info = secure_wrap(host_info, user)
+    host_info = p.get_host_info()
+    host_info = secure_wrap(host_info, user, interface_names=['Viewer', 'Editor'])
 
     see_host_info = False
     try :
@@ -210,7 +212,6 @@ def profile(request, username, template_name="profiles/profile.html"):
     links = get_links_for(other_user,RequestContext(request))
     if links :
         see_links = True
-
     can_tag = profile.has_interface('Profile.Editor')
     template_args = {
             "is_me": is_me,
@@ -222,10 +223,10 @@ def profile(request, username, template_name="profiles/profile.html"):
             "invite_form": invite_form,
             "previous_invitations_to": previous_invitations_to,
             "previous_invitations_from": previous_invitations_from,
-            "head_title" : "%s" % other_user.get_profile().get_display_name(),
+            "head_title" : "%s" % profile.get_display_name(),
             "status_type" : status_type,
             "status_since" : status_since,
-            "host_info" : other_user.get_profile().get_host_info(),
+            "host_info" : host_info,
             "skills" : skills,
             "needs" : needs,
             "interests" : interests,

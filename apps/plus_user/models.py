@@ -1,4 +1,5 @@
 from django.db import models
+import settings
 import datetime
 from django.contrib.auth.models import User, UserManager, AnonymousUser, check_password
 from django.contrib.contenttypes.models import ContentType
@@ -14,14 +15,14 @@ from apps.plus_groups.models import is_member_of,  is_direct_member_of,  get_enc
 """
 
 class AliasOf(object):
-   def __init__(self,name): 
+   def __init__(self, name): 
        self.name = name
 
-   def __get__(self,obj,typ=None): 
-       return getattr(obj,self.name)
+   def __get__(self, obj, typ=None): 
+       return getattr(obj, self.name)
 
-   def __set__(self,obj,val): 
-       setattr(obj,self.name,val)
+   def __set__(self, obj, val): 
+       setattr(obj, self.name, val)
 
 
 def user_save(self) :
@@ -137,36 +138,67 @@ def get_meta_data(obj, attr):
       return None
 
 
-def getattr(self, attr):
-    try:
-       return self.__dict__[attr]
-    except KeyError:
-       return get_meta_data(self, attr).attr_value
+def __getattr__(self, attr):
+   """Only called if normal attribute lookup fails
+   """
+   if attr.startswith('md_'):
+      return get_meta_data(self, attr[3:]).attr_value
 
-def setattr(self, attr_name, attr_value):
-    if attr_name in self._meta.get_all_field_names() or \
-           attr_name.endswith('_id') and attr_name[:-3] in self._meta.get_all_field_names() or \
-           attr_name.endswith('_cache') and attr_name[1:-6] in self._meta.get_all_field_names():
-       self.__dict__[attr_name] = attr_value
-    else:
-       meta_data = get_meta_data(self, attr_name)
-       import ipdb
-       ipdb.set_trace()
-       if meta_data:
-          meta_data.attr_value = attr_value
-          meta_data.save()
-       else:
-          UserMetaData(user=self, attr_name=attr_name, attr_value=attr_value)
+   try:
+      return self.__dict__[attr]
+   except:
+      raise AttributeError
+   
+      #except KeyError:
+      #   if attr in type(self).__dict__ and hasattr(type(self).__dict__[attr], '__get__'):
+      #   #instance descriptor e.g. AliasOf
+      #      type(self).__dict__[attr].__get__(self, type(self))
+    #try:
+    #   return self.__dict__[attr]
+    #except KeyError:
+    #   return get_meta_data(self, attr).attr_value
+
+def __setattr__(self, attr_name, attr_value):
+   if attr_name.startswith('md_'):
+      meta_data = get_meta_data(self, attr_name[3:])
+      if meta_data:
+         meta_data.attr_value = attr_value
+         meta_data.save()
+      else:
+         u_md = UserMetaData(user=self, attr_name=attr_name[3:], attr_value=attr_value)
+         u_md.save()
+
+   else:
+       models.Model.__setattr__(self, attr_name, attr_value)
+
+
+
+    #if attr_name in self._meta.get_all_field_names() or \
+    #       attr_name.endswith('_id') and attr_name[:-3] in self._meta.get_all_field_names() or \
+    #       attr_name.endswith('_cache') and attr_name[1:-6] in self._meta.get_all_field_names():
+    #   self.__dict__[attr_name] = attr_value
+    #elif attr_name in type(self).__dict__ and hasattr(type(self).__dict__[attr_name], '__set__'):
+    #   #instance descriptor e.g. AliasOf
+    #   type(self).__dict__[attr_name].__set__(self, attr_value)
+    #else:
+    #   meta_data = get_meta_data(self, attr_name)
+    #   if meta_data:
+    #      meta_data.attr_value = attr_value
+    #      meta_data.save()
+    #   else:
+    #      UserMetaData(user=self, attr_name=attr_name, attr_value=attr_value)
           
 
 
 
-def patch_user_class():  
+def patch_user_class():
+    """access biz_type, introduced_by and postcode through prefixing 'md_' e.g user.md_biz_type.
+    """
     from apps.plus_groups.models import TgGroup, User_Group  
     User._meta.db_table = 'tg_user'
     # Patching the User class
-    #User.add_to_class('__getattr__',  getattr)
-    #User.add_to_class('__setattr__',  setattr)
+    User.add_to_class('__getattr__',  __getattr__)
+    User.add_to_class('__setattr__',  __setattr__)
     User.add_to_class('user_name', UserNameField(unique=True, max_length=255))
     User.add_to_class('email_address', models.CharField(max_length=255,unique=True))
 
@@ -176,9 +208,6 @@ def patch_user_class():
     del User.groups
     # add ours new relation for groups
     User.add_to_class('groups', models.ManyToManyField(TgGroup, through=User_Group, related_name='users'))
-
-
-    #User.add_to_class('active', models.SmallIntegerField(null=True)) # not shown
 
     User.add_to_class('description', models.TextField())
     User.add_to_class('organisation', models.CharField(max_length=255)) 
@@ -197,8 +226,7 @@ def patch_user_class():
     User.add_to_class('website',models.TextField())
     User.add_to_class('homeplace', models.ForeignKey(Location, null=True))
     User.add_to_class('address', models.TextField())
-    #User.add_to_class('post_or_zip', models.CharField(null=True, default="", max_length=30))
-    #User.add_to_class('country', models.CharField(null=True, default="", max_length=2))
+    User.add_to_class('country', models.CharField(null=True, default="", max_length=2))
 
     User.add_to_class('homehub', models.ForeignKey("plus_groups.TgGroup", null=True)) # we need this for PSN, XXX need to decide how to make it compatible with hubspace for hub+ 
 
@@ -208,6 +236,15 @@ def patch_user_class():
     User.add_to_class('cc_messages_to_email',models.BooleanField(default=False)) # internal messages get reflected to email
 
     User.email = AliasOf('email_address')
+    if settings.PROJECT_THEME == 'plus':
+       User.post_or_zip = AliasOf('md_postcode')
+       User.add_to_class('public_field', models.SmallIntegerField(null=True)) # this will be phased out as it is redundant with the new permissions system
+    else:
+       User.add_to_class('post_or_zip', models.CharField(null=True, default="", max_length=30))
+    
+    User.is_active = AliasOf('active') # This takes precedence over the existing is_active field in django.contrib.auth.models
+    User.add_to_class('active', models.SmallIntegerField(null=True)) # not currently shown, however setting this to 0 will stop the user logging in
+
     User.set_password = set_password
     User.check_password = check_password
     User.is_member_of = is_member_of

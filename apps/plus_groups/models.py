@@ -1,4 +1,3 @@
-
 from django.db import models
 from django.db.models.signals import post_save
 from itertools import chain
@@ -7,6 +6,8 @@ from django.conf import settings
 
 from apps.plus_contacts.status_codes import ACCEPTED_PENDING_USER_SIGNUP
 from apps.plus_permissions.proxy_hmac import attach_hmac 
+
+
 from datetime import datetime
 
 from django.utils.translation import ugettext_lazy as _
@@ -209,7 +210,13 @@ try :
 
         def add_member(self, user_or_group):
             if isinstance(user_or_group, User) and not self.users.filter(id=user_or_group.id):
+                from apps.plus_permissions.types.Profile import ProfileInterfaces
                 self.users.add(user_or_group)
+
+                # add host permissions on profile when join/leave Hub
+                if self.group_type == 'hub':
+                    for prof in ProfileInterfaces:
+                        user.get_security_context().add_arbitrary_agent(self.get_admin_group(), 'Profile.%s' % prof, admin)
 
                 from apps.microblogging.models import send_tweet # avoid circularity
                 message = _("%(joiner)s joined the group %(group)s") % (
@@ -222,7 +229,15 @@ try :
 
         def remove_member(self, user_or_group):
             if isinstance(user_or_group, User) and self.users.filter(id=user_or_group.id):
+                from apps.plus_permissions.types.Profile import ProfileInterfaces
+
                 self.users.remove(user_or_group)
+
+                # remove host permissions on profile when join/leave Hub
+                if self.group_type == 'hub':
+                    for prof in ProfileInterfaces:
+                        user.get_security_context().remove_arbitrary_agent(self.get_admin_group(), 'Profile.%s' % prof, admin)
+
 
                 from apps.microblogging.models import send_tweet 
                 message = _("%(leaver)s left the group %(group)s") % (

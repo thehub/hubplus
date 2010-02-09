@@ -33,7 +33,7 @@ def get_admin_user():
     try:
         admin_user =  User.objects.filter(username='admin')[0]
     except IndexError:
-        admin_user = User(username='admin', email_address='plus.admin@the-hub.net', password='blah')
+        admin_user = User(username='admin', email_address='plus.admin@the-hub.net', password='ba3h2f')
         admin_user.save()
     return admin_user
 
@@ -67,7 +67,7 @@ def set_all_members_group():
            
 def get_all_members_group():
     #XXXchange this to use the a group ID configured in local_settings.py
-    all_members = TgGroup.objects.filter(group_name="all_members")
+    all_members = TgGroup.objects.filter(group_name="all_members") #
     if not all_members:
         all_members, created = set_all_members_group()
     else :

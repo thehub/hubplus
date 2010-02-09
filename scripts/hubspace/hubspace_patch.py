@@ -84,6 +84,13 @@ patch4 = """
 Alter table tg_group add column address character varying(255);
 """
 
+patch5 = """
+Alter Table tg_user ADD "country" varchar(2);
+"""
+
+patch6 = """
+ALTER TABLE plus_permissions_genericreference ALTER COLUMN "permission_prototype" TYPE varchar(20);
+"""
 
 
 def main():
@@ -91,6 +98,8 @@ def main():
     patch_hubspace(patch2)
     patch_hubspace(patch3)
     patch_hubspace(patch4)
+    patch_hubspace(patch5)
+    patch_hubspace(patch6)
 
 if __name__ == "__main__":
     main()

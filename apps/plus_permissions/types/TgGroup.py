@@ -225,7 +225,7 @@ SetVisibleAgents(TgGroup, visible_agents())
 
 #constraints - note that "higher" means wider access. Therefore if "anonymous can't edit" we must set that Editor<$anonymous OR if Editor functionality can't be given to a wider group than Viewer then we must set Editor < Viewer.
 
-def setup_defaults() :
+def setup_defaults():
     public_defaults = {'TgGroup':
                        {'defaults':
                             {'Viewer':'anonymous_group', 
@@ -377,12 +377,11 @@ def setup_defaults() :
     private_defaults = overlay(private_defaults,{'Resource':{'defaults':{'Viewer':'context_agent'}}})
     
 
-    AgentDefaults = {'public':public_defaults,
-                     'private':private_defaults,
-                     'open' : open_defaults,
-                     'invite' : invite_defaults}
+    return {'public':public_defaults,
+            'private':private_defaults,
+            'open' : open_defaults,
+            'invite' : invite_defaults}
 
-    return AgentDefaults
 
 
 AgentDefaults = setup_defaults()

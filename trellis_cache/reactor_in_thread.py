@@ -16,6 +16,8 @@ class ReactorException(Exception):
             Exception.__init__(self, *args)
             
 
+# should use multiprocessing here to spin trellis/twisted off into a new process and avoid the global interpreter lock
+# may then want to use an rpc to call into it, e.g. pyro
 class TrellisThread(threading.Thread):    
   
       """Run the Reactor in a Thread to prevent blocking the 
@@ -33,7 +35,7 @@ class TrellisThread(threading.Thread):
               self._reactorRunning = True
               #call run passing a False flag indicating to the
               #reactor not to install sig handlers since sig handlers
-              #only work on the main thread
+              #only work on the main thread  --> this should change once we use a separate process
               self.ev_q = EventQueue.activate()
               Time.activate()
               print "stating reactor"
