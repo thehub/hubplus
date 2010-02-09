@@ -238,7 +238,7 @@ class SetPasswordForm(UserForm):
         self.user.message_set.create(message=ugettext(u"Password successfully set."))
 
 class ResetPasswordForm(forms.Form):
-
+    
     email = forms.EmailField(label=_("Email"), required=True, widget=forms.TextInput(attrs={'size':'30'}))
 
     def clean_email(self):
@@ -256,8 +256,11 @@ class ResetPasswordForm(forms.Form):
             )).hexdigest()
             
             # save it to the password reset model
-            password_reset = PasswordReset(user=user, temp_key=temp_key)
-            password_reset.save()
+            try:
+                password_reset = PasswordReset.objects.get(user=user,temp_key=temp_key, reset=False) 
+            except PasswordReset.DoesNotExist:
+                password_reset = PasswordReset(user=user, temp_key=temp_key)
+                password_reset.save()
             
             #send the password reset email
             subject = _("Password reset email sent")
