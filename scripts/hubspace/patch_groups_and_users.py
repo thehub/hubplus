@@ -31,7 +31,7 @@ def tidy_groups():
             hub.display_name = display_name.replace('London', 'Islington')
         hub.save()
         
-    """
+    
     hub_members_groups = TgGroup.objects.filter(level='member')
     for hub in hub_members_groups:
         hub.group_name = hub.group_name.replace('_member', '').replace(' ', '').strip().lower()
@@ -41,7 +41,7 @@ def tidy_groups():
         hub.group_type = 'hub'
         hub.save()
         give_host_permissions(hub)
-        """
+        
 
 def patch_in_groups():
     """Do group security setup for hubspace groups
@@ -144,10 +144,10 @@ def individual_changes():
     # 
 
 def main():
-    #patch_in_groups()
-    #patch_in_profiles()
+    patch_in_groups()
+    patch_in_profiles()
     tidy_groups()
-    #individual_changes()
+    individual_changes()
 
 if __name__ == '__main__':
     main()
