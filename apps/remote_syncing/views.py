@@ -38,7 +38,7 @@ def on_user_changed(request, data) :
 @reply
 def on_create_group(request, data) :
     from apps.plus_permissions.types.TgGroup import group_post_create 
-    g = TgGroup.objects.plus_get(request.user, group_id=data['group_id'])
+    g = TgGroup.objects.plus_get(request.user, id=data['group_id'])
     u = User.objects.plus_get(request.user, username=data['username'])
     if data.has_key('permission_prototype') :
         permission_prototype = data['permission_prototype']
@@ -50,14 +50,14 @@ def on_create_group(request, data) :
 @json_view
 @reply
 def on_group_changed(request, data) :
-    g = TgGroup.objects.plus_get(request.user, group_id=data['group_id'])
+    g = TgGroup.objects.plus_get(request.user, id=data['group_id'])
     g.post_save()
 
 
 @json_view
 @reply
 def on_join_group(request, data) :
-    g = TgGroup.objects.plus_get(request.user, group_id=data['group_id'])
+    g = TgGroup.objects.plus_get(request.user, id=data['group_id'])
     u = User.objects.plus_get(request.user, username=data['username'])
     g.post_join(u)
 
@@ -65,7 +65,7 @@ def on_join_group(request, data) :
 @json_view
 @reply
 def on_leave_group(request, data) :
-    g = TgGroup.objects.plus_get(request.user, group_id=data['group_id'])
+    g = TgGroup.objects.plus_get(request.user, id=data['group_id'])
     u = User.objects.plus_get(request.user, username=data['username'])
     g.post_leave(u)
 
