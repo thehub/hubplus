@@ -189,7 +189,6 @@ INSTALLED_APPS = (
     'haystack',
     'django403',
     'synced',
-    'remote_syncing',
     )
 
 HAYSTACK_SITECONF = 'search_sites'
