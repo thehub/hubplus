@@ -11,7 +11,10 @@ url_base = 'http://plusdev.the-hub.net/remote_syncing/'
 class HubPlusSubscriber(WebApp) :
 
     def post(self, event, **kwargs) :
-        # add error handling here
+        # this is a placeholder
+        # to-do
+        # 1) make sure this is a real POST ... not sure if makeHttpReq is
+        # 2) handle if error comes back ({'OK':False,'msg':'error message'})
         return self.makeHttpReq(url_base+event, {'json':json.dumps(kwargs)})
 
     def onUserAdd(self, username, udata):
