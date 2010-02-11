@@ -132,5 +132,6 @@ if settings.SERVE_MEDIA:
     )
 
 
-import synced.urls
-urlpatterns += synced.urls.urlpatterns
+if settings.SYNC_ENABLED:
+    import synced.urls
+    urlpatterns += synced.urls.urlpatterns
