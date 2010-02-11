@@ -20,7 +20,6 @@ def create_user(user_name, email_address, password='dummy', permission_prototype
     """create a User
     """
 
-
     if User.objects.filter(username=user_name).count() < 0 :
         user = User.objects.get(username=user_name)
     else :
@@ -30,12 +29,16 @@ def create_user(user_name, email_address, password='dummy', permission_prototype
         user.user_name = user_name
         user.save()
         
-        setup_user_security(user, permission_prototype)
+        user_post_create(user)
 
-        user.create_Profile(user,user=user)
-        user.create_HostInfo(user,user=user)
     return user
 
+def user_post_create(user, permission_prototype='public') :
+    setup_user_security(user, permission_prototype)
+
+    user.create_Profile(user,user=user)
+    user.create_HostInfo(user,user=user)
+    return user
 
 def setup_user_security(user, permission_prototype):
     user.to_security_context()

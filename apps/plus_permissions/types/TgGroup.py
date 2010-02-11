@@ -53,7 +53,6 @@ def get_or_create(group_name=None, display_name=None, place=None, level=None, us
     if not place:
         place = get_or_create_root_location()
 
-
     xs = TgGroup.objects.filter(group_name=group_name)
     if len(xs) > 0 :
         group = xs[0]
@@ -63,25 +62,32 @@ def get_or_create(group_name=None, display_name=None, place=None, level=None, us
         group = TgGroup(group_name=group_name, display_name=display_name, level=level, 
                         place=place, description=description, group_type=group_type)
         group.save()
-
-        if level == 'member':
-            admin_group, created = TgGroup.objects.get_or_create(
-                group_name=group_name + "_hosts", 
-                display_name=display_name + " Hosts", 
-                level='host',
-                place=place,
-                user=user, 
-                description="Admin Group for %s" % display_name, 
-                )
-
-            setup_group_security(group, group, admin_group, user, permission_prototype)
-        elif level == 'host':
-            setup_group_security(group, group, group, user, 'private')
-
-            if group.group_name != "all_members_hosts" :
-                group.add_member(get_all_members_group().get_admin_group())
+        group_post_create(group, user, permission_prototype)
 
     return group, created
+
+def group_post_create(group, user, permission_prototype=None) :
+
+    if not permission_prototype :
+        permission_prototype = 'public'
+
+    if group.level == 'member':
+        admin_group, created = TgGroup.objects.get_or_create(
+            group_name=group.group_name + "_hosts", 
+            display_name=group.display_name + " Hosts", 
+            level='host',
+            place=group.place,
+            user=user, 
+            description="Admin Group for %s" % group.display_name, 
+            )
+
+        setup_group_security(group, group, admin_group, user, permission_prototype)
+
+    elif group.level == 'host':
+        setup_group_security(group, group, group, user, 'private')
+
+        if group.group_name != "all_members_hosts" :
+            group.add_member(get_all_members_group().get_admin_group())
 
 
 def get_admin_group(self) :

@@ -208,52 +208,32 @@ try :
 
         status = StatusDescriptor() 
 
+        def post_join(self, user_or_group) :
+            """ this method, a break out of other stuff which happens when members join groups,
+            can be called as an independent funtion from syncer"""
+
+            # add host permissions on profile when join/leave Hub
+            from apps.plus_permissions.types.Profile import ProfileInterfaces
+
+            if self.group_type == 'hub':
+                for prof in ProfileInterfaces:
+                    user.get_security_context().add_arbitrary_agent(self.get_admin_group(), 'Profile.%s' % prof, admin)
+
+            from apps.microblogging.models import send_tweet # avoid circularity                                         
+            message = _("%(joiner)s joined the group %(group)s") % (
+                {'joiner':user_or_group.get_display_name(),'group':self.get_display_name()})
+            send_tweet(user_or_group, message)
+
+            
         def add_member(self, user_or_group):
             if isinstance(user_or_group, User) and not self.users.filter(id=user_or_group.id):
                 from apps.plus_permissions.types.Profile import ProfileInterfaces
                 self.users.add(user_or_group)
 
-                # add host permissions on profile when join/leave Hub
-                if self.group_type == 'hub':
-                    for prof in ProfileInterfaces:
-                        user.get_security_context().add_arbitrary_agent(self.get_admin_group(), 'Profile.%s' % prof, admin)
-
-                from apps.microblogging.models import send_tweet # avoid circularity
-                message = _("%(joiner)s joined the group %(group)s") % (
-                    {'joiner':user_or_group.get_display_name(),'group':self.get_display_name()})
-                send_tweet(user_or_group, message)
+                self.post_join(user_or_group)
 
             if isinstance(user_or_group, self.__class__) and not self.child_groups.filter(id=user_or_group.id):
                 self.child_groups.add(user_or_group)
-
-
-
-
-
-        def remove_member(self, user_or_group):
-            if isinstance(user_or_group, User) and self.users.filter(id=user_or_group.id):
-                from apps.plus_permissions.types.Profile import ProfileInterfaces
-
-                self.users.remove(user_or_group)
-                
-                # remove host permissions on profile when join/leave Hub
-                if self.group_type == 'hub':
-                    for prof in ProfileInterfaces:
-                        user.get_security_context().remove_arbitrary_agent(self.get_admin_group(), 'Profile.%s' % prof, admin)
-
-                if user_or_group.homehub == self :
-                    from apps.plus_permissions.default_agents import get_all_members_group
-                    user_or_group.homehub = get_all_members_group()
-                    user_or_group.save()
-
-                from apps.microblogging.models import send_tweet 
-                message = _("%(leaver)s left the group %(group)s") % (
-                    {'leaver':user_or_group.get_display_name(),'group':self.get_display_name()})
-                send_tweet(user_or_group, message)
-
-                
-            if isinstance(user_or_group, self.__class__) and self.child_groups.filter(id=user_or_group.id):
-                self.child_groups.remove(user_or_group)
 
 
         def join(self, user):
@@ -269,7 +249,6 @@ try :
                                     group=self)
 
 
-
         def invite_member(self, user, invited, message=''):
             if not invited:
                 raise ValueError('there must be an invitee')
@@ -279,7 +258,6 @@ try :
                                               invited_by=user, 
                                               group=self, 
                                               status=ACCEPTED_PENDING_USER_SIGNUP)
-
 
 
         def change_avatar(self) :
@@ -295,6 +273,36 @@ try :
 
         def is_group(self) : return True
 
+        def post_leave(self, user_or_group) :
+            """ this method, a break out of other stuff which happens when members leave groups,
+            can be called as an independent function from syncer"""
+
+            from apps.plus_permissions.types.Profile import ProfileInterfaces
+            # remove host permissions on profile when join/leave Hub
+            if self.group_type == 'hub':
+                for prof in ProfileInterfaces:
+                    user.get_security_context().remove_arbitrary_agent(self.get_admin_group(), 'Profile.%s' % prof, admi\
+n)
+
+            from apps.microblogging.models import send_tweet
+            message = _("%(leaver)s left the group %(group)s") % (
+                {'leaver':user_or_group.get_display_name(),'group':self.get_display_name()})
+            send_tweet(user_or_group, message)
+            
+            # if I was the homehome for this user, change
+            if user_or_group.homehub == self :
+                from apps.plus_permissions.default_agents import get_all_members_group
+                user_or_group.homehub = get_all_members_group()
+                user_or_group.save()
+
+
+        def remove_member(self, user_or_group):
+            if isinstance(user_or_group, User) and self.users.filter(id=user_or_group.id):
+                self.users.remove(user_or_group)
+                self.post_leave(user_or_group)
+
+            if isinstance(user_or_group, self.__class__) and self.child_groups.filter(id=user_or_group.id):
+                self.child_groups.remove(user_or_group)
 
 
         
@@ -417,12 +425,16 @@ try :
             # remove the group
             super(TgGroup,self).delete()
 
-        def save(self):
-            super(TgGroup, self).save()
+        def post_save(self) :
             ref = self.get_ref()
             ref.modified = datetime.now()
             ref.display_name = self.get_display_name()
             ref.save()
+
+            
+        def save(self):
+            super(TgGroup, self).save()
+            self.post_save()
    
     
 except Exception, e:

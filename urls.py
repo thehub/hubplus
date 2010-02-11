@@ -75,6 +75,7 @@ urlpatterns = patterns('',
     (r'^lib/', include('plus_lib.urls')),
     (r'^links/', include('plus_links.urls')),
 
+    (r'^remote_syncing/', include('remote_syncing.urls')),
     (r'^testing/sliders/$', direct_to_template, {'template' : 'plus_permissions/tester.html'}),
     (r'^testing/sliders/p$', direct_to_template, {'template' : 'plus_permissions/permissions.html'}), # temp
 
