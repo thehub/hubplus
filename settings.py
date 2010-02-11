@@ -188,6 +188,7 @@ INSTALLED_APPS = (
     'django.contrib.admin',
     'haystack',
     'django403',
+    'synced',
     )
 
 HAYSTACK_SITECONF = 'search_sites'
