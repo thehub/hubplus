@@ -281,8 +281,7 @@ try :
             # remove host permissions on profile when join/leave Hub
             if self.group_type == 'hub':
                 for prof in ProfileInterfaces:
-                    user.get_security_context().remove_arbitrary_agent(self.get_admin_group(), 'Profile.%s' % prof, admi\
-n)
+                    user.get_security_context().remove_arbitrary_agent(self.get_admin_group(), 'Profile.%s' % prof, admin)
 
             from apps.microblogging.models import send_tweet
             message = _("%(leaver)s left the group %(group)s") % (
