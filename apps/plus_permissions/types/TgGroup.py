@@ -71,6 +71,8 @@ def group_post_create(group, user, permission_prototype=None) :
     if not permission_prototype :
         permission_prototype = 'public'
 
+    group.save() # ensures our post_save signal is fired to create gen_ref, even if we came via syncer 
+
     if group.level == 'member':
         admin_group, created = TgGroup.objects.get_or_create(
             group_name=group.group_name + "_hosts", 

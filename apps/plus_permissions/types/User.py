@@ -34,6 +34,7 @@ def create_user(user_name, email_address, password='dummy', permission_prototype
     return user
 
 def user_post_create(user, permission_prototype='public') :
+    user.save() # ensures our post_save signal is fired to create gen_ref, even if we came via syncer
     setup_user_security(user, permission_prototype)
 
     user.create_Profile(user,user=user)
