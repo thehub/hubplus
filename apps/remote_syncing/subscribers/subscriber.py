@@ -6,37 +6,35 @@ import simplejson as json
 # XXX following shouldn't be hardwired in
 url_base = 'http://plusdev.the-hub.net/remote_syncing/' 
                 
-        
-class HubPlusSubscriber(WebApp) :
-    
-    def __init__(self) :
-        pass
+# presumably WebApps can handle the signing-in / cookie session for us??
 
-    def json_call(url, data) :
-        j_data = json.dumps(data) # assume data is dictionary
-        
-        
+class HubPlusSubscriber(WebApp) :
+
+    def post(self, event, **kwargs) :
+        # add error handling here
+        return self.makeHttpReq(url_base+event, {'json':json.dumps(kwargs)})
+
     def onUserAdd(self, username, udata):
-        url = url_base+'on_create_user'
-        
+        cj,result = self.post('on_create_user', username=username)
+
 
     def onUserMod(self, username, udata):
-        url = url_base+'on_user_changed'
+        cj,result = self.post('on_user_changed', username=username)
 
 
     def onGroupAdd(self, group_id, data) :
-        url = url_base+'on_create_group'
+        cj,result = self.post('on_create_group', group_id=group_id)
         
     def onGroupMod(self, group_id, data) :
-        url = url_base+'on_group_changed'
+        cj,result = self.post('on_group_changed', group_id=group_id)
 
     onHubAdd = onGroupAdd
     onHubMod = onGroupMod
 
     def onJoinGroup(self, username, group_id, data) :
-        # doesn't exist yet, 
-        url = url_base+'on_join_group'
+        # need to create this event
+        cj,result = self.post('on_join_group',username=username,group_id=group_id)
         
     def onLeaveGroup(self, username, group_id, data) :
-        # doesn't exist yet
-        url = url_base+'on_leave_group'
+        # need to create this event
+        cj,result = self.post('on_leave_group',username=username,group_id=group_id)
