@@ -27,7 +27,8 @@ class AliasOf(object):
        setattr(obj,self.name,val)
 
 
-def user_save(self) :
+def preferably_pre_save(self) :
+    """ ideally should be called before saving, but should be written so that it could safely be run, post_save too"""
     if not self.created :
         self.created = datetime.date.today()
 
@@ -39,8 +40,12 @@ def user_save(self) :
     if self.homehub and (self.homeplace != self.homehub.place) : 
        self.homeplace = self.homehub.place
 
+def user_save(self) :
+    self.preferably_pre_save()
     super(User,self).save()
+    self.post_save()
 
+def post_save(self) :
     # profile
     try:
        ref = self.get_profile().get_ref()
@@ -195,7 +200,11 @@ def patch_user_class():
     User.get_enclosures = get_enclosures
     User.get_enclosure_set = get_enclosure_set
     User.is_group = lambda(self) : False
+
+    User.preferably_pre_save = preferably_pre_save
     User.save = user_save
+    User.post_save = post_save
+    
 
     User.is_admin_of = lambda self, group : self.is_member_of(group.get_admin_group())
 
