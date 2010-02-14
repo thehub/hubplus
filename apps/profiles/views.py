@@ -201,9 +201,9 @@ def profile(request, username, template_name="profiles/profile.html"):
         pass # can't see host_info
     host_info = TemplateSecureWrapper(host_info)
 
-
-    member_of = [(g.group_app_label() + ':group', g) for g in other_user.get_enclosures(levels=['member']).exclude(group_name='all_members')]
-    host_of = [(g.group_app_label() + ':group', g) for g in other_user.get_enclosures(levels=['host']).exclude(group_name='all_members_hosts')]
+    hubs = other_user.hubs()
+    non_hub_groups = [(g.group_app_label() + ':group', g) for g in other_user.groups.filter(level='member').exclude(id__in=hubs)]
+    hubs = [(g.group_app_label() + ':group', g) for g in hubs]
 
     see_about = is_me or show_section(profile, ('about',))
     see_contacts = is_me or show_section(profile,('mobile','home','work','fax','website','address','email_address'))
@@ -232,8 +232,8 @@ def profile(request, username, template_name="profiles/profile.html"):
             "interests" : interests,
             "other_user_tweets" : tweets,
             "permissions":perms_bool,
-            "member_of":member_of,
-            "host_of":host_of,
+            "non_hub_groups":non_hub_groups,
+            "hubs":hubs,
             "search_type":search_type,
             "search_types":search_types,
             "search_type_label":search_type_label,

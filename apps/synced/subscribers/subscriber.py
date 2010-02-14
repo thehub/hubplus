@@ -17,27 +17,25 @@ class HubPlusSubscriber(WebApp) :
         # 2) handle if error comes back ({'OK':False,'msg':'error message'})
         return self.makeHttpReq(url_base+event, {'json':json.dumps(kwargs)})
 
-    def onUserAdd(self, username, udata):
+    def onPlusUserAdd(self, username, udata):
         cj,result = self.post('on_create_user', username=username)
 
-
-    def onUserMod(self, username, udata):
+    def onPlusUserMod(self, username, udata):
         cj,result = self.post('on_user_changed', username=username)
-
 
     def onGroupAdd(self, group_id, data) :
         cj,result = self.post('on_create_group', group_id=group_id)
         
-    def onGroupMod(self, group_id, data) :
+    def onPlusGroupMod(self, group_id, data) :
         cj,result = self.post('on_group_changed', group_id=group_id)
 
     onHubAdd = onGroupAdd
     onHubMod = onGroupMod
 
-    def onJoinGroup(self, username, group_id, data) :
+    def onPlusJoinGroup(self, username, group_id, data) :
         # need to create this event
         cj,result = self.post('on_join_group',username=username,group_id=group_id)
         
-    def onLeaveGroup(self, username, group_id, data) :
+    def onPlusLeaveGroup(self, username, group_id, data) :
         # need to create this event
         cj,result = self.post('on_leave_group',username=username,group_id=group_id)

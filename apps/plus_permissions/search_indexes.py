@@ -11,7 +11,7 @@ else :
 class GenericIndex(search_index):
     title = indexes.CharField(model_attr='obj__get_display_name')
     content = indexes.CharField(document=True, use_template=True)
-    author = indexes.CharField(model_attr='creator__get_display_name')
+    author = indexes.CharField(model_attr='creator__get_display_name', default='')
     content_type = indexes.CharField(model_attr='content_type__model')
 
     #object_id = indexes.IntegerField(model_attr='object_id')

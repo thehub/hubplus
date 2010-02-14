@@ -22,6 +22,8 @@ if settings.SYNC_ENABLED:
     syncerclient = syncer.client.SyncerClient("hubplus", sessiongetter)
 
     def sso(u, p):
+        import ipdb
+        ipdb.set_trace()
         ret = syncerclient.onUserLogin(u, p)
         tr_id, res = ret
         cookies = []

@@ -29,6 +29,9 @@ def create_user(user_name, email_address, password='dummy', permission_prototype
         user.user_name = user_name
         user.save()
         
+        from apps.synced.sync_tools import post_user_create
+        post_user_create.send(sender=user,user=user)
+
         user_post_create(user)
 
     return user
@@ -73,6 +76,11 @@ class UserViewer:
     is_site_admin = InterfaceCallProperty
     hubs = InterfaceCallProperty
 
+class UserEditor:
+    preferably_pre_save = InterfaceCallProperty
+    post_save = InterfaceCallProperty
+    save = InterfaceCallProperty
+
 class SetManagePermissions:
     pass
 
@@ -80,6 +88,7 @@ class SetManagePermissions:
 UserInterfaces = {
     'Viewer':UserViewer,
     'SetManagePermissions':SetManagePermissions,
+    'Editor':UserEditor,
 
     }
 
@@ -133,6 +142,7 @@ def setup_defaults():
     public_defaults = {'User':
                            {'defaults': 
                                {'Viewer': 'all_members_group',
+                                'Editor': 'context_admin',
                                  'SetManagePermissions': 'context_admin',
                                  'ManagePermissions':'context_agent',
                                  'CreateLink': 'context_admin',
