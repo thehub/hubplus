@@ -57,6 +57,7 @@ class LoginForm(forms.Form):
         return self.cleaned_data
 
     def login(self, request):
+
         if self.is_valid():
             login(request, self.user)
             request.user.message_set.create(message=ugettext(u"Successfully logged in as %(username)s.") % {'username': self.user.username})
@@ -416,20 +417,25 @@ class HubPlusApplicationForm(forms.Form):
 
     def save(self, user):
         site = get_site(get_admin_user())
-        group = self.cleaned_data.pop('group')
         about_and_why = self.cleaned_data.pop("about_and_why")
-        contact = group.create_Contact(user, **self.cleaned_data)
-
+ 
+        group = self.cleaned_data.pop('group')
         members_group = get_all_members_group()
+ 
+        had_group = True
+        if not group : 
+            had_group = False
+            group = members_group
+            
+        contact = group.create_Contact(user, **self.cleaned_data)
         site_application = members_group.apply(user, 
                                                applicant=contact,
                                                about_and_why=about_and_why)
-        if group:
+        if had_group:
             group.apply(user, 
                         applicant=contact,
                         about_and_why=about_and_why)
-        if not group:
-            group = members_group
+
         return group
         
 

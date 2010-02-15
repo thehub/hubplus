@@ -81,6 +81,8 @@ class Contact(models.Model):
         h.find_out = self.find_out
         p.save()
         h.save()
+
+        u.is_active = True
         u.save()
         
         self.user = u
@@ -119,18 +121,19 @@ class Contact(models.Model):
             application.save()
         
 
-
-    def send_link_email(self, title, message, sponsor, id):
+    def make_link(self, sponsor, id) :
         site_root = settings.DOMAIN_NAME
-        url = attach_hmac("/signup/%s/" % id, sponsor)
-        url = 'http://%s%s' % (site_root, url)
+        url = attach_hmac("/account/signup/%s/" % id, sponsor)
+        return 'http://%s%s' % (site_root, url)
 
+    def send_link_email(self, title, messages, sponsor, id) :
+        url = self.make_link(sponsor, id)
         message = message + _("""
 
 Please visit the following link to confirm your account : %(url)s""") % {'url': url}
 
         send_mail(title, message, settings.CONTACT_EMAIL,
-                  [self.email_address], fail_silently=False)
+                  [self.email_address], fail_silently=True)
         return message, url
 
     def accept_mail(self, sponsor, site_root, application_id):
