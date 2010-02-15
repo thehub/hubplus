@@ -80,11 +80,6 @@ def group(request, group, template_name="plus_groups/group.html", current_app='p
 
     user = request.user
     
-    members = group.get_users()[:50]
-    member_count = group.get_no_users()
-
-    hosts = group.get_admin_group().get_users()[:10]
-    host_count = group.get_admin_group().get_no_members()
 
     can_join = False
     apply = False
@@ -182,6 +177,19 @@ def group(request, group, template_name="plus_groups/group.html", current_app='p
     resource_search = resources(group=group, search=search, order=order)
     resource_listing_args = listing_args(current_app + ':group_resources', current_app + ':group_resources_tag', tag_string='', search_terms=search, multitabbed=False, order=order, template_base='plus_lib/listing_frag.html', search_type_label='resources')
     resource_listing_args['group_id'] = group.id
+
+
+    ##############Here we should use the "plus_search" function from plus_explore as above########
+    members = group.users
+    member_count = members.count()
+    members = members.filter(active=True).order_by('?')[:50]
+
+    hosts = group.get_admin_group().users
+    host_count = hosts.count()
+    hosts = hosts.filter(active=True).order_by('?')[:10]
+
+    ##############################################################################################
+
 
     return render_to_response(template_name, {
             "head_title" : "%s" % group.get_display_name(),

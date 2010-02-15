@@ -136,7 +136,6 @@ def login(request, form_class=LoginForm,
     form = form_class()
 
     return render_to_response(template_name, {
-
         "form": form,
         "url_required": url_required,
         "message" : message,
