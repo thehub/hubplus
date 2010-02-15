@@ -50,9 +50,14 @@ if settings.SYNC_ENABLED:
                 print syncer.client.errors.res2errstr(res)
             else:
                 for v in res.values():
-                    sso_cookies = v['result']
-                    for c in sso_cookies:
-                        resp.set_cookie(c.name, value=c.value, max_age=None, path=c.path, domain=settings.SESSION_COOKIE_DOMAIN, secure=c.secure)
+                    try:
+                        sso_cookies = v['result']
+                        for c in sso_cookies:
+                            resp.set_cookie(c.name, value=c.value, max_age=None, path=c.path, domain=settings.SESSION_COOKIE_DOMAIN, secure=c.secure)
+                    except Exception, err:
+                            print "SSO: skipping ", v['appname']
+
+
 
 
         return resp

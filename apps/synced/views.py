@@ -16,9 +16,14 @@ def reply(f) :
 @json_view
 @reply
 def on_user_add(request, data) :
+
     from apps.plus_permissions.types.User import user_post_create
-    u = User.objects.plus_get(request.user, username=data['username'])
-    
+
+    # XXX can't do a plus_get yet because all the other permissioning 
+    # infrastructure hasn't been created, but we need to test some kind of 
+    # permission here
+    user = User.objects.get(id=data['id'])
+
     if user.active:
         if user.public_field:
             permission_prototype = 'public'
@@ -31,14 +36,14 @@ def on_user_add(request, data) :
         if user.public_field:
             user.public_field = 0
         
-    user_post_create(u, permission_prototype)
+    user_post_create(user, permission_prototype)
 
 
 @json_view
 @reply
 def on_user_change(request, data) :
     print "in on_user_changed"
-    u = User.objects.plus_get(request.user, username=data['username'])
+    u = User.objects.plus_get(request.user, id=data['id'])
     u.preferably_pre_save() # normally called pre_save, but must be safe to call post_save (as in this case)
     u.save()
     u.post_save()
@@ -49,7 +54,7 @@ def on_user_change(request, data) :
 @reply
 def on_group_join(request, data) :
     g = TgGroup.objects.plus_get(request.user, id=data['group_id'])
-    u = User.objects.plus_get(request.user, username=data['username'])
+    u = User.objects.plus_get(request.user, id=data['user_id'])
     g.post_join(u)
 
 
@@ -57,7 +62,7 @@ def on_group_join(request, data) :
 @reply
 def on_group_leave(request, data) :
     g = TgGroup.objects.plus_get(request.user, id=data['group_id'])
-    u = User.objects.plus_get(request.user, username=data['username'])
+    u = User.objects.plus_get(request.user, id=data['user_id'])
     g.post_leave(u)
 
     
