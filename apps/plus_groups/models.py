@@ -214,10 +214,12 @@ try :
 
             # add host permissions on profile when join/leave Hub
             from apps.plus_permissions.types.Profile import ProfileInterfaces
-
+            from apps.plus_permissions.default_agents import get_all_members_group, get_admin_user
+            admin = get_admin_user()
+            admin_group = self.get_admin_group()
             if self.group_type == 'hub':
                 for prof in ProfileInterfaces:
-                    user.get_security_context().add_arbitrary_agent(self.get_admin_group(), 'Profile.%s' % prof, admin)
+                    user_or_group.get_security_context().add_arbitrary_agent(admin_group, 'Profile.%s' % prof, admin)
 
             from apps.microblogging.models import send_tweet # avoid circularity                                         
             message = _("%(joiner)s joined the group %(group)s") % (
@@ -278,10 +280,13 @@ try :
             can be called as an independent function from syncer"""
 
             from apps.plus_permissions.types.Profile import ProfileInterfaces
-            # remove host permissions on profile when join/leave Hub
+            from apps.plus_permissions.default_agents import get_all_members_group, get_admin_user
+            # remove host erpermissions on profile when join/leave Hub
+            admin = get_admin_user()
+            admin_group = self.get_admin_group()
             if self.group_type == 'hub':
                 for prof in ProfileInterfaces:
-                    user.get_security_context().remove_arbitrary_agent(self.get_admin_group(), 'Profile.%s' % prof, admin)
+                    user_or_group.get_security_context().remove_arbitrary_agent(admin_group, 'Profile.%s' % prof, admin)
 
             from apps.microblogging.models import send_tweet
             message = _("%(leaver)s left the group %(group)s") % (
@@ -290,7 +295,6 @@ try :
             
             # if I was the homehome for this user, change
             if user_or_group.homehub == self :
-                from apps.plus_permissions.default_agents import get_all_members_group
                 user_or_group.homehub = get_all_members_group()
                 user_or_group.save()
 

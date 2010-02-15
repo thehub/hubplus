@@ -15,7 +15,7 @@ def reply(f) :
 
 @json_view
 @reply
-def on_user_create(request, data) :
+def on_user_add(request, data) :
     from apps.plus_permissions.types.User import user_post_create
     u = User.objects.plus_get(request.user, username=data['username'])
     

@@ -44,6 +44,7 @@ class Profile(models.Model):
    email_address = DelegateToUser('email_address')
    name = DelegateToUser('username')
    display_name = DelegateToUser('display_name')
+   active = DelegateToUser('active')
    first_name = DelegateToUser('first_name')
    last_name = DelegateToUser('last_name')
    organisation = DelegateToUser('organisation')

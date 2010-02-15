@@ -113,7 +113,7 @@ def filter(request, tag_string, template_name='plus_explore/explore_filtered.htm
 
 object_type_filters = {Resource:{'stub':False},
                        WikiPage:{'stub':False},
-                       Profile:{},
+                       Profile:{'user__active':True},
                        TgGroup:{}}
 
 def plus_search(tags, search, search_types, order=None, in_group=None, extra_filter=None):

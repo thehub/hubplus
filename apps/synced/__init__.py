@@ -3,6 +3,7 @@ from django.conf import settings
 from django.http import HttpResponse
 import settings
 
+
 if settings.SYNC_ENABLED:
     import thread
     import time
@@ -22,8 +23,6 @@ if settings.SYNC_ENABLED:
     syncerclient = syncer.client.SyncerClient("hubplus", sessiongetter)
 
     def sso(u, p):
-        import ipdb
-        ipdb.set_trace()
         ret = syncerclient.onUserLogin(u, p)
         tr_id, res = ret
         cookies = []
@@ -62,10 +61,12 @@ if settings.SYNC_ENABLED:
         u = settings.HUBPLUSSVCUID
         p = settings.HUBPLUSSVCPASS
         tr_id, res = syncerclient.onSignon(u, p)
+        print `tr_id`, `res`        
         if syncerclient.isSuccessful(res):
             syncerclient.setSyncerToken(res['sessionkeeper']['result'])
             msg = "Syncer signon successful"
             print msg
+
             return True
         msg = "Syncer signon failed: %s" % res
         print msg
@@ -78,3 +79,16 @@ if settings.SYNC_ENABLED:
             time.sleep(10)
 
     thread.start_new(signonloop, ())
+
+    from  sync_tools import events_setup
+    on_user_mod, on_user_add, on_location_mod = events_setup(syncerclient)
+
+
+    from apps.plus_groups.models import TgGroup, Location, User_Group
+    from django.contrib.auth.models import User
+
+    from django.db.models.signals import post_save, post_delete
+
+    #post_user_create.connect(on_user_add)
+    post_save.connect(on_user_mod, sender=User)
+    post_save.connect(on_location_mod, sender=Location) # we'll disambiguate create and mod inside
