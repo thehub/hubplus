@@ -57,31 +57,22 @@ def events_setup(syncerclient):
                     return f(*args, **kw)
         return wrap
 
-
-    @checkSyncerResults
     def on_location_add(location=None, **kwargs) :
-        print "on_location_add"
+        print "hubplus sends - on_location_add : %s" % location.name.encode('utf-8')
         xs = tls.syncerclient.onLocationAdd(location.id)
         print xs
         return xs
 
-    @checkSyncerResults
     def on_location_mod(instance=None, created=None, **kwargs) :
-        print "on_location_mod"
+        print "hubplus sends - on_location_mod : %s" % instance.name.encode('utf-8')
         return tls.syncerclient.onLocationMod(instance.id)
 
-
-    @checkSyncerResults
     def on_user_add(user=None, **kwargs) :
-        print "on_user_add"
+        print "hubplus sends - on_user_add : %s" % user.username.encode('utf-8')
         return tls.syncerclient.onUserAdd(user.id)
         
-
-    #@checkSyncerResults
     def on_user_mod(user=None, **kwargs) :
-        print "on_user_mod"
-        import ipdb
-        ipdb.set_trace() 
+        print "hubplus sends - on_user_mod : %s " % user.username.encode('utf-8')
         return  tls.syncerclient.onUserMod(user.id)
 
 
@@ -96,7 +87,7 @@ def events_setup(syncerclient):
             except Exception, e:
                 transaction.rollback()
                 raise e
-
+            
             transaction.commit()
             tls.syncerclient.run_all() 
             return ret
