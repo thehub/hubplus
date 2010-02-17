@@ -363,6 +363,8 @@ def message_members(request, group, current_app='plus_groups', **kwargs) :
                                'group_id': group.id}, context_instance=RequestContext(request, current_app=current_app))
 
 
+from apps.synced import synced_transaction
+@synced_transaction
 @login_required
 @site_context
 def create_group(request, site, template_name="plus_groups/create_group.html", current_app='plus_groups', **kwargs):

@@ -44,7 +44,10 @@ def on_user_add(request, data) :
 def on_user_change(request, data) :
     print "in on_user_changed"
     u = User.objects.plus_get(request.user, id=data['id'])
-    u.preferably_pre_save() # normally called pre_save, but must be safe to call post_save (as in this case)
+
+    if not self.homehub or self.homehub.place != self.homeplace :
+       self.homehub = TgGroup.objects.get(place=self.homeplace,level='member')
+
     u.save()
     u.post_save()
     print "user %s was changed by an external application" % u.username

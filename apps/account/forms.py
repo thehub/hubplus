@@ -92,42 +92,6 @@ class SignupForm(forms.Form):
                 raise forms.ValidationError(_("You must type the same password each time."))
         return self.cleaned_data
 
-    def save(self):
-        username = self.cleaned_data["username"]
-        email = self.cleaned_data["email"]
-        password = self.cleaned_data["password1"]
-        if self.cleaned_data["confirmation_key"]:
-            from friends.models import JoinInvitation # @@@ temporary fix for issue 93
-            try:
-                join_invitation = JoinInvitation.objects.get(confirmation_key = self.cleaned_data["confirmation_key"])
-                confirmed = True
-            except JoinInvitation.DoesNotExist:
-                confirmed = False
-        else:
-            confirmed = False
-
-        # @@@ clean up some of the repetition below -- DRY!
-
-        if confirmed:
-            if email == join_invitation.contact.email:
-                new_user = User.objects.create_user(username, email, password)
-                join_invitation.accept(new_user) # should go before creation of EmailAddress below
-                new_user.message_set.create(message=ugettext(u"Your email address has already been verified"))
-                # already verified so can just create
-                EmailAddress(user=new_user, email=email, verified=True, primary=True).save()
-            else:
-                new_user = User.objects.create_user(username, "", password)
-                join_invitation.accept(new_user) # should go before creation of EmailAddress below
-                if email:
-                    new_user.message_set.create(message=ugettext(u"Confirmation email sent to %(email)s") % {'email': email})
-                    EmailAddress.objects.add_email(new_user, email)
-            return username, password # required for authenticate()
-        else:
-            new_user = User.objects.create_user(username, "", password)
-            if email:
-                new_user.message_set.create(message=ugettext(u"Confirmation email sent to %(email)s") % {'email': email})
-                EmailAddress.objects.add_email(new_user, email)
-            return username, password # required for authenticate()
 
 
 class OpenIDSignupForm(forms.Form):
@@ -421,17 +385,18 @@ class HubPlusApplicationForm(forms.Form):
  
         group = self.cleaned_data.pop('group')
         members_group = get_all_members_group()
- 
+
         had_group = True
-        if not group : 
+        if not group:
             had_group = False
             group = members_group
-            
+
         contact = group.create_Contact(user, **self.cleaned_data)
         site_application = members_group.apply(user, 
                                                applicant=contact,
                                                about_and_why=about_and_why)
-        if had_group:
+
+        if had_group: 
             group.apply(user, 
                         applicant=contact,
                         about_and_why=about_and_why)

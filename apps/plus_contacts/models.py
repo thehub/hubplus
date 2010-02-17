@@ -93,6 +93,13 @@ class Contact(models.Model):
             contact.user = u
             contact.update_applications()
             contact.update_invitations()
+        other_groups = u.groups.exclude(id=get_all_members_group().id) 
+ 
+        if other_groups.count()==1:
+            u.homehub = other_groups[0]
+        else:
+            u.homehub = get_all_members_group()
+        
         return u
 
 
@@ -126,7 +133,7 @@ class Contact(models.Model):
         url = attach_hmac("/account/signup/%s/" % id, sponsor)
         return 'http://%s%s' % (site_root, url)
 
-    def send_link_email(self, title, messages, sponsor, id) :
+    def send_link_email(self, title, message, sponsor, id) :
         url = self.make_link(sponsor, id)
         message = message + _("""
 

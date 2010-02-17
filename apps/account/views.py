@@ -434,7 +434,8 @@ def site_invite(request, template_name='account/invite_non_member.html', **kwarg
 
 
 
-@transaction.commit_on_success
+from apps.synced import synced_transaction
+@synced_transaction
 @hmac_proxy
 @secure_resource(Application)
 def proxied_signup(request, application, form_class=SignupForm,

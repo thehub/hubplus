@@ -2,7 +2,12 @@ from account.views import login
 from django.conf import settings
 from django.http import HttpResponse
 import settings
+import django.dispatch
 
+# Sets up custom signals for events which are interesting to syncer
+post_user_create = django.dispatch.Signal(providing_args=['user'])
+post_user_mod = django.dispatch.Signal(providing_args=['user'])
+post_location_add = django.dispatch.Signal(providing_args=['location'])
 
 if settings.SYNC_ENABLED:
     import thread
@@ -13,6 +18,8 @@ if settings.SYNC_ENABLED:
     import syncer.client
     import syncer.config
     import syncer.utils
+
+    from sync_tools import LazySyncerClient
 
     syncer.config.host = settings.SYNCER_HOST
     syncer.config.port = settings.SYNCER_PORT
@@ -85,15 +92,11 @@ if settings.SYNC_ENABLED:
 
     thread.start_new(signonloop, ())
 
+    # get the events functions
     from  sync_tools import events_setup
-    on_user_mod, on_user_add, on_location_mod = events_setup(syncerclient)
+    on_user_add, on_user_mod, on_location_add, on_location_mod, synced_transaction = events_setup(syncerclient)
 
 
-    from apps.plus_groups.models import TgGroup, Location, User_Group
-    from django.contrib.auth.models import User
-
-    from django.db.models.signals import post_save, post_delete
-
-    #post_user_create.connect(on_user_add)
-    post_save.connect(on_user_mod, sender=User)
-    post_save.connect(on_location_mod, sender=Location) # we'll disambiguate create and mod inside
+    post_user_create.connect(on_user_add)
+    post_user_mod.connect(on_user_mod)
+    post_location_add.connect(on_location_add)

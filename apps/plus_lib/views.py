@@ -30,6 +30,8 @@ def inner_objects(x) :
     
 
 #with_interfaces={'object':['Viewer', 'Editor', 'EmailAddressViewer', 'HomeViewer', 'WorkViewer', 'MobileViewer', 'FaxViewer', 'AddressViewer', 'SkypeViewer', 'SipViewer']
+from apps.synced import synced_transaction
+@synced_transaction
 @secure_resource(obj_schema={'object':'any'})
 def field(request, default='', **kwargs) :
     """This should be the generic "attribute" editor ... for any normal attribute, 

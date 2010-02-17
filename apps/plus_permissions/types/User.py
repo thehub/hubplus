@@ -29,19 +29,22 @@ def create_user(user_name, email_address, password='dummy', permission_prototype
         user.user_name = user_name
         user.save()
         
-        from apps.synced.sync_tools import post_user_create
-        post_user_create.send(sender=user,user=user)
-
         user_post_create(user)
+
+        from apps.synced import post_user_create
+        post_user_create.send(sender=user,user=user)
 
     return user
 
 def user_post_create(user, permission_prototype='public') :
+    
     user.save() # ensures our post_save signal is fired to create gen_ref, even if we came via syncer
     setup_user_security(user, permission_prototype)
 
     user.create_Profile(user,user=user)
     user.create_HostInfo(user,user=user)
+
+    get_all_members_group().add_member(user)
     return user
 
 def setup_user_security(user, permission_prototype):

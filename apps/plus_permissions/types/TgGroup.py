@@ -80,12 +80,13 @@ def group_post_create(group, user, permission_prototype=None) :
             level='host',
             place=group.place,
             user=user, 
+            group_type='administrative',
             description="Admin Group for %s" % group.display_name, 
             )
 
         setup_group_security(group, group, admin_group, user, permission_prototype)
 
-    elif group.level == 'host':
+    elif group.level == 'host' or group.level == 'director' :
         setup_group_security(group, group, group, user, 'private')
 
         if group.group_name != "all_members_hosts" :
@@ -342,8 +343,6 @@ def setup_defaults():
                           },
                           'constraints':['Viewer>=Manager']
                         },
-
-
                    'Profile':
                        {'defaults': 
                         {'Viewer': 'anonymous_group',
@@ -378,6 +377,11 @@ def setup_defaults():
 
     invite_defaults = deepcopy(open_defaults)
     invite_defaults = overlay(invite_defaults,{'TgGroup':{'defaults':{'Join':'context_agent'}}})
+    invite_defaults = overlay(invite_defaults,{'TgGroup':{'defaults':{'CreateMemberInvite':'context_agent'}}})
+
+    hub_defaults = deepcopy(invite_defaults)
+    hub_defaults = overlay(hub_defaults, {'TgGroup':{'defaults':{'Invite':'context_admin'}}})
+    hub_defaults = overlay(hub_defaults, {'TgGroup':{'defaults':{'CreateMemberInvite':'context_admin'}}})
 
     private_defaults = deepcopy(invite_defaults)
     private_defaults = overlay(private_defaults,{'TgGroup':{'defaults':{'Viewer':'context_agent'}}})
