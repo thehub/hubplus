@@ -7,6 +7,17 @@
 
 {% block body %}
 <div class="block">
-	{% blocktrans %}<p>If you think you should be able to do this please <a href="mailto:{{ SUPPORT_EMAIL }}">email us.</a></p>{% endblocktrans %}
+
+	{% blocktrans %}
+<p>Your access to this content is restricted at present. </p>
+<p>
+If you are a network member and believe you are entitled to access this content, please contact the relevant host 
+(ie. group, region or network) to check why you have not been able to do so.  
+Do note that material posted or groups created by members may be subject to privacy settings that limit permission 
+for others to view or interact with these. Consequently, some groups and resources may only be accessed by 
+logged-in members of the network whilst others can only be accessed by members of particular groups.</p>
+
+<!-- p>If you think you should be able to do this please <a href="mailto:{{ SUPPORT_EMAIL }}">email us.</a>
+	</p-->{% endblocktrans %}
 </div>
 {% endblock %}
