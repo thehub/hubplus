@@ -47,7 +47,7 @@ def get_or_create(group_name=None, display_name=None, place=None, level=None, us
     """
     # note : we can't use get_or_create for TgGroup, because the created date clause won't match on a different day
     # from the day the record was created.
-    
+
     if not user:
         raise TypeError("We must have a user to create a group, since otherwise it will be inaccessible")
     if not place:
@@ -62,6 +62,7 @@ def get_or_create(group_name=None, display_name=None, place=None, level=None, us
         group = TgGroup(group_name=group_name, display_name=display_name, level=level, 
                         place=place, description=description, group_type=group_type)
         group.save()
+
         group_post_create(group, user, permission_prototype)
 
     return group, created
@@ -89,7 +90,8 @@ def group_post_create(group, user, permission_prototype=None) :
     elif group.level == 'host' or group.level == 'director' :
         setup_group_security(group, group, group, user, 'private')
 
-        if group.group_name != "all_members_hosts" :
+        from django.conf import settings
+        if group.group_name != settings.VIRTUAL_HUB_NAME+'_hosts' :
             group.add_member(get_all_members_group().get_admin_group())
 
 
