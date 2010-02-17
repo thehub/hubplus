@@ -2,6 +2,8 @@ import settings
 import django.dispatch
 import threading
 
+tls = threading.local()
+
 class LazyCall(object):
     def __init__(self, f):
         self.f = f
@@ -23,7 +25,7 @@ class LazySyncerClient(list):
         return self.results
 
 
-def events_setup(syncerclient):
+def events_setup(syncerclient): 
 
     class SyncerError(Exception) :
         pass
@@ -59,7 +61,6 @@ def events_setup(syncerclient):
     @checkSyncerResults
     def on_location_add(location=None, **kwargs) :
         print "on_location_add"
-        tls = threading.local()
         xs = tls.syncerclient.onLocationAdd(location.id)
         print xs
         return xs
@@ -67,47 +68,42 @@ def events_setup(syncerclient):
     @checkSyncerResults
     def on_location_mod(instance=None, created=None, **kwargs) :
         print "on_location_mod"
-        tls = threading.local()
         return tls.syncerclient.onLocationMod(instance.id)
 
 
     @checkSyncerResults
     def on_user_add(user=None, **kwargs) :
         print "on_user_add"
-        tls = threading.local()
         return tls.syncerclient.onUserAdd(user.id)
         
 
-    @checkSyncerResults
-    def on_user_mod(created=None, **kwargs) :
-        if kwargs.has_key('instance') :
-            print "on_user_mod"
-            tls = threading.local()
-            instance = kwargs['instance']
-            if not created :
-                # we prefer to send the on_user_add when the user is created.
-                return  tls.syncerclient.onUserMod(instance.id)
+    #@checkSyncerResults
+    def on_user_mod(user=None, **kwargs) :
+        print "on_user_mod"
+        import ipdb
+        ipdb.set_trace() 
+        return  tls.syncerclient.onUserMod(user.id)
 
 
     from django.db import transaction
 
     def synced_transaction(f) :
         @transaction.commit_manually
-        def g(*argv,**kwargs) :
-            tls = threading.local()
-            tls.syncerclient = LazySyncerClient(syncerclient)
+        def g(*argv,**kwargs) : 
+            tls.syncerclient = LazySyncerClient(syncerclient) 
             try :
-                return f(*argv,**kwargs)
+                ret = f(*argv,**kwargs)
             except Exception, e:
                 transaction.rollback()
                 raise e
+
             transaction.commit()
-            tls.syncerclient.run_all()
+            tls.syncerclient.run_all() 
+            return ret
             # what does this do?
             #if hasattr(tls, 'syncer_trs') and tls.syncer_trs:
             #    syncerclient.completeTransactions(tuple(tls.syncer_trs))
-
-
+        return g
 
 
     return on_user_add, on_user_mod, on_location_add, on_location_mod, synced_transaction

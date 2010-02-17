@@ -1,11 +1,10 @@
 from apps.plus_groups.models import TgGroup
 from apps.plus_permissions.types.TgGroup import setup_group_security
-from apps.plus_permissions.default_agents import get_admin_user, get_all_members_group, get_or_create_root_location
 from apps.plus_permissions.views import setup_hubs_security, create_reference
 from django.contrib.auth.models import User
 from apps.plus_permissions.types.User import setup_user_security
 
-from apps.plus_permissions.default_agents import get_or_create_root_location, get_virtual_members_group
+from apps.plus_permissions.default_agents import get_or_create_root_location, get_all_members_group,  get_admin_user, get_creator_agent
 
 from apps.plus_groups.models import TgGroup
 from apps.plus_permissions.default_agents import get_or_create_root_location, get_admin_user
@@ -19,6 +18,7 @@ def give_host_permissions(hub):
     for member in hub.get_members():
         for prof in ProfileInterfaces:
             member.get_security_context().add_arbitrary_agent(hub.get_admin_group(), 'Profile.%s' % prof, admin)
+
 
 
 
@@ -62,9 +62,20 @@ def patch_in_groups():
 
     for group in no_security_host:
         create_reference(TgGroup, group)
+        group.type = 'administrative'
         setup_group_security(group, group, group, admin_user, 'private')
 
-    print "patched %s hub group's security" % str(len(no_security_host))
+    #this should have setup most of the host groups, but if not
+    no_security_director = [group for group in TgGroup.objects.filter(level='director') if not group.ref.all()]
+
+    for group in no_security_host:
+        create_reference(TgGroup, group)
+        group.type = 'administrative'
+        group.save()
+        setup_group_security(group, group, group, admin_user, 'private')
+
+    print "patched hub group's security"
+
 
 
 def patch_in_profiles():
@@ -140,14 +151,28 @@ def individual_changes():
     admin = get_admin_user()
     admin.active = True
     admin.save()
+    all_members_group = get_all_members_group()
+    all_members_group.group_name = settings.VIRTUAL_HUB_NAME
+    all_members_group.display_name = settings.VIRTUAL_HUB_DISPLAY_NAME
+    all_members_group.group_type = "hub"
+    all_members_group.save()
+    all_members_hosts = all_members_group.get_admin_group()
+    all_members_hosts.group_name = "hubplus_hosts"
+    all_members_hosts.display_name = "Hub+ Hosts" 
+    all_members_hosts.group_type = 'administrative'
+    all_members_hosts.save()
 
-    # 
+    for gr in Group.objects.get(level='host').all():
+        all_members_hosts.add_member(gr)
+        gr.save()
+
 
 def main():
+    individual_changes()
     patch_in_groups()
     patch_in_profiles()
     tidy_groups()
-    individual_changes()
+
 
 if __name__ == '__main__':
     main()

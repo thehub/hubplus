@@ -7,12 +7,14 @@ class Site(models.Model) :
 
     def create_hub(self, *args, **kwargs) :
         from apps.plus_groups.models import Location
+        from django.conf import settings
+
         place,created = Location.objects.get_or_create(name=kwargs['location_name'])
 
         group = self.create_TgGroup(
             group_name=kwargs['group_name'],
             display_name=kwargs['display_name'],
-            group_type = kwargs['group_type'],
+            group_type = settings.GROUP_HUB_TYPE,
             level = 'member',
             user = kwargs['user'],
             description = kwargs['description'],

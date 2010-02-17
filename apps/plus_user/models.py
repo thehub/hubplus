@@ -278,8 +278,7 @@ def patch_user_class():
        return self.is_admin_of(get_all_members_group())
     User.is_site_admin = is_site_admin
    
-    User.hubs = lambda self : self.groups.filter(group_type=settings.GROUP_HUB_TYPE)
-
+    User.hubs = lambda self : self.groups.filter(group_type=settings.GROUP_HUB_TYPE,level='member')
 
     print "Monkey Patched User Class ... gulp!"
 

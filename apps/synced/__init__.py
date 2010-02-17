@@ -93,10 +93,11 @@ if settings.SYNC_ENABLED:
     thread.start_new(signonloop, ())
 
     # get the events functions
-    from  sync_tools import events_setup
-    on_user_add, on_user_mod, on_location_add, on_location_mod, synced_transaction = events_setup(syncerclient)
+    from  sync_tools import events_setup 
 
+    on_user_add, on_user_mod, on_location_add, on_location_mod, synced_transaction = events_setup(syncerclient)
 
     post_user_create.connect(on_user_add)
     post_user_mod.connect(on_user_mod)
     post_location_add.connect(on_location_add)
+

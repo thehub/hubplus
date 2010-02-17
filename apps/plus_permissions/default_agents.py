@@ -63,11 +63,11 @@ def get_anon_user():
 
 def set_all_members_group():
     admin_user = get_admin_user()
-    return TgGroup.objects.get_or_create(group_name='all_members', display_name=settings.ALL_MEMBERS_NAME, place=get_or_create_root_location(), level='member', user=admin_user)
+    return TgGroup.objects.get_or_create(group_name=settings.VIRTUAL_HUB_NAME, display_name=settings.VIRTUAL_HUB_DISPLAY_NAME, place=get_or_create_root_location(), level='member', user=admin_user)
            
 def get_all_members_group():
     #XXXchange this to use the a group ID configured in local_settings.py
-    all_members = TgGroup.objects.filter(group_name="all_members") #
+    all_members = TgGroup.objects.filter(group_name=settings.VIRTUAL_HUB_NAME) #
     if not all_members:
         all_members, created = set_all_members_group()
     else :
@@ -80,6 +80,8 @@ def get_all_members_group():
 class CreatorMarker(models.Model) :
     """ This class is only for a fake "agent" which is used to represent "query for the creator of this content_type" """
     display_name = models.CharField(default="Creator", max_length="20")
+    def get_display_name(self):
+        return self.display_name
 
 
 def get_creator_agent() :
