@@ -9,7 +9,7 @@ from apps.plus_permissions.default_agents import get_or_create_root_location, ge
 from apps.plus_groups.models import TgGroup
 from apps.plus_permissions.default_agents import get_or_create_root_location, get_admin_user
 from apps.plus_permissions.types.Profile import ProfileInterfaces
-
+import settings
 
 def give_host_permissions(hub):
     """give hosts all rights to on user profiles of their members
@@ -34,8 +34,8 @@ def tidy_groups():
     
     hub_members_groups = TgGroup.objects.filter(level='member')
     for hub in hub_members_groups:
-        hub.group_name = hub.group_name.replace('_member', '').replace(' ', '').strip().lower()
         hub.display_name = hub.group_name.replace('_', ' ').replace('member', '').strip().title()
+        hub.group_name = hub.group_name.replace('_member', '').replace(' ', '').strip().lower()
         if not hub.display_name:
             hub.display_name = hub.group_name.title()
         hub.group_type = 'hub'
@@ -162,7 +162,7 @@ def individual_changes():
     all_members_hosts.group_type = 'administrative'
     all_members_hosts.save()
 
-    for gr in Group.objects.get(level='host').all():
+    for gr in TgGroup.objects.filter(level='host'):
         all_members_hosts.add_member(gr)
         gr.save()
 

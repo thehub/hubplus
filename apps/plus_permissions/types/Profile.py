@@ -27,7 +27,7 @@ class ProfileViewer:
     first_name = InterfaceReadProperty
     last_name = InterfaceReadProperty
 
-    address = InterfaceReadProperty
+    #address = InterfaceReadProperty
     country = InterfaceReadProperty
     display_name = InterfaceReadProperty
     title = InterfaceReadProperty

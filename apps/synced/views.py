@@ -45,8 +45,8 @@ def on_user_change(request, data) :
     print "in on_user_changed"
     u = User.objects.plus_get(request.user, id=data['id'])
 
-    if not self.homehub or self.homehub.place != self.homeplace :
-       self.homehub = TgGroup.objects.get(place=self.homeplace,level='member')
+    if not u.homehub or u.homehub.place != u.homeplace :
+       u.homehub = TgGroup.objects.get(place=u.homeplace,level='member')
 
     u.save()
     u.post_save()

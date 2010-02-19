@@ -38,7 +38,6 @@ from trellis_cache.reactor_in_thread import TrellisThread
 from mext.context import State
 
 #from settings import trellis
-
 #EventQueueSingleton.activate()
 # would be nice for testability to be able to do this before starting the reactor, but that would require EventQueue to be a (non-thread local) Singleton which doesn't seem to be possible in 'Contextual' :-(
  

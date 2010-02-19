@@ -144,7 +144,7 @@ if User not in PossibleTypes:
 def setup_defaults():
     public_defaults = {'User':
                            {'defaults': 
-                               {'Viewer': 'all_members_group',
+                               {'Viewer': 'anonymous_group',
                                 'Editor': 'context_admin',
                                  'SetManagePermissions': 'context_admin',
                                  'ManagePermissions':'context_agent',
@@ -189,7 +189,8 @@ def setup_defaults():
                        }
                      
     members_only_defaults = deepcopy(public_defaults)
-    members_only_defaults = overlay(members_only_defaults,{'TgGroup':{'defaults':{'Viewer':'all_members_group'}}})
+    members_only_defaults = overlay(members_only_defaults, {'Profile':{'defaults':{'Viewer':'all_members_group'}},
+                                                            'User': {'defaults':{'Viewer':'all_members_group'}}})
 
     inactive_defaults = deepcopy(members_only_defaults)
     inactive_defaults['User']['defaults'] = {'Unknown':'context_admin'} 

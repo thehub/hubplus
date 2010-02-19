@@ -50,6 +50,8 @@ git-submodule init
 git submodule update
 
 cp local_settings_example.py local_settings.py
+cp external_apps.txt ../src/pinax/requirements/external_apps.txt
+cp libs.txt ../src/pinax/requirements/libs.txt
 
 pip install --requirement src/pinax/requirements/external_apps.txt
 

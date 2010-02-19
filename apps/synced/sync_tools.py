@@ -81,7 +81,7 @@ def events_setup(syncerclient):
     def synced_transaction(f) :
         @transaction.commit_manually
         def g(*argv,**kwargs) : 
-            tls.syncerclient = LazySyncerClient(syncerclient) 
+            #tls.syncerclient = LazySyncerClient(syncerclient) 
             try :
                 ret = f(*argv,**kwargs)
             except Exception, e:
@@ -89,7 +89,7 @@ def events_setup(syncerclient):
                 raise e
             
             transaction.commit()
-            tls.syncerclient.run_all() 
+            #tls.syncerclient.run_all() 
             return ret
             # what does this do?
             #if hasattr(tls, 'syncer_trs') and tls.syncer_trs:
