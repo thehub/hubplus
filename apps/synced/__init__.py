@@ -74,8 +74,8 @@ else:
 
         return resp
 
-    def signon():
 
+    def signon():
         u = settings.HUBPLUSSVCUID
         p = settings.HUBPLUSSVCPASS
         tr_id, res = syncerclient.onSignon(u, p)
@@ -91,6 +91,9 @@ else:
 
    
     def signonloop():
+        # ok, ironically, before we sign-in, let's kill the old syncertoken
+        del (syncerclient.sessiongetter())['syncertoken']
+
         while not signon():
             time.sleep(10)
 
@@ -106,3 +109,4 @@ else:
     post_location_add.connect(on_location_add)
 
     synced_transaction = _synced_transaction
+

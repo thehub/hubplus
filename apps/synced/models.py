@@ -29,6 +29,11 @@ class DbSessions(object) :
         ss.set_data(val)
         ss.save()
 
+    def __delitem__(self,key) :
+        if self.has_key(key) :
+            ss = SyncerSession.objects.get(key=key)
+            ss.delete()
+        
 
     def __repr__(self) :
         return ', '.join(['(%s : %s)' % (x.key,x.data) for x in SyncerSession.objects.all()])
