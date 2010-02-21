@@ -48,7 +48,7 @@ else:
     syncerclient = syncer.client.SyncerClient("hubplus", sessiongetter)
 
     def login(*args, **kw):
-         request = args[0]
+        request = args[0]
         req_cookies = request.COOKIES
         u = request.POST.get('username')
         p = request.POST.get('password')
