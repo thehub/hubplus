@@ -24,6 +24,9 @@ def on_user_add(request, data) :
     # permission here
     user = User.objects.get(id=data['id'])
 
+    if user.user_name and not user.username :
+        user.username = user.user_name
+
     if user.active:
         if user.public_field:
             permission_prototype = 'public'
