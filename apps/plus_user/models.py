@@ -214,7 +214,14 @@ def patch_user_class():
     # Patching the User class
     User.add_to_class('__getattr__',  __getattr__)
     User.add_to_class('__setattr__',  __setattr__)
-    User.add_to_class('user_name', UserNameField(unique=True, max_length=255))
+
+    # EXPERIMENT ... make username alias of user_name
+    #User.add_to_class('user_name', UserNameField(unique=True, max_length=255))
+    User.add_to_class('user_name',models.CharField(max_length=255,unique=True))
+    #del User.username
+    User.add_to_class('username',AliasOf('user_name'))                      
+    # EXPERIMENT END
+
     User.add_to_class('email_address', models.CharField(max_length=255,unique=True))
 
     #remove the existing django groups relation  
