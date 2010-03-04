@@ -15,10 +15,9 @@ MAIN_HUB_NAME = _('Main Region')
 
 HUB_APP_NAME = 'regions:groups'
 
-
 TOP_LEVEL_TABS = [(_('Home'), 'home', ''), (_('Resources'), 'resources', 'resources'), (_('Members'), 'profile_list', 'members'),  (_("Groups"), 'groups:groups', 'groups'), (HUB_NAME_PLURAL, HUB_APP_NAME, 'hubs')]
 
-VIRTUAL_HUB_NAME = 'mhpss_network'
+VIRTUAL_HUB_NAME = 'all_members'
 VIRTUAL_HUB_DISPLAY_NAME = 'MHPSS Network' 
 
 SITE_NAME = _("Mental Health and Psychosocial Support Network")
@@ -33,7 +32,6 @@ GROUP_TYPES = (
 )
 
 GROUP_HUB_TYPE = 'region'
-
 
 EXPLORE_SEARCH_TITLE = _('Search Site')
 MEMBER_SEARCH_TITLE = _('Search Members')
