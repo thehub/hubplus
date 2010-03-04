@@ -78,8 +78,13 @@ class UserViewer:
     display_name = InterfaceReadProperty 
     is_site_admin = InterfaceCallProperty
     hubs = InterfaceCallProperty
+    homehub = InterfaceReadProperty
+    homeplace = InterfaceReadProperty
 
 class UserEditor:
+    homehub = InterfaceWriteProperty
+    homeplace = InterfaceWriteProperty
+    
     preferably_pre_save = InterfaceCallProperty
     post_save = InterfaceCallProperty
     save = InterfaceCallProperty

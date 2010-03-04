@@ -10,7 +10,7 @@ def reply(f) :
             f(*argv,**kwargs)
             return {'ok':True}
         except Exception, e:
-            return {'ok':False,'msg':'%s'%e}
+            return {'ok':False,'msg':'%s;; %s'%(e,e.__class__.__name__)}
     return g
 
 @json_view
@@ -49,7 +49,11 @@ def on_user_change(request, data) :
     u = User.objects.plus_get(request.user, id=data['id'])
 
     if not u.homehub or u.homehub.place != u.homeplace :
-       u.homehub = TgGroup.objects.get(place=u.homeplace,level='member')
+        from apps.plus_permissions.default_agents import get_or_create_root_location, get_all_members_group
+        if u.homeplace == get_or_create_root_location() :
+            u.homehub = get_all_members_group()
+        else :
+            u.homehub = TgGroup.objects.get(place=u.homeplace,level='member')
 
     u.save()
     u.post_save()
