@@ -21,7 +21,9 @@ if not settings.SYNC_ENABLED:
             return f(*args,**kwargs)
         return g
 else:
+
     from apps.account.views import login
+
     import thread
     import time
     import cookielib
@@ -46,9 +48,6 @@ else:
     syncerclient = syncer.client.SyncerClient("hubplus", sessiongetter)
 
     def login(*args, **kw):
-        print "________starting login (%s,%s)" % (thread.get_ident(), id(syncerclient.sessiongetter()))
-        print syncerclient.sessiongetter()
-
         request = args[0]
         req_cookies = request.COOKIES
         u = request.POST.get('username')
@@ -59,10 +58,7 @@ else:
             cl = [ cookielib.Cookie(None, name, value, None, None, settings.SESSION_COOKIE_DOMAIN, None, None, '/', None, "", None, "", "", None, None)
                 for (name, value) in req_cookies.items() ]
  
-            print "syncertoken " + `syncerclient.getSyncerToken()`
-            print "thread id is "+`thread.get_ident()`
             tr_id, res = syncerclient.onUserLogin(u, p, cl)
-            print ".....",res
 
             if not syncerclient.isSuccessful(res):
                 print syncer.client.errors.res2errstr(res)
@@ -75,6 +71,7 @@ else:
                     except Exception, err:
                             print "SSO: skipping ", v['appname']
 
+
         return resp
 
 
@@ -83,14 +80,9 @@ else:
         p = settings.HUBPLUSSVCPASS
         tr_id, res = syncerclient.onSignon(u, p)
         if syncerclient.isSuccessful(res):
-            print "setting syncer token (%s, %s)" % (`thread.get_ident()`,`id(syncerclient.sessiongetter())`)
-            print syncerclient.sessiongetter()
             syncerclient.setSyncerToken(res['sessionkeeper']['result'])
-            print syncerclient.sessiongetter()
-            print "syncertoken " + `syncerclient.getSyncerToken()`
             msg = "Syncer signon successful"
             print msg
-
             return True
         msg = "Syncer signon failed: %s" % res
         print msg
