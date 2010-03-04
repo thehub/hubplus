@@ -354,15 +354,10 @@ try :
 
         def group_app_label(self):
             from apps.plus_lib.utils import hub_name
-            try:
-                if self.place.name == settings.VIRTUAL_HUB_NAME:
-                    group_label = "group"
-                else:
-                    group_label = hub_name().lower()
-            except Location.DoesNotExist:
-                group_label = "group"
-            group_app_label = group_label + 's'
-            return group_app_label
+
+            if self.group_type == settings.GROUP_HUB_TYPE:
+                return hub_name().lower()+'s'
+            return 'groups'
 
         @transaction.commit_on_success
         def delete(self) :
