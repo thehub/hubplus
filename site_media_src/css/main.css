@@ -975,7 +975,14 @@ li.place div.editable {
 	clear		: both;
 	padding-bottom	: 20px;
 }
-
+#content ol {
+list-style: decimal;
+list-style-position:inside;
+}
+#content ul {
+list-style: disc;
+list-style-position:inside;
+}
 #preview_content {
 	margin-bottom	: 20px;
 }
