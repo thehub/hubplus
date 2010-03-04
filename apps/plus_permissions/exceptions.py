@@ -8,6 +8,11 @@ class PlusPermissionsNoAccessException(PermissionDenied):
         self.silent_variable_failure = True
         self.message = msg
 
+    def __repr__(self) :
+        return "[** PlusPermissionNoAccessException: %s, %s, %s, %s **]" % (self.cls,self.id,self.msg,self.silent_variable_failure)
+
+
+
 class PlusPermissionsReadOnlyException(PermissionDenied) : 
     def __init__(self,cls,msg) :
         self.cls = cls

@@ -97,9 +97,9 @@ def profile(request, username, template_name="profiles/profile.html"):
 
     #come on this is crap, we are opening up a common perhaps the most commonly read view with two writes. and why?
     other_user = get_object_or_404(User, username=username)
-    other_user.save()
+    #other_user.save()
     p = other_user.get_profile()
-    p.save()
+    #p.save()
     if request.user.is_authenticated():
 
         is_friend = Friendship.objects.are_friends(request.user, other_user)
