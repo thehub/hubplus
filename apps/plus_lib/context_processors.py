@@ -69,6 +69,7 @@ def configs(context):
             'TOP_LEVEL_TABS' : settings.TOP_LEVEL_TABS,
             'STATUS_COPY' : settings.STATUS_COPY,
             'GOOGLE_MAP_KEY' : settings.GOOGLE_MAP_KEY,
+            'GOOGLE_ANALYTICS_TOKEN' : settings.GOOGLE_ANALYTICS_TOKEN,
 
             }
 
