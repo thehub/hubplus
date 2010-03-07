@@ -42,7 +42,6 @@ import itertools
 
 
 
-
 #separate params for searches
 
 @secure_resource(TgGroup, required_interfaces=["Viewer"], with_interfaces=['Viewer'])
@@ -63,12 +62,9 @@ def group_resources(request, group, tag_string='', template_name='plus_explore/e
 
 
 
-
-
 def resources(group, tags=[], order=None, search=''):
     search_types = narrow_search_types('Resource')
     return plus_search(tags, search, search_types, order, in_group=group.get_ref())
-
 
 #@secure_resource(TgGroup, required_interfaces=['Viewer'], with_interfaces=['Viewer'])
 # above is MUCH MUCH faster (whole request *10 faster), it shouldn't have to be this way
@@ -79,7 +75,6 @@ def group(request, group, template_name="plus_groups/group.html", current_app='p
         raise Http404(_('There is no group with this id'))
 
     user = request.user
-    
 
     can_join = False
     apply = False
@@ -92,6 +87,7 @@ def group(request, group, template_name="plus_groups/group.html", current_app='p
     can_change_avatar = False
     has_accept = False
     can_delete = False
+
     editable_group_type = group.group_type != settings.HUB_NAME
 
     if user.is_authenticated():
