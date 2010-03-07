@@ -10,7 +10,8 @@ from apps.profiles.models import Profile, HostInfo
 from apps.plus_links.models import Link
 
 import datetime
-
+from copy import deepcopy
+from apps.plus_lib.dict_tools import overlay
 # We need our own get_or_create
 
 from apps.plus_groups.models import User
@@ -18,7 +19,6 @@ from apps.plus_groups.models import User
 def create_user(user_name, email_address, password='dummy', permission_prototype='public') :
     """create a User
     """
-
 
     if User.objects.filter(username=user_name).count() < 0 :
         user = User.objects.get(username=user_name)
@@ -29,12 +29,23 @@ def create_user(user_name, email_address, password='dummy', permission_prototype
         user.user_name = user_name
         user.save()
         
-        setup_user_security(user, permission_prototype)
+        user_post_create(user)
 
-        user.create_Profile(user,user=user)
-        user.create_HostInfo(user,user=user)
+        from apps.synced import post_user_create
+        post_user_create.send(sender=user,user=user)
+
     return user
 
+def user_post_create(user, permission_prototype='public') :
+    
+    user.save() # ensures our post_save signal is fired to create gen_ref, even if we came via syncer
+    setup_user_security(user, permission_prototype)
+
+    user.create_Profile(user,user=user)
+    user.create_HostInfo(user,user=user)
+
+    get_all_members_group().add_member(user)
+    return user
 
 def setup_user_security(user, permission_prototype):
     user.to_security_context()
@@ -67,6 +78,16 @@ class UserViewer:
     display_name = InterfaceReadProperty 
     is_site_admin = InterfaceCallProperty
     hubs = InterfaceCallProperty
+    homehub = InterfaceReadProperty
+    homeplace = InterfaceReadProperty
+
+class UserEditor:
+    homehub = InterfaceWriteProperty
+    homeplace = InterfaceWriteProperty
+    
+    preferably_pre_save = InterfaceCallProperty
+    post_save = InterfaceCallProperty
+    save = InterfaceCallProperty
 
 class SetManagePermissions:
     pass
@@ -75,6 +96,7 @@ class SetManagePermissions:
 UserInterfaces = {
     'Viewer':UserViewer,
     'SetManagePermissions':SetManagePermissions,
+    'Editor':UserEditor,
 
     }
 
@@ -113,7 +135,7 @@ SetSliderAgents(User, get_slider_agents)
 child_types = [Profile, HostInfo]
 # ChildTypes are used to determine what types of objects can be created in this security context (and acquire security context from this). These are used when creating an explicit security context for an object of this type.
 
-if User not in PossibleTypes :
+if User not in PossibleTypes:
     child_types = [Profile, HostInfo, Link]
     SetPossibleTypes(User, child_types)
     SetVisibleTypes(content_type, [Profile, HostInfo])
@@ -123,52 +145,68 @@ if User not in PossibleTypes :
 # The agent must have a set of default levels for every type which can be created within it. Other objects don't need these as they will be copied from acquired security context according to the possible types available at the "lower" level. We have different AgentDefaults for different group types e.g. standard, public, or private.
 
 #constraints - note that "higher" means wider access. Therefore if "anonymous can't edit" we must set that Editor<$anonymous OR if Editor functionality can't be given to a wider group than Viewer then we must set Editor < Viewer.
-AgentDefaults = {'public':
-                     {'User':
-                          {'defaults': {
-                                'Viewer': 'all_members_group',
-                                'SetManagePermissions': 'context_admin',
-                                'ManagePermissions':'context_admin',
-                                'CreateLink': 'context_admin',
-                                'Unknown': 'context_agent'
-                                },                           
-                           'constraints':
-                               []
-                           },
-                   'Profile':
-                       {'defaults':
-                        {'Viewer': 'anonymous_group',
-                         'Editor': 'context_agent',
-                         'EmailAddressViewer' : 'all_members_group',
-                         'HomeViewer' : 'all_members_group',
-                         'WorkViewer' : 'all_members_group',
-                         'MobileViewer' : 'all_members_group',
-                         'FaxViewer' : 'all_members_group',
-                         'AddressViewer' : 'all_memebers_group',
-                         'SkypeViewer' : 'all_members_group',
-                         'SipViewer' : 'all_members_group',
-                         'ManagePermissions':'context_agent',
-                         'Unknown' : 'context_agent',
-                         },
-                        'constraints':['Viewer>=Editor', 'Editor<$anonymous_group', 'Editor>=$context_agent']
-                        },
-                      'Link': 
-                          {'defaults': {'Viewer':'all_members_group',
-                                        'Manager':'context_agent',
-                                        'ManagePermissions':'context_agent',
-                                        'Unknown' : 'context_agent'},
-                           'constraints':['Viewer>=Manager']
-                           },
-                      'HostInfo':
-                          {'defaults': {'Viewer':'context_agent',
-                                        'Editor':'context_agent',
-                                        'ManagePermissions':'context_agent',
-                                        'Unknown':'context_agent',
-                                        },
-                           'constraints':['Viewer>=Editor']
-                          },
-                      },
-                 }
-                 
 
+def setup_defaults():
+    public_defaults = {'User':
+                           {'defaults': 
+                               {'Viewer': 'anonymous_group',
+                                'Editor': 'context_admin',
+                                 'SetManagePermissions': 'context_admin',
+                                 'ManagePermissions':'context_agent',
+                                 'CreateLink': 'context_admin',
+                                 'Unknown': 'context_agent'
+                                 },                           
+                            'constraints':
+                                []
+                            },
+                       'Profile':
+                           {'defaults':
+                                {'Viewer': 'anonymous_group',
+                                 'Editor': 'context_agent',
+                                 'EmailAddressViewer' : 'all_members_group',
+                                 'HomeViewer' : 'all_members_group',
+                                    'WorkViewer' : 'all_members_group',
+                                    'MobileViewer' : 'all_members_group',
+                                    'FaxViewer' : 'all_members_group',
+                                    'AddressViewer' : 'all_memebers_group',
+                                    'SkypeViewer' : 'all_members_group',
+                                    'SipViewer' : 'all_members_group',
+                                    'ManagePermissions':'context_agent',
+                                    'Unknown' : 'context_agent',
+                                    },
+                               'constraints':['Viewer>=Editor', 'Viewer>$context_agent', 'Editor<$anonymous_group']
+                               },
+                          'Link': 
+                              {'defaults': {'Viewer':'all_members_group',
+                                            'Manager':'context_agent',
+                                            'ManagePermissions':'context_agent',
+                                            'Unknown' : 'context_agent'},
+                               'constraints':['Viewer>=Manager']
+                               },
+                          'HostInfo':
+                              {'defaults': {'Viewer':'context_agent',
+                                            'Editor':'context_agent',
+                                            'ManagePermissions':'context_agent',
+                                            'Unknown':'context_agent',
+                                            },
+                               'constraints':['Viewer>=Editor']
+                               },
+                       }
+                     
+    members_only_defaults = deepcopy(public_defaults)
+    members_only_defaults = overlay(members_only_defaults, {'Profile':{'defaults':{'Viewer':'all_members_group'}},
+                                                            'User': {'defaults':{'Viewer':'all_members_group'}}})
+
+    inactive_defaults = deepcopy(members_only_defaults)
+    inactive_defaults['User']['defaults'] = {'Unknown':'context_admin'} 
+    inactive_defaults['Profile']['defaults'] = {'Unknown':'context_admin'} 
+    inactive_defaults['Link']['defaults'] = {'Unknown':'context_admin'} 
+    inactive_defaults['HostInfo']['defaults'] = {'Unknown':'context_admin'} 
+
+    
+    return {'public':public_defaults,
+            'members_only':members_only_defaults,
+            'inactive':inactive_defaults}
+    
+AgentDefaults = setup_defaults()
 SetAgentDefaults(User, AgentDefaults)

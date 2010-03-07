@@ -48,7 +48,6 @@ urlpatterns = patterns('',
     (r'^explore/', include('plus_explore.urls')),
 
     (r'^blog/', include('blog.urls')),
-    (r'^tags/', include('tag_app.urls')),
     (r'^invitations/', include('friends_app.urls')),
     (r'^notices/', include('notification.urls')),
     (r'^messages/', include('messages.urls')),
@@ -71,9 +70,6 @@ urlpatterns = patterns('',
     (r'^feeds/tweets/(.*)/$', 'django.contrib.syndication.views.feed', tweets_feed_dict),
     (r'^feeds/posts/(.*)/$', 'django.contrib.syndication.views.feed', blogs_feed_dict),
     (r'^feeds/bookmarks/(.*)/?$', 'django.contrib.syndication.views.feed', bookmarks_feed_dict),
-
-    (r'^signup/', include('signup_codes.urls')),
-
     (r'^notices/', include('notification.urls')),
 
     (r'^lib/', include('plus_lib.urls')),
@@ -136,5 +132,8 @@ if settings.SERVE_MEDIA:
     )
 
 
-import synced.urls
-urlpatterns += synced.urls.urlpatterns
+if settings.SYNC_ENABLED:
+    import synced.urls
+
+    urlpatterns += synced.urls.urlpatterns
+

@@ -15,16 +15,10 @@ MAIN_HUB_NAME = _('Main Region')
 
 HUB_APP_NAME = 'regions:groups'
 
-
 TOP_LEVEL_TABS = [(_('Home'), 'home', ''), (_('Resources'), 'resources', 'resources'), (_('Members'), 'profile_list', 'members'),  (_("Groups"), 'groups:groups', 'groups'), (HUB_NAME_PLURAL, HUB_APP_NAME, 'hubs')]
 
-VIRTUAL_HUB_NAME = 'MHPSS Network' 
-
-ALL_MEMBERS_NAME = 'MHPSS Network' # we'll now use all members as the virtual homehub, so it's display name should be appropriate
-
-VIRTUAL_MEMBERS_GROUP_NAME = 'virtual_members' 
-VIRTUAL_MEMBERS_DISPLAY_NAME = 'MHPSS Network' 
-
+VIRTUAL_HUB_NAME = 'all_members'
+VIRTUAL_HUB_DISPLAY_NAME = 'MHPSS Network' 
 
 SITE_NAME = _("Mental Health and Psychosocial Support Network")
 SITE_NAME_SHORT = _("MHPSS Network")
@@ -38,7 +32,6 @@ GROUP_TYPES = (
 )
 
 GROUP_HUB_TYPE = 'region'
-
 
 EXPLORE_SEARCH_TITLE = _('Search Site')
 MEMBER_SEARCH_TITLE = _('Search Members')

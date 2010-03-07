@@ -29,6 +29,7 @@ from plus_contacts.models import Contact, Application
 from plus_permissions.default_agents import get_site, get_admin_user
 
 from plus_groups.models import TgGroup
+from django.utils.translation import ugettext, ugettext_lazy as _
 
 
 alnum_re = re.compile(r'^[\w\s]+$')
@@ -56,6 +57,7 @@ class LoginForm(forms.Form):
         return self.cleaned_data
 
     def login(self, request):
+
         if self.is_valid():
             login(request, self.user)
             request.user.message_set.create(message=ugettext(u"Successfully logged in as %(username)s.") % {'username': self.user.username})
@@ -90,42 +92,6 @@ class SignupForm(forms.Form):
                 raise forms.ValidationError(_("You must type the same password each time."))
         return self.cleaned_data
 
-    def save(self):
-        username = self.cleaned_data["username"]
-        email = self.cleaned_data["email"]
-        password = self.cleaned_data["password1"]
-        if self.cleaned_data["confirmation_key"]:
-            from friends.models import JoinInvitation # @@@ temporary fix for issue 93
-            try:
-                join_invitation = JoinInvitation.objects.get(confirmation_key = self.cleaned_data["confirmation_key"])
-                confirmed = True
-            except JoinInvitation.DoesNotExist:
-                confirmed = False
-        else:
-            confirmed = False
-
-        # @@@ clean up some of the repetition below -- DRY!
-
-        if confirmed:
-            if email == join_invitation.contact.email:
-                new_user = User.objects.create_user(username, email, password)
-                join_invitation.accept(new_user) # should go before creation of EmailAddress below
-                new_user.message_set.create(message=ugettext(u"Your email address has already been verified"))
-                # already verified so can just create
-                EmailAddress(user=new_user, email=email, verified=True, primary=True).save()
-            else:
-                new_user = User.objects.create_user(username, "", password)
-                join_invitation.accept(new_user) # should go before creation of EmailAddress below
-                if email:
-                    new_user.message_set.create(message=ugettext(u"Confirmation email sent to %(email)s") % {'email': email})
-                    EmailAddress.objects.add_email(new_user, email)
-            return username, password # required for authenticate()
-        else:
-            new_user = User.objects.create_user(username, "", password)
-            if email:
-                new_user.message_set.create(message=ugettext(u"Confirmation email sent to %(email)s") % {'email': email})
-                EmailAddress.objects.add_email(new_user, email)
-            return username, password # required for authenticate()
 
 
 class OpenIDSignupForm(forms.Form):
@@ -415,22 +381,74 @@ class HubPlusApplicationForm(forms.Form):
 
     def save(self, user):
         site = get_site(get_admin_user())
-        group = self.cleaned_data.pop('group')
         about_and_why = self.cleaned_data.pop("about_and_why")
-        contact= site.create_Contact(user, **self.cleaned_data)
-
+ 
+        group = self.cleaned_data.pop('group')
         members_group = get_all_members_group()
+
+        had_group = True
+        if not group:
+            had_group = False
+            group = members_group
+
+        contact = group.create_Contact(user, **self.cleaned_data)
         site_application = members_group.apply(user, 
                                                applicant=contact,
                                                about_and_why=about_and_why)
-        if group:
+
+        if had_group: 
             group.apply(user, 
                         applicant=contact,
                         about_and_why=about_and_why)
+
+        return group
+        
+
+
+class InviteForm(forms.Form):
+    first_name = forms.RegexField(regex=alnum_re, label=_("First Name"), max_length=30, widget=forms.TextInput(), error_messages={'invalid': 'Name must only contain alphabetic character'})
+    last_name = forms.RegexField(regex=alnum_re, label=_("Last Name"), max_length=30, widget=forms.TextInput(), error_messages={'invalid': 'Name must only contain alphabetic character'})
+    email_address = forms.EmailField(label=_("Email (required)"), required=True, widget=forms.TextInput())
+    message = forms.CharField(label=_("Invite Message"), required=True, widget=forms.TextInput())
+
+    group = forms.CharField(label=_("A group you'd like to join (Optional)"), required=False, widget=forms.TextInput())
+
+    def clean_group(self) :
+        if self.cleaned_data['group'] == '' :
+            return None
+        groups = TgGroup.objects.filter(group_name=self.cleaned_data['group'])
+        if groups :
+            return groups[0]
+        else :
+            raise forms.ValidationError(_("There is no group called %s"%self.cleaned_data['group']))
+
+    def clean_email_address(self) :
+        email = self.cleaned_data['email_address']
+        users = User.objects.filter(email_address=email)
+        if users:
+            raise forms.ValidationError(_("There is already a user with that email address. Please choose another."))
+        return email
+
+    def clean(self):
+        return self.cleaned_data
+
+    def save(self, user):
+        group = self.cleaned_data.pop('group')
+        members_group = get_all_members_group()
+        if not group:
+            group = members_group
+        invitee = group.create_Contact(user, 
+                                       email_address = self.cleaned_data['email_address'], 
+                                       first_name=self.cleaned_data['first_name'],
+                                       last_name=self.cleaned_data['last_name'])
+
+        group.invite_member(user, 
+                            invitee,
+                            message=self.cleaned_data['message'])
         if not group:
             group = members_group
         return group
-        
+    
 
 class SettingsForm(forms.Form) :
     cc_email = forms.BooleanField(required=False)

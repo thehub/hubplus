@@ -42,10 +42,9 @@ import itertools
 
 
 
-
 #separate params for searches
 
-@secure_resource(TgGroup)
+@secure_resource(TgGroup, required_interfaces=["Viewer"], with_interfaces=['Viewer'])
 def group_resources(request, group, tag_string='', template_name='plus_explore/explore_filtered.html', current_app='plus_groups', **kwargs):
     tags = tag_string.split('+')
     form = SearchForm(request.GET)
@@ -63,13 +62,12 @@ def group_resources(request, group, tag_string='', template_name='plus_explore/e
 
 
 
-
-
 def resources(group, tags=[], order=None, search=''):
     search_types = narrow_search_types('Resource')
     return plus_search(tags, search, search_types, order, in_group=group.get_ref())
 
-
+#@secure_resource(TgGroup, required_interfaces=['Viewer'], with_interfaces=['Viewer'])
+# above is MUCH MUCH faster (whole request *10 faster), it shouldn't have to be this way
 @secure_resource(TgGroup)
 def group(request, group, template_name="plus_groups/group.html", current_app='plus_groups', **kwargs):
 
@@ -77,12 +75,6 @@ def group(request, group, template_name="plus_groups/group.html", current_app='p
         raise Http404(_('There is no group with this id'))
 
     user = request.user
-    
-    members = group.get_users()[:50]
-    member_count = group.get_no_users()
-
-    hosts = group.get_admin_group().get_users()[:10]
-    host_count = group.get_admin_group().get_no_members()
 
     can_join = False
     apply = False
@@ -95,6 +87,7 @@ def group(request, group, template_name="plus_groups/group.html", current_app='p
     can_change_avatar = False
     has_accept = False
     can_delete = False
+
     editable_group_type = group.group_type != settings.HUB_NAME
 
     if user.is_authenticated():
@@ -180,6 +173,19 @@ def group(request, group, template_name="plus_groups/group.html", current_app='p
     resource_search = resources(group=group, search=search, order=order)
     resource_listing_args = listing_args(current_app + ':group_resources', current_app + ':group_resources_tag', tag_string='', search_terms=search, multitabbed=False, order=order, template_base='plus_lib/listing_frag.html', search_type_label='resources')
     resource_listing_args['group_id'] = group.id
+
+
+    ##############Here we should use the "plus_search" function from plus_explore as above########
+    members = group.users
+    member_count = members.count()
+    members = members.filter(active=True).order_by('?')[:50]
+
+    hosts = group.get_admin_group().users
+    host_count = hosts.count()
+    hosts = hosts.filter(active=True).order_by('?')[:10]
+
+    ##############################################################################################
+
 
     return render_to_response(template_name, {
             "head_title" : "%s" % group.get_display_name(),
@@ -296,14 +302,10 @@ def apply(request, group, current_app='plus_groups', **kwargs):
     
 
 @login_required
-@secure_resource(TgGroup, required_interfaces=['Viewer']) 
-def leave(request, group, template_name="plus_groups/group.html", current_app='plus_groups', **kwargs):
-    group.leave(request.user)
-    return HttpResponseRedirect(reverse(current_app + ':group',args=(group.id,)))
-
-@login_required
 @secure_resource(TgGroup, required_interfaces=['Invite', 'Viewer'])
 def invite(request, group, template_name='plus_groups/invite.html', current_app='plus_groups', **kwargs):
+    if request.user == get_anon_user():
+        return HttpResponseRedirect(reverse('acct_invite'))
 
     if request.POST :
         form = TgGroupMemberInviteForm(request.POST)
@@ -319,6 +321,15 @@ def invite(request, group, template_name='plus_groups/invite.html', current_app=
             'group' : group,
             'group_id' : group.id,
             }, context_instance=RequestContext(request, current_app=current_app))
+
+
+
+@login_required
+@secure_resource(TgGroup, required_interfaces=['Viewer']) 
+def leave(request, group, template_name="plus_groups/group.html", current_app='plus_groups', **kwargs):
+    group.leave(request.user)
+    return HttpResponseRedirect(reverse(current_app + ':group',args=(group.id,)))
+
 
 
 @hmac_proxy
@@ -348,6 +359,8 @@ def message_members(request, group, current_app='plus_groups', **kwargs) :
                                'group_id': group.id}, context_instance=RequestContext(request, current_app=current_app))
 
 
+from apps.synced import synced_transaction
+@synced_transaction
 @login_required
 @site_context
 def create_group(request, site, template_name="plus_groups/create_group.html", current_app='plus_groups', **kwargs):

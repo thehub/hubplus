@@ -3,7 +3,7 @@
 {% load i18n %}
 {% load avatar_tags %}
 
-{% load uni_form %}
+{% load uni_form_tags %}
 {% load inbox %}
 {% block page_title %}
 {% trans "Invite " %}{% if SITE_NAME %}{% trans "to " %}{{ SITE_NAME }}{% endif %}
@@ -18,22 +18,22 @@
       <ul>
 	<li>
 	  <label for="id_first_name"><span class="required">*</span> {% trans "First Name" %}</label>
-	  <input  id="id_first_name" name="username" class="text" type="text" />
+	  <input  id="id_first_name" name="first_name" class="text" type="text" value="{% if form.first_name.data %}{{form.first_name.data}}{% endif %}" />
 	  {{ form.first_name.errors }}
 	</li>
 	<li>
 	  <label for="id_last_name"><span class="required">*</span> {% trans "Last Name" %}</label>
-	  <input  id="id_last_name" name="username" class="text" type="text" />
+	  <input  id="id_last_name" name="last_name" class="text" type="text" value="{% if form.last_name.data %}{{form.last_name.data}}{% endif %}" />
 	  {{ form.last_name.errors }}
 	</li>
 	<li>
 	  <label for="id_email_address"><span class="required">*</span> {% trans "Email" %}</label>
-	  <input id="id_email_address" name="email_address" class="text" type="text" />
+	  <input id="id_email_address" name="email_address" class="text" type="text" value="{% if form.email_address.data %}{{form.email_address.data}}{% endif %}" />
 	  {{ form.email_address.errors}}
  	</li>
 	<li>
 	  <label for="id_message"><span class="required">*</span> {% trans "Message" %}</label>
-	  <textarea id="id_message" name="message" class="text" type="text"></textarea>
+	  <textarea id="id_message" name="message" class="text" type="text">{% if form.message.data %}{{form.message.data}}{% endif %}</textarea>
 	  {{ form.message.errors}}
  	</li>
 	<li>

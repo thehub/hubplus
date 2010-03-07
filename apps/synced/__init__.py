@@ -1,9 +1,29 @@
-from account.views import login
+
 from django.conf import settings
 from django.http import HttpResponse
 import settings
+import django.dispatch
 
-if settings.SYNC_ENABLED:
+
+from models import get_sessions
+
+# Sets up custom signals for events which are interesting to syncer
+post_user_create = django.dispatch.Signal(providing_args=['user'])
+post_user_mod = django.dispatch.Signal(providing_args=['user'])
+post_location_add = django.dispatch.Signal(providing_args=['location'])
+
+
+if not settings.SYNC_ENABLED:
+    def synced_transaction(f) :
+        """ Need this because if the SYNC_ENABLED flag isn't set, we won't have the real synced_transaction
+        but it's refered to in other apps."""
+        def g(*args,**kwargs) :
+            return f(*args,**kwargs)
+        return g
+else:
+
+    from apps.account.views import login
+
     import thread
     import time
     import cookielib
@@ -13,26 +33,19 @@ if settings.SYNC_ENABLED:
     import syncer.config
     import syncer.utils
 
+    from sync_tools import LazySyncerClient
+
     syncer.config.host = settings.SYNCER_HOST
     syncer.config.port = settings.SYNCER_PORT
     syncer.config.reload()
 
-    _sessions = dict()
-    sessiongetter = lambda: _sessions
-    syncerclient = syncer.client.SyncerClient("hubplus", sessiongetter)
+    from apps.synced.models import get_sessions
+    sessiongetter = lambda : get_sessions()
 
-    def sso(u, p):
-        ret = syncerclient.onUserLogin(u, p)
-        tr_id, res = ret
-        cookies = []
-        if 'authcookies' in res:
-            for appname in res['authcookies']:
-                for c in res['authcookies'][appname]:
-                    cookies.append(c)
-        if not syncerclient.isSuccessful(res):
-            print syncer.client.errors.res2errstr(res)
-            # warning
-        return cookies
+    # _sessions = {}
+    # sessiongetter = lambda: _sessions
+
+    syncerclient = syncer.client.SyncerClient("hubplus", sessiongetter)
 
     def login(*args, **kw):
         request = args[0]
@@ -44,17 +57,23 @@ if settings.SYNC_ENABLED:
         if not syncerclient.isSyncerRequest(request.META['HTTP_USER_AGENT']) and resp.status_code == 302:
             cl = [ cookielib.Cookie(None, name, value, None, None, settings.SESSION_COOKIE_DOMAIN, None, None, '/', None, "", None, "", "", None, None)
                 for (name, value) in req_cookies.items() ]
+ 
             tr_id, res = syncerclient.onUserLogin(u, p, cl)
+
             if not syncerclient.isSuccessful(res):
                 print syncer.client.errors.res2errstr(res)
             else:
                 for v in res.values():
-                    sso_cookies = v['result']
-                    for c in sso_cookies:
-                        resp.set_cookie(c.name, value=c.value, max_age=None, path=c.path, domain=settings.SESSION_COOKIE_DOMAIN, secure=c.secure)
+                    try:
+                        sso_cookies = v['result']
+                        for c in sso_cookies:
+                            resp.set_cookie(c.name, value=c.value, max_age=None, path=c.path, domain=settings.SESSION_COOKIE_DOMAIN, secure=c.secure)
+                    except Exception, err:
+                            print "SSO: skipping ", v['appname']
 
 
         return resp
+
 
     def signon():
         u = settings.HUBPLUSSVCUID
@@ -72,7 +91,22 @@ if settings.SYNC_ENABLED:
 
    
     def signonloop():
+        # ok, ironically, before we sign-in, let's kill the old syncertoken
+        del (syncerclient.sessiongetter())['syncertoken']
+
         while not signon():
             time.sleep(10)
 
     thread.start_new(signonloop, ())
+
+    # get the events functions
+    from sync_tools import events_setup 
+
+    on_user_add, on_user_mod, on_location_add, on_location_mod, _synced_transaction = events_setup(syncerclient)
+
+    post_user_create.connect(on_user_add)
+    post_user_mod.connect(on_user_mod)
+    post_location_add.connect(on_location_add)
+
+    synced_transaction = _synced_transaction
+

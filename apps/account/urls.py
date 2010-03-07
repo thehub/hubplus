@@ -4,7 +4,8 @@ from account.forms import *
 urlpatterns = patterns('',
     url(r'^settings/$','account.views.site_settings', name='acct_settings'),                       
     url(r'^email/$', 'account.views.email', name="acct_email"),
-    url(r'^signup/$', 'account.views.signup', name="acct_signup"),
+    #url(r'^signup/$', 'account.views.signup', name="acct_signup"),
+    url(r'^signup/(?P<resource_id>[0-9]+)/$', 'apps.account.views.proxied_signup', name='proxied_signup'),
     url(r'^login/$', 'account.views.login', name="acct_login"),
     url(r'^login/openid/$', 'account.views.login', {'associate_openid': True},
         name="acct_login_openid"),
@@ -25,10 +26,10 @@ urlpatterns = patterns('',
     url(r'^confirm_email/(\w+)/$', 'emailconfirmation.views.confirm_email', name="acct_confirm_email"),
 
     url(r'^apply/$', 'account.views.apply', name='acct_apply'),
-
+    url(r'^site_invite/$', 'account.views.site_invite', name='acct_invite'),
     # Setting the permanent password after getting a key by email
     url(r'^password_reset_key/(\w+)/$', 'account.views.password_reset_from_key', name="acct_passwd_reset_key"),
-
+    url(r'^(?P<resource_id>[0-9]+)/$', 'account.views.proxied_signup', name='proxied_signup'),
     # ajax validation
     (r'^validate/$', 'ajax_validation.views.validate', {'form_class': SignupForm}, 'signup_form_validate'),
 )

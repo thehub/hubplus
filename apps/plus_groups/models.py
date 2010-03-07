@@ -1,4 +1,3 @@
-
 from django.db import models
 from django.db.models.signals import post_save
 from itertools import chain
@@ -7,6 +6,8 @@ from django.conf import settings
 
 from apps.plus_contacts.status_codes import ACCEPTED_PENDING_USER_SIGNUP
 from apps.plus_permissions.proxy_hmac import attach_hmac 
+
+
 from datetime import datetime
 
 from django.utils.translation import ugettext_lazy as _
@@ -14,8 +15,8 @@ from django.db import transaction
 from apps.plus_lib.status import StatusDescriptor
 from django.contrib.contenttypes.models import ContentType
 
-
-
+from django.template import Template, Context
+from django.contrib.contenttypes import generic
 
 class Location(models.Model):
     class Meta:
@@ -169,8 +170,9 @@ try :
             db_table = u'tg_group'
             ordering = ['display_name']
             
-        #the reverse lookups "group_instance.users" does not seem to work - probably would need to modify ReverseManyRelatedObjectsDescriptor in django.db.models.fields.related to configure the create_many_related_manager differently
-        users = models.ManyToManyField(User, through="User_Group") #through="User_Group" stops the add and remove functionality unnecessarily. Above we patch it back in. 
+        #users = models.ManyToManyField(User, through="User_Group") #'groups' attribute is removed in plus_user.models
+
+#through="User_Group" stops the add and remove functionality unnecessarily. Above we patch it back in. 
                                                                    #The reverse lookup of "user.groups" unfortunately still doesn't work, however you can get a reverse lookup on user.user_group_set from which the results could be inferred
                                                                    #db_table="user_group" doesn't use the right columns for lookup
 
@@ -206,14 +208,31 @@ try :
 
         status = StatusDescriptor() 
 
+        def post_join(self, user_or_group) :
+            """ this method, a break out of other stuff which happens when members join groups,
+            can be called as an independent funtion from syncer"""
+
+            # add host permissions on profile when join/leave Hub
+            from apps.plus_permissions.types.Profile import ProfileInterfaces
+            from apps.plus_permissions.default_agents import get_all_members_group, get_admin_user
+            admin = get_admin_user()
+            admin_group = self.get_admin_group()
+            if self.group_type == 'hub':
+                for prof in ProfileInterfaces:
+                    user_or_group.get_security_context().add_arbitrary_agent(admin_group, 'Profile.%s' % prof, admin)
+
+            from apps.microblogging.models import send_tweet # avoid circularity                                         
+            message = _("%(joiner)s joined the group %(group)s") % (
+                {'joiner':user_or_group.get_display_name(),'group':self.get_display_name()})
+            send_tweet(user_or_group, message)
+
+            
         def add_member(self, user_or_group):
             if isinstance(user_or_group, User) and not self.users.filter(id=user_or_group.id):
+                from apps.plus_permissions.types.Profile import ProfileInterfaces
                 self.users.add(user_or_group)
 
-                from apps.microblogging.models import send_tweet # avoid circularity
-                message = _("%(joiner)s joined the group %(group)s") % (
-                    {'joiner':user_or_group.get_display_name(),'group':self.get_display_name()})
-                send_tweet(user_or_group, message)
+                self.post_join(user_or_group)
 
             if isinstance(user_or_group, self.__class__) and not self.child_groups.filter(id=user_or_group.id):
                 self.child_groups.add(user_or_group)
@@ -226,7 +245,22 @@ try :
         def apply(self, user, applicant=None, about_and_why=''):
             if not applicant:
                 raise ValueError('there must be an applicant')
-            self.create_Application(user, applicant=applicant, request=about_and_why, group=self)
+            self.create_Application(user, 
+                                    applicant=applicant, 
+                                    request=about_and_why, 
+                                    group=self)
+
+
+        def invite_member(self, user, invited, message=''):
+            if not invited:
+                raise ValueError('there must be an invitee')
+
+            invite = self.create_MemberInvite(user,
+                                              invited=invited, 
+                                              invited_by=user, 
+                                              group=self, 
+                                              status=ACCEPTED_PENDING_USER_SIGNUP)
+
 
         def change_avatar(self) :
             pass
@@ -241,48 +275,38 @@ try :
 
         def is_group(self) : return True
 
+        def post_leave(self, user_or_group) :
+            """ this method, a break out of other stuff which happens when members leave groups,
+            can be called as an independent function from syncer"""
+
+            from apps.plus_permissions.types.Profile import ProfileInterfaces
+            from apps.plus_permissions.default_agents import get_all_members_group, get_admin_user
+            # remove host erpermissions on profile when join/leave Hub
+            admin = get_admin_user()
+            admin_group = self.get_admin_group()
+            if self.group_type == 'hub':
+                for prof in ProfileInterfaces:
+                    user_or_group.get_security_context().remove_arbitrary_agent(admin_group, 'Profile.%s' % prof, admin)
+
+            from apps.microblogging.models import send_tweet
+            message = _("%(leaver)s left the group %(group)s") % (
+                {'leaver':user_or_group.get_display_name(),'group':self.get_display_name()})
+            send_tweet(user_or_group, message)
+            
+            # if I was the homehome for this user, change
+            if user_or_group.homehub == self :
+                user_or_group.homehub = get_all_members_group()
+                user_or_group.save()
+
+
         def remove_member(self, user_or_group):
             if isinstance(user_or_group, User) and self.users.filter(id=user_or_group.id):
                 self.users.remove(user_or_group)
-
-                from apps.microblogging.models import send_tweet 
-                message = _("%(leaver)s left the group %(group)s") % (
-                    {'leaver':user_or_group.get_display_name(),'group':self.get_display_name()})
-                send_tweet(user_or_group, message)
-
-                # if I was the homehome for this user, change 
-                if user_or_group.homehub == self :
-                    from apps.plus_permissions.default_agents import get_all_members_group
-                    user_or_group.homehub = get_all_members_group()
-                    user_or_group.save()
+                self.post_leave(user_or_group)
 
             if isinstance(user_or_group, self.__class__) and self.child_groups.filter(id=user_or_group.id):
                 self.child_groups.remove(user_or_group)
 
-
-
-        def invite_member(self, invited, special_message, invited_by, url_root ) : 
-            invite = MemberInvite(invited=invited, invited_by=invited_by, 
-                                  group=self, status=ACCEPTED_PENDING_USER_SIGNUP)
-            invite_url = invite.make_accept_url(url_root)
-            if special_message :
-                message = """<p>%s</p>""" % special_message
-            else :
-                message = """
-<p>%s is inviting you to join the %s group.</p>
-""" % (invited_by.get_display_name(), self.get_display_name())
-            message = message + """
-<p><a href="%s">Click here to accept</a>
-""" % invite_url
-
-            invite.message = message
-            invite.save()
-
-            from apps.plus_lib.utils import message_user 
-
-            message_user(invited_by, invited, 'Invitation to join %s' % self.get_display_name(), message)
-            message_user(invited_by, invited_by, "Invitation sent", """You have invited %s to join %s""" % 
-                         (invited.get_display_name(), self.get_display_name()))
 
         
         def get_users(self):
@@ -330,15 +354,10 @@ try :
 
         def group_app_label(self):
             from apps.plus_lib.utils import hub_name
-            try:
-                if self.place.name == settings.VIRTUAL_HUB_NAME:
-                    group_label = "group"
-                else:
-                    group_label = hub_name().lower()
-            except Location.DoesNotExist:
-                group_label = "group"
-            group_app_label = group_label + 's'
-            return group_app_label
+
+            if self.group_type == settings.GROUP_HUB_TYPE:
+                return hub_name().lower()+'s'
+            return 'groups'
 
         @transaction.commit_on_success
         def delete(self) :
@@ -404,12 +423,16 @@ try :
             # remove the group
             super(TgGroup,self).delete()
 
-        def save(self):
-            super(TgGroup, self).save()
+        def post_save(self) :
             ref = self.get_ref()
             ref.modified = datetime.now()
             ref.display_name = self.get_display_name()
             ref.save()
+
+            
+        def save(self):
+            super(TgGroup, self).save()
+            self.post_save()
    
     
 except Exception, e:
@@ -453,7 +476,7 @@ def get_enclosures(self, levels=None) :
         levels = ['member', 'host']
 
     if isinstance(self, User):
-        return self.tggroup_set.filter(level__in=levels)
+        return self.groups.filter(level__in=levels)
     elif isinstance(self, TgGroup):
         return self.parent_groups.filter(level__in=levels)
 
@@ -485,22 +508,74 @@ def get_permission_agent_name(self) :
     return self.username
 
 
-# Now GenericReferences replace "Agents" to make a many-to-many relationship with agents such as 
-# Users and TgGroups
+from apps.plus_contacts.models import Contact
 
-
-
-# Move MemberInvite (to group) here
 class MemberInvite(models.Model) :
-    # Actually, it's useful to have a generic invited member,
-    invited = models.ForeignKey(User, related_name='invited_member')
+    invited_content_type = models.ForeignKey(ContentType, related_name='invited_type')
+    invited_object_id = models.PositiveIntegerField()
+    invited = generic.GenericForeignKey('invited_content_type', 'invited_object_id') # either user or contact
+
     invited_by = models.ForeignKey(User, related_name='member_is_invited_by')
     group = models.ForeignKey(TgGroup)
     message = models.TextField()
     status = models.IntegerField()
 
-    def make_accept_url(self, site_root) :
-        url = attach_hmac("/groups/%s/add_member/%s/" % (self.group.id, self.invited.username), self.invited_by)
-        return 'http://%s%s' % (site_root, url)
+    def make_accept_url(self):
+        if self.is_site_invitation():
+            url = attach_hmac("/signup/%s/add_member/%s/" % (self.group.id, self.invited.first_name + self.invited.last_name), self.invited_by)
+        else:
+            url = attach_hmac("/groups/%s/add_member/%s/" % (self.group.id, self.invited.username), self.invited_by)
+        return 'http://%s%s' % (settings.DOMAIN_NAME, url)
 
+    def is_site_invitation(self):
+        """ Is this an invitation to someone who's not yet a site-member and needs an User / Profile object created"""
+        
+        if isinstance(self.invited, Contact) and not self.invited.get_user():
+            return True
+        return False
+
+    def accept_invite(self, sponsor, site_root, **kwargs):
+        pass
+    
+    
+def invite_mail(invited, sponsor, invite):
+    message = Template(settings.INVITE_EMAIL_TEMPLATE).render(
+        Context({'sponsor':sponsor.get_display_name(),
+                 'first_name':invited.first_name, 
+                 'last_name':invited.last_name}))
+    return invited.send_link_email("Invite to join MHPSS", message, sponsor)
+
+
+def invite_messages(sender, instance, **kwargs):
+    from apps.plus_lib.utils import message_user
+    if instance is None:
+        return
+    member_invite = instance
+    if member_invite.is_site_invitation():
+        invite_mail(member_invite.invited, member_invite.invited_by, member_invite)
+    else:
+        invite_url = member_invite.make_accept_url()
+        if member_invite.message :
+            message = """<p>%s</p>""" % member_invite.message
+        else :
+            message = """
+<p>%s is inviting you to join the %s group.</p>
+""" % (member_invite.invited_by.get_display_name(), member_invite.group.get_display_name())
+
+            message = message + """
+<p><a href="%s">Click here to join %s</a>
+""" % (invite_url, member_invite.group.get_display_name())
+            
+            member_invite.message = message
+            member_invite.save()
+
+            from apps.plus_lib.utils import message_user 
+
+            message_user(user, member_invite.invited, 'Invitation to join %s' % member_invite.group.get_display_name(), message, settings.DOMAIN_NAME)
+            message_user(user, invited_by, "Invitation sent", """You have invited %s to join %s""" % 
+                         (member_invite.invited.get_display_name(), member_invite.group.get_display_name()), settings.DOMAIN_NAME)
+
+
+if "messages" in settings.INSTALLED_APPS:
+    post_save.connect(invite_messages, sender=MemberInvite, dispatch_uid="apps.plus_groups.models")
 

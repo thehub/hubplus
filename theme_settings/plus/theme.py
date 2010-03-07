@@ -5,10 +5,8 @@ PROJECT_NAME=_("Hub+")
 
 COPYRIGHT_HOLDER=_('Hub World Ltd')
 
-VIRTUAL_HUB_NAME = 'HubPlus'
-ALL_MEMBERS_NAME = 'HubPlus'
-VIRTUAL_MEMBERS_GROUP_NAME = 'virtual_members'
-VIRTUAL_MEMBERS_DISPLAY_NAME = 'Hub+ Virtual'
+VIRTUAL_HUB_NAME = 'hubPlus'
+VIRTUAL_HUB_DISPLAY_NAME = 'Hub+ Members'
 
 HUB_NAME_PLURAL = 'Hubs'
 EXPLORE_NAME = _('Explore')

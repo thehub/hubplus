@@ -2,7 +2,7 @@ import os.path
 
 from avatar.models import Avatar, avatar_file_path
 from avatar.forms import PrimaryAvatarForm, DeleteAvatarForm
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, HttpResponse, Http404
 from django.shortcuts import render_to_response
 from django.template import RequestContext
 from django.contrib.auth.decorators import login_required
@@ -124,3 +124,15 @@ def delete(request, extra_context={}, next_override=None):
         )
     )
 change = login_required(change)
+
+
+
+def get_url(request, username) :
+    from apps.avatar.templatetags.avatar_tags import avatar_url
+    from django.contrib.auth.models import User
+    try :
+        user = User.objects.get(username=username)
+        return HttpResponse("%s" % avatar_url(user), mimetype='text/plain')
+    except :
+        raise Http404('File does not exist')
+ 

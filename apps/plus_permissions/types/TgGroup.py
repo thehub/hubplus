@@ -1,6 +1,6 @@
 from apps.plus_permissions.interfaces import InterfaceReadProperty, InterfaceWriteProperty, InterfaceCallProperty
 from apps.plus_permissions.models import SetSliderOptions, SliderOptions, SetAgentDefaults, SetPossibleTypes, SetSliderAgents, PossibleTypes, get_interface_map, SetVisibleAgents, SetVisibleTypes, SetTypeLabels
-from apps.plus_groups.models import TgGroup
+from apps.plus_groups.models import TgGroup, MemberInvite
 from apps.plus_permissions.OurPost import OurPost
 from apps.plus_contacts.models import Application, Contact
 from apps.plus_wiki.models import WikiPage
@@ -47,12 +47,11 @@ def get_or_create(group_name=None, display_name=None, place=None, level=None, us
     """
     # note : we can't use get_or_create for TgGroup, because the created date clause won't match on a different day
     # from the day the record was created.
-    
+
     if not user:
         raise TypeError("We must have a user to create a group, since otherwise it will be inaccessible")
     if not place:
         place = get_or_create_root_location()
-
 
     xs = TgGroup.objects.filter(group_name=group_name)
     if len(xs) > 0 :
@@ -64,24 +63,36 @@ def get_or_create(group_name=None, display_name=None, place=None, level=None, us
                         place=place, description=description, group_type=group_type)
         group.save()
 
-        if level == 'member':
-            admin_group, created = TgGroup.objects.get_or_create(
-                group_name=group_name + "_hosts", 
-                display_name=display_name + " Hosts", 
-                level='host',
-                place=place,
-                user=user, 
-                description="Admin Group for %s" % display_name, 
-                )
-
-            setup_group_security(group, group, admin_group, user, permission_prototype)
-        elif level == 'host':
-            setup_group_security(group, group, group, user, 'private')
-
-            if group.group_name != "all_members_hosts" :
-                group.add_member(get_all_members_group().get_admin_group())
+        group_post_create(group, user, permission_prototype)
 
     return group, created
+
+def group_post_create(group, user, permission_prototype=None) :
+
+    if not permission_prototype :
+        permission_prototype = 'public'
+
+    group.save() # ensures our post_save signal is fired to create gen_ref, even if we came via syncer 
+
+    if group.level == 'member':
+        admin_group, created = TgGroup.objects.get_or_create(
+            group_name=group.group_name + "_hosts", 
+            display_name=group.display_name + " Hosts", 
+            level='host',
+            place=group.place,
+            user=user, 
+            group_type='administrative',
+            description="Admin Group for %s" % group.display_name, 
+            )
+
+        setup_group_security(group, group, admin_group, user, permission_prototype)
+
+    elif group.level == 'host' or group.level == 'director' :
+        setup_group_security(group, group, group, user, 'private')
+
+        from django.conf import settings
+        if group.group_name != settings.VIRTUAL_HUB_NAME+'_hosts' :
+            group.add_member(get_all_members_group().get_admin_group())
 
 
 def get_admin_group(self) :
@@ -102,6 +113,7 @@ class TgGroupViewer:
     group_type = InterfaceReadProperty
     address = InterfaceReadProperty
     apply = InterfaceCallProperty
+    invite_member = InterfaceCallProperty
     leave = InterfaceCallProperty
     get_users = InterfaceCallProperty
     get_no_members = InterfaceCallProperty
@@ -111,6 +123,7 @@ class TgGroupViewer:
     get_group_type_display = InterfaceReadProperty
     status = InterfaceReadProperty
     is_hub_type = InterfaceCallProperty
+    users = InterfaceReadProperty
 
 class TgGroupEditor: 
     pk = InterfaceReadProperty
@@ -135,9 +148,6 @@ class TgGroupJoin:
 class TgGroupLeave:
     leave = InterfaceCallProperty
 
-class TgGroupInviteMember:
-    pk = InterfaceReadProperty
-    invite_member = InterfaceCallProperty
 
 class TgGroupComment:
     pk = InterfaceReadProperty
@@ -173,7 +183,6 @@ if not get_interface_map(TgGroup):
     TgGroupInterfaces = {'Viewer': TgGroupViewer,
                          'Editor': TgGroupEditor,
                          'Delete': TgGroupDelete,
-                         'Invite': TgGroupInviteMember,
                          'ManageMembers': TgGroupManageMembers,
                          'Join': TgGroupJoin,
                          'Leave': TgGroupLeave,
@@ -191,7 +200,7 @@ if not get_interface_map(TgGroup):
 # they don't need to be stored in the db
 if not SliderOptions.get(TgGroup, False):
     SetSliderOptions(TgGroup, 
-                     {'InterfaceOrder':['Viewer', 'Editor', 'Invite', 'Join', 'Uploader', 'Commentor', 'ManageMembers', 'Delete', 'ManagePermissions'], 
+                     {'InterfaceOrder':['Viewer', 'Editor', 'Join', 'Uploader', 'Commentor', 'ManageMembers', 'Delete', 'ManagePermissions'], 
                       'InterfaceLabels':{'Viewer':'View',
                                                   'Editor': 'Edit',
                                                   'Commentor': 'Comment',
@@ -201,7 +210,7 @@ if not SliderOptions.get(TgGroup, False):
 
 # ChildTypes are used to determine what types of objects can be created in this security context (and acquire security context from this). These are used when creating an explicit security context for an object of this type. 
 if TgGroup not in PossibleTypes:
-    child_types = [OurPost, Site, Application, Contact, Profile, WikiPage, Link, Resource]
+    child_types = [OurPost, Site, Application, Contact, Profile, WikiPage, Link, Resource, MemberInvite]
     SetPossibleTypes(TgGroup, child_types)
     SetVisibleTypes(content_type, [TgGroup, WikiPage, Resource, Application])
     SetTypeLabels(content_type, 'Group')
@@ -228,13 +237,12 @@ SetVisibleAgents(TgGroup, visible_agents())
 
 #constraints - note that "higher" means wider access. Therefore if "anonymous can't edit" we must set that Editor<$anonymous OR if Editor functionality can't be given to a wider group than Viewer then we must set Editor < Viewer.
 
-def setup_defaults() :
+def setup_defaults():
     public_defaults = {'TgGroup':
                        {'defaults':
                             {'Viewer':'anonymous_group', 
                              'Editor':'creator',
                              'Delete':'creator',
-                             'Invite':'context_agent',
                              'ManageMembers':'creator',
                              'Join':'all_members_group',
                              'Leave':'context_agent',
@@ -245,13 +253,14 @@ def setup_defaults() :
                              'CreateWikiPage':'context_agent',
                              'CreateResource':'context_agent',
                              'CreateApplication':'all_members_group',
+                             'CreateMemberInvite':'context_agent',
                              'Message':'context_agent',
                              'StatusViewer':'anonymous_group',
                              'GroupTypeEditor':'context_admin',
                              'Unknown': 'context_admin'
                              },
                         'constraints':
-                            ['Viewer>=Editor', 'Invite>=ManageMembers', 'Join>=ManageMembers', 'ManageMembers<=$anonymous_group', 'ManagePermissions<=$context_agent']
+                            ['Viewer>=Editor', 'Join>=ManageMembers', 'ManageMembers<=$anonymous_group', 'ManagePermissions<=$context_agent']
                         },
                    'WikiPage':
                        {'defaults':
@@ -287,8 +296,18 @@ def setup_defaults() :
                        {'defaults' :
                         {'Viewer':'context_admin',
                          'Editor':'creator',
-                         'Accept':'context_agent',
+                         'Accept':'context_admin',
                          'Reject':'context_admin',
+                         'ManagePermissions':'context_admin',
+                         'Unknown': 'context_admin',
+                         },
+                        'constraints':['Viewer>=Editor', 'Editor<$anonymous_group'] 
+                        },   
+                   'MemberInvite':
+                       {'defaults' :
+                        {'Viewer':'context_admin',
+                         'Editor':'creator',
+                         'Accept':'creator',
                          'ManagePermissions':'context_admin',
                          'Unknown': 'context_admin',
                          },
@@ -326,8 +345,6 @@ def setup_defaults() :
                           },
                           'constraints':['Viewer>=Manager']
                         },
-
-
                    'Profile':
                        {'defaults': 
                         {'Viewer': 'anonymous_group',
@@ -362,6 +379,11 @@ def setup_defaults() :
 
     invite_defaults = deepcopy(open_defaults)
     invite_defaults = overlay(invite_defaults,{'TgGroup':{'defaults':{'Join':'context_agent'}}})
+    invite_defaults = overlay(invite_defaults,{'TgGroup':{'defaults':{'CreateMemberInvite':'context_agent'}}})
+
+    hub_defaults = deepcopy(invite_defaults)
+    hub_defaults = overlay(hub_defaults, {'TgGroup':{'defaults':{'Invite':'context_admin'}}})
+    hub_defaults = overlay(hub_defaults, {'TgGroup':{'defaults':{'CreateMemberInvite':'context_admin'}}})
 
     private_defaults = deepcopy(invite_defaults)
     private_defaults = overlay(private_defaults,{'TgGroup':{'defaults':{'Viewer':'context_agent'}}})
@@ -370,12 +392,11 @@ def setup_defaults() :
     private_defaults = overlay(private_defaults,{'Resource':{'defaults':{'Viewer':'context_agent'}}})
     
 
-    AgentDefaults = {'public':public_defaults,
-                     'private':private_defaults,
-                     'open' : open_defaults,
-                     'invite' : invite_defaults}
+    return {'public':public_defaults,
+            'private':private_defaults,
+            'open' : open_defaults,
+            'invite' : invite_defaults}
 
-    return AgentDefaults
 
 
 AgentDefaults = setup_defaults()

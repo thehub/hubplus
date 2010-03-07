@@ -50,7 +50,7 @@
 	 {% if visible %} 
 	  <tr {% if visible %}{% else %}style="display:none;"{% endif %} id="agent-{{agent_class}}-{{agent_ref.id}}" {% if forloop.first %}class="first"{% endif %}{% if forloop.last %}class="last"{% endif %}>
 	    <td class="group_label">
-	      {{agent_ref.display_name}}
+	      {{agent_ref.get_display_name}}
 	    </td>
 	    {% for css_class, selected, interface in agent_data %}
 	    <td class="setting {{css_class}} {{obj_type}}_{{interface}}" tabindex="-1">	 <!--active inactive and limited -->

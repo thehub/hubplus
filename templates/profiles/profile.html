@@ -3,7 +3,7 @@
 {% load i18n %}
 {% load avatar_tags %}
 {% load app_plugins %}
-{% load uni_form %}
+{% load uni_form_tags %}
 {% load plus_tags %}
 {% load plus_url %}
 {% load editable_attribute %}
@@ -72,30 +72,36 @@
 	       href='{% url ajax_hub_list_for_user profile.user.username %}'>
 	  </div>
 	</li>
-        {% editable "Main Region" profile 'homehub' 'No Region Set' %}
+        {% editable MAIN_HUB_LABEL profile 'homehub' MAIN_HUB_DEFAULT %}
 	
       
-      <!--li>
-	  <dl class="disabled"><dt >{% trans "Region" %}</dt>
-	    <dd>
-	      <a href="hub.html" class='editable_temp_off' id='{{profile.edit_key}}hub'>{{profile.get_hub}}</a>
-	    </dd>
-	  </dl>
-      </li-->
+      {% if hubs %}
+      <li>
+	<div class="label">
+	  {{HUB_NAME_PLURAL}}
+	</div>
+	<div class="value">
+	  {% for reverse_g, g in hubs %}
+	  <a href="{% plus_url reverse_g g.pk %}">{{g.get_display_name}}</a>{% if forloop.last %}{% else %}, {% endif %}
+	  {% endfor %}
+	</div>
+      </li>
+      {% endif %}      
       
-      
-      {% if member_of %}
+      {% if non_hub_groups %}
       <li>
 	<div class="label">
 	  {% trans "Groups" %}
 	</div>
 	<div class="value">
-	  {% for reverse_g, g in member_of %}
-	  <a href="{% plus_url reverse_g g.pk %}">{{g.get_permission_agent_name}}</a>{% if forloop.last %}{% else %}, {% endif %}
+	  {% for reverse_g, g in non_hub_groups %}
+	  <a href="{% plus_url reverse_g g.pk %}">{{g.get_display_name}}</a>{% if forloop.last %}{% else %}, {% endif %}
 	  {% endfor %}
 	</div>
       </li>
       {% endif %}
+
+
       
       {% if profile.should_show_organisation %}
       {% editable "Organisation" profile 'organisation' 'Your organisation' %}

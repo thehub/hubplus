@@ -105,24 +105,33 @@ class TgGroupForm(forms.Form):
             self.cleaned_data['is_hub'] = False
         return self.cleaned_data['is_hub']
 
-
     
     def save(self, user, site):
+
         if not self.cleaned_data['is_hub'] :
             place = get_or_create_root_location()
+            group = site.create_TgGroup(
+                group_name=self.cleaned_data['group_name'],
+                display_name=self.cleaned_data['display_name'],
+                group_type = self.cleaned_data['group_type'],
+                level = 'member',
+                user = user,
+                description = self.cleaned_data['description'],
+                permission_prototype = self.cleaned_data['permissions_set'],
+                place = place,
+                )
         else :
-            place,created = Location.objects.get_or_create(name=self.cleaned_data['location'])
+            group = site.create_hub(
+                location_name = self.cleaned_data['location'],
+                group_name=self.cleaned_data['group_name'],
+                display_name=self.cleaned_data['display_name'],
+                group_type = self.cleaned_data['group_type'],
+                level = 'member',
+                user = user,
+                description = self.cleaned_data['description'],
+                permission_prototype = self.cleaned_data['permissions_set'],
+                )
 
-        group = site.create_TgGroup(
-            group_name=self.cleaned_data['group_name'],
-            display_name=self.cleaned_data['display_name'],
-            group_type = self.cleaned_data['group_type'],
-            level = 'member',
-            user = user,
-            description = self.cleaned_data['description'],
-            permission_prototype = self.cleaned_data['permissions_set'],
-            place = place,
-            )
         group.save()
         return group
     

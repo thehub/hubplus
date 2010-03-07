@@ -27,9 +27,8 @@ class ProfileViewer:
     first_name = InterfaceReadProperty
     last_name = InterfaceReadProperty
 
-    address = InterfaceReadProperty
+    #address = InterfaceReadProperty
     country = InterfaceReadProperty
-    post_or_zip = InterfaceReadProperty
     display_name = InterfaceReadProperty
     title = InterfaceReadProperty
     get_display_name = InterfaceCallProperty
@@ -38,6 +37,7 @@ class ProfileViewer:
 
 class ProfileEmailAddressViewer:
     email_address = InterfaceReadProperty
+
 
 class ProfileHomeViewer:
     home = InterfaceReadProperty
@@ -53,6 +53,7 @@ class ProfileFaxViewer:
 
 class ProfileAddressViewer:
     address = InterfaceReadProperty
+    post_or_zip = InterfaceReadProperty
 
 class ProfileSkypeViewer:
     skype_id = InterfaceReadProperty
@@ -115,24 +116,6 @@ SliderOptions = {'InterfaceOrder':['Viewer'], 'InterfaceLabels':{'Viewer':'View'
 SetSliderOptions(Profile, SliderOptions) 
 
 
-"""
-Data for User.py
-        slide = interfaces['Viewer'].make_slider_for(resource,options,owner,0,creator)
-        slide = interfaces['Editor'].make_slider_for(resource,options,owner,2,creator)
-        slide = interfaces['EmailAddressViewer'].make_slider_for(resource,options,owner,1,creator)
-        slide = interfaces['HomeViewer'].make_slider_for(resource,options,owner,2,creator)
-        slide = interfaces['WorkViewer'].make_slider_for(resource,options,owner,2,creator)
-        slide = interfaces['MobileViewer'].make_slider_for(resource,options,owner,2,creator)
-        slide = interfaces['FaxViewer'].make_slider_for(resource,options,owner,2,creator)
-
-        slide = interfaces['AddressViewer'].make_slider_for(resource,options,owner,2,creator)
-        slide = interfaces['SkypeViewer'].make_slider_for(resource,options,owner,1,creator)
-
-            SliderOption('World',get_permission_system().get_anon_group()),
-            SliderOption('All Members',get_permission_system().get_site_members()),
-            SliderOption('Me',owner),
-            SliderOption('Hosts',creator)
-"""
 
 
 

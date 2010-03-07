@@ -3,7 +3,7 @@
 {% load i18n %}
 {% load avatar_tags %}
 
-{% load uni_form %}
+{% load uni_form_tags %}
 
 {% block head_title %}{% trans "Apply to join" %}{% endblock %}
 {% block page_title %}{% trans "Apply to join" %}{% endblock %}
@@ -202,7 +202,7 @@
           jq("#physical_hub").click(function() {
               jq("#which_hub").toggle();
               if(jq("#physical_hub:checked").length===0) {
-                 .find("option:first").attr("selected", "selected");
+                 jq(this).find("option:first").attr("selected", "selected");
               }
           });
           /* jq('#signup_form').validate('{% url signup_form_validate %}', {type: 'table', fields: ['username'], dom: jq('#id_username'), event: 'change'});

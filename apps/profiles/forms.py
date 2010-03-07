@@ -32,6 +32,7 @@ class ProfileForm(forms.ModelForm):
     home = forms.CharField(max_length=100, required=False)
     work = forms.CharField(max_length=100, required=False)
     fax = forms.CharField(max_length=100,required=False)
+    post_or_zip = forms.CharField(max_length=20, required=False)
 
     email2 = forms.EmailField(max_length=100, required=False)
     address = forms.CharField(max_length=100)

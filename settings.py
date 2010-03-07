@@ -185,10 +185,10 @@ INSTALLED_APPS = (
     'projects',
     'misc',
     'photos',
-    'tag_app',
     'django.contrib.admin',
     'haystack',
     'django403',
+    'synced',
     )
 
 HAYSTACK_SITECONF = 'search_sites'
@@ -291,12 +291,12 @@ DATABASE_HOST = ''             # Set to empty string for localhost. Not used wit
 DATABASE_PORT = ''             # Set to empty string for default. Not used with sqlite3.
 
 
-SESSION_COOKIE_DODMAIN = ".XXX.net"
+SESSION_COOKIE_DOMAIN = ""
 HUBSPACE_COMPATIBLE = True # is this running against a HUBSPACE database?
-ROOT_URLCONF = 'XXX.urls'
+ROOT_URLCONF = 'hubplus.urls'
 
-EMAIL_HOST= 'XXX'
-EMAIL_HOST_PASSWORD='XXX_EMAIL_PASSWORD'
+EMAIL_HOST= 'localhost'
+EMAIL_HOST_PASSWORD=''
 EMAIL_HOST_USER=''
 EMAIL_PORT='25'
 EMAIL_USE_TLS=False
@@ -361,19 +361,50 @@ logging.basicConfig(
     format = '%(asctime)s %(levelname)s %(message)s',
 )
 
+from threading import Thread
 try:
-    from utils.static_files import compile, get_version_no
-    CSS_FILES = ["site.css", "header.css", "main.css", "serendipity.css", "footer.css", "forms.css", "tabview.css", "overlay.css", "permissions.css", "flickr.css", "list-edit-table.css", "jquery.autocomplete.css", "yui2/editor.css", "yui2/menu.css", "yui2/button.css", "yui2/container.css", "yui2/autocomplete.css", "yui2/slider.css"]
-
-    JS_FILES = ["jquery.min.js", "jq.noconflict.js", "ui.core.js", "effects.core.js", "effects.highlight.js", "jquery.bgiframe.min.js", "jquery.autocomplete.min.js", "tools.overlay-1.0.4.min.js", "json2.js", "yui2/build/yahoo-dom-event/yahoo-dom-event.js", "yui2/build/element/element-min.js", "yui2/build/container/container_core-min.js", "yui2/build/menu/menu-min.js", "yui2/build/button/button-min.js", "yui2/build/editor/editor-min.js", "yui2/build/animation/animation-min.js", "yui2/build/logger/logger-min.js", "yui2/build/dragdrop/dragdrop-min.js", "yui2/build/selector/selector-min.js", "yui2/build/tabview/tabview-min.js", "yui2/build/history/history-min.js", "yui2/build/datasource/datasource-min.js", "yui2/build/connection/connection-min.js", "yui2/build/autocomplete/autocomplete-min.js", "editor.js", "ui.accordion.js", "json2.js", "jquery.confirm.js", "jquery.confirm-1.1.js", "hubcms.js", "tab_hist.js", "hubplus.js", "yui2/build/slider/slider-min.js", "plus_resources/replace_file.js", "plus_permissions/views.js", "pinax_libs/comments.js", "plus_links/plus_links.js", "listings.js", "home.js", "plus_microblogging/plus_microblogging.js", "ready.js"]
-
-
-    compile(JS_FILES, 'site_media/js', 'hubplus_core.js', minified=True)
-    compile(CSS_FILES, 'site_media/css', 'hubplus_core.css')
+    from utils.static_files import get_version_no
     JS_VERSION_NO = get_version_no("hubplus_core.js", 'site_media/js')
     CSS_VERSION_NO = get_version_no("hubplus_core.css", 'site_media/css')
 except ImportError, e:
     print `e`
+    
+class JsCompile(Thread):
+    def __init__(self, css=None, js=None):
+        Thread.__init__(self)
+        self.CSS_FILES = css and css or []
+        self.JS_FILES = js and js or []
 
+    def run(self):
+        from utils.static_files import compile, get_version_no
+        compile(self.JS_FILES, 'site_media/js', 'hubplus_core.js', minified=True)
+        compile(self.CSS_FILES, 'site_media/css', 'hubplus_core.css')
+        JS_VERSION_NO = get_version_no("hubplus_core.js", 'site_media/js')
+        CSS_VERSION_NO = get_version_no("hubplus_core.css", 'site_media/css')
 
+    def startThread(self):
+        Thread.start(self)
+        
+try:
+    from apps.plus_permissions import patch
+     #do this in a separate thread/process
+    CSS_FILES = ["site.css", "header.css", "main.css", "serendipity.css", "footer.css", "forms.css", "tabview.css", "overlay.css", "permissions.css", "flickr.css", "list-edit-table.css", "jquery.autocomplete.css", "yui2/editor.css", "yui2/menu.css", "yui2/button.css", "yui2/container.css", "yui2/autocomplete.css", "yui2/slider.css"]
 
+    JS_FILES = ["jquery.min.js", "jq.noconflict.js", "ui.core.js", "effects.core.js", "effects.highlight.js", "jquery.bgiframe.min.js", "jquery.autocomplete.min.js", "tools.overlay-1.0.4.min.js", "json2.js", "yui2/build/yahoo-dom-event/yahoo-dom-event.js", "yui2/build/element/element-min.js", "yui2/build/container/container_core-min.js", "yui2/build/menu/menu-min.js", "yui2/build/button/button-min.js", "yui2/build/editor/editor-min.js", "yui2/build/animation/animation-min.js", "yui2/build/logger/logger-min.js", "yui2/build/dragdrop/dragdrop-min.js", "yui2/build/selector/selector-min.js", "yui2/build/tabview/tabview-min.js", "yui2/build/history/history-min.js", "yui2/build/datasource/datasource-min.js", "yui2/build/connection/connection-min.js", "yui2/build/autocomplete/autocomplete-min.js", "editor.js", "ui.accordion.js", "json2.js", "jquery.confirm.js", "jquery.confirm-1.1.js", "hubcms.js", "tab_hist.js", "hubplus.js", "yui2/build/slider/slider-min.js", "plus_resources/replace_file.js", "plus_permissions/views.js", "pinax_libs/comments.js", "plus_links/plus_links.js", "listings.js", "home.js", "plus_microblogging/plus_microblogging.js", "ready.js"]
+
+    js_compiler = JsCompile(css=CSS_FILES, js=JS_FILES)
+    js_compiler.startThread()
+except ImportError, e:
+    print `e`
+
+try:
+    from utils.static_files import get_version_no
+    JS_VERSION_NO = get_version_no("hubplus_core.js", 'site_media/js')
+    CSS_VERSION_NO = get_version_no("hubplus_core.css", 'site_media/css')
+except ImportError, e:
+    print `e`
+    
+
+   
+#from trellis_cache.reactor_in_thread import TrellisThread
+#trellis = TrellisThread()

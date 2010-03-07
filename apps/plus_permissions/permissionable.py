@@ -187,7 +187,7 @@ def add_create_method(content_type, child_type) :
             child_type.check_name(kwargs['name'], kwargs['in_agent'])
         resource = child_type(**kwargs)
         resource.save()
-        # now create its security_context etc.        
+        # now create its security_context etc.
         resource.acquires_from(self)
         ref = resource.get_ref()
         ref.creator = creator
