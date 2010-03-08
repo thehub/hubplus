@@ -27,6 +27,8 @@ def create_user(user_name, email_address, password='dummy', permission_prototype
         user = User(username=user_name, password=password, email=email_address)
         user.email_address=email_address
         user.user_name = user_name
+        user.active = 1 # need this to be set before the save, below
+
         user.save()
         
         user_post_create(user)
