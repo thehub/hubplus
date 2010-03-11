@@ -47,12 +47,28 @@ SIDE_SEARCH_TITLE = _('side search title')
 
 STATUS_COPY = _('What are you thinking about?')
 
+
 INVITE_EMAIL_TEMPLATE = """
 Dear {{first_name}} {{last_name}},
 
 {{sponsor}} has invited you to become a member of Hub+.
 
 Join and enter a worldwide community of social entrepreneurs and organizations concerned with making the world a better place."""
+
+GROUP_INVITE_SUBJECT_TEMPLATE = """Invitation to join {{group_name}}"""
+
+GROUP_INVITE_TEMPLATE = """
+Dear {{first_name}} {{last_name}},
+
+{{sponsor}} has invited you to become a member of {{group_name}} on {{site_name}}.
+
+{{special_message}}
+
+Click on the following link to accept this invitation.
+
+{{signup_link}}
+"""
+
 
 APPLICATION_MESSAGE = """
 You have received an application to: {{group_name}}
