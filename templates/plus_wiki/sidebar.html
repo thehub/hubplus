@@ -7,7 +7,7 @@
   <div class="first">
     <ol class="tag_list">
       {% for tag in tags %}
-      <li><a href="#" class="tag pop7">{{tag.keyword}}</a></li>
+      <li><a href="{% url explore_filtered  tag.keyword  %}" class="tag pop7">{{tag.keyword}}</a></li>
       {% endfor %}
     </ol>
   </div>
