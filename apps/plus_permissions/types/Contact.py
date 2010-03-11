@@ -32,6 +32,7 @@ class ContactAdmin:
 class ContactInvite:
     pk = InterfaceReadProperty
     invite = InterfaceCallProperty
+    group_invite_message = InterfaceCallProperty
 
 from apps.plus_permissions.models import add_type_to_interface_map
 

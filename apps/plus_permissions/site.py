@@ -18,6 +18,7 @@ class Site(models.Model) :
             level = 'member',
             user = kwargs['user'],
             description = kwargs['description'],
+            address=kwargs['address'],
             permission_prototype = kwargs['permission_prototype'],
             place = place,
             )

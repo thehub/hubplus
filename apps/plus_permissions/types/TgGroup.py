@@ -42,7 +42,7 @@ def setup_group_security(group, context_agent, context_admin, creator, permissio
 
 # override object managers, filter, get, get_or_create
 def get_or_create(group_name=None, display_name=None, place=None, level=None, user=None, 
-                  group_type='interest', description='', permission_prototype='public') :
+                  group_type='interest', description='', permission_prototype='public', address='') :
     """get or create a group
     """
     # note : we can't use get_or_create for TgGroup, because the created date clause won't match on a different day
@@ -60,7 +60,7 @@ def get_or_create(group_name=None, display_name=None, place=None, level=None, us
     else :
         created = True
         group = TgGroup(group_name=group_name, display_name=display_name, level=level, 
-                        place=place, description=description, group_type=group_type)
+                        place=place, description=description, group_type=group_type, address=address)
         group.save()
 
         group_post_create(group, user, permission_prototype)
@@ -169,6 +169,9 @@ class TgGroupManageMembers:
     remove_member = InterfaceCallProperty
 
 
+class TgGroupInvite:
+    invite_member = InterfaceCallProperty
+
 class TgGroupStatusViewer:
     current_status = InterfaceCallProperty
 
@@ -189,6 +192,7 @@ if not get_interface_map(TgGroup):
                          'Comment':TgGroupComment,
                          'Uploader':TgGroupUploader,
                          'Message':TgGroupMessage,
+                         'Invite':TgGroupInvite,
                          'GroupTypeEditor':TgGroupTypeEditor,
                          'StatusViewer':TgGroupStatusViewer,
                          'SetManagePermissions':SetManagePermissions}
@@ -200,12 +204,12 @@ if not get_interface_map(TgGroup):
 # they don't need to be stored in the db
 if not SliderOptions.get(TgGroup, False):
     SetSliderOptions(TgGroup, 
-                     {'InterfaceOrder':['Viewer', 'Editor', 'Join', 'Uploader', 'Commentor', 'ManageMembers', 'Delete', 'ManagePermissions'], 
+                     {'InterfaceOrder':['Viewer', 'Editor', 'Join', 'Uploader', 'Commentor', 'Invite', 'ManageMembers', 'Delete', 'ManagePermissions'], 
                       'InterfaceLabels':{'Viewer':'View',
-                                                  'Editor': 'Edit',
-                                                  'Commentor': 'Comment',
-                                                  'ManageMembers': 'Manage Membership',
-                                                  'ManagePermissions':'Change Permissions'}})
+                                         'Editor': 'Edit',
+                                         'Commentor': 'Comment',
+                                         'ManageMembers': 'Manage Membership',
+                                         'ManagePermissions':'Change Permissions'}})
 
 
 # ChildTypes are used to determine what types of objects can be created in this security context (and acquire security context from this). These are used when creating an explicit security context for an object of this type. 
@@ -246,6 +250,7 @@ def setup_defaults():
                              'ManageMembers':'creator',
                              'Join':'all_members_group',
                              'Leave':'context_agent',
+                             'Invite':'creator',
                              'ManagePermissions':'context_admin',
                              'SetManagePermissions':'context_admin',
                              'CreateLink':'context_agent',

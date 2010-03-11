@@ -82,6 +82,8 @@ class UserViewer:
     hubs = InterfaceCallProperty
     homehub = InterfaceReadProperty
     homeplace = InterfaceReadProperty
+    group_invite_message = InterfaceCallProperty
+    message = InterfaceCallProperty
 
 class UserEditor:
     homehub = InterfaceWriteProperty

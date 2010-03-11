@@ -16,7 +16,7 @@ class MemberInviteViewer():
 	status = InterfaceReadProperty
 	date = InterfaceReadProperty
 	is_site_invitation = InterfaceCallProperty
-
+	make_accept_user = InterfaceCallProperty
 
 class MemberInviteEditor():
 	pk = InterfaceReadWriteProperty
