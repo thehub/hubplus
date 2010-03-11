@@ -88,7 +88,8 @@ def group(request, group, template_name="plus_groups/group.html", current_app='p
     has_accept = False
     can_delete = False
 
-    editable_group_type = group.group_type != settings.HUB_NAME
+
+    editable_group_type = group.group_type != settings.GROUP_HUB_TYPE
 
     if user.is_authenticated():
         if user.is_direct_member_of(group.get_inner()):
