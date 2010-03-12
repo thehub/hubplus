@@ -634,8 +634,12 @@ def invite_to_group(group, invited, invited_by, message) :
         from django import forms
         try : 
             forms.EmailField().clean(invited)
-            invited = group.create_Contact(invited_by, email_address=invited)
+            flag = True
         except Exception :
             pass
+
+        if flag :
+            invited = group.create_Contact(invited_by, email_address=invited)
+
     group.invite_member(invited, invited_by, message)
  

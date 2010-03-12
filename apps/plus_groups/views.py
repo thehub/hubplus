@@ -308,7 +308,6 @@ def invite(request, group, template_name='plus_groups/invite.html', current_app=
     if request.user == get_anon_user():
         return HttpResponseRedirect(reverse('acct_invite'))
 
-
     if request.POST :
         form = TgGroupMemberInviteForm(request.POST)
         if form.is_valid() :

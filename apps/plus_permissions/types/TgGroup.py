@@ -171,6 +171,7 @@ class TgGroupManageMembers:
 
 class TgGroupInvite:
     invite_member = InterfaceCallProperty
+    create_Contact = InterfaceCallProperty
 
 class TgGroupStatusViewer:
     current_status = InterfaceCallProperty
