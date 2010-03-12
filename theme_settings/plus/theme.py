@@ -66,7 +66,6 @@ Dear {{first_name}} {{last_name}},
 
 Click on the following link to accept this invitation.
 
-{{signup_link}}
 """
 
 CONTACT_GROUP_INVITE_TEMPLATE = """
@@ -77,7 +76,7 @@ CONTACT_GROUP_INVITE_TEMPLATE = """
 
 Click on the following link to accept this invitation.
 
-{{signup_link}}
+
 """
 
 APPLICATION_MESSAGE = """

@@ -185,6 +185,8 @@ We are delighted to confirm you have been accepted as a member of %(site)s
                      'site_name':settings.SITE_NAME,
                      'special_message':special_message,
                      }))
+        message = message + """  
+%s """ % accept_invite_url
         subject = Template(settings.GROUP_INVITE_SUBJECT_TEMPLATE).render(
             Context({'group_name':group.get_display_name() }))
         return self.message(invited_by, subject, message)
