@@ -122,37 +122,38 @@ class TgGroupForm(forms.Form):
                 )
         else :
             group = site.create_hub(
-                location_name = self.cleaned_data['location'],
+                location_name = self.cleaned_data['display_name'], # not location, 
                 group_name=self.cleaned_data['group_name'],
                 display_name=self.cleaned_data['display_name'],
                 group_type = self.cleaned_data['group_type'],
                 level = 'member',
                 user = user,
                 description = self.cleaned_data['description'],
+                address = self.cleaned_data['address'],
                 permission_prototype = self.cleaned_data['permissions_set'],
                 )
 
         group.save()
         return group
     
-
-
+    
+    
 class TgGroupMemberInviteForm(forms.Form) :
     plain_text = forms.CharField()
     special_message = forms.CharField(required=False)
+
     
     def clean_plain_text(self) :
+        from apps.plus_groups.models import infer_invited, InvalidInvited
         tt = self.cleaned_data['plain_text']
-        try :
-            user = User.objects.get(username=tt)
-        except :
-            print "%s is not a username" % tt
-            try :
-                user = User.objects.get(email_address=tt)
-            except :
-                print "%s is not an email_address" % tt
-                raise forms.ValidationError(_('Not recognised as either existing username or known email'))
-        self.cleaned_data['user'] = user
+        try:
+            invited = infer_invited(tt)
+            self.cleaned_data['invited'] = invited
+            return invited
+        except InvalidInvited, ii :
+            # so it's neither a known user or valid email address, not much more we can do
+            raise forms.ValidationError(_('Not recognised as either existing username or an email'))
+
 
 class TgGroupMessageMemberForm(forms.Form) :
     message_header = forms.CharField()

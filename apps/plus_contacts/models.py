@@ -67,7 +67,7 @@ class Contact(models.Model):
         if password:
             u.set_password(password)
         p = u.get_profile()
-        p.first_name = self.first_name
+        p.first_name = self.first_name if self.first_name else username
         p.last_name = self.last_name
         p.email_address = self.email_address
         p.organisation = self.organisation
@@ -128,13 +128,16 @@ class Contact(models.Model):
             application.save()
         
 
-    def make_link(self, sponsor, id) :
-        site_root = settings.DOMAIN_NAME
+    def make_signup_link(self, sponsor, id) :
         url = attach_hmac("/account/signup/%s/" % id, sponsor)
-        return 'http://%s%s' % (site_root, url)
+        return 'http://%s%s' % (settings.DOMAIN_NAME, url)
+
+    def make_accept_invite_link(self, sponsor, id) :
+        url = attach_hmac("/invites/accept/%s/" % id, sponsor)
+        return 'http://%s%s' % (settings.DOMAIN_NAME, url)
 
     def send_link_email(self, title, message, sponsor, id) :
-        url = self.make_link(sponsor, id)
+        url = self.make_signup_link(sponsor, id)
         message = message + _("""
 
 Please visit the following link to confirm your account : %(url)s""") % {'url': url}
@@ -152,10 +155,41 @@ We are delighted to confirm you have been accepted as a member of %(site)s
         return self.send_link_email(_("Confirmation of account on %(site)s") % {'site':settings.SITE_NAME}, message, sponsor, application_id)
 
 
+    def message(self, sender, subject, body) :
+
+        if self.get_user() :
+            return self.get_user().message(sender, subject, body)
+        else :
+            from messages.models import Message
+            from django.core.mail import send_mail
+            message = _("""
+
+%(sender)s has sent you a new message from %(site_name)s .
+
+%(body)s
+
+""") % {'site_name':settings.SITE_NAME, 'body':body,  'sender':sender.get_display_name()}
+
+            send_mail(subject, message, settings.SUPPORT_EMAIL, [self.email_address],fail_silently=True)
+            return False
 
 
-
+    def group_invite_message(self, group, invited_by, accept_invite_url, special_message) :
         
+        message = Template(settings.CONTACT_GROUP_INVITE_TEMPLATE).render(
+            Context({'sponsor':invited_by.get_display_name(),
+                     'first_name':self.first_name,
+                     'last_name':self.last_name,
+                     'signup_link':accept_invite_url,
+                     'group_name':group.get_display_name(),
+                     'site_name':settings.SITE_NAME,
+                     'special_message':special_message,
+                     }))
+        subject = Template(settings.GROUP_INVITE_SUBJECT_TEMPLATE).render(
+            Context({'group_name':group.get_display_name() }))
+        return self.message(invited_by, subject, message)
+
+
 class Application(models.Model):
     """This should move to plus_groups
     """
@@ -241,7 +275,7 @@ class Application(models.Model):
 
 
 def create_messages(sender, instance, **kwargs):
-    from apps.plus_lib.utils import message_user
+
 
     if instance is None:
         return
@@ -274,11 +308,9 @@ def create_messages(sender, instance, **kwargs):
                                'find_out':find_out})
 
             msg = Template(settings.APPLICATION_MESSAGE).render(context)
-            message_user(sender=sender, 
-                         recipient=approver, 
+            approver.message(sender=sender, 
                          subject="Application to %s from %s" %(group_name, application.applicant.get_display_name()), 
-                         body=msg, 
-                         domain=settings.DOMAIN_NAME)
+                         body=msg)
 
     #if the application has a user then we want to message them
     if not application.is_site_application():
@@ -293,11 +325,9 @@ def create_messages(sender, instance, **kwargs):
 
             msg = settings.ACCEPTED_TO_GROUP % data
             
-            message_user(sender=accepted_by,
-                         recipient=applicant,
+            applicant.message(sender=accepted_by,
                          subject="Your application to %(group_name)s was accepted" % data,
-                         body=msg,
-                         domain=settings.DOMAIN_NAME)
+                         body=msg)
 
         elif application.status == REJECTED:
             group = application.group
@@ -311,11 +341,9 @@ def create_messages(sender, instance, **kwargs):
             context = Context(data)
             msg = Template(settings.APPLICATION_REJECT_TEMPLATE).render(context)
 
-            message_user(sender=rejected_by,
-                         recipient=applicant,
+            applicant.message(sender=rejected_by,
                          subject="Your application to %(group_name)s was declined" % data,
-                         body=msg,
-                         domain=settings.DOMAIN_NAME)
+                         body=msg)
 
 
 if "messages" in settings.INSTALLED_APPS:

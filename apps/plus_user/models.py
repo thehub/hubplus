@@ -10,6 +10,7 @@ import datetime
 from apps.plus_groups.models import is_member_of,  is_direct_member_of,  get_enclosures, get_enclosure_set, Location
 
 from django.conf import settings 
+from django.template import Template, Context
 
 
 """TODO:
@@ -284,14 +285,65 @@ def patch_user_class():
        from apps.plus_permissions.default_agents import get_all_members_group
        return self.is_admin_of(get_all_members_group())
     User.is_site_admin = is_site_admin
-   
+
+    def message(self, sender, subject, body) :
+       from messages.models import Message
+       from django.core.mail import send_mail
+       from django.core.urlresolvers import reverse
+       from django.utils.translation import ugettext_lazy as _, ugettext
+
+       m = Message(subject=subject, body=body, sender = self, recipient=self)
+       m.save()
+
+
+       if self.cc_messages_to_email :
+          # recipient wants emails cc-ed 
+          link = 'http://' + settings.DOMAIN_NAME + reverse('messages_all')
+          main = _(""" 
+%(sender)s has sent you a new message on %(account_name)s .
+
+%(body)s
+
+Click %(link)s to see your account
+
+""") % {'account_name':settings.SITE_NAME, 'body':body, 'link':link, 'sender':sender.get_display_name()}
+
+          self.email_user(subject, main, settings.SUPPORT_EMAIL)
+
+       return m
+
+    User.message = message
+
+
+    def group_invite_message(self, group, invited_by, accept_url, special_message='') :
+
+       self.message(invited_by, 
+                    Template(settings.GROUP_INVITE_SUBJECT_TEMPLATE).render(
+             Context({'group_name':group.get_display_name() })),
+                    Template(settings.GROUP_INVITE_TEMPLATE).render(
+             Context({
+                   'first_name':self.first_name,
+                   'last_name':self.last_name,
+                   'sponsor':invited_by.get_display_name(),
+                   'group_name':group.get_display_name(),
+                   'site_name':settings.SITE_NAME,
+                   'special_message':special_message,
+                   'signup_link':accept_url,
+                   })
+             ))
+    
+    User.group_invite_message = group_invite_message
+
+
     User.hubs = lambda self : self.groups.filter(group_type=settings.GROUP_HUB_TYPE,level='member')
 
     print "Monkey Patched User Class ... gulp!"
 
     AnonymousUser.is_member_of = lambda *args, **kwargs : False
     AnonymousUser.is_direct_member_of = lambda *args, **kwarg : False
+
     # Finished the User Patch
+    
     
 
 

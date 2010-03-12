@@ -183,8 +183,7 @@ try :
         address = models.CharField(max_length=255, null=True)
 
         place = models.ForeignKey(Location)
-    #if place is Hub Islington then set member of toHub Islington group if level is member
-    #if level is host, set member of to Hub Islington Host Group.
+
         level = models.CharField(max_length=9)
         psn_id = models.CharField(max_length=100)
         path = models.CharField(max_length=120)
@@ -251,15 +250,19 @@ try :
                                     group=self)
 
 
-        def invite_member(self, user, invited, message=''):
+        def invite_member(self, invited, invited_by, message=''):
             if not invited:
                 raise ValueError('there must be an invitee')
 
-            invite = self.create_MemberInvite(user,
+            invite = self.create_MemberInvite(invited_by,
                                               invited=invited, 
-                                              invited_by=user, 
+                                              invited_by=invited_by, 
                                               group=self, 
                                               status=ACCEPTED_PENDING_USER_SIGNUP)
+
+
+            accept_url = invite.make_accept_url()
+            invited.group_invite_message(self, invited_by, accept_url, message)
 
 
         def change_avatar(self) :
@@ -268,10 +271,9 @@ try :
         def leave(self, user):
             return self.remove_member(user)
 
-        def message_members(self, sender, message_header, message_body, domain) :
-            from apps.plus_lib.utils import message_user
+        def message_members(self, sender, message_header, message_body) :
             for member in self.get_users() :
-                message_user(sender, member, message_header, message_body, domain)
+                member.send_message(sender, message_header, message_body)
 
         def is_group(self) : return True
 
@@ -404,6 +406,7 @@ try :
             for r in Resource.objects.filter(in_agent=ref) :
                 r.delete()
 
+            # XXX remove associated invites and applications
 
             # permissions
             
@@ -520,16 +523,21 @@ class MemberInvite(models.Model) :
     message = models.TextField()
     status = models.IntegerField()
 
+
     def make_accept_url(self):
         if self.is_site_invitation():
-            url = attach_hmac("/signup/%s/add_member/%s/" % (self.group.id, self.invited.first_name + self.invited.last_name), self.invited_by)
+            url = attach_hmac("/account/signup/invited/%s/" % (self.id), self.invited_by)
         else:
-            url = attach_hmac("/groups/%s/add_member/%s/" % (self.group.id, self.invited.username), self.invited_by)
+            if isinstance(self.invited,User):
+                invited_username = self.invited.username
+            elif self.invited.get_user() :
+                invited_username = self.invited.get_user().username
+
+            url = attach_hmac("/groups/%s/add_member/%s/" % (self.group.id, invited_username), self.invited_by)
         return 'http://%s%s' % (settings.DOMAIN_NAME, url)
 
     def is_site_invitation(self):
         """ Is this an invitation to someone who's not yet a site-member and needs an User / Profile object created"""
-        
         if isinstance(self.invited, Contact) and not self.invited.get_user():
             return True
         return False
@@ -547,7 +555,6 @@ def invite_mail(invited, sponsor, invite):
 
 
 def invite_messages(sender, instance, **kwargs):
-    from apps.plus_lib.utils import message_user
     if instance is None:
         return
     member_invite = instance
@@ -569,13 +576,66 @@ def invite_messages(sender, instance, **kwargs):
             member_invite.message = message
             member_invite.save()
 
-            from apps.plus_lib.utils import message_user 
-
-            message_user(user, member_invite.invited, 'Invitation to join %s' % member_invite.group.get_display_name(), message, settings.DOMAIN_NAME)
-            message_user(user, invited_by, "Invitation sent", """You have invited %s to join %s""" % 
-                         (member_invite.invited.get_display_name(), member_invite.group.get_display_name()), settings.DOMAIN_NAME)
+            member_invite.invited.send_message(user, 'Invitation to join %s' % member_invite.group.get_display_name(), message)
+            invited_by.send_message(user, "Invitation sent", """You have invited %s to join %s""" % 
+                         (member_invite.invited.get_display_name(), member_invite.group.get_display_name()))
 
 
-if "messages" in settings.INSTALLED_APPS:
-    post_save.connect(invite_messages, sender=MemberInvite, dispatch_uid="apps.plus_groups.models")
+#if "messages" in settings.INSTALLED_APPS:
+    #post_save.connect(invite_messages, sender=MemberInvite, dispatch_uid="apps.plus_groups.models")
 
+
+
+# I think this functionality should live at the model level
+# rather than in a particular form / view
+
+class InvalidInvited(Exception) :
+    pass
+
+def infer_invited(tt):
+    from django.contrib.auth.models import User
+    # test for username                                                                                                  
+    us = User.objects.filter(username=tt)
+    if us :
+        return us[0]
+    
+    # test for user email_address                                                                                        
+    us = User.objects.filter(email_address=tt)
+    if us :
+        return us[0]
+
+    from apps.plus_contacts.models import Contact
+
+    # test for Contact email_address                                                                                     
+    us = Contact.objects.filter(email_address=tt)
+    if us :
+        return us[0]
+
+    from django import forms
+
+    try :
+        forms.EmailField().clean(tt)
+        # if this is an email, maybe we can make a new
+        # contact for it, but we don't know what
+        # group or user is creating it, so kick it
+        # back upstairs
+        return tt
+    except Exception :
+        raise InvalidInvited(tt)
+
+def invite_to_group(group, invited, invited_by, message) :
+ 
+    from django.contrib.auth.models import User
+    from apps.plus_contacts.models import Contact
+
+    if not isinstance(invited, (User,Contact)) : 
+        # do we assume that invited has to be a valid email address? (ie. came via infer_invited above)?
+        # or should we validate again?
+        from django import forms
+        try : 
+            forms.EmailField().clean(invited)
+            invited = group.create_Contact(invited_by, email_address=invited)
+        except Exception :
+            pass
+    group.invite_member(invited, invited_by, message)
+ 

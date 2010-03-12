@@ -113,7 +113,7 @@ class TgGroupViewer:
     group_type = InterfaceReadProperty
     address = InterfaceReadProperty
     apply = InterfaceCallProperty
-    invite_member = InterfaceCallProperty
+    
     leave = InterfaceCallProperty
     get_users = InterfaceCallProperty
     get_no_members = InterfaceCallProperty

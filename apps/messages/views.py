@@ -224,7 +224,7 @@ def in_out_trash_comp(request, recipient=None, message_id=None, form_class=Compo
         sender = request.user
         form = form_class(request.POST)
         if form.is_valid():
-            form.save(sender=request.user,domain=request.get_host())
+            form.save(sender=request.user)
             request.user.message_set.create(
                 message=_(u"Message successfully sent."))
             if success_url is None:

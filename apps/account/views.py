@@ -433,7 +433,6 @@ def site_invite(request, template_name='account/invite_non_member.html', **kwarg
                               
 
 
-
 from apps.synced import synced_transaction
 @synced_transaction
 @hmac_proxy
@@ -481,15 +480,13 @@ def proxied_signup(request, application, form_class=SignupForm,
             form.data['email_address'] = applicant.email_address
             form.data['first_name'] = applicant.first_name
             form.data['last_name'] = applicant.last_name 
-            form.data['username'] = applicant.first_name.lower() + '.' + applicant.last_name.lower()  #normalize and uniquify
+            form.data['username'] = applicant.first_name.lower() + '.' + applicant.last_name.lower() #normalize and uniquify
             display_name = form.data['first_name'] + ' ' + form.data['last_name']
 
         else :
             form.email_address = ''
             form.username = ''
-            
-        
-
+    
     # the outstanding issue is how to make sure that the form we're rendering comes back here
     # ie. with the hmac, let's pass it down as a "submit_url"
 
@@ -502,4 +499,70 @@ def proxied_signup(request, application, form_class=SignupForm,
         "submit_url" : request.build_absolute_uri(),
         "display_name" : display_name        
     }, context_instance=RequestContext(request))
+
+
+
+
+from apps.plus_groups.models import MemberInvite
+@synced_transaction
+@hmac_proxy
+@secure_resource(MemberInvite)
+def proxied_invited_signup(request, invite, form_class=SignupForm,
+                   template_name="account/accepted_signup.html", success_url=None):
+    # request.user is the user who has invited / authorized the signup
+
+    if success_url is None:
+        success_url = get_default_redirect(request)
+    display_name = "Visitor"
+    sponsor = request.user # the actual user who authorized this acceptance
+
+    if request.method == "POST":
+        form = form_class(request.POST)
+
+        if form.is_valid():
+            username = form.cleaned_data['username']
+            password = form.cleaned_data['password1']
+
+            invite.invited.become_member(username, accepted_by=sponsor, password=password)
+            user = authenticate(username=username, password=password)
+
+            auth_login(request, user)
+            user.message_set.create(
+                message=ugettext("Successfully logged in as %(username)s.") % {
+                'username': user.username
+            })
+
+            # Now, what happens if this invite came with a group? 
+            if invite.group :
+                group = secure_wrap(invite.group, sponsor)
+                group.add_member(user)
+
+            return HttpResponseRedirect(success_url)
+
+    else:
+
+        form = form_class()
+
+        applicant = invite.invited
+        if applicant :
+            form.data['email_address'] = applicant.email_address
+            form.data['first_name'] = ''
+            form.data['last_name'] = ''
+            form.data['username'] = ''
+
+            display_name = ''
+
+        else :
+            form.email_address = ''
+            form.username = ''
+
+    request.user = request.old_user
+
+    return render_to_response(template_name, {
+        "form": form,
+        "submit_url" : request.build_absolute_uri(),
+        "display_name" : display_name
+    }, context_instance=RequestContext(request))
+
+
 

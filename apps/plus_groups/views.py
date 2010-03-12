@@ -240,6 +240,7 @@ def groups(request, site, tag_string='', type='other', template_name='plus_explo
 
     create_group = False
     if request.user.is_authenticated():
+
         try:
             if current_app == 'groups':
                 site.create_virtual
@@ -307,11 +308,13 @@ def invite(request, group, template_name='plus_groups/invite.html', current_app=
     if request.user == get_anon_user():
         return HttpResponseRedirect(reverse('acct_invite'))
 
+
     if request.POST :
         form = TgGroupMemberInviteForm(request.POST)
         if form.is_valid() :
-            invited = form.cleaned_data['user']
-            group.invite_member(invited, form.cleaned_data['special_message'], request.user, request.get_host())
+            invited = form.cleaned_data['invited']
+            from apps.plus_groups.models import invite_to_group
+            invite_to_group(group,invited,request.user,form.cleaned_data['special_message'])
             return HttpResponseRedirect(reverse(current_app + ':group',args=(group.id,)))
             
     else :

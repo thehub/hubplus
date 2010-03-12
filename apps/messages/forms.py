@@ -26,14 +26,14 @@ class ComposeForm(forms.Form):
         widget=forms.Textarea(attrs={'rows': '12', 'cols':'55'}))
     
         
-    def save(self, sender, domain, parent_msg=None):
-        from apps.plus_lib.utils import message_user
+    def save(self, sender, parent_msg=None):
+
         recipients = self.cleaned_data['recipient']
         subject = self.cleaned_data['subject']
         body = self.cleaned_data['body']
         message_list = []
         for r in recipients:
-            msg = message_user(sender,r,subject,body,domain)
+            msg = r.message(sender,subject,body)
             #msg = Message(
             #    sender = sender,
             #    recipient = r,
