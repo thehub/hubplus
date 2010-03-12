@@ -69,6 +69,16 @@ Click on the following link to accept this invitation.
 {{signup_link}}
 """
 
+CONTACT_GROUP_INVITE_TEMPLATE = """
+
+{{sponsor}} has invited you to become a member of {{group_name}} on {{site_name}}.
+
+{{special_message}} 
+
+Click on the following link to accept this invitation.
+
+{{signup_link}}
+"""
 
 APPLICATION_MESSAGE = """
 You have received an application to: {{group_name}}
