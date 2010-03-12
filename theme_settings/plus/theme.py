@@ -42,11 +42,10 @@ RESOURCE_SEARCH_TITLE = _('Search Resources')
 
 
 TAG_SEARCH_TITLE = _('tag search title')
-
 SIDE_SEARCH_TITLE = _('side search title')
-
 STATUS_COPY = _('What are you thinking about?')
 
+GROUP_INVITES_TO_NON_MEMBERS = True
 
 INVITE_EMAIL_TEMPLATE = """
 Dear {{first_name}} {{last_name}},

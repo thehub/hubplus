@@ -604,6 +604,11 @@ def infer_invited(tt):
     if us :
         return us[0]
 
+    # if the option to allow invites to non-members is
+    # NOT set, then we bail
+    if not settings.GROUP_INVITES_TO_NON_MEMBERS :
+        raise InvalidInvited(tt)
+
     from apps.plus_contacts.models import Contact
 
     # test for Contact email_address                                                                                     

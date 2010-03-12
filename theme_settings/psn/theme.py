@@ -44,12 +44,28 @@ SIDE_SEARCH_TITLE = _('side search title')
 
 STATUS_COPY = _('Update the Network, what are you doing right now ?')
 
+GROUP_INVITES_TO_NON_MEMBERS = False
+
 INVITE_EMAIL_TEMPLATE = """
 Dear {{first_name}} {{last_name}}, 
 
 {{sponsor}} has invited you to become a member of MHPSS network.
 
 Join and enter a worldwide community of people and organizations concerned with mental health & psychosocial support. Discover and learn about new Resources, Members, Groups and Regions from the worldwide network."""
+
+GROUP_INVITE_SUBJECT_TEMPLATE = """Invitation to join {{group_name}}"""
+
+GROUP_INVITE_TEMPLATE = """
+
+Dear {{first_name}} {{last_name}},
+
+{{sponsor}} has invited you to become a member of {{group_name}} on {{site_name}}.
+
+{{special_message}}
+
+Click on the following link to accept this invitation.
+
+"""
 
 
 PASSWORD_RESET_TEMPLATE = """
