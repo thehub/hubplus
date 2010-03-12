@@ -330,7 +330,9 @@ Click %(link)s to see your account
                    'special_message':special_message,
                    'signup_link':accept_url,
                    })
-             ))
+             )+"""
+%s""" % accept_url
+                    )
     
     User.group_invite_message = group_invite_message
 
