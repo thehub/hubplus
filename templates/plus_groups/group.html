@@ -41,10 +41,12 @@
               {% editable "Type" group 'group_type' 'Type of Group' %}
           {% endif %}
       {% else %}
+      <!--
           <li>
 	    <div class="label">{% trans "Type" %}</div>
             <div class="value">{{group.group_type}}</div>
 	  </li>
+	  -->
       {% endif %}
       
       {% if group.should_show_description %}

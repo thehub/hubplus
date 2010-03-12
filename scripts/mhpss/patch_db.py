@@ -29,11 +29,13 @@ def getPostgreSQLConnection():
 
 if __name__ == '__main__' :
     patch_db("""ALTER TABLE tg_user ADD "active" integer DEFAULT 1;""")
-    patch_db("""ALTER TABLE plus_groups_memberinvite ADD "invited_content_type" integer;""")
-    patch_db("""ALTER TABLE plus_groups_memberinvite ADD "invited_object_id" integer;""")
-    patch_db("""ALTER TABLE plus_groups_memberinvite DROP COLUMN "invited";""")
-    patch_db("""ALTER TABLE plus_group DROP COLUMN "users";""")
+    patch_db("""ALTER TABLE plus_groups_memberinvite DROP COLUMN "invited_content_type";""")
+    patch_db("""ALTER TABLE plus_groups_memberinvite ADD "invited_content_type_id" integer;""")
 
+    patch_db("""ALTER TABLE plus_groups_memberinvite ADD "invited_object_id" integer;""")
+    patch_db("""ALTER TABLE plus_groups_memberinvite DROP COLUMN "invited_id";""")
+    patch_db("""ALTER TABLE plus_group DROP COLUMN "users";""")
+    
     patch_db("""ALTER TABLE plus_contacts_contact ADD "user_id" integer;""")
     patch_db("""ALTER TABLE plus_contacts_contact DROP COLUMN "invited_by";""")
 
