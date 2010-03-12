@@ -69,12 +69,12 @@
         {% if is_hub %}
         <li>
           <div class="label">
-            <label for="location">Location</label>
+            <label for="addres">Address</label>
             <p class="note">postcode, country</p>
           </div>
           <div class="value">
-            <input  id="location" class="text" name="location" type="text" />
-            {{form.location.errors}}
+            <input  id="address" class="text" name="address" type="text" />
+            {{form.address.errors}}
           </div>
         </li>
         {% endif %}
@@ -109,6 +109,10 @@
       </ul>
 
     </fieldset>
+    
+    {% if is_hub %}
+    <input type="hidden" name="permissions_set" value="private"/>
+    {% else %}
     <fieldset>
 
       <ul>
@@ -156,6 +160,7 @@
       </ul>
   
     </fieldset>
+    {% endif %}
 
 
   
