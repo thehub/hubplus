@@ -273,7 +273,7 @@ try :
 
         def message_members(self, sender, message_header, message_body) :
             for member in self.get_users() :
-                member.send_message(sender, message_header, message_body)
+                member.message(sender, message_header, message_body)
 
         def is_group(self) : return True
 

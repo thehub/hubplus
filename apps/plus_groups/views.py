@@ -315,6 +315,9 @@ def invite(request, group, template_name='plus_groups/invite.html', current_app=
             invited = form.cleaned_data['invited']
             from apps.plus_groups.models import invite_to_group
             invite_to_group(group,invited,request.user,form.cleaned_data['special_message'])
+            message = _("You have invited %(invited)s to %(group)s.") % {'invited':invited,'group':group.get_display_name()}
+            request.user.message_set.create(message=message)
+
             return HttpResponseRedirect(reverse(current_app + ':group',args=(group.id,)))
             
     else :
@@ -350,7 +353,7 @@ def message_members(request, group, current_app='plus_groups', **kwargs) :
     if request.POST :
         form = TgGroupMessageMemberForm(request.POST)
         if form.is_valid() :
-            group.message_members(request.user, form.data['message_header'], form.data['message_body'], request.get_host())
+            group.message_members(request.user, form.data['message_header'], form.data['message_body'])
             message = _("You have successfully messaged everyone in %(group_name)s") % {'group_name':group.get_display_name()}
             request.user.message_set.create(message=message)
             return HttpResponseRedirect(reverse(current_app + ':group',args=(group.id,)))
