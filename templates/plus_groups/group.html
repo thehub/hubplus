@@ -89,7 +89,8 @@
 	</dl>
       </li>
     </ul>
-    
+
+    <!--
     <h3>{% trans "Members" %}</h3>
     <ul>
       <li>
@@ -122,6 +123,7 @@
 	</dl>
       </li>
     </ul>
+    -->
   </div>
   
   <div id="extra" class="block_column">
@@ -151,12 +153,17 @@
       <li class="disabled last"><a href="#">Follow {{GROUP_OR_HUB}} ?</a></li>
     </ul>
   </div>
+
+  
+
 </div>
 <!--div id="section_tab_navigation" class="section"-->
 {% include "plus_groups/tabbed_subs.html" %}
 <!--/div-->	
 
 {% if can_delete %}
+
+<hr/>
 <a href="{% url plus_groups:delete_group group_id %}">Delete this group</a>
 {% endif %}  
 
