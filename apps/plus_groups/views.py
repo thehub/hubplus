@@ -208,6 +208,8 @@ def group(request, group, template_name="plus_groups/group.html", current_app='p
             "can_delete" : can_delete, 
             "hosts": hosts,
             "host_group_id":group.get_admin_group().id,
+            "host_group_app_label":group.get_admin_group().group_app_label() + ':group',
+            "is_host":user.is_admin_of(group.get_inner()),
             "host_count": host_count,
             "tweets" : tweets,
             "permissions": perms_bool,
