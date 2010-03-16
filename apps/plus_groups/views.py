@@ -187,7 +187,6 @@ def group(request, group, template_name="plus_groups/group.html", current_app='p
 
     ##############################################################################################
 
-
     return render_to_response(template_name, {
             "head_title" : "%s" % group.get_display_name(),
             "status_type" : 'group',
@@ -208,6 +207,7 @@ def group(request, group, template_name="plus_groups/group.html", current_app='p
             "can_change_avatar" : can_change_avatar,
             "can_delete" : can_delete, 
             "hosts": hosts,
+            "host_group_id":group.get_admin_group().id,
             "host_count": host_count,
             "tweets" : tweets,
             "permissions": perms_bool,
