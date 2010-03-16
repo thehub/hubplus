@@ -554,31 +554,32 @@ def invite_mail(invited, sponsor, invite):
     return invited.send_link_email("Invite to join MHPSS", message, sponsor)
 
 
-def invite_messages(sender, instance, **kwargs):
-    if instance is None:
-        return
-    member_invite = instance
-    if member_invite.is_site_invitation():
-        invite_mail(member_invite.invited, member_invite.invited_by, member_invite)
-    else:
-        invite_url = member_invite.make_accept_url()
-        if member_invite.message :
-            message = """<p>%s</p>""" % member_invite.message
-        else :
-            message = """
-<p>%s is inviting you to join the %s group.</p>
-""" % (member_invite.invited_by.get_display_name(), member_invite.group.get_display_name())
+# deprecated
+#def invite_messages(sender, instance, **kwargs):
+#    if instance is None:
+#        return
+#    member_invite = instance
+#    if member_invite.is_site_invitation():
+#        invite_mail(member_invite.invited, member_invite.invited_by, member_invite)
+#    else:
+#        invite_url = member_invite.make_accept_url()
+#        if member_invite.message :
+#            message = """<p>%s</p>""" % member_invite.message
+#        else :
+#            message = """
+#<p>%s is inviting you to join the %s group.</p>
+#""" % (member_invite.invited_by.get_display_name(), member_invite.group.get_display_name())
 
-            message = message + """
-<p><a href="%s">Click here to join %s</a>
-""" % (invite_url, member_invite.group.get_display_name())
+#            message = message + """
+#<p><a href="%s">Click here to join %s</a>
+#""" % (invite_url, member_invite.group.get_display_name())
             
-            member_invite.message = message
-            member_invite.save()
+#           member_invite.message = message
+#            member_invite.save()
 
-            member_invite.invited.send_message(user, 'Invitation to join %s' % member_invite.group.get_display_name(), message)
-            invited_by.send_message(user, "Invitation sent", """You have invited %s to join %s""" % 
-                         (member_invite.invited.get_display_name(), member_invite.group.get_display_name()))
+#            member_invite.invited.send_message(user, 'Invitation to join %s' % member_invite.group.get_display_name(), message)
+#            invited_by.send_message(user, "Invitation sent", """You have invited %s to join %s""" % 
+#                         (member_invite.invited.get_display_name(), member_invite.group.get_display_name()))
 
 
 #if "messages" in settings.INSTALLED_APPS:
