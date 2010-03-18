@@ -392,8 +392,13 @@ try:
 
     JS_FILES = ["jquery.min.js", "jq.noconflict.js", "ui.core.js", "effects.core.js", "effects.highlight.js", "jquery.bgiframe.min.js", "jquery.autocomplete.min.js", "tools.overlay-1.0.4.min.js", "json2.js", "yui2/build/yahoo-dom-event/yahoo-dom-event.js", "yui2/build/element/element-min.js", "yui2/build/container/container_core-min.js", "yui2/build/menu/menu-min.js", "yui2/build/button/button-min.js", "yui2/build/editor/editor-min.js", "yui2/build/animation/animation-min.js", "yui2/build/logger/logger-min.js", "yui2/build/dragdrop/dragdrop-min.js", "yui2/build/selector/selector-min.js", "yui2/build/tabview/tabview-min.js", "yui2/build/history/history-min.js", "yui2/build/datasource/datasource-min.js", "yui2/build/connection/connection-min.js", "yui2/build/autocomplete/autocomplete-min.js", "editor.js", "ui.accordion.js", "json2.js", "jquery.confirm.js", "jquery.confirm-1.1.js", "hubcms.js", "tab_hist.js", "hubplus.js", "yui2/build/slider/slider-min.js", "plus_resources/replace_file.js", "plus_permissions/views.js", "pinax_libs/comments.js", "plus_links/plus_links.js", "listings.js", "home.js", "plus_microblogging/plus_microblogging.js", "ready.js"]
 
-    js_compiler = JsCompile(css=CSS_FILES, js=JS_FILES)
-    js_compiler.startThread()
+    import sys
+    if sys.argv[1] not in ['shell','execfile'] :
+        # only recompile javascript if we're really running
+        js_compiler = JsCompile(css=CSS_FILES, js=JS_FILES)
+        js_compiler.startThread()
+
+
 except ImportError, e:
     print `e`
 
