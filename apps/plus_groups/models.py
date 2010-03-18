@@ -437,6 +437,14 @@ try :
             super(TgGroup, self).save()
             self.post_save()
    
+
+        def get_resources_of_class(self,cls) :
+            # clunky but useful
+            resources = []
+            for r in cls.objects.all() :
+                if r.in_agent.obj == self :
+                    resources.append(r)
+            return resources 
     
 except Exception, e:
     print "##### %s" % e
