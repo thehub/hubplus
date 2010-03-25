@@ -60,7 +60,14 @@ def resource_common(cls) :
         return self.__class__.__name__
     cls.display_type = display_type
 
+
+    def list_siblings(self) :
+        return self.in_agent.obj.get_resources_in_class(self.__class__)
+    cls.list_siblings = list_siblings
+
+
     return cls
+
 
 
 # Forms

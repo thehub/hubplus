@@ -165,8 +165,12 @@ def get_security_context(self):
             raise e
     return ref.acquired_scontext
     
+class NoGenericReference(Exception) : pass
 def get_ref(self):
-    return self.ref.all()[0]
+    rs = self.ref.all()
+    if not rs :
+        raise NoGenericReference("No generic reference for %s id %s" % (self.__class__.__name__,self.id))
+    return rs[0]
 
 def acquires_from(self, content_obj):
     ref = self.get_ref()
