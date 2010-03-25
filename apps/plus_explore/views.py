@@ -56,6 +56,13 @@ def get_search_types():
             ('Resource', ({'content_type__model__in':['resource', 'wikipage']}, None, _('Resources'))), 
             )
 
+
+def narrow_search_types(type_name):
+    types = dict(get_search_types())
+    return ((type_name, types[type_name]),)
+
+
+
 def goto_tag(request):
     tag_string = request.GET.get('tag', '')
     if tag_string:
@@ -223,3 +230,5 @@ def plus_search(tags, search, search_types, order=None, in_group=None, extra_fil
             search_type_data.append((typ, data[2], results_map[typ], type_len))
 
     return {'All':results_map['All'], 'items_len':items_len, 'search_types':search_type_data, 'tag_intersection':tag_intersection}
+
+

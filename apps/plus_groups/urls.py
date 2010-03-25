@@ -19,8 +19,16 @@ urlpatterns = patterns('',
                        url(r'^(?P<resource_id>[\w\._-]+)/message/$', 'plus_groups.views.message_members', name='message_members'),
                        url(r'^$', 'plus_groups.views.groups', name='groups'),
                        url(r'^tags/(?P<tag_string>[\w\+\. _-]+)/$', 'plus_groups.views.groups', name='groups_tag'),
+
                        url(r'^(?P<resource_id>[\d]+)/resources/$', 'plus_groups.views.group_resources', name='group_resources'),
-                       url(r'^(?P<resource_id>[\d]+)/resources/tag/(?P<tag_string>[\w\+\. _-]+)/$', 'plus_groups.views.group_resources', name='group_resources_tag'),
+                       url(r'^(?P<resource_id>[\d]+)/members/$', 'plus_groups.views.group_members', name='group_members'),
+
+                       url(r'^(?P<resource_id>[\d]+)/resources/tag/(?P<tag_string>[\w\+\. _-]+)/$', 
+                           'plus_groups.views.group_resources', name='group_resources_tag'),
+                       url(r'^(?P<resource_id>[\d]+)/members/tag/(?P<tag_string>[\w\+\. _-]+)/$', 
+                           'plus_groups.views.group_members', name='group_members_tag'),
+
+
                        url(r'^group_type_ajax/$', 'plus_groups.views.group_type_ajax', name='group_type_ajax'),
                        url(r'^delete/(?P<resource_id>[\d]+)/$', 'plus_groups.views.delete', name='delete_group'),
                        )

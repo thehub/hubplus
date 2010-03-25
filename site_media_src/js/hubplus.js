@@ -303,10 +303,23 @@ var profile_ready = function () {
     wiki_edit();
     editing();
     setup_tag_lists();
-    jq('#resources .add_tag, #resources .delete_tag, #resources .clear_tag, #resources .pagination a').live('click', function () {
-	jq('.tabbed_content #resources').load(jq(this).attr('href') + ' form');
+
+    // live updating of controls for listings (eg. adding / removing a tag from the filter / pagination )
+    // XXX why is this in "pofile_ready" ? 
+
+    jq('.page_content .add_tag, .page_content .delete_tag, .page_content .clear_tag, .page_content .pagination a').live('click', function () {
+	    // get which
+	    var tab = jq(this).parents('.page_content');
+	    tab.load(jq(this).attr('href')+' form', '', function () {
+		    listing_ready();
+		});
+	    //jq('.tabbed_content .page_content').load(jq(this).attr('href') + ' form');
+
+
+
 	return false;
     });
+
     if (jq('li.place .editable').length) {
 	var google_map_key=jq('#google_map_key').attr('href');
 	var g_url = "http://maps.google.com/maps?file=api&v=2.x&key="+google_map_key+"&async=2&callback=setup_maps";
