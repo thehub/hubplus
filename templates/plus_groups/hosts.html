@@ -1,0 +1,10 @@
+{% load i18n %}
+{% load listings %}
+
+<div>
+{% if is_host %}
+<p><a href="{% url groups:group host_group_id%}">Visit the Host Group</a></p>
+{% endif %}
+
+{% included_listing host_search host_listing_args %}
+</div>
