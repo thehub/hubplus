@@ -315,8 +315,6 @@ var profile_ready = function () {
 		});
 	    //jq('.tabbed_content .page_content').load(jq(this).attr('href') + ' form');
 
-
-
 	return false;
     });
 

@@ -69,22 +69,24 @@ def group_resources(request, group, tag_string, search, order, current_app, **kw
     return {'search':results, 'listing_args':resource_listings_args}
 
 
-def make_group_members(template_base_div_id, make_profile_id_list) :
+def make_group_members(member_or_host, make_profile_id_list) :
     """ We want two copies of this view handler, one which is based on list of group members,
     other which is based on group hosts.
     """
     @secure_resource(TgGroup, required_interfaces=['Viewer'], with_interfaces=['Viewer'])
     @subsearch
     def group_members(request, group, tag_string, search, order, current_app, **kwargs):
-        member_listings_args = listing_args(current_app + ':group_members', current_app + ':group_members_tag', 
+        member_listings_args = listing_args(current_app + ':group_%s'%member_or_host, 
+                                            current_app + ':group_%s_tag'%member_or_host, 
                                             tag_string=tag_string, search_terms=search, multitabbed=False, 
                                             order=order, template_base='plus_lib/listing_frag.html', 
-                                            template_base_div_id=template_base_div_id, group_id=group.id)
+                                            template_base_div_id=member_or_host, group_id=group.id)
 
         search_types = narrow_search_types('Profile')
         member_profile_ids=make_profile_id_list(group)
         results = plus_search(member_listings_args['tag_filter'], search, search_types, order, 
                               extra_filter={'id__in':member_profile_ids})
+
         return {'search':results, 'listing_args':member_listings_args}
 
     return group_members
@@ -218,9 +220,9 @@ def group(request, group, template_name="plus_groups/group.html", current_app='p
                                     member_profile_ids=[x.get_profile().get_ref().id for x in group.users.all()])
     host_search = a_member_search(group=group.get_admin_group(), search=search, order=order, 
                                   member_profile_ids=[x.get_profile().get_ref().id for x in group.get_admin_group().users.all()])
-    member_listing_args = listing_args(current_app+':group_members', current_app+':group_members_tag', tag_string='', search_terms=search, multitabbed=False, order=order, template_base='plus_lib/listing_frag.html', search_type_label='members')
-    member_listing_args['group_id']=group.id
+    member_listing_args = listing_args(current_app+':group_members', current_app+':group_members_tag', tag_string='', search_terms=search, multitabbed=False, order=order, template_base='plus_lib/listing_frag.html', search_type_label='members', group_id=group.id)
 
+    host_listing_args = listing_args(current_app+':group_hosts', current_app+':group_hosts_tag', tag_string='', search_terms=search, multitabbed=False, order=order, template_base='plus_lib/listing_frag.html', search_type_label='hosts', group_id=group.id)
     member_count = group.users.all().count()
     host_count = group.get_admin_group().users.all().count()
 
@@ -259,6 +261,7 @@ def group(request, group, template_name="plus_groups/group.html", current_app='p
             'member_search':member_search,
             'member_listing_args':member_listing_args,
             'host_search':host_search,
+            'host_listing_args':host_listing_args,
             'group_id':group.id,
             'search_types':search_types,
             'tagged_url':current_app + ':groups_tag',
