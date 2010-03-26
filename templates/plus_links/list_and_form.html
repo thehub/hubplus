@@ -4,8 +4,8 @@
     {% for l, l_del in links %}
     <li>
       {% if l.text %}
-      <dl id='links{{l.id}}'><dd><a href="{{l.url}}">{{l.text}}</a> 
-	  {% if l_del %}<a class="remove_link button" href="" id="{% url remove_link l.id %}">X</a>{% endif %}
+      <dl id='links{{l.id}}'><dd> <a href="{{l.url}}">{{l.text}}</a> 
+	  {% if l_del %}&nbsp;<a class="remove_link button" href="" id="{% url remove_link l.id %}">X</a>{% endif %}
       </dd></dl>
       {% endif %}
     </li>
@@ -13,7 +13,7 @@
     <li>
 
   {% if can_create %}
-  <form target="{% url add_link %}" class="link_form">
+  <form target="{% url add_link %}" class="link_form togglable">
     <input name="target_class" class="target_class" value="{{target_class_name}}" type="hidden" />
     <input name="target_id" class="target_id" value="{{target_id}}" type="hidden" />
         <table>
@@ -28,7 +28,10 @@
 	    <td><input type="submit" value="{% trans 'add' %}" class='submit_link button' /></td>
 	  </tr>
         </table>
+
   </form>
+  <input type='button' class='togglable_switch button ' value='Add Link'/>
+
   {% endif %}
     </li>
     </ul>
