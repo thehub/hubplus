@@ -9,6 +9,8 @@
         <!-- should have a permission delete tag item on the tagged_for agent -->
     {% endfor %}                   
   </ul>
+  <div>
+  <div class="togglable">
   <!-- This should only show if has permission add tags on the tagged_for agent -->
   <div class="add_tag_form" id="{% url add_generic_tag %}" > 
     <input name="tagged_class" class="tagged_class" value="{{tagged_class}}" type="hidden" />
@@ -19,5 +21,8 @@
   </div> 
   <span class="error_message"></span>
   <p class="note">Keep your tags short and concise</p>
+  </div>
+  <input type='button' class='togglable_switch button ' value='Add {{tag_type}}'/>
+  </div>
 
 </div>
