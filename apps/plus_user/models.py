@@ -286,6 +286,11 @@ def patch_user_class():
        return self.is_admin_of(get_all_members_group())
     User.is_site_admin = is_site_admin
 
+    def send_tweet(self, msg) :
+       from apps.microblogging.models import send_tweet
+       return send_tweet(self, msg)
+    User.send_tweet = send_tweet
+
     def message(self, sender, subject, body) :
        from messages.models import Message
        from django.core.mail import send_mail
