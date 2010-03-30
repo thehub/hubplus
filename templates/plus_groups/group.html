@@ -65,33 +65,36 @@
     <h3>{% trans "Links" %}</h3>
     {% plus_links target_class target_id %}
     
-    <!--
-    <h3>{   % trans "Skills and Needs" %}</h3>
-    <ul>
-      <li>
-	<dl>
-	  {  % if can_tag %}
-	  {  % plus_tag 'Skills <span class="extra">What does the group specialise in? (eg. 'nutrition')</span>' 'skills'	group user %}
-	  {  % else %}
-	  {  % view_plus_tag 'Skills' 'skills' group '' %}
-	  {  % endif %}
-	</dl>
-      </li>
-    </ul>
     
-    <ul>
-      <li>
-	<dl>
-	  {  % if can_tag %}
-	  {  % plus_tag 'Needs <span class="extra">What skills are the group looking for from other members? (eg. 'marketing')</span>' 'needs'	group	user %}
-	  {  % else %}
-	  {  % view_plus_tag 'Needs' 'needs' group '' %}
-	  {  % endif %}
-	</dl>
-      </li>
-    </ul>
-    -->
+    <h3>{% trans "Skills and Needs" %}</h3>
 
+    <div>
+      <ul>
+	<li>
+	  <dl>
+	    {% if can_tag %}
+	    {% plus_tag 'Skills <span class="extra">What does the group specialise in? (eg. 'nutrition')</span>' 'skills'	group user %}
+	    {% else %}
+	      {% view_plus_tag 'Skills' 'skills' group '' %}
+	    {% endif %}
+	  </dl>
+	</li>
+      </ul>
+    </div>
+    
+    <div>
+      <ul>
+	<li>
+	  <dl>
+	    {% if can_tag %}
+	    {% plus_tag 'Needs <span class="extra">What skills are the group looking for from other members? (eg. 'marketing')</span>' 'needs'	group	user %}
+	    {% else %}
+	    {% view_plus_tag 'Needs' 'needs' group '' %}
+	    {% endif %}
+	  </dl>
+	</li>
+      </ul>
+    </div>
   </div>
   
   <div id="extra" class="block_column">
