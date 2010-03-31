@@ -46,3 +46,12 @@ http://django-photologue.googlecode.com/files/photologue-2.1.zip
 django-reversion
 django-haystack==1.0.1_final
 # -e git://github.com/toastdriven/django-haystack.git#egg=django-haystack
+
+# redis
+#http://redis.googlecode.com/files/redis-1.2.6.tar.gz
+pyredis
+
+# concurrance
+pyrex
+greenlet
+concurrence
