@@ -33,7 +33,7 @@
 		<dd>{{ message.recipient }}</dd>
 	</dl>
 
-	<p class="message_body">{% oembed %}{% autoescape off %}{{ message.body|linebreaksbr }}{% endautoescape %}{% endoembed %}</p>
+	<p class="message_body">{% oembed %}{% autoescape off %}{{ message.body|urlize|linebreaksbr }}{% endautoescape %}{% endoembed %}</p>
 
 	{% ifequal message.recipient user %}
 		<a class="button" href="{% url messages_reply message.id %}#tabview=compose">{% trans "Reply" %}</a>
