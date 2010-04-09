@@ -79,3 +79,13 @@ def reject_application(request, resource_id, application_id, template_name="plus
     application = Application.objects.plus_get(request.user, id=application_id, interface_names=['Viewer', 'Reject'])
     application.reject(request.user, request.get_host())
     return HttpResponseRedirect(reverse('plus_groups:list_open_applications', args=[application.group.id]))
+
+
+@login_required
+@transaction.commit_on_success
+def cancel_application(request, resource_id, application_id, template_name="plus_contacts/applicant_list.html", **kwargs) :
+    application = Application.objects.plus_get(request.user, id=application_id, interface_names=['Viewer', 'Reject'])
+    application.reject(request.user, request.get_host())
+    return HttpResponseRedirect(reverse('plus_groups:list_open_applications', args=[application.group.id]))
+
+

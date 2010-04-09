@@ -253,6 +253,9 @@ COUNTRIES = (
     ('ZW', _('Zimbabwe')), 
 )
 
+def country_name(code) :
+    return (x[1] for x in COUNTRIES if x[0]==code).next()
+
 class CountryField(models.CharField):
     
     def __init__(self, *args, **kwargs):
