@@ -44,6 +44,8 @@ class WikiPageViewer:
     creation_time = InterfaceReadProperty
     author = InterfaceReadProperty
     get_display_name = InterfaceReadProperty
+    get_attachments = InterfaceCallProperty
+    is_downloadable = InterfaceCallProperty
 
 class WikiPageEditor:
     set_name = InterfaceCallProperty

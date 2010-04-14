@@ -20,6 +20,10 @@ class ResourceViewer :
     get_display_name = InterfaceReadProperty
     in_agent = InterfaceReadProperty
 
+    get_attachments = InterfaceCallProperty
+    is_downloadable = InterfaceCallProperty
+
+
 class ResourceEditor :
     set_name = InterfaceCallProperty
     title = InterfaceWriteProperty
