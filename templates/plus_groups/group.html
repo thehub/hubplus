@@ -59,6 +59,13 @@
       {% if group.should_show_address %}
       {% editable "Address" group 'address' 'Address' %}
       {% endif %}
+
+      {% if is_host %}
+      <li>
+	<div class="label">Host Group</div>
+	<div class=""><a href="{% url groups:group host_group_id%}">{{group.get_admin_group.get_display_name}}</a></div>
+      </li>
+      {% endif %}
       
     </ul>
     

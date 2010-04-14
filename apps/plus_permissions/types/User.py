@@ -84,6 +84,7 @@ class UserViewer:
     homeplace = InterfaceReadProperty
     group_invite_message = InterfaceCallProperty
     message = InterfaceCallProperty
+    groups = InterfaceReadProperty
 
 class UserEditor:
     homehub = InterfaceWriteProperty
@@ -92,6 +93,8 @@ class UserEditor:
     preferably_pre_save = InterfaceCallProperty
     post_save = InterfaceCallProperty
     save = InterfaceCallProperty
+
+    change_avatar = InterfaceCallProperty
 
 class SetManagePermissions:
     pass

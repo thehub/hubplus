@@ -3,13 +3,16 @@ import os.path
 from avatar.models import Avatar, avatar_file_path
 from avatar.forms import PrimaryAvatarForm, DeleteAvatarForm
 from django.http import HttpResponseRedirect, HttpResponse, Http404
-from django.shortcuts import render_to_response
+from django.shortcuts import render_to_response, get_object_or_404
 from django.template import RequestContext
 from django.contrib.auth.decorators import login_required
 from django.utils.translation import ugettext as _
 
+from django.contrib.auth.models import User
+
 from apps.plus_permissions.models import GenericReference
 from apps.plus_groups.models import TgGroup
+
 
 from apps.plus_lib.utils import hub_name
 def _get_next(request):
@@ -32,24 +35,26 @@ def _get_next(request):
     return next
 
 
-def change(request, extra_context={}, next_override=None, group_id=None, current_app='plus_groups',namespace='groups'):
-    if not group_id :
-        target_obj = request.user
-    else :
-        target_obj = TgGroup.objects.get(id=group_id)
+@login_required
+def change_user_avatar(request, username, **kwargs):
+    target_obj = get_object_or_404(User, username=username)
+    return change_avatar(request, target_obj, 'user', 'Profile', **kwargs)
 
+@login_required
+def change_group_avatar(request, group_id, **kwargs) :
+    target_obj = get_object_or_404(TgGroup, id=group_id)
+    if target_obj.is_hub_type() :
+        from_name = hub_name()
+    else :
+        from_name = 'Group'
+
+    return change_avatar(request, target_obj, 'group', from_name, **kwargs)
+
+
+def change_avatar(request, target_obj, target_type, from_name, extra_context={}, 
+                  next_override=None, current_app='plus_groups',namespace='groups',**kwargs):
 
     target = target_obj.get_ref()
-    if isinstance(target_obj,TgGroup) :
-        target_type = 'group'
-        if target_obj.is_hub_type() :
-            from_name = hub_name()
-        else :
-            from_name = "Group"
-    else :
-        target_type = 'user'
-        from_name = "Profile"
-
     avatars = Avatar.objects.filter(target=target).order_by('-primary')
     if avatars.count() > 0:
         avatar = avatars[0]
@@ -96,8 +101,9 @@ def change(request, extra_context={}, next_override=None, group_id=None, current
               }
         )
     )
-change = login_required(change)
 
+
+@login_required
 def delete(request, extra_context={}, next_override=None):
     avatars = Avatar.objects.filter(target=request.user.get_ref()).order_by('-primary')
     if avatars.count() > 0:
@@ -123,7 +129,7 @@ def delete(request, extra_context={}, next_override=None):
               'next': next_override or _get_next(request), }
         )
     )
-change = login_required(change)
+
 
 
 
