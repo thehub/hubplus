@@ -126,6 +126,7 @@ class TgGroupViewer:
     users = InterfaceReadProperty
     group_type = InterfaceReadProperty
 
+
 class TgGroupEditor: 
     pk = InterfaceReadProperty
     description = InterfaceWriteProperty
@@ -138,6 +139,9 @@ class TgGroupEditor:
     status = InterfaceWriteProperty
     group_type = InterfaceWriteProperty
     address = InterfaceWriteProperty
+
+    get_resources_of_class = InterfaceCallProperty
+
 
 class TgGroupDelete:
     delete = InterfaceCallProperty

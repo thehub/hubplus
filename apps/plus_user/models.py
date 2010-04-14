@@ -300,7 +300,6 @@ def patch_user_class():
        m = Message(subject=subject, body=body, sender = self, recipient=self)
        m.save()
 
-
        if self.cc_messages_to_email :
           # recipient wants emails cc-ed 
           link = 'http://' + settings.DOMAIN_NAME + reverse('messages_all')
@@ -344,7 +343,8 @@ Click %(link)s to see your account
 
     User.hubs = lambda self : self.groups.filter(group_type=settings.GROUP_HUB_TYPE,level='member')
 
-    print "Monkey Patched User Class ... gulp!"
+    User.change_avatar = lambda self : True
+
 
     AnonymousUser.is_member_of = lambda *args, **kwargs : False
     AnonymousUser.is_direct_member_of = lambda *args, **kwarg : False

@@ -95,71 +95,35 @@ def hello(a):
 def profile(request, username, template_name="profiles/profile.html"):
     #trellis.callInEventLoop(hello, "Tom")
 
-    #come on this is crap, we are opening up a common perhaps the most commonly read view with two writes. and why?
-    other_user = get_object_or_404(User, username=username)
-    #other_user.save()
-    p = other_user.get_profile()
-    #p.save()
-    if request.user.is_authenticated():
+    is_me = False
+    user = request.user
 
-        is_friend = Friendship.objects.are_friends(request.user, other_user)
-        is_following = Following.objects.is_following(request.user, other_user)
-        other_friends = Friendship.objects.friends_for_user(other_user)
-        if request.user == other_user:
+    if request.user.is_authenticated() :
+        if user.username == username :
             is_me = True
-        else:
-            is_me = False
-    else:
-        other_friends = []
-        is_friend = False
-        is_me = False
-        is_following = False
+    else :
+        user = get_anon_user()
+
+    other_user = secure_wrap(get_object_or_404(User, username=username),user)
+
+    is_following = Following.objects.is_following(request.user, other_user.get_inner())
+
+    p = other_user.get_profile()
+    profile = secure_wrap(p,user)
+    profile.user # trigger permission exception if no access
+ 
+    can_change_avatar = False
     
-    if is_friend:
-        invite_form = None
-        previous_invitations_to = None
-        previous_invitations_from = None
-    else:
-        if request.user.is_authenticated() and request.method == "POST":
-            if request.POST["action"] == "invite":
-                invite_form = InviteFriendForm(request.user, request.POST)
-                if invite_form.is_valid():
-                    invite_form.save()
-            else:
-                invite_form = InviteFriendForm(request.user, {
-                    'to_user': username,
-                    'message': ugettext("Let's be friends!"),
-                })
-                if request.POST["action"] == "accept": # @@@ perhaps the form should just post to friends and be redirected here
-                    invitation_id = request.POST["invitation"]
-                    try:
-                        invitation = FriendshipInvitation.objects.get(id=invitation_id)
-                        if invitation.to_user == request.user:
-                            invitation.accept()
-                            request.user.message_set.create(message=_("You have accepted the friendship request from %(from_user)s") % {'from_user': invitation.from_user})
-                            is_friend = True
-                            other_friends = Friendship.objects.friends_for_user(other_user)
-                    except FriendshipInvitation.DoesNotExist:
-                        pass
-        else:
-            invite_form = InviteFriendForm(request.user, {
-                'to_user': username,
-                'message': ugettext("Let's be friends!"),
-            })
-    previous_invitations_to = FriendshipInvitation.objects.filter(to_user=other_user, from_user=request.user)
-    previous_invitations_from = FriendshipInvitation.objects.filter(to_user=request.user, from_user=other_user)
-    
+    try :
+        other_user.change_avatar
+        can_change_avatar = True
+    except PlusPermissionsNoAccessException :
+        pass
+
 
     interests = get_tags(tagged=other_user.get_profile(), tagged_for=other_user, tag_type='interest')
     skills = get_tags(tagged = other_user.get_profile(), tagged_for=other_user, tag_type='skill')
     needs = get_tags(tagged = other_user.get_profile(), tagged_for=other_user, tag_type='need')
-
-
-    user = request.user
-
-    # should be deprecated
-    if not user.is_authenticated():
-        user = get_anon_user()
 
     user_type = ContentType.objects.get_for_model(other_user)
 
@@ -173,15 +137,12 @@ def profile(request, username, template_name="profiles/profile.html"):
         status_type = ''
         status_since = ''
 
-
-    profile = secure_wrap(p, user)     #interfaces = ['Viewer', 'Editor', 'EmailAddressViewer', 'HomeViewer', 'WorkViewer', 'MobileViewer', 'FaxViewer', 'AddressViewer', 'SkypeViewer', 'SipViewer']
-    profile.user # trigger permission exception if no access
-
     try:
         profile.get_all_sliders
         perms_bool = True
     except PlusPermissionsNoAccessException:
         perms_bool = False
+
     profile = TemplateSecureWrapper(profile)
 
     search_type = 'profile_list' 
@@ -200,7 +161,7 @@ def profile(request, username, template_name="profiles/profile.html"):
     except :
         pass # can't see host_info
     host_info = TemplateSecureWrapper(host_info)
-
+    
     hubs = other_user.hubs()
     non_hub_groups = [(g.group_app_label() + ':group', g) for g in other_user.groups.filter(level='member').exclude(id__in=hubs)]
     hubs = [(g.group_app_label() + ':group', g) for g in hubs]
@@ -212,17 +173,17 @@ def profile(request, username, template_name="profiles/profile.html"):
     links = get_links_for(other_user,RequestContext(request))
     if links :
         see_links = True
+
     can_tag = profile.has_interface('Profile.Editor')
+
+
     template_args = {
             "is_me": is_me,
-            "is_friend": is_friend,
             "is_following": is_following,
             "other_user": other_user,
             "profile":profile,
-            "other_friends": other_friends,
-            "invite_form": invite_form,
-            "previous_invitations_to": previous_invitations_to,
-            "previous_invitations_from": previous_invitations_from,
+            "can_change_avatar":can_change_avatar,
+
             "head_title" : "%s" % profile.get_display_name(),
             "status_type" : status_type,
             "status_since" : status_since,

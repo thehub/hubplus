@@ -28,8 +28,8 @@
     
     <div id="page_image" class="image member">
       {% avatar other_user 180 %}
-      {% if is_me %}
-      <a href="{% url avatar_change %}" id="avatar_replace" class="bt_edit icon_button">(replace)</a>
+      {% if can_change_avatar %}
+      <a href="{% url avatar_change other_user.username%}" id="avatar_replace" class="bt_edit icon_button">(replace)</a>
       {% endif %}
     </div>
     

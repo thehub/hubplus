@@ -403,6 +403,7 @@ class GenericReference(models.Model):
     # If there are only these, we can add a choice to this field, but I'm not 100% certain yet.
     permission_prototype = models.CharField(max_length=10, null=True)
 
+    attachments = models.ManyToManyField('GenericReference',related_name='attached_to')
 
     def delete(self) :
         # remove the generic reference
