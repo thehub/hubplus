@@ -45,7 +45,9 @@ def target_name(target) :
 class Avatar(models.Model):
 
     # XXX we want to get rid of user, but leave it here until we've moved data across
-    user = models.ForeignKey(User,null=True)
+    user = models.ForeignKey(User,null=True) # deprecated, shouldn't be used
+
+
     target = models.ForeignKey(GenericReference, null=True)
 
     primary = models.BooleanField(default=False)

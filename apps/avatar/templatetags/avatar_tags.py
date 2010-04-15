@@ -30,7 +30,7 @@ def get_true_target(target_obj) :
 
 
 def get_default_avatar_url(target_obj) :
-    if target_obj.__class__.__name__ == 'User':
+    if target_obj.is_user() :
         return AVATAR_DEFAULT_URL
     if target_obj.is_hub_type() :
         return AVATAR_DEFAULT_HUB_URL

@@ -54,6 +54,7 @@ def change_group_avatar(request, group_id, **kwargs) :
 def change_avatar(request, target_obj, target_type, from_name, extra_context={}, 
                   next_override=None, current_app='plus_groups',namespace='groups',**kwargs):
 
+    # XXX some of this should probably be refactored into the model layer 
     target = target_obj.get_ref()
     avatars = Avatar.objects.filter(target=target).order_by('-primary')
     if avatars.count() > 0:
@@ -82,6 +83,7 @@ def change_avatar(request, target_obj, target_type, from_name, extra_context={},
                 primary_avatar_form.cleaned_data['choice'])
             avatar.primary = True 
             avatar.save()
+            
             request.user.message_set.create(
                 message=_("Successfully updated your avatar."))
         return HttpResponseRedirect(next_override or _get_next(request))
