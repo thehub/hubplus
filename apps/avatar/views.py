@@ -146,20 +146,24 @@ def get_url(request, username) :
 
 
 
-def get_avatar(request, username, size=100) :
-    from apps.avatar.templatetags.avatar_tags import avatar_url
-    user = get_object_or_404(User,username=username)    
+def get_avatar(request, username, size=100) :    
+    from apps.plus_lib.lighttpd_serve import send_file, get_mimetype, get_path_from_webserver, \
+         get_last_modified, file_exists
 
-    avatar = Avatar.objects.get_for_target(user)
-    
-    from apps.plus_lib.lighttpd_serve import send_file,  get_mimetype, get_path_from_webserver, get_last_modified
+    user = get_object_or_404(User, username=username)
 
-    file_size = avatar.avatar.file.size    
-    server_path = get_path_from_webserver(avatar.avatar.file.name)    
-    mimetype = get_mimetype(avatar.avatar.file.name)
-    last_modified = get_last_modified(avatar.avatar.file.name)
+    try :
+        avatar = Avatar.objects.get_for_target(user)
+        file_size = avatar.avatar.file.size    
+        server_path = get_path_from_webserver(avatar.avatar.file.name)    
+        mimetype = get_mimetype(avatar.avatar.file.name)
+        last_modified = get_last_modified(avatar.avatar.file.name)
+        
+        new_filename=avatar.avatar.file.name.split('/')[-1]  
+        content_disposition = 'attachment;filename=%s'%new_filename
+        
+        print file_size, server_path, mimetype, last_modified, content_disposition
+        return send_file(server_path, file_size, mimetype, last_modified, content_disposition)
 
-    print file_size, server_path, mimetype, last_modified
-    return send_file(server_path, file_size, mimetype, last_modified)
-
-    
+    except Avatar.DoesNotExist :
+        return HttpResponseRedirect('/site_media/images/member.jpg')
