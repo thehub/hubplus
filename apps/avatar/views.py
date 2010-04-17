@@ -143,4 +143,23 @@ def get_url(request, username) :
         return HttpResponse("%s" % avatar_url(user), mimetype='text/plain')
     except :
         raise Http404('File does not exist')
- 
+
+
+
+def get_avatar(request, username, size=100) :
+    from apps.avatar.templatetags.avatar_tags import avatar_url
+    user = get_object_or_404(User,username=username)    
+
+    avatar = Avatar.objects.get_for_target(user)
+    
+    from apps.plus_lib.lighttpd_serve import send_file,  get_mimetype, get_path_from_webserver, get_last_modified
+
+    file_size = avatar.avatar.file.size    
+    server_path = get_path_from_webserver(avatar.avatar.file.name)    
+    mimetype = get_mimetype(avatar.avatar.file.name)
+    last_modified = get_last_modified(avatar.avatar.file.name)
+
+    print file_size, server_path, mimetype, last_modified
+    return send_file(server_path, file_size, mimetype, last_modified)
+
+    

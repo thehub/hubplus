@@ -42,18 +42,36 @@ def target_name(target) :
         raise Exception("An avatar is attached to something (%s,%s), but can't get a name for it."%(target.__class__.__name__,target.id))
 
 
+class AvatarManager(models.Manager) :
+    def get_for_target(self, target_obj, size=80):
+        target = target_obj.get_ref()
+        avatars = target.avatar_set.order_by('-date_uploaded')
+        primary = avatars.filter(primary=True)
+
+        if primary.count() > 0:
+            avatar = primary[0]
+        elif avatars.count() > 0:
+            avatar = avatars[0]
+        else:
+            raise Avatar.DoesNotExist
+        if not avatar.thumbnail_exists(size):
+            avatar.create_thumbnail(size)
+        return avatar
+        
+
 class Avatar(models.Model):
 
     # XXX we want to get rid of user, but leave it here until we've moved data across
     user = models.ForeignKey(User,null=True) # deprecated, shouldn't be used
-
 
     target = models.ForeignKey(GenericReference, null=True)
 
     primary = models.BooleanField(default=False)
     avatar = models.ImageField(max_length=1024, upload_to=avatar_file_path, blank=True)
     date_uploaded = models.DateTimeField(default=datetime.datetime.now)
-    
+
+    objects = AvatarManager()
+
     def target_name(self) :
         target = self.target.obj
         return target_name(target)
@@ -100,3 +118,9 @@ class Avatar(models.Model):
     def avatar_name(self, size):
         return os.path.join(AVATAR_STORAGE_DIR, self.target_name(),
             'resized', str(size), self.avatar.name)
+
+    def full_path(self) :
+        return self.avatar.path
+
+
+
