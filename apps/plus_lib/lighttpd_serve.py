@@ -34,14 +34,14 @@ def get_last_modified(path) :
    return http_date(statobj[stat.ST_MTIME])
 
 
-def send_file(path, file_size, mimetype, last_modified) :
+def send_file(path, file_size, mimetype, last_modified, content_disposition) :
     response = HttpResponse(mimetype=mimetype)
     response["Last-Modified"] = last_modified
     response["Content-Length"] = file_size
     response['X-Sendfile'] = path
 
-    new_filename=path.split('/')[-1]
-    response['Content-Disposition'] = 'attachment;filename=%s'%new_filename
+
+    response['Content-Disposition'] = content_disposition
 
     return response
 
