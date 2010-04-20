@@ -52,6 +52,9 @@ django-haystack==1.0.1_final
 pyredis
 
 # concurrance
-pyrex
-greenlet
-concurrence
+#pyrex
+#greenlet
+#concurrence
+
+# rmi
+#Pyro
