@@ -9,6 +9,9 @@ import stat
 PINAX_MEDIA_ROOT = os.path.join(settings.PINAX_ROOT, 'media', settings.PINAX_THEME)
 WEBSERVER_MEDIA_ROOT = getattr(settings, 'WEBSERVER_MEDIA_ROOT',PINAX_MEDIA_ROOT)
 
+SITE_MEDIA_ROOT = getattr(settings, 'MEDIA_ROOT',
+    os.path.join(settings.PROJECT_ROOT, 'site_media'))
+
 
 def get_path_from_webserver(file_path) :
     # XXXX this is a horrible hack ... please find a better way of doing this
@@ -33,6 +36,9 @@ def get_last_modified(path) :
    statobj = os.stat(path)
    return http_date(statobj[stat.ST_MTIME])
 
+
+def get_size(path) :
+    return len(open(path, 'rb').read())
 
 def send_file(path, file_size, mimetype, last_modified, content_disposition) :
     response = HttpResponse(mimetype=mimetype)
