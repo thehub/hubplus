@@ -211,8 +211,8 @@ def profile(request, username, template_name="profiles/profile.html"):
     labels = {'MAIN_HUB_LABEL':_('Main %s')%settings.HUB_NAME,
               'MAIN_HUB_DEFAULT':_("No %s selected")%settings.HUB_NAME}
     template_args.update(labels)
-    return render_to_response(template_name, template_args, context_instance=RequestContext(request))
 
+    return render_to_response(template_name, template_args, context_instance=RequestContext(request))
 
 
 def our_profile_permission_test(fn) :
