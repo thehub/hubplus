@@ -155,7 +155,7 @@ def get_avatar(request, username, size=100) :
     try :
         avatar = Avatar.objects.get_for_target(user)
         if not avatar.thumbnail_exists(size) :
-            avatar.create_thumbnail(size)
+            avatar.create_thumbnail(int(size))
      
  
         file_path = SITE_MEDIA_ROOT +'/'+avatar.avatar_name(size)
