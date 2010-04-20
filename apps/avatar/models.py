@@ -83,6 +83,8 @@ class Avatar(models.Model):
         if self.primary:
             avatars = Avatar.objects.filter(target=self.target, primary=True).exclude(id=self.id)
             avatars.update(primary=False)
+            self.target.obj.has_avatar = True
+            self.target.obj.save()
         super(Avatar, self).save(force_insert, force_update)
     
     def thumbnail_exists(self, size):

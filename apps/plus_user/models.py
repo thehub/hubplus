@@ -258,6 +258,8 @@ def patch_user_class():
 
     User.add_to_class('cc_messages_to_email',models.BooleanField(default=False)) # internal messages get reflected to email
 
+    User.add_to_class('has_avatar', models.BooleanField(default=False))
+
     User.email = AliasOf('email_address')
     if settings.PROJECT_THEME == 'plus':
        User.post_or_zip = AliasOf('md_postcode')
