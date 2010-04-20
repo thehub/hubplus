@@ -8,7 +8,7 @@ useradd -m -s /bin/bash psn
 
 # get python dev
 apt-cache search python-dev
-sudo apt-get install python-dev git-core curl emacs22-nox python-psycopg2 libxslt1-dev gcc python-imaging rsync postgresql-client-8.3
+sudo apt-get install python-dev git-core curl emacs22-nox python-psycopg2 libxslt1-dev gcc python-imaging rsync postgresql-client-8.3 libevent-dev
 
 # create directory
 cd /
@@ -263,3 +263,18 @@ lighttpd -t -f /etc/lighttpd/lighttpd.conf
 
 # restart lighty (or reload could be faster)
 sudo /etc/init.d/lighttpd restart
+
+
+Installing Redis
+================
+
+# download the latest redis following the instructions here : http://code.google.com/p/redis/wiki/QuickStart
+
+wget http://redis.googlecode.com/files/redis-1.02.tar.gz
+tar xvzf redis-1.02.tar.gz
+cd redis-1.02
+make
+
+# test run the redis server with 
+./redis-server
+# but would be better to put this under supervisord control

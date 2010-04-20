@@ -278,7 +278,6 @@ class Application(models.Model):
 
 def create_messages(sender, instance, **kwargs):
 
-
     if instance is None:
         return
     application = instance
@@ -298,8 +297,12 @@ def create_messages(sender, instance, **kwargs):
                 group_name = application.group.get_display_name()
 
             find_out = ""
+            country = ""
             if isinstance(application.applicant, Contact):
                 find_out = application.applicant.find_out
+                from apps.plus_lib.countryfield import country_name
+                country = country_name(application.applicant.country)
+
             context = Context({'first_name':application.applicant.first_name,
                                'last_name':application.applicant.last_name,
                                'email_address':application.applicant.email_address,
@@ -307,7 +310,8 @@ def create_messages(sender, instance, **kwargs):
                                'group_name':group_name,
                                'request':application.request,
                                'review_url':review_url,
-                               'find_out':find_out})
+                               'find_out':find_out,
+                               'country':country})
 
             msg = Template(settings.APPLICATION_MESSAGE).render(context)
             approver.message(sender=sender, 
