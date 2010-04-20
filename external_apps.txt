@@ -30,6 +30,8 @@ django-flag
 django-debug-toolbar
 django-db-log
 
+django-rosetta
+
 # packages we create for release::
 http://django-tagging.googlecode.com/svn/trunk/
 http://django-voting.googlecode.com/svn/trunk/
