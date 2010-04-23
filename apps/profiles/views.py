@@ -108,10 +108,11 @@ def profile(request, username, template_name="profiles/profile.html"):
 
     is_following = Following.objects.is_following(request.user, other_user.get_inner())
 
-    p = other_user.get_profile()
+    p = other_user.get_inner().get_profile()
+
     profile = secure_wrap(p,user)
     profile.user # trigger permission exception if no access
- 
+
     can_change_avatar = False
     
     try :
@@ -121,9 +122,9 @@ def profile(request, username, template_name="profiles/profile.html"):
         pass
 
 
-    interests = get_tags(tagged=other_user.get_profile(), tagged_for=other_user, tag_type='interest')
-    skills = get_tags(tagged = other_user.get_profile(), tagged_for=other_user, tag_type='skill')
-    needs = get_tags(tagged = other_user.get_profile(), tagged_for=other_user, tag_type='need')
+    interests = get_tags(tagged=profile.get_inner(), tagged_for=other_user, tag_type='interest')
+    skills = get_tags(tagged = profile.get_inner(), tagged_for=other_user, tag_type='skill')
+    needs = get_tags(tagged = profile.get_inner(), tagged_for=other_user, tag_type='need')
 
     user_type = ContentType.objects.get_for_model(other_user)
 
@@ -161,7 +162,7 @@ def profile(request, username, template_name="profiles/profile.html"):
     except :
         pass # can't see host_info
     host_info = TemplateSecureWrapper(host_info)
-    
+
     hubs = other_user.hubs()
     non_hub_groups = [(g.group_app_label() + ':group', g) for g in other_user.groups.filter(level='member').exclude(id__in=hubs)]
     hubs = [(g.group_app_label() + ':group', g) for g in hubs]
@@ -211,8 +212,13 @@ def profile(request, username, template_name="profiles/profile.html"):
     labels = {'MAIN_HUB_LABEL':_('Main %s')%settings.HUB_NAME,
               'MAIN_HUB_DEFAULT':_("No %s selected")%settings.HUB_NAME}
     template_args.update(labels)
-    return render_to_response(template_name, template_args, context_instance=RequestContext(request))
-
+    try:
+        ret = render_to_response(template_name, template_args, context_instance=RequestContext(request))
+    except PlusPermissionsNoAccessException, e :
+        import ipdb
+        print e
+        ipdb.set_trace()
+    return ret
 
 
 def our_profile_permission_test(fn) :
