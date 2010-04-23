@@ -484,7 +484,7 @@ def get_enclosures(self, levels=None) :
     """Give us all the things of which this user/group is a member_of
     """
     if levels == None:
-        levels = ['member', 'host']
+        levels = ['member', 'host', 'public']
 
     if isinstance(self, User):
         return self.groups.filter(level__in=levels)
