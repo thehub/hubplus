@@ -214,6 +214,7 @@ def profile(request, username, template_name="profiles/profile.html"):
 
     return render_to_response(template_name, template_args, context_instance=RequestContext(request))
 
+
 def our_profile_permission_test(fn) :
     """ Trying to put our permission testing into a decorator """
     def our_fn(request,username,*args,**kwargs) :
