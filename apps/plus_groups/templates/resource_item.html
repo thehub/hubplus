@@ -9,7 +9,7 @@
   <dt>{% trans "Name" %}</dt>
   <dd><a href="{{resource_url}}">{{resource.display_name}}</a> ({{resource.display_type}})</dd>
   <dt>{% trans "Description" %}</dt>
-  <dd>{% autoescape off %}{{resource.content|truncatewords_html:20}}{% endautoescape %}</dd>
+  <dd>{% autoescape off %}{{resource.content|striptags|truncatewords:20}}{% endautoescape %}</dd>
   <dt>{% trans "In Group" %}</dt>
   <dd><a href="{% url plus_groups:group resource.in_agent.obj.id %}">{{resource.in_agent.display_name}}</a></dd>
   {% view_plus_tag 'Tags' ''  resource  '' %}

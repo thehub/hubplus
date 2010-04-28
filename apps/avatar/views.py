@@ -12,7 +12,7 @@ from django.contrib.auth.models import User
 
 from apps.plus_permissions.models import GenericReference
 from apps.plus_groups.models import TgGroup
-
+from django.conf import settings
 
 from apps.plus_lib.utils import hub_name
 def _get_next(request):
@@ -54,6 +54,7 @@ def change_group_avatar(request, group_id, **kwargs) :
 def change_avatar(request, target_obj, target_type, from_name, extra_context={}, 
                   next_override=None, current_app='plus_groups',namespace='groups',**kwargs):
 
+    # XXX some of this should probably be refactored into the model layer 
     target = target_obj.get_ref()
     avatars = Avatar.objects.filter(target=target).order_by('-primary')
     if avatars.count() > 0:
@@ -82,6 +83,7 @@ def change_avatar(request, target_obj, target_type, from_name, extra_context={},
                 primary_avatar_form.cleaned_data['choice'])
             avatar.primary = True 
             avatar.save()
+            
             request.user.message_set.create(
                 message=_("Successfully updated your avatar."))
         return HttpResponseRedirect(next_override or _get_next(request))
@@ -141,4 +143,33 @@ def get_url(request, username) :
         return HttpResponse("%s" % avatar_url(user), mimetype='text/plain')
     except :
         raise Http404('File does not exist')
+
+
+
+def get_avatar(request, username, size=100) :    
+    from apps.plus_lib.lighttpd_serve import send_file, get_mimetype, get_size, \
+         get_last_modified, file_exists, SITE_MEDIA_ROOT, WEBSERVER_MEDIA_ROOT
+
+    user = get_object_or_404(User, username=username)
+
+    try :
+        avatar = Avatar.objects.get_for_target(user)
+        if not avatar.thumbnail_exists(size) :
+            avatar.create_thumbnail(int(size))
+     
  
+        file_path = SITE_MEDIA_ROOT +'/'+avatar.avatar_name(size)
+        lightty_path = WEBSERVER_MEDIA_ROOT + avatar.avatar_name(size)
+
+        file_size = get_size(file_path)
+        mimetype = get_mimetype(file_path)
+        last_modified = get_last_modified(file_path)
+        
+        new_filename=avatar.avatar.file.name.split('/')[-1]  
+        content_disposition = 'attachment;filename=%s'%new_filename
+        
+        print file_size, lightty_path, mimetype, last_modified, content_disposition
+        return send_file(lightty_path, file_size, mimetype, last_modified, content_disposition)
+
+    except Avatar.DoesNotExist :
+        return HttpResponseRedirect('/site_media/images/member.jpg')

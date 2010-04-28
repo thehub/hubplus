@@ -37,6 +37,7 @@ class TemplateSecureWrapper:
             show_attr = name.split('should_show_')[1]
             if self.can_write(show_attr) :
                 return True
+
             val = self.__getattr__(show_attr)
             if val == NotViewable :
                 # need a separate test because the *class* NotViewable evaluates to True, 

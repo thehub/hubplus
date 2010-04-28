@@ -86,6 +86,11 @@ class UserViewer:
     message = InterfaceCallProperty
     groups = InterfaceReadProperty
 
+    is_group = InterfaceCallProperty
+    is_user = InterfaceCallProperty
+
+    has_avatar = InterfaceReadProperty
+
 class UserEditor:
     homehub = InterfaceWriteProperty
     homeplace = InterfaceWriteProperty
@@ -95,6 +100,7 @@ class UserEditor:
     save = InterfaceCallProperty
 
     change_avatar = InterfaceCallProperty
+    has_avatar = InterfaceWriteProperty
 
 class SetManagePermissions:
     pass
@@ -128,6 +134,7 @@ def get_slider_agents(scontext)  :
 
 
 
+
 def visible_agents():
     return ['anonymous_group', 'all_members_group', 'context_agent']
 SetVisibleAgents(User, visible_agents())
@@ -157,10 +164,10 @@ def setup_defaults():
     public_defaults = {'User':
                            {'defaults': 
                                {'Viewer': 'anonymous_group',
-                                'Editor': 'context_admin',
-                                 'SetManagePermissions': 'context_admin',
+                                'Editor': 'context_agent',
+                                 'SetManagePermissions': 'context_agent',
                                  'ManagePermissions':'context_agent',
-                                 'CreateLink': 'context_admin',
+                                 'CreateLink': 'context_agent',
                                  'Unknown': 'context_agent'
                                  },                           
                             'constraints':

@@ -258,6 +258,8 @@ def patch_user_class():
 
     User.add_to_class('cc_messages_to_email',models.BooleanField(default=False)) # internal messages get reflected to email
 
+    User.add_to_class('has_avatar', models.BooleanField(default=False))
+
     User.email = AliasOf('email_address')
     if settings.PROJECT_THEME == 'plus':
        User.post_or_zip = AliasOf('md_postcode')
@@ -268,6 +270,9 @@ def patch_user_class():
     User.is_active = AliasOf('active') # This takes precedence over the existing is_active field in django.contrib.auth.models
     User.add_to_class('active', models.SmallIntegerField(null=True)) # not currently shown, however setting this to 0 will stop the user logging in
 
+    #User.add_to_class('image', models.CharField(null=True, default="", max_length= XXXX)
+
+
     User.set_password = set_password
     User.check_password = check_password
     User.is_member_of = is_member_of
@@ -275,6 +280,7 @@ def patch_user_class():
     User.get_enclosures = get_enclosures
     User.get_enclosure_set = get_enclosure_set
     User.is_group = lambda(self) : False
+    User.is_user = lambda(self) : True
 
     User.save = user_save
     User.post_save = post_save

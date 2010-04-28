@@ -212,14 +212,8 @@ def profile(request, username, template_name="profiles/profile.html"):
     labels = {'MAIN_HUB_LABEL':_('Main %s')%settings.HUB_NAME,
               'MAIN_HUB_DEFAULT':_("No %s selected")%settings.HUB_NAME}
     template_args.update(labels)
-    try:
-        ret = render_to_response(template_name, template_args, context_instance=RequestContext(request))
-    except PlusPermissionsNoAccessException, e :
-        import ipdb
-        print e
-        ipdb.set_trace()
-    return ret
 
+    return render_to_response(template_name, template_args, context_instance=RequestContext(request))
 
 def our_profile_permission_test(fn) :
     """ Trying to put our permission testing into a decorator """

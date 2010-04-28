@@ -82,10 +82,8 @@ def serve_upload(request, group_id, upload_id, path) :
 
 def get_webserver_path(path) :
     # need this alternative path from the lighttpd 
-    # XXX this is an emergency fix, when I get back from holiday,
-    # do it properly
     return WEBSERVER_MEDIA_ROOT + path
-    #return "/mnt/hubplus-static/mhpss/"+path
+
 
 def serve(request, path, show_indexes=False):
     """

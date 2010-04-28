@@ -276,6 +276,7 @@ try :
                 member.message(sender, message_header, message_body)
 
         def is_group(self) : return True
+        def is_user(self) : return False
 
         def post_leave(self, user_or_group) :
             """ this method, a break out of other stuff which happens when members leave groups,
