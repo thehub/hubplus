@@ -1,13 +1,46 @@
 # common between uploads (plus_resources) / wikipages etc.
+from django.db import models
 
 from datetime import datetime
 from apps.plus_tags.models import tag_item_delete, TagItem
 from apps.plus_groups.models import TgGroup
+from apps.plus_permissions.models import GenericReference
+from django.contrib.auth.models import User
+
+from django.shortcuts import render_to_response, get_object_or_404
+from django.http import Http404
+from django.template import RequestContext
+from django.http import HttpResponse, HttpResponseRedirect, HttpResponseForbidden
+from django.conf import settings
+from django.core.exceptions import ValidationError
+from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import ugettext
+
 
 class NameConflictException(Exception) :
     pass
 
-def resource_common(cls) :
+
+class ResourceCommonModel(models.Model) :
+    name = models.CharField(max_length=100)
+    title = models.CharField(max_length=100)
+
+    stub = models.BooleanField(default=True)
+    in_agent = models.ForeignKey(GenericReference,related_name="%(class)s_related")
+    created_by = models.ForeignKey(User, related_name="created_%(class)s", null=True) 
+    #stubs shouldn't be created by anyone or owned by anyone (imo) - t.s.
+
+    class Meta:
+        abstract = True
+        unique_together = (("name", "in_agent"),)
+
+    def set_name(self, name):
+        self.check_name(name, self.in_agent, obj=self)
+        self.name = name
+
+    def display_name(self):
+        return self.title
+
 
     def move_to_new_group(self, group) :
         try :
@@ -20,8 +53,7 @@ def resource_common(cls) :
         self.acquires_from(group)
         self.save()
 
-    cls.move_to_new_group = move_to_new_group
-
+    @classmethod
     def check_name(cls, name, in_agent, obj=None):
         try:
             res = cls.objects.get(name=name, in_agent=in_agent)
@@ -32,25 +64,22 @@ def resource_common(cls) :
         except cls.DoesNotExist:
             pass
 
-    cls.check_name = classmethod(check_name)
 
     def delete(self) :
         for tag_item in TagItem.objects.filter(ref=self.get_ref()):
             tag_item_delete(tag_item)
         ref = self.get_ref()
         ref.delete()
-        super(self.__class__,self).delete()
+        models.Model.delete(self)
 
-    cls.delete = delete
 
     def save(self):
-        super(self.__class__, self).save()
+        models.Model.save(self) # can't use super because this designed to be called by subclass, which leads to recursionOB
         ref = self.get_ref()
         ref.modified = datetime.now()
         ref.display_name = self.get_display_name()
         ref.save()
 
-    cls.save = save
 
     def display_type(self) :
         if self.__class__.__name__ == 'Resource' :
@@ -58,15 +87,21 @@ def resource_common(cls) :
         if self.__class__.__name__ == 'WikiPage' :
             return 'Page'
         return self.__class__.__name__
-    cls.display_type = display_type
 
 
     def list_siblings(self) :
         return self.in_agent.obj.get_resources_in_class(self.__class__)
-    cls.list_siblings = list_siblings
 
+    def get_attachments(self) :
+        return self.get_ref().attachments
 
-    return cls
+    def add_attachment(self, attachment):
+        self.get_ref().attachments.add(attachment.get_ref())
+    
+    def is_downloadable(self) :
+        # override if downloadable
+        return False
+
 
 
 
