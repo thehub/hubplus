@@ -1,34 +1,22 @@
 
 from apps.plus_lib.models import extract
-from apps.plus_lib.utils import title_to_name, overlay
+from apps.plus_lib.utils import title_to_name
 
 import unittest
 
-class TestExtract(unittest.TestCase) :
-
-    def test_extract(self) :
-        d = {'a':1, 'b':2}
-        a = extract(d,'a')
-        self.assertEquals(a,1)
-        self.assertEquals(d,{'b':2})
-
-
-    def test_title_to_name(self):
-        self.assertEquals(title_to_name('hello world'),u'hello_world')
+class TestIt(unittest.TestCase) :
+    def test(self) :
+        class A() :
+            def __init__(self,id) :
+                self.id = id
+        a = A(123)
+        from django.conf import settings
+        self.assertEquals(cache_key('FROM_OBJ',obj=a), settings.DOMAIN_NAME + ":FROM_OBJ:A:123")
+        self.assertEquals(cache_key('FROM_CLASS_AND_ID',cls=A,id=456), settings.DOMAIN_NAME + ":FROM_CLASS_AND_ID:A:456")
         
 
-    def test_overlay(self) :
-        d = {}
-        d2 = overlay(d, {'a':1}) 
-        self.assertEquals(d2,{'a':1})
 
-        d = {'a':1, 'b':{'c':2}, 'd':[1,2,3] }
-        d2 = overlay(d,{'a':11, 'b': {'c2':3}})
-        self.assertEquals(d2,{'a':11,'b':{'c':2,'c2':3},'d':[1,2,3]})
-        
-        d = {'a':{'b':{'c':2}}}
-        d2 = {'a':{'b':{'c':3}}}
-        d2 = overlay(d, d2)
-        self.assertEquals(d2['a']['b']['c'],3)
+from apps.plus_lib.redis_lib import cache_key
 
-
+if __name__ == "__main__":
+    unittest.run()
