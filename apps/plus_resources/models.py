@@ -9,7 +9,7 @@ from datetime import datetime
 from apps.plus_lib.models import extract
 from django.core.files.base import File
 
-from apps.plus_groups.resources_common import resource_common
+from apps.plus_groups.resources_common import ResourceCommonModel
 
 import os
 
@@ -27,29 +27,12 @@ def upload_to(instance, file_name) :
     owner_id = owner.id
     return "member_res/%s/%s/%s/%s" % (owner_class, owner_id, instance.id, file_name)
 
-class Resource(models.Model):
-
-    in_agent = models.ForeignKey(GenericReference, related_name="resources")
-
-    title = models.CharField(max_length=100)
-    def display_name(self):
-        return self.title
-    
-    def set_name(self, name):
-        self.check_name(name, self.in_agent, obj=self)
-        self.name = name
+class Resource(ResourceCommonModel):
 
     description = models.TextField(default='')
-
     author = models.CharField(max_length=100)
     license = models.CharField(max_length=50)
-
     resource = models.FileField(upload_to=upload_to)
-    created_by = models.ForeignKey(User, related_name="created_resource", null=True) 
-
-    stub = models.BooleanField(default=True) # for compatibility with content creation
-    name = models.CharField(max_length=100)
-        
 
     def download_url(self) :
         if self.resource :
@@ -62,12 +45,11 @@ class Resource(models.Model):
 
     def content(self) :
         return self.description
-#        return """%s
-#%s,
-#%s,
-#%s""" % (self.title, self.description, self.author, self.created_by.get_display_name())
-        
 
+
+    def is_downloadable(self) :
+        return True
+    
 
     def get_file_name(self) :
         if '/' in self.resource.file.name : 
@@ -114,7 +96,6 @@ class Resource(models.Model):
         pass
         # dummy, for testing
 
-Resource = resource_common(Resource)
 
 def update_attributes(resource_obj, user, **kwargs) :
 
