@@ -28,6 +28,15 @@ def getPostgreSQLConnection():
 if __name__ == "__main__":
     patch_db("""ALTER TABLE tg_user ADD "has_avatar" bool; """)
 
+    patch_db("""CREATE TABLE "plus_permissions_genericreference_attachments" (
+    "id" serial NOT NULL PRIMARY KEY,
+    "from_genericreference_id" integer NOT NULL REFERENCES "plus_permissions_genericreference" ("id") DEFERRABLE INITIALLY DEFERRED,
+    "to_genericreference_id" integer NOT NULL REFERENCES "plus_permissions_genericreference" ("id") DEFERRABLE INITIALLY DEFERRED,
+    UNIQUE ("from_genericreference_id", "to_genericreference_id")
+)
+;
+ """)
+
     from django.contrib.auth.models import User
     from apps.avatar.models import Avatar
 
