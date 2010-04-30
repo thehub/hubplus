@@ -534,7 +534,7 @@ def get_enclosures(self, levels=None) :
         return TgGroup.objects.filter(id__in=get_enclosure_ids(self.__class__, self.id))
  
     if levels == None:
-        levels = ['member', 'host']
+        levels = ['member', 'host', 'public']
 
     if isinstance(self, User):
         return self.groups.filter(level__in=levels)

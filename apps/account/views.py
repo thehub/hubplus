@@ -483,7 +483,8 @@ def proxied_signup(request, application, form_class=SignupForm,
             form.data['email_address'] = applicant.email_address
             form.data['first_name'] = applicant.first_name
             form.data['last_name'] = applicant.last_name 
-            form.data['username'] = applicant.first_name.lower() + '.' + applicant.last_name.lower() #normalize and uniquify
+            form.data['username'] = applicant.first_name.lower().strip() + '.' + applicant.last_name.lower().strip() 
+            #normalize and uniquify
             display_name = form.data['first_name'] + ' ' + form.data['last_name']
 
         else :
