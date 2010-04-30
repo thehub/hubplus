@@ -52,7 +52,7 @@ django-haystack==1.0.1_final
 # redis
 #http://redis.googlecode.com/files/redis-1.2.6.tar.gz
 pyredis
-
+redis
 # concurrance
 #pyrex
 #greenlet
