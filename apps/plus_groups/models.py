@@ -18,17 +18,17 @@ from django.contrib.contenttypes.models import ContentType
 from django.template import Template, Context
 from django.contrib.contenttypes import generic
 
+from apps.plus_lib.redis_lib import redis, add_to_cached_set, cache_key, invalidates_membership_cache, ONE_LEVEL_MEMBERSHIP_KEY, MULTI_LEVEL_MEMBERSHIP_KEY
+
 class Location(models.Model):
     class Meta:
         db_table = u'location'
 
     name = models.CharField(unique=True, max_length=200)
 
-
 #patch django orm's "create_many_related_manager"
 from django.db.models.fields.related import *
 import django.db.models.fields.related
-
 
 def create_many_related_manager(superclass, through=False):
     """Creates a manager that subclasses 'superclass' (which is a Manager)
@@ -207,6 +207,8 @@ try :
 
         status = StatusDescriptor() 
 
+
+        @invalidates_membership_cache
         def post_join(self, user_or_group) :
             """ this method, a break out of other stuff which happens when members join groups,
             can be called as an independent funtion from syncer"""
@@ -225,7 +227,7 @@ try :
                 {'joiner':user_or_group.get_display_name(),'group':self.get_display_name()})
             send_tweet(user_or_group, message)
 
-            
+        @invalidates_membership_cache
         def add_member(self, user_or_group):
             if isinstance(user_or_group, User) and not self.users.filter(id=user_or_group.id):
                 from apps.plus_permissions.types.Profile import ProfileInterfaces
@@ -278,6 +280,8 @@ try :
         def is_group(self) : return True
         def is_user(self) : return False
 
+
+        @invalidates_membership_cache
         def post_leave(self, user_or_group) :
             """ this method, a break out of other stuff which happens when members leave groups,
             can be called as an independent function from syncer"""
@@ -301,7 +305,7 @@ try :
                 user_or_group.homehub = get_all_members_group()
                 user_or_group.save()
 
-
+        @invalidates_membership_cache
         def remove_member(self, user_or_group):
             if isinstance(user_or_group, User) and self.users.filter(id=user_or_group.id):
                 self.users.remove(user_or_group)
@@ -446,10 +450,11 @@ try :
                 if r.in_agent.obj == self :
                     resources.append(r)
             return resources 
-    
+
+
+
 except Exception, e:
     print "##### %s" % e
-
 
 
 class User_Group(models.Model):
@@ -469,7 +474,6 @@ def is_member_of(self, group, already_seen=None) :
     for x in self.get_enclosures():
         if x.id not in already_seen:
             already_seen.add(x.id)
-        #need to do cycle detection here - since groups can be a member of a any group including a group which is a member of it.
             if x.is_member_of(group, already_seen): 
                 return True
     return False
@@ -478,12 +482,57 @@ def is_member_of(self, group, already_seen=None) :
 TgGroup.is_member_of = is_member_of
 
 # to be added to User class
+
+def get_enclosure_ids(cls,id) :
+    """ Note, these are depth 1 membership ids. And note also that all enclosures, are, by definition TgGroup
+    cls is the actual python class (django model class) ... cache_key takes its name
+    """
+    key = cache_key(ONE_LEVEL_MEMBERSHIP_KEY, cls=cls, id=id)
+    if redis.exists(key) :
+        return redis.smembers(key)
+
+    # if not cached, get the object and get its enclosures
+    obj = cls.objects.get(id=id)
+    memberships = set([x.id for x in obj.get_enclosures()])
+    
+    add_to_cached_set(key, memberships)
+    return memberships
+
+def get_enclosure_id_set(cls, self_id, seen=None) :
+
+    key = cache_key(MULTI_LEVEL_MEMBERSHIP_KEY,cls=cls, id=self_id)
+    if redis.exists(key) :
+        return redis.smembers(key)
+
+    if not seen :
+        seen = set([self_id])
+
+    if cls == TgGroup :
+        es = set([self_id])
+    else :
+        es = set([])
+    for e_id in get_enclosure_ids(cls, self_id ) :
+        if e_id not in seen :
+            seen.add(e_id)
+            multi_memberships = get_enclosure_id_set(TgGroup, e_id, seen)
+            es = es.union(set(multi_memberships))
+            seen = seen.union([m for m in multi_memberships])
+
+    add_to_cached_set(key, es)
+    return es
+
+# to be added to TgGroup and User classes
 def get_enclosures(self, levels=None) :
     # XXX TO-DO given that this is now different for Users and Groups 
     # no need to have one function assigned to both with a different test
     # just put different versions into respective classes
     """Give us all the things of which this user/group is a member_of
     """
+
+    key = cache_key(ONE_LEVEL_MEMBERSHIP_KEY, self)
+    if redis.exists(key) :
+        return TgGroup.objects.filter(id__in=get_enclosure_ids(self.__class__, self.id))
+ 
     if levels == None:
         levels = ['member', 'host']
 
@@ -494,20 +543,21 @@ def get_enclosures(self, levels=None) :
 
 TgGroup.get_enclosures = get_enclosures
 
-# set of all enclosures
-# to be added to User class
 
+def get_enclosure_set(self, seen=None):
+    key = cache_key(MULTI_LEVEL_MEMBERSHIP_KEY, self)
+    if redis.exists(key) :
+        return TgGroup.objects.filter(id__in=redis.smembers(key))
 
-def get_enclosure_set(self) :
-    #XXX this needs to stop recursive group membership leading to continual recursion - currently this is implemented in is_member_of
-    es = set([self])
-    for e in self.get_enclosures() :
-        if e != self :
-            es = es.union(e.get_enclosure_set())
-    return es
-    
+    es = get_enclosure_id_set(self.__class__, self.id)
+    add_to_cached_set(key, es)
+
+    return TgGroup.objects.filter(id__in=[x for x in es])
 
 TgGroup.get_enclosure_set = get_enclosure_set
+
+
+
 
 # to be added to User class
 def is_direct_member_of(self, group) :
@@ -658,3 +708,5 @@ def invite_to_group(group, invited, invited_by, message) :
 
     group.invite_member(invited, invited_by, message)
  
+
+
