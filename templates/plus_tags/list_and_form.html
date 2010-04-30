@@ -1,28 +1,30 @@
+{% load togglable %}
+
 <div class="label">
-	{{label}}
+  {{label}}
 </div>
 <div class="value tag_manager" id="{{tag_type}}">
   <ul class="tag_list" id="{% url delete_generic_tag %}">
     {% for t in tags %}
     <li {% if forloop.first %}class="first"{% endif %}><a href="{% url explore_filtered  t.keyword  %}" class="tag option">{{t.keyword}}</a>
-        <a class="delete_tag">X</a></li>
-        <!-- should have a permission delete tag item on the tagged_for agent -->
+      <a class="delete_tag">X</a></li>
+    <!-- should have a permission delete tag item on the tagged_for agent -->
     {% endfor %}                   
   </ul>
-  <div>
-  <div class="togglable">
+  
+  
+  {% togglable "Add" tag_type %}
   <!-- This should only show if has permission add tags on the tagged_for agent -->
   <div class="add_tag_form" id="{% url add_generic_tag %}" > 
     <input name="tagged_class" class="tagged_class" value="{{tagged_class}}" type="hidden" />
     <input name="tagged_id" class="tagged_id" value="{{tagged_id}}" type="hidden" />
     <input name="tag_type" type="hidden" class="tag_type text" value="{{tag_type}}" />
     <input name="tag_value" class="tag_value text" id="{% url autocomplete_typed_tag tag_type %}" />
-    <input class="button add_tag" type="submit" value="Add" />
+	<input class="button add_tag" type="submit" value="Add" />
   </div> 
   <span class="error_message"></span>
   <p class="note">Keep your tags short and concise</p>
-  </div>
-  <input type='button' class='togglable_switch button ' value='Add {{tag_type}}'/>
-  </div>
+  
+  {% endtogglable %}
 
 </div>
