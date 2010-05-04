@@ -1,4 +1,6 @@
 {% load i18n %}
+{% load togglable %}
+
 <div class='external_links'>
   <ul class="list_of_links">
     {% for l, l_del in links %}
@@ -11,11 +13,12 @@
     </li>
     {% endfor %}
     <li>
-
-  {% if can_create %}
-  <form target="{% url add_link %}" class="link_form togglable">
-    <input name="target_class" class="target_class" value="{{target_class_name}}" type="hidden" />
-    <input name="target_id" class="target_id" value="{{target_id}}" type="hidden" />
+      
+      {% if can_create %}
+      {% togglable "Add a link" %}
+      <form target="{% url add_link %}" class="link_form">
+	<input name="target_class" class="target_class" value="{{target_class_name}}" type="hidden" />
+	<input name="target_id" class="target_id" value="{{target_id}}" type="hidden" />
         <table>
 	  <tr>
 	    <td><label for="text">{% trans "Title" %} <span class="extra">{% trans "('Website', 'Flickr')" %}</span></label></td>
@@ -28,11 +31,11 @@
 	    <td><input type="submit" value="{% trans 'add' %}" class='submit_link button' /></td>
 	  </tr>
         </table>
-
-  </form>
-  <input type='button' class='togglable_switch button ' value='Add Link'/>
-
-  {% endif %}
+	
+      </form>
+      
+      {% endtogglable %}
+      {% endif %}
     </li>
-    </ul>
+  </ul>
 </div>

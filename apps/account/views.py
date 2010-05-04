@@ -111,6 +111,9 @@ def site_settings(request, template_name='account/settings.html'):
     return render_to_response(template_name, {'form':form}, context_instance=RequestContext(request))
 
 
+def fast_login(request) :
+    return login(request, success_url=reverse('help'))
+
 def login(request, form_class=LoginForm,
         template_name="account/login.html", success_url=None,
         associate_openid=False, openid_success_url=None, url_required=False):
@@ -480,7 +483,8 @@ def proxied_signup(request, application, form_class=SignupForm,
             form.data['email_address'] = applicant.email_address
             form.data['first_name'] = applicant.first_name
             form.data['last_name'] = applicant.last_name 
-            form.data['username'] = applicant.first_name.lower() + '.' + applicant.last_name.lower() #normalize and uniquify
+            form.data['username'] = applicant.first_name.lower().strip() + '.' + applicant.last_name.lower().strip() 
+            #normalize and uniquify
             display_name = form.data['first_name'] + ' ' + form.data['last_name']
 
         else :

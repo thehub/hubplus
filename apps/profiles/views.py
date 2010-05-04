@@ -108,7 +108,7 @@ def profile(request, username, template_name="profiles/profile.html"):
 
     is_following = Following.objects.is_following(request.user, other_user.get_inner())
 
-    p = other_user.get_profile()
+    p = other_user.get_inner().get_profile()
     profile = secure_wrap(p,user)
     profile.user # trigger permission exception if no access
  
@@ -120,10 +120,12 @@ def profile(request, username, template_name="profiles/profile.html"):
     except PlusPermissionsNoAccessException :
         pass
 
-
-    interests = get_tags(tagged=other_user.get_profile(), tagged_for=other_user, tag_type='interest')
-    skills = get_tags(tagged = other_user.get_profile(), tagged_for=other_user, tag_type='skill')
-    needs = get_tags(tagged = other_user.get_profile(), tagged_for=other_user, tag_type='need')
+    interests = get_tags(tagged=other_user.get_inner().get_profile(), 
+                         tagged_for=other_user.get_inner(), tag_type='interest')
+    skills = get_tags(tagged = other_user.get_inner().get_profile(), 
+                      tagged_for=other_user.get_inner(), tag_type='skill')
+    needs = get_tags(tagged = other_user.get_inner().get_profile(), 
+                     tagged_for=other_user.get_inner(), tag_type='need')
 
     user_type = ContentType.objects.get_for_model(other_user)
 
@@ -162,8 +164,9 @@ def profile(request, username, template_name="profiles/profile.html"):
         pass # can't see host_info
     host_info = TemplateSecureWrapper(host_info)
     
-    hubs = other_user.hubs()
-    non_hub_groups = [(g.group_app_label() + ':group', g) for g in other_user.groups.filter(level='member').exclude(id__in=hubs)]
+    hubs = other_user.get_inner().hubs()
+    non_hub_groups = [(g.group_app_label() + ':group', g) for g in 
+                      other_user.get_inner().groups.filter(level='member').exclude(id__in=hubs)]
     hubs = [(g.group_app_label() + ':group', g) for g in hubs]
 
     see_about = is_me or show_section(profile, ('about',))
@@ -180,7 +183,7 @@ def profile(request, username, template_name="profiles/profile.html"):
     template_args = {
             "is_me": is_me,
             "is_following": is_following,
-            "other_user": other_user,
+            "other_user": other_user.get_inner(), # XXX - should fix this get_inner
             "profile":profile,
             "can_change_avatar":can_change_avatar,
 
@@ -213,7 +216,6 @@ def profile(request, username, template_name="profiles/profile.html"):
     template_args.update(labels)
 
     return render_to_response(template_name, template_args, context_instance=RequestContext(request))
-
 
 def our_profile_permission_test(fn) :
     """ Trying to put our permission testing into a decorator """

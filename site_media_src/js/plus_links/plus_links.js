@@ -40,14 +40,4 @@ var plus_links_ready = function () {
 	links(ele);
     });
 
-    jq('.togglable').each(function(i, ele) {
-	    jq(this).toggle();
-	    var form = this;
-	    jq(this).parent().find('.togglable_switch').click(function() { 
-		    jq(form).toggle();
-		    jq(this).toggle();
-		    return false;
-	    });
-	
-    });
 };

@@ -298,6 +298,7 @@ var add_content = function () {
 
 
 
+
 var profile_ready = function () {
     add_content();
     wiki_edit();
@@ -326,6 +327,40 @@ var profile_ready = function () {
     //jq.getJSON('map_tags/', {}, init_rgraph);
 
     setup_user_lists();
+
+
+    // set up togglable 
+    jq('.togglable').each(function(i, ele) {
+            jq(this).toggle();
+
+            var panel = this;
+            var button = jq(this).parent().find('.togglable_switch');
+            var old_button_name = jq(button).attr('value');
+            var shown = false;
+
+            var show = function() {
+                jq(button).attr('value','Cancel');
+                jq(panel).toggle();
+                shown = true;
+                return false;
+            };
+	    
+            var hide = function() {
+                jq(button).attr('value',old_button_name);
+                jq(panel).toggle();
+                shown = false;
+                return false;
+            };
+	    
+            jq(button).click(function() {
+                    if (shown) {
+                        hide();
+                    } else {
+                        show();
+                    }
+                    return false;
+		});
+	});
 
 };
 

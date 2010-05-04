@@ -92,9 +92,13 @@ email: {{email_address}}
 
 {% if find_out %}
 {{first_name}} {{last_name}} found out about {{group_name}} by:
-
 {{find_out}}
 {% endif %}
+
+{% if country %}
+{{first_name}} {{last_name}} comes from {{country}}
+{% endif %}
+
 {{first_name}} {{last_name}} wants to join {{group_name}} because:
 
 {{request}}
