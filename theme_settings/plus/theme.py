@@ -17,7 +17,7 @@ TOP_LEVEL_TABS = [(_('Home'), 'home', ''), (EXPLORE_NAME, 'explore', 'explore'),
 
 SITE_NAME = _("Hub+")
 SITE_NAME_SHORT = _("Hub+")
-
+SITE_NAME_SENTENCE = _("the Hub+ network")
 
 
 GROUP_TYPES = (

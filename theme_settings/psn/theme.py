@@ -22,6 +22,7 @@ VIRTUAL_HUB_DISPLAY_NAME = 'MHPSS Network'
 
 SITE_NAME = _("Mental Health and Psychosocial Support Network")
 SITE_NAME_SHORT = _("MHPSS Network")
+SITE_NAME_SENTENCE = _("the MHPSS network")
 
 GROUP_TYPES = (
     (u'interest', u'Interest'),
