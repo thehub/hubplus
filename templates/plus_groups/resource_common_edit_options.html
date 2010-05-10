@@ -25,24 +25,6 @@
 </fieldset>
 {% endtogglable %}
 
-{% if pages %}
-{% togglable "Attach to a Page" %}
-<fieldset class="buttons">
-  <div>{% trans "Attach to another page in this group." %}.</div>
-  <ul id="attach">
-    <li>
-
-      {  % listing pages 'THIS IS THE LABEL' 'ORDER' 'SEARCH TERMS' pages_listings_args %}
-
-    </li>
-    <li class="delete_hide">
-      <input class="button" id="attach_submit" name="attach_submit" type="submit" value="Move"/>
-    </li>
-  </ul>
-</fieldset>
-
-{% endtogglable %}
-{% endif %}
 
 {% togglable "Delete this resource" %}
 <fieldset class="buttons">
