@@ -96,6 +96,7 @@ def set_search_order(request, form):
     request.session['order'] = order 
     return search, order
 
+
 def filter(request, tag_string, template_name='plus_explore/explore_filtered.html'):
     """ this should be integrated with index into a single method - probably
     """
@@ -116,6 +117,56 @@ def filter(request, tag_string, template_name='plus_explore/explore_filtered.htm
                                               'listing_args':listing_args_dict,
                                               'search':search_dict,
                                               'search_args':side_search,}, context_instance=RequestContext(request))
+
+
+from django.utils.feedgenerator import Rss201rev2Feed, Enclosure
+ 
+def rss_explore(request, tag_string) :
+    from apps.plus_lib.redis_lib import redis
+    feed_type = 'rss2.0' # XXX decide how to send this as parameter to link
+    key = "feed:"+feed_type+":"+tag_string
+    if redis.exists(key) :
+        return HttpResponse(redis.get(key),mimetype="application/xhtml+xml")
+    else :
+        feed = Rss201rev2Feed(title=settings.SITE_NAME+" : "+tag_string,
+                              link='http://'+settings.DOMAIN_NAME+reverse('explore_filtered_feed',args=(tag_string,)),
+                              description=_("Items tagged with %s" % tag_string) )
+        # XXX decide how to parameterize which feed type, title, description, link
+
+        form = SearchForm(request.GET)
+        if form.is_valid():
+            search, order = set_search_order(request, form)
+        else:
+            search = ''
+            order = ''
+
+        side_search = side_search_args('', '')
+        search_types = get_search_types()
+        head_title = settings.EXPLORE_NAME
+        listing_args_dict = listing_args('explore', 'explore_filtered', tag_string=tag_string, search_terms=search, multitabbed=True, order=order, template_base="site_base.html", search_type_label=head_title)
+        search_dict = plus_search(listing_args_dict['tag_filter'], search, search_types, order)
+
+
+        for item_ref in search_dict['All']:
+            item = item_ref.obj
+
+            feed.add_item(title=item.get_display_name(), 
+                          link=item.get_url(), 
+                          description=item.get_description(),
+                          author_name=item.get_author_name(),
+                          author_copyright=item.get_author_copyright(),
+                          pubdate=item.get_created_date(),
+                          **(item.get_feed_extras())
+                          )
+
+
+        feed_string = feed.writeString('utf-8')
+        #redis.set(key,feed_string)
+        #redis.expire(key,60*60*1) # sets expire every 1 hour
+        return HttpResponse(feed_string, mimetype="application/xhtml+xml")
+
+        
+
 
 
 object_type_filters = {Resource:{'stub':False},
