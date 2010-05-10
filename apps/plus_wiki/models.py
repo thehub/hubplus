@@ -1,6 +1,7 @@
 from django.db import models
 from apps.plus_permissions.models import GenericReference
 from django.contrib.auth.models import User
+from django.conf import settings
 
 
 from apps.plus_groups.resources_common import ResourceCommonModel
@@ -18,6 +19,7 @@ class WikiPage(ResourceCommonModel):
         """ XXX will refactor creating a comment on the wiki into this function, at the moment, 
         at the moment, used for permission testing"""
         pass
+
 
 
 import reversion

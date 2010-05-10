@@ -28,6 +28,8 @@ from reversion.models import Version
 from datetime import datetime
 import simplejson as json
 
+from apps.plus_lib.search import listing_args
+
 from apps.plus_groups.resources_common import MoveResourceForm
 
 # HTMLDIFF
@@ -65,7 +67,8 @@ def edit_wiki(request, group, page_name, template_name="plus_wiki/create_wiki.ht
                                'form_action':reverse(current_app + ":create_WikiPage", args=[secure_page.in_agent.obj.id, secure_page.name]),
                                'contributors':contributors,
                                'tags':get_tags_for_object(secure_page, request.user),
-                               'permissions':perms_bool}, 
+                               'permissions':perms_bool,
+                               }, 
                               context_instance=RequestContext(request, current_app=current_app))
 
 @revision.create_on_success
@@ -74,6 +77,7 @@ def edit_wiki(request, group, page_name, template_name="plus_wiki/create_wiki.ht
 def create_wiki_page(request, group, page_name, template_name="plus_wiki/create_wiki.html", current_app='plus_groups', **kwargs):
     """creates OR saves WikiPages
     """
+
     try:
         obj = WikiPage.objects.plus_get(request.user, name=page_name, in_agent=group.get_ref())
     except:
@@ -213,8 +217,11 @@ def view_wiki_page(request, group, page_name, template_name="plus_wiki/wiki.html
             'tags': get_tags_for_object(obj, request.user),
             'permissions':perms_bool,
             'can_edit': edit,
-            'comparable':version_list.count()>1}, context_instance=RequestContext(request, current_app=current_app))
+            'comparable':version_list.count()>1,
+           
+            'pages_listings_args':listing_args('home', 'home', ''),
 
+            }, context_instance=RequestContext(request, current_app=current_app))
 
 
 
