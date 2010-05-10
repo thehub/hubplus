@@ -12,11 +12,9 @@
 
   <div class="tabbed_content yui-content">
 	{% included_listing resource_search resource_listing_args %}
-	<!--{  % include "plus_groups/members.html" %}-->
 	{% included_listing member_search member_listing_args %}
 	{% include "plus_groups/activity.html" %}
 	{% include "plus_groups/comments.html" %}
-	<!--{  % included_listing host_search host_listing_args %}-->
 	{% include "plus_groups/hosts.html" %}
   </div>
 
