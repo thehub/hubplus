@@ -11,6 +11,8 @@ from apps.plus_permissions.default_agents import get_admin_user, get_site
 from timezones.fields import TimeZoneField
 from datetime import datetime
 
+from apps.plus_explore.models import Explorable
+
 import itertools
 
 class DelegateToUser(object) :
@@ -34,7 +36,7 @@ class ProfileStatusDescriptor(object):
         send_tweet(profile.user,val)
 
 
-class Profile(models.Model):    
+class Profile(Explorable):    
    user = models.ForeignKey(User, unique=True, verbose_name=_('user'))
    def content(self):
       return """
@@ -118,6 +120,21 @@ class Profile(models.Model):
    class Meta:
       verbose_name = _('profile')
       verbose_name_plural = _('profiles')
+
+
+   # methods over-riding Explorable
+   def get_url(self) :
+      from django.core.urlresolvers import reverse
+      return 'http://%s%s' % (settings.DOMAIN_NAME, reverse('profile_detail',args=(self.user.username,)))
+
+   def get_description(self) :
+      return self.get_display_name()
+
+   def get_author_name(self) :
+      return self.get_display_name()
+
+   def get_author_copyright(self) :
+      return self.get_display_name()
 
 import logging
 
