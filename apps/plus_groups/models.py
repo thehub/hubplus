@@ -164,7 +164,9 @@ django.db.models.fields.related.create_many_related_manager = create_many_relate
 
 
 try :
-    class TgGroup(models.Model):
+    from apps.plus_explore.models import Explorable 
+
+    class TgGroup(Explorable):
         
         class Meta:
             db_table = u'tg_group'
@@ -450,6 +452,17 @@ try :
                 if r.in_agent.obj == self :
                     resources.append(r)
             return resources 
+
+        # methods over-riding Explorable 
+        def get_url(self) :
+            from django.core.urlresolvers import reverse
+            current_app = 'groups:group'
+            if self.is_hub_type() :
+                current_app = settings.HUB_APP_NAME
+            return 'http://%s%s' % (settings.DOMAIN_NAME, reverse('plus_groups:group',args=(self.id,)))
+            
+        def get_description(self) :
+            return self.get_display_name()
 
 
 

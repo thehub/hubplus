@@ -16,12 +16,14 @@ from django.core.exceptions import ValidationError
 from django.utils.translation import ugettext_lazy as _
 from django.utils.translation import ugettext
 
+from apps.plus_lib.utils import hub_name
 
 class NameConflictException(Exception) :
     pass
 
+from apps.plus_explore.models import Explorable
 
-class ResourceCommonModel(models.Model) :
+class ResourceCommonModel(Explorable) :
     name = models.CharField(max_length=100)
     title = models.CharField(max_length=100)
 
@@ -93,7 +95,7 @@ class ResourceCommonModel(models.Model) :
         return self.in_agent.obj.get_resources_in_class(self.__class__)
 
     def get_attachments(self) :
-        return self.get_ref().attachments
+        return self.get_ref().attachments.all()
 
     def add_attachment(self, attachment):
         self.get_ref().attachments.add(attachment.get_ref())
@@ -102,8 +104,25 @@ class ResourceCommonModel(models.Model) :
         # override if downloadable
         return False
 
+    # for Explorable interface
+    def get_description(self) :
+        return self.get_display_name()
+   
+    def get_author_name(self) :
+        return self.created_by.get_display_name()
 
 
+    def get_url_root(self) :
+        group_label = 'group'
+        if self.in_agent.obj.is_hub_type():
+            group_label = hub_name().lower()
+        return group_label + "s:"
+
+    def get_url(self) :
+        from django.core.urlresolvers import reverse
+        url = reverse(self.get_url_root()+'view_'+self.__class__.__name__,args=(self.in_agent.obj.id,self.name))
+        return 'http://%s%s' % (settings.DOMAIN_NAME, url)
+    
 
 # Forms
 from django import forms
