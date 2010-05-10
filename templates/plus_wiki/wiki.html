@@ -2,6 +2,7 @@
 {% load i18n %}
 {% load plus_tags %}
 {% load threadedcommentstags %}
+{% load listings %}
 
 {% block page_header %}
 <a id="parent" href="{% url plus_groups:group group_id %}">{{group_display_name}}</a>
@@ -39,15 +40,17 @@
   <ul class="tabbed_navigation yui-nav">
     {% get_comment_count for page as comment_count %}
     <li class="selected"><a href="#comments"><span>{% trans "Comments" %}({{comment_count}})</span></a></li>
-    <li><a href="#attachments"><span>{% trans "Attachments" %} (0)</span></a></li>
+    <li><a href="#attachments"><span>{% trans "Attachments" %} ({{page.get_attachments.count}})</span></a></li>
     <li><a href="#history"><span>{% trans "History" %} ({{version_list.count}} {% trans "revisions" %})</span></a></li>    
   </ul>
   <div class="tabbed_content yui-content">
     <div id="comments">
       {% include "plus_wiki/comments.html" %}
     </div>
-    <div id="attachments">
-      Attachments go here
+    <div id="attachments"> 
+        {% if page.get_attachments %}
+	      {% listing page.get_attachments 'THIS IS THE LABEL' 'ORDER' 'SEARCH TERMS' pages_listings_args %}
+	{% endif %}
     </div>
     <div id="history">
       <form id="page_id-{{page.id}}" action="{% url plus_groups:compareversions_WikiPage group_id page.name %}">
