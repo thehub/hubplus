@@ -21,6 +21,8 @@ class UploadFileForm(forms.Form):
 
     new_parent_group = forms.CharField(required=False) 
 
+    attached_to = forms.CharField(required=False)
+
     def __init__(self, *args, **kwargs) :
         if kwargs.has_key('user') :
             self.user = kwargs['user']
@@ -42,6 +44,15 @@ class UploadFileForm(forms.Form):
                 raise forms.ValidationError(_("There is no group with the id you submitted."))
         return self.cleaned_data['new_parent_group']
         
+
+    def clean_attached_to(self) :
+        # allows the resource to be attached to something
+        if self.data.has_key('attached_to') :
+            attached_to = self.data['attached_to']
+        else :
+            attached_to = ''
+        return attached_to
+
     def clean(self):
         obj = self.data['obj']        
 

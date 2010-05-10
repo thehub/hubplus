@@ -27,9 +27,11 @@ from django.core.files import File
 
 from apps.plus_permissions.exceptions import PlusPermissionsNoAccessException
 
+from apps.plus_wiki.models import WikiPage
+
 import os
 
-
+from apps.plus_lib.search import listing_args
 
 from apps.plus_tags.models import get_tags_for_object, tag_item_delete, TagItem
 
@@ -59,7 +61,6 @@ def edit_resource(request, group, resource_name,
         perms_bool = False
 
     if request.POST:
-
         post_kwargs = request.POST.copy()
         post_kwargs['obj'] = secure_upload
 
@@ -118,12 +119,16 @@ def edit_resource(request, group, resource_name,
 
     return render_to_response(template_name, {
         'upload': TemplateSecureWrapper(secure_upload),
+        'resource':TemplateSecureWrapper(secure_upload), # let's us use resource_common included template
         'data' : form.data,
         'errors': form.errors,
         'form_action':'',
         'form_encoding':'enctype=multipart/form-data',
         'permissions':perms_bool,
-        'tags':tags
+        'tags':tags,
+        'pages':[p.get_ref() for p in group.get_resources_of_class(WikiPage)],
+        'pages_listings_args':listing_args('home', 'home', '')
+        
     }, context_instance=RequestContext(request, current_app=current_app))
 #'group_permissions_prototype': group.get_ref().permission_prototype
 

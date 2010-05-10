@@ -96,6 +96,14 @@ class Resource(ResourceCommonModel):
         pass
         # dummy, for testing
 
+    # overrides for explorable
+    def get_feed_extras(self) :
+        from django.utils.feedgenerator import Rss201rev2Feed, Enclosure
+        import mimetypes
+
+        enclosure = Enclosure('http://%s%s'% (settings.DOMAIN_NAME,self.download_url()), '%s'%self.resource.size,  
+                              mimetypes.guess_type(self.resource.path)[0] or 'application/octet-stream' )
+        return {'enclosure':enclosure}
 
 def update_attributes(resource_obj, user, **kwargs) :
 
