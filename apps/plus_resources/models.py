@@ -101,9 +101,13 @@ class Resource(ResourceCommonModel):
         from django.utils.feedgenerator import Rss201rev2Feed, Enclosure
         import mimetypes
 
-        enclosure = Enclosure('http://%s%s'% (settings.DOMAIN_NAME,self.download_url()), '%s'%self.resource.size,  
+        enclosure = Enclosure('http://%s%s'% (settings.DOMAIN_NAME,self.download_url()), 
+                              '%s'%self.resource.size,  
                               mimetypes.guess_type(self.resource.path)[0] or 'application/octet-stream' )
         return {'enclosure':enclosure}
+
+    def get_description(self) :
+        return self.description
 
 def update_attributes(resource_obj, user, **kwargs) :
 

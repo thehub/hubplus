@@ -5,6 +5,7 @@ from django.conf import settings
 
 
 from apps.plus_groups.resources_common import ResourceCommonModel
+from django.utils.html import strip_tags
 
 class WikiPage(ResourceCommonModel):
 
@@ -20,6 +21,8 @@ class WikiPage(ResourceCommonModel):
         at the moment, used for permission testing"""
         pass
 
+    def get_description(self) :
+        return strip_tags(self.content)
 
 
 import reversion
