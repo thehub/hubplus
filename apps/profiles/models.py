@@ -128,7 +128,7 @@ class Profile(Explorable):
       return 'http://%s%s' % (settings.DOMAIN_NAME, reverse('profile_detail',args=(self.user.username,)))
 
    def get_description(self) :
-      return self.get_display_name()
+      return self.about
 
    def get_author_name(self) :
       return self.get_display_name()
