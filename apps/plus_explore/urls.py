@@ -27,6 +27,9 @@ urlpatterns = patterns('',
                        url(r'^goto_tag/$', 'plus_explore.views.goto_tag', name='goto_tag'),
                        url(r'^tags/(?P<tag_string>[ \w\+\._-]*)/$', 'plus_explore.views.filter', name='explore_filtered'),  
                        url(r'^tag_feed/rss/(?P<tag_string>[ \w\+\._-]*)/$', 'plus_explore.views.rss_explore', name='explore_filtered_feed'),
+                       url(r'^tag_feed/rss/(?P<tag_string>[ \w\+\._-]*)/(?P<s_type>[\w]+)/$', 'plus_explore.views.rss_explore', name='explore_filtered_typed_feed'),
+
+
                        #url(r'^tag_feed/atom/(?P<tag_string>[ \w\+\._-]*)/$', 'plus_explore.views.atom_explore', name='explore_filtered_feed'),
 
 

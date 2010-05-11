@@ -120,8 +120,9 @@ def filter(request, tag_string, template_name='plus_explore/explore_filtered.htm
 
 
 from django.utils.feedgenerator import Rss201rev2Feed, Enclosure
- 
-def rss_explore(request, tag_string) :
+
+# XXX needs refactoring 
+def rss_explore(request, tag_string, s_type=None) :
     from apps.plus_lib.redis_lib import redis
     feed_type = 'rss2.0' # XXX decide how to send this as parameter to link
     key = "feed:"+feed_type+":"+tag_string
@@ -141,7 +142,12 @@ def rss_explore(request, tag_string) :
             order = ''
 
         side_search = side_search_args('', '')
-        search_types = get_search_types()
+
+        if s_type :
+            search_types = narrow_search_types(s_type)
+        else :
+            search_types = get_search_types()
+
         head_title = settings.EXPLORE_NAME
         listing_args_dict = listing_args('explore', 'explore_filtered', tag_string=tag_string, search_terms=search, multitabbed=True, order=order, template_base="site_base.html", search_type_label=head_title)
         search_dict = plus_search(listing_args_dict['tag_filter'], search, search_types, order)
@@ -161,6 +167,7 @@ def rss_explore(request, tag_string) :
 
 
         feed_string = feed.writeString('utf-8')
+        # uncomment the following when we start to cache
         #redis.set(key,feed_string)
         #redis.expire(key,60*60*1) # sets expire every 1 hour
         return HttpResponse(feed_string, mimetype="application/xhtml+xml")
