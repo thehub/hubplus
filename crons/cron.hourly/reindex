@@ -1,0 +1,4 @@
+#!/bin/bash
+cd /opt/apphomes/plusdev/hubplus/
+source ../bin/activate
+python manage.py update_index > /dev/null

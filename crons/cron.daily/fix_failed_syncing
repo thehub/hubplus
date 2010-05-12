@@ -1,0 +1,5 @@
+#!/bin/bash
+# need to change these directories
+cd /opt/apphomes/plusdev/hubplus/
+source ../bin/activate
+python manage.py fix_failed_syncing > /dev/null
