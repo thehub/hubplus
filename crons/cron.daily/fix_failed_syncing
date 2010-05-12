@@ -1,5 +1,5 @@
 #!/bin/bash
-# need to change these directories
-cd /opt/apphomes/plusdev/hubplus/
+cd /opt/apphomes/hubplus/pinax-env/hubplus/
 source ../bin/activate
+
 python manage.py fix_failed_syncing > /dev/null
