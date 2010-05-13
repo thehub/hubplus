@@ -98,6 +98,7 @@ def profile(request, username, template_name="profiles/profile.html"):
     is_me = False
     user = request.user
 
+
     if request.user.is_authenticated() :
         if user.username == username :
             is_me = True
@@ -115,7 +116,7 @@ def profile(request, username, template_name="profiles/profile.html"):
     can_change_avatar = False
     
     try :
-        other_user.change_avatar
+        profile.change_avatar
         can_change_avatar = True
     except PlusPermissionsNoAccessException :
         pass

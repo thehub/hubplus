@@ -72,9 +72,6 @@ class ProfileEditor:
 
     status = InterfaceWriteProperty
 
-    display_name = InterfaceWriteProperty
-    title = InterfaceWriteProperty
-
     address = InterfaceWriteProperty
     country = InterfaceWriteProperty
     post_or_zip = InterfaceWriteProperty
@@ -93,6 +90,7 @@ class ProfileEditor:
     last_name = InterfaceWriteProperty
 
     cc_messages_to_email = InterfaceWriteProperty
+    change_avatar = InterfaceCallProperty
 
 from apps.plus_permissions.models import add_type_to_interface_map
 

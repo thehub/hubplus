@@ -556,7 +556,6 @@ def has_access(agent, resource, interface, sec_context=None) :
         typ = resource.__class__
         interface_name = interface.split('.')[1]
         if interface_name in get_interface_map(typ.__name__):
-
             agent_defaults = AgentDefaults[context.context_agent.obj.__class__][context.context_agent.permission_prototype]
             slider_agents = SliderAgents[context.context_agent.obj.__class__](context)
             sad = dict(slider_agents)
@@ -568,10 +567,12 @@ def has_access(agent, resource, interface, sec_context=None) :
                                              security_context=context).agents
     
 
-    # probably should memcache both allowed agents (per .View interface) and 
+    # probably should redis both allowed agents (per .View interface) and 
     # agents held per user to allow many queries very quickly. 
     allowed_agents = set([a.obj for a in allowed_agents.all()])
     
+    if agent in allowed_agents : # agent must hold itself. agent.get_enclosures no longer includes agent
+        return True
 
     if get_anonymous_group() in allowed_agents: 
         # in other words, if this resource is matched with anyone, we don't have to test 
@@ -585,6 +586,7 @@ def has_access(agent, resource, interface, sec_context=None) :
                 return True
 
     agents_held = agent.get_enclosure_set()
+
     if allowed_agents.intersection(agents_held):
         return True
 
