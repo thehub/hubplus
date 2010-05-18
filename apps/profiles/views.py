@@ -115,8 +115,6 @@ def profile(request, username, template_name="profiles/profile.html"):
  
     can_change_avatar = False
     
-    import ipdb
-    ipdb.set_trace()
     try :
         other_user.change_avatar
         can_change_avatar = True
