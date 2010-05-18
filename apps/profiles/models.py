@@ -117,6 +117,8 @@ class Profile(Explorable):
       ref.display_name = self.get_display_name()
       ref.save()
 
+   def change_avatar(self) :
+      pass # just for permission testing
 
    class Meta:
       verbose_name = _('profile')
