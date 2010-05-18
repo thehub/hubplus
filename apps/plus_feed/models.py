@@ -94,7 +94,7 @@ class FeedManager(models.Manager) :
         from apps.plus_permissions.interfaces import secure_wrap
         for f in Following.objects.followers_of(source) :
             # test permission
-            secure_item = secure_wrap(item,f.follower_content_object)
+            secure_item = secure_wrap(item,f)
             if secure_item.has_interface('FeedItem.Viewer') :
                 key = feed_for_key(f)
                 redis.lpush(key,item.id)
