@@ -224,10 +224,9 @@ try :
                 for prof in ProfileInterfaces:
                     user_or_group.get_security_context().add_arbitrary_agent(admin_group, 'Profile.%s' % prof, admin)
 
-            from apps.microblogging.models import send_tweet # avoid circularity                                         
-            message = _("%(joiner)s joined the group %(group)s") % (
-                {'joiner':user_or_group.get_display_name(),'group':self.get_display_name()})
-            send_tweet(user_or_group, message)
+
+            from apps.plus_feed.models import FeedItem # avoid circularity
+            FeedItem.post_JOIN(user_or_group, self)
 
         @invalidates_membership_cache
         def add_member(self, user_or_group):
@@ -297,11 +296,9 @@ try :
                 for prof in ProfileInterfaces:
                     user_or_group.get_security_context().remove_arbitrary_agent(admin_group, 'Profile.%s' % prof, admin)
 
-            from apps.microblogging.models import send_tweet
-            message = _("%(leaver)s left the group %(group)s") % (
-                {'leaver':user_or_group.get_display_name(),'group':self.get_display_name()})
-            send_tweet(user_or_group, message)
-            
+            from apps.plus_feed.models import FeedItem
+            FeedItem.post_LEAVE(user_or_group, self)
+
             # if I was the homehome for this user, change
             if user_or_group.homehub == self :
                 user_or_group.homehub = get_all_members_group()

@@ -134,6 +134,11 @@ def create_wiki_page(request, group, page_name, template_name="plus_wiki/create_
             obj.copyright_holder = copyright_holder
             obj.stub = False
             obj.save()
+
+            from apps.plus_feed.models import FeedItem
+            FeedItem.post_WIKI_PAGE(request.user, obj)
+
+
             return HttpResponseRedirect(reverse(current_app + ':view_WikiPage', args=[group.id, obj.name]))
 
     return render_to_response(template_name, 
@@ -141,7 +146,8 @@ def create_wiki_page(request, group, page_name, template_name="plus_wiki/create_
                                'revision':revision,
                                'data':form.data,
                                'errors': form.errors,
-                               'form_action':reverse(current_app + ":create_WikiPage", args=[obj.in_agent.obj.id, obj.name])}, 
+                               'form_action':reverse(current_app + ":create_WikiPage", 
+                                                     args=[obj.in_agent.obj.id, obj.name])}, 
                               context_instance=RequestContext(request, current_app=current_app))
 
 def get_contributors(user, obj):

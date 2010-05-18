@@ -3,41 +3,93 @@
 {% load pagination_tags %}
 {% load plus_url %}
 {% load avatar_tags %}
+{% load group_tags %}
+{% load profile_tags %}
 
-{% autopaginate tweets %}
+{% autopaginate feed_items %}
 
-{% if tweets %}
+{% if feed_items %}
   <ul id="feed" class="content_list">
-
-    {% for tweet in tweets %}
-
+    {% for item in feed_items %}
+    
     <li>
-      <div class="thumb tiny">{% avatar tweet.sender 30 %}</div>
+      {% if item.has_avatar %}
+      <div class="thumb tiny">{% avatar item.source.obj 30 %}</div>
+      {% endif %}
+      <div class="tweet" id="t{{ item.id }}">
+        {% if prefix_sender %}
+	<a href="{% simple_url item.source.obj %}"><b>{{ item.source.obj.get_display_name }} :</b></a>
+	{% endif %}
+	
+	{{item.short|safe|urlize}}
+	
+	<span class="label_time">  &nbsp; {% blocktrans with item.sent|timesince as tweet_age %}{{ tweet_age }} ago{% endblocktrans %}</span>
+	<div>
 
-        <div class="tweet" id="t{{ tweet.id }}">
-            {% if prefix_sender %}<a href="{% simple_url tweet.sender %}"><b>{{ tweet.sender.get_display_name }} :</b></a>{% endif %}
+	  {% if item.target %}
 
-	    {{tweet.html|safe|urlize}} 
-	    
-            <span class="label_time">{% blocktrans with tweet.sent|timesince as tweet_age %}{{ tweet_age }} ago{% endblocktrans %}</span>
-	    <!--XXX reply to tweets not working. comment and fix -->
-            <!--a class="reply" href="{% url tweets_you_follow %}?reply={{ tweet.sender }}">{% trans "reply" %}</a-->
-         </div>
+	    See : <span><a href="{{ item.target.obj.get_url }}">{{item.target.obj.get_display_name}}</a></span>
+	    <br/>
+	      {% comment %}
+	      <!-- XXX - commenting this out because including the ordinary listing element 
+		 doesn't work, needs design work
+		 <div>
+		   {% ifequal item.target.obj.get_class 'Profile' %}
+		   {  % comment %}
+		   {% show_profile item.target.obj %}
+		   {  % endcomment %}
+		   {% endifequal %}
+		   {% ifequal item.target.obj.get_class 'Resource' %}
+		   {% show_resource item.target.obj %}
+		   {% endifequal %}
+		   {% ifequal item.target.obj.get_class 'WikiPage' %}
+		   {% show_resource item.target.obj %}
+		   {% endifequal %}
+		   {% ifequal item.target.obj.get_class 'TgGroup' %}
+		   {% show_group item.target.obj %}
+ 		   {% endifequal %}
+		   
+		 </div>
+		 -->
+	    {% endcomment %}
+	{% endif %}  
+
+	{% if item.expanded %}
+	    <br/>
+	    {{item.expanded|safe|truncatewords:20|urlize|linebreaks}}
+	{% endif %}
+
+	{% if item.external_link %}
+	    <br/>
+	      Elsewhere : {{item.external_link|urlize}}
+	{% endif %}
+	</div>
+      </div>
     </li>
+    
     {% endfor %}
   </ul>
 
 {% else %}
-    {% if are_mine %}
-        {% url tweets_you_follow as tweets_url %}
+  {% comment %}
+  {% if are_mine %}
+     {% url tweets_you_follow as tweets_url %}
         <p>{% blocktrans %}You haven't posted any <a href="{{ tweets_url }}">status updates</a> yet.{% endblocktrans %}</p>
-    {% else %}
-	{% if IS_GROUP_TYPE %}
-	<p>{% blocktrans %}There is no activity on this{% endblocktrans %} {{GROUP_OR_HUB}}</p>
+     {% else %}
+        {% if IS_GROUP_TYPE %}
+           <p>{% blocktrans %}There is no activity on this{% endblocktrans %} {{GROUP_OR_HUB}}</p>
         {% else %} 
-        <p>{% blocktrans %}There are currently no status updates.{% endblocktrans %}</p>
+           <p>{% blocktrans %}There are currently no status updates.{% endblocktrans %}</p>
 	{% endif %}
-    {% endif %}
+   
+     {% endif %}
+   
+  {% endif %}
+  {% endcomment %}
 {% endif %}
 
+
 {% paginate %}
+
+
+

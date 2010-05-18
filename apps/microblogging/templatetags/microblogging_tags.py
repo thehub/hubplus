@@ -5,22 +5,25 @@ from django.contrib.contenttypes.models import ContentType
 from django.conf import settings
 from django.template import defaultfilters
 
+from apps.plus_feed.models import FeedItem
+
 from apps.plus_permissions.api import secure_wrap
 
 register = template.Library()
 
 @register.inclusion_tag('microblogging/listing.html', takes_context=True)
 def tweet_listing(context, tweets, prefix_sender, are_mine) :
-
     request = context.get('request', None)
     sc = {
-        'tweets': tweets.select_related(depth=1),
+        'feed_items': tweets,
         'prefix_sender': prefix_sender,
         'are_mine': are_mine
     }
     if request is not None:
         sc['request'] = request
     return sc
+
+
 
 @register.inclusion_tag('microblogging/listing.html', takes_context=True)
 def sent_tweet_listing(context, user, prefix_sender, are_mine):
@@ -30,14 +33,13 @@ def sent_tweet_listing(context, user, prefix_sender, are_mine):
 @register.inclusion_tag('microblogging/form.html', takes_context=True)
 def microblogging_form(context, sender, starts_hidden=False) :
     sender_class = ContentType.objects.get_for_model(sender)
-    tweets = TweetInstance.objects.tweets_from(sender).order_by("-sent")
     user = context['request'].user
 
-    if tweets :
-        latest_status = tweets[0]
-        status_since = defaultfilters.timesince(latest_status.sent)
-        status_text = latest_status.text
-    else:
+    try :
+        status = FeedItem.feed_manager.get_status(sender)
+        status_since = defaultfilters.timesince(status.sent)
+        status_text = status.short
+    except FeedItem.DoesNotExist, e :
         status_since = ''
         status_text = ''
 
@@ -55,7 +57,7 @@ def microblogging_form(context, sender, starts_hidden=False) :
             secure = secure_wrap(sender, user)
         can_update_status = secure.has_interface(secure.get_inner().__class__.__name__ + '.Editor') 
 
-        
+
     return {
         'sender':sender,
         'path':path,

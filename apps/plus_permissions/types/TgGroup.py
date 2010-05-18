@@ -8,7 +8,7 @@ from apps.profiles.models import Profile
 from apps.plus_permissions.site import Site
 from apps.plus_links.models import Link
 from apps.plus_resources.models import Resource
-
+from apps.plus_feed.models import FeedItem, AggregateFeed
 from django.db.models.signals import post_save
 import datetime
 from copy import deepcopy
@@ -222,9 +222,10 @@ if not SliderOptions.get(TgGroup, False):
 
 # ChildTypes are used to determine what types of objects can be created in this security context (and acquire security context from this). These are used when creating an explicit security context for an object of this type. 
 if TgGroup not in PossibleTypes:
-    child_types = [OurPost, Site, Application, Contact, Profile, WikiPage, Link, Resource, MemberInvite]
+    child_types = [OurPost, Site, Application, Contact, Profile, WikiPage, Link, Resource, 
+                   MemberInvite, AggregateFeed, FeedItem]
     SetPossibleTypes(TgGroup, child_types)
-    SetVisibleTypes(content_type, [TgGroup, WikiPage, Resource, Application])
+    SetVisibleTypes(content_type, [TgGroup, WikiPage, Resource, Application, FeedItem])
     SetTypeLabels(content_type, 'Group')
 
 # if the security context is in this agent, this set of slider_agents apply, irrespective of the type of resource they are
@@ -358,6 +359,13 @@ def setup_defaults():
                           },
                           'constraints':['Viewer>=Manager']
                         },
+                   'FeedItem':
+                       {'defaults':
+                            {'Viewer' : 'all_members_group',
+                                 'Unknown':'context_agent'},
+                        'constraints': []
+                        },
+                       
                    'Profile':
                        {'defaults': 
                         {'Viewer': 'anonymous_group',

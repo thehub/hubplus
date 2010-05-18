@@ -1,5 +1,6 @@
 {% load i18n %}
+{% load microblogging_tags %}
 
 <div id="global">
-	<p>Global feed goes here</p>
+  {% tweet_listing global_tweets 1 0 %}
 </div>

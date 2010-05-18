@@ -22,6 +22,10 @@ def add_link(request, target):
                                       text = form.cleaned_data['text'],
                                       url = form.cleaned_data['url'],
                                       service=form.cleaned_data['service'])
+            
+            from apps.plus_feed.models import FeedItem 
+            FeedItem.post_ADD_LINK(request.user, target.get_inner(), form.cleaned_data['url'])
+
             link_html = get_template('plus_links/one_link.html').render(RequestContext(request, {'text':link.text, 'url':link.url, 'link_id':link.id, 'can_delete':hasattr(link, 'delete') and True or False}))
             data = simplejson.dumps({'new_link':link_html})
             return HttpResponse(data, mimetype='application/json')

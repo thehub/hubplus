@@ -182,6 +182,17 @@ class FollowingManager(models.Manager):
         else :
             self.follow(follower, followed)
         
+    def followers_of(self, resource) :
+        ctype = ContentType.objects.get_for_model(resource)
+        return (o.follower_content_object for o in 
+                self.filter(followed_content_type__pk = ctype.id, followed_object_id=resource.id))
+
+    def followed_by(self, resource) :
+        ctype = ContentType.objects.get_for_model(resource)
+        return (o.followed_content_object for o in 
+                self.filter(follower_content_type__pk = ctype.id, follower_object_id=resource.id))
+
+
 
 class Following(models.Model):
     follower_content_type = models.ForeignKey(ContentType, related_name="followed", verbose_name=_('follower'))

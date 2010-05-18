@@ -3,6 +3,8 @@ from microblogging.models import Tweet, tweet, send_tweet
 from django.contrib.contenttypes.models import ContentType
 from django.utils.translation import ugettext_lazy as _
 
+from apps.plus_feed.models import FeedItem
+
 try:
     from notification import models as notification
 except ImportError:
@@ -30,6 +32,7 @@ class TweetForm(forms.ModelForm):
     def clean_text(self):
         return self.cleaned_data['text'].strip()
 
+
     def clean(self) :
         cls = self.cleaned_data['sender_class']
         id = self.cleaned_data['sender_id']
@@ -40,7 +43,4 @@ class TweetForm(forms.ModelForm):
         return self.cleaned_data
         
     def save(self):
-        send_tweet(self.sender,self.cleaned_data["text"])
-
-
-        
+        FeedItem.post_STATUS(self.sender,self.cleaned_data['text'])

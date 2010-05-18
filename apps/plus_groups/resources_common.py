@@ -43,7 +43,6 @@ class ResourceCommonModel(Explorable) :
     def display_name(self):
         return self.title
 
-
     def move_to_new_group(self, group) :
         try :
             self.check_name(self.name, group.get_ref(), self)
