@@ -116,6 +116,8 @@ def simple_url(target) :
     except Exception, e:
         pass
     cls = target.__class__.__name__
+    
+    
     try :
         if cls in ('User','Profile') :            
             url = reverse('profile_detail', args=[target.username])
@@ -123,6 +125,9 @@ def simple_url(target) :
             url = reverse('groups:group', args=[target.id])
         elif cls in (settings.HUB_NAME) :
             url = reverse('%s:group'%settings.HUB_NAME_PLURAL, args=[target.id])
+        elif cls in ('WikiPage') :
+            # XXX why doesn't this work?
+            url = reverse('view_WikiPage', args=[target.in_agent.obj.id,target.name])
         else :
             url = ''
     except Exception, e:

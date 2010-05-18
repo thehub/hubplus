@@ -23,17 +23,18 @@ class DelegateToUser(object) :
        setattr(obj.user,self.attr_name,val)
        #print "Getting from inner %s" % getattr(obj.user,self.attr_name)
 
+# deprecated
 class ProfileStatusDescriptor(object):
     # XXXX Bah! There has to be a better way than this, but
     # because we're using the Profile, we have to get the user 
 
     def __get__(self,profile,typ=None):
-        from apps.microblogging.models import TweetInstance
-        return TweetInstance.objects.tweets_from(profile.user).order_by("-sent")[0].text
+        from apps.plus_feed.models import FeedItem
+        return FeedItem.feed_manager.get_status(profile.user)
 
     def __set__(self,profile,val):
-        from apps.microblogging.models import send_tweet
-        send_tweet(profile.user,val)
+        from apps.plus_feed.models import FeedItem
+        FeedItem.post_STATUS(profile.user, profile.user,val)
 
 
 class Profile(Explorable):    

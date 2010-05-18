@@ -105,6 +105,9 @@ def edit_resource(request, group, resource_name,
             if not success_url :
                 success_url = reverse(current_app + ':view_Resource', args=(group.id, resource.name))
            
+            from apps.plus_feed.models import FeedItem
+            FeedItem.post_UPLOAD(request.user, resource)
+
             return HttpResponseRedirect(success_url)
                  
         else:

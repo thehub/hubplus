@@ -16,7 +16,7 @@ from django.core.urlresolvers import reverse
 
 from django.template import defaultfilters
 
-from microblogging.models import Tweet, TweetInstance, Following
+from apps.plus_feed.models import FeedItem 
 
 from apps.plus_lib.models import DisplayStatus, add_edit_key
 from apps.plus_lib.parse_json import json_view
@@ -192,7 +192,7 @@ def group(request, group, template_name="plus_groups/group.html", current_app='p
         else:
             has_accept = False
     
-    tweets = TweetInstance.objects.tweets_from(group).order_by("-sent")     
+    tweets = FeedItem.feed_manager.get_from(group).order_by("-sent")     
 
     try:
         group.get_all_sliders

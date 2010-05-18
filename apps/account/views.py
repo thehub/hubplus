@@ -29,7 +29,8 @@ from apps.account.forms import SignupForm, AddEmailForm, LoginForm, \
     ChangePasswordForm, SetPasswordForm, ResetPasswordForm, \
     ChangeTimezoneForm, ChangeLanguageForm, TwitterForm, ResetPasswordKeyForm
 
-
+from apps.plus_feed.models import FeedItem
+from apps.microblogging.models import Following
 
 from emailconfirmation.models import EmailAddress, EmailConfirmation
 
@@ -67,7 +68,10 @@ def home(request, success_url=None):
         form = form_class()
         if reply:
             form.fields['text'].initial = u"@%s " % reply
-    tweets = TweetInstance.objects.tweets_for(request.user).order_by("-sent")
+
+    tweets = FeedItem.feed_manager.get_for(request.user).order_by("-sent")
+    global_tweets = FeedItem.feed_manager.all_permissioned(request.user)
+
     all_members_group = get_all_members_group()
 
     if has_access(request.user, None, 'Application.Accept', all_members_group.get_security_context()):
@@ -81,6 +85,7 @@ def home(request, success_url=None):
         "form": form,
         "reply": reply,
         "tweets": tweets,
+        "global_tweets": global_tweets,
         "twitter_authorized": twitter_verify_credentials(twitter_account),
         "site_members_group":all_members_group,
         "has_accept":has_accept

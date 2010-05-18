@@ -14,6 +14,7 @@ from friends.models import FriendshipInvitation, Friendship
 
 from microblogging.models import Tweet, TweetInstance, Following
 from microblogging.views import get_tweets_for
+from apps.plus_feed.models import FeedItem
 
 from profiles.models import Profile, HostInfo
 from profiles.forms import ProfileForm, HostInfoForm
@@ -131,14 +132,13 @@ def profile(request, username, template_name="profiles/profile.html"):
     user_type = ContentType.objects.get_for_model(other_user)
 
     # new style statuses
-    tweets = TweetInstance.objects.tweets_from(user).order_by("-sent")
+    tweets = FeedItem.feed_manager.get_from(other_user.get_inner()).order_by("-sent")
     if tweets :
         latest_status = tweets[0]
-        status_type = 'profile'
         status_since = defaultfilters.timesince(latest_status.sent)
     else:
-        status_type = ''
         status_since = ''
+    status_type = 'profile'
 
     try:
         profile.get_all_sliders

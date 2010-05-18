@@ -8,6 +8,7 @@ from django.db.models.signals import post_save
 
 from apps.profiles.models import Profile, HostInfo
 from apps.plus_links.models import Link
+from apps.plus_feed.models import FeedItem, AggregateFeed
 
 import datetime
 from copy import deepcopy
@@ -146,13 +147,13 @@ SetSliderAgents(User, get_slider_agents)
 
 
 
-child_types = [Profile, HostInfo]
+child_types = [Profile, HostInfo, FeedItem]
 # ChildTypes are used to determine what types of objects can be created in this security context (and acquire security context from this). These are used when creating an explicit security context for an object of this type.
 
 if User not in PossibleTypes:
-    child_types = [Profile, HostInfo, Link]
+    child_types = [Profile, HostInfo, Link, FeedItem]
     SetPossibleTypes(User, child_types)
-    SetVisibleTypes(content_type, [Profile, HostInfo])
+    SetVisibleTypes(content_type, [Profile, HostInfo, FeedItem])
     SetTypeLabels(content_type, 'User')
 
 
@@ -197,6 +198,14 @@ def setup_defaults():
                                             'Unknown' : 'context_agent'},
                                'constraints':['Viewer>=Manager']
                                },
+
+                          'FeedItem':
+                               {'defaults' : 
+                                {'Viewer' : 'all_members_group',
+                                 'Unknown':'context_agent'},
+                                'constraints' : []
+                                },
+
                           'HostInfo':
                               {'defaults': {'Viewer':'context_agent',
                                             'Editor':'context_agent',
