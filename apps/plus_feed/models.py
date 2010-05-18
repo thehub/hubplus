@@ -133,7 +133,7 @@ class FeedItem(models.Model) :
         return (self.source.obj.__class__.__name__ in ['User','TgGroup'])
 
     STATUS = 0
-    #(1,'xxx'),
+    CREATE_GROUP = 1
     JOIN = 2
     LEAVE = 3
     COMMENT = 4
@@ -142,10 +142,22 @@ class FeedItem(models.Model) :
     WIKI_PAGE = 7
     ADD_LINK = 8
 
+
     @classmethod
     def post_STATUS(cls, sender, short) :
         new_item = sender.create_FeedItem(sender.get_creator(), type=STATUS, source=sender.get_ref(), short=short) 
         FeedManager().update_followers(sender, new_item)
+
+    @classmethod
+    def post_CREATE_GROUP(cls, creator, group) :
+        creator_item = creator.create_FeedItem(creator.get_creator(), type=1, source=creator.get_ref(),
+                                               short = clip('has created a group : %s' % group.get_display_name()),
+                                               target = group.get_ref())
+        FeedManager().update_followers(creator, creator_item)
+        group_item = group.create_FeedItem(group.get_creator(), type=1, source=group.get_ref(),
+                                           short=clip('Created by %s' % creator.get_display_name()),
+                                           target = creator.get_ref())
+        FeedManager().update_followers(group, group_item)
 
     @classmethod
     def post_JOIN(cls, joiner, joined) :

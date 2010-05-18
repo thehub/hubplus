@@ -225,9 +225,6 @@ try :
                     user_or_group.get_security_context().add_arbitrary_agent(admin_group, 'Profile.%s' % prof, admin)
 
 
-            from apps.plus_feed.models import FeedItem # avoid circularity
-            FeedItem.post_JOIN(user_or_group, self)
-
         @invalidates_membership_cache
         def add_member(self, user_or_group):
             if isinstance(user_or_group, User) and not self.users.filter(id=user_or_group.id):

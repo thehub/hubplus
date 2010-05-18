@@ -365,6 +365,13 @@ def setup_defaults():
                                  'Unknown':'context_agent'},
                         'constraints': []
                         },
+
+                    'AggregateFeed':
+                           {'defaults':
+                                {'Viewer' : 'context_agent',
+                                 'Unknown' : 'context_agent'},
+                            'constrains':[]
+                            },
                        
                    'Profile':
                        {'defaults': 

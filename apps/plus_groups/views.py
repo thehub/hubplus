@@ -331,6 +331,12 @@ def groups(request, site, tag_string='', type='other', template_name='plus_explo
 @secure_resource(TgGroup, required_interfaces=['Join','Viewer'])
 def join(request, group,  template_name="plus_groups/group.html", current_app='plus_groups', **kwargs):
     group.join(request.user)
+
+    # have to do this here, because models.join is too tied up with group creation 
+    # permission infrastructure for group not sufficiently ready to create child FeedItems 
+    from apps.plus_feed.models import FeedItem # avoid circularity                                                   
+    FeedItem.post_JOIN(request.user, group)
+
     return HttpResponseRedirect(reverse(current_app + ':group',args=(group.id,)))
 
 
@@ -424,6 +430,10 @@ def create_group(request, site, template_name="plus_groups/create_group.html", c
             print form.errors
         else :
             group = form.save(request.user, site)
+
+            from apps.plus_feed.models import FeedItem
+            FeedItem.post_CREATE_GROUP(request.user, group.get_inner())
+
             return HttpResponseRedirect(reverse(current_app + ':group', args=(group.id,)))
     else :
         form = TgGroupForm()
