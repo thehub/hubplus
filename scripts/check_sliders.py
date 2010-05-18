@@ -20,12 +20,12 @@ def fix_all() :
         except Exception, e:
             print u.username, " problem with Security Context"
             continue
-        #fix_tags(u,sc)
+        fix_tags(u,sc)
         fix_sliders(u,sc)
         
 def fix_tags(u,sc) :
     for tag in SecurityTag.objects.filter(security_context=sc):
-        #print tag.interface, [x.obj for x in tag.agents.all()]
+        
         if not site_admin.get_ref().id in [x.id for x in tag.agents.all()] :
             print u.username, tag.interface, ' missing real admin' 
             tag.add_agents([site_admin.get_ref()])
