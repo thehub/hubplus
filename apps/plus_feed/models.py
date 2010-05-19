@@ -30,7 +30,7 @@ def clip(s) :
         s = s[0:136]+'...'
     return s
 
-def recreate_feed(agent) :
+def recreate_feed(key, agent) :
     """ Recreates the queue of feed items for agent """
     from apps.plus_permissions.interfaces import secure_wrap
     subscriptions = Following.objects.followed_by(agent)
@@ -67,7 +67,7 @@ class FeedManager(models.Manager) :
             ids = redis.lrange(key,start,stop)
         else :
             # ok, we're going to recreate the whole feed again
-            ids = recreate_feed(receiver)
+            ids = recreate_feed(key, receiver)
 
         return self.filter(id__in=ids).order_by('-sent')
 
