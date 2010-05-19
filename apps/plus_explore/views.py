@@ -11,7 +11,8 @@ from apps.plus_permissions.models import GenericReference
 from apps.plus_wiki.models import WikiPage
 from apps.plus_resources.models import Resource
 from apps.plus_lib.search import side_search_args, listing_args
-
+from apps.plus_permissions.interfaces import secure_wrap
+from apps.plus_permissions.exceptions import PlusPermissionsNoAccessException
 
 from django.db.models import Q
 import settings
@@ -152,11 +153,12 @@ def rss_explore(request, tag_string, s_type=None) :
         listing_args_dict = listing_args('explore', 'explore_filtered', tag_string=tag_string, search_terms=search, multitabbed=True, order=order, template_base="site_base.html", search_type_label=head_title)
         search_dict = plus_search(listing_args_dict['tag_filter'], search, search_types, order)
 
-
         for item_ref in search_dict['All']:
             item = item_ref.obj
+            item=secure_wrap(item,request.user)
 
-            feed.add_item(title=item.get_display_name(), 
+            try :
+                feed.add_item(title=item.get_display_name(), 
                           link=item.get_url(), 
                           description=item.get_description(),
                           author_name=item.get_author_name(),
@@ -164,6 +166,8 @@ def rss_explore(request, tag_string, s_type=None) :
                           pubdate=item.get_created_date(),
                           **(item.get_feed_extras())
                           )
+            except PlusPermissionsNoAccessException, e :
+                pass
 
 
         feed_string = feed.writeString('utf-8')

@@ -98,6 +98,7 @@ def move_sliders(request, json, current):
     """json is of the form, {interface:[agent_class, agent_id]}
     This should be properly secured by doing everything through permissionable objects on the current resource. i.e. without getting the security context.
     """
+
     try:
         type_name = request.POST['type_name']
         sec_context = current._inner.get_security_context()

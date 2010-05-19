@@ -129,6 +129,15 @@ class TgGroupViewer:
     is_group = InterfaceCallProperty
     is_user = InterfaceCallProperty
 
+    get_url = InterfaceCallProperty
+    get_display_name = InterfaceCallProperty
+    get_description = InterfaceCallProperty
+    get_author_name = InterfaceCallProperty
+    get_author_copyright = InterfaceCallProperty
+    get_created_date = InterfaceCallProperty
+    get_feed_extras = InterfaceCallProperty
+
+
 class TgGroupEditor: 
     pk = InterfaceReadProperty
     description = InterfaceWriteProperty
