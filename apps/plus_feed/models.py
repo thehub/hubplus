@@ -183,7 +183,7 @@ class FeedItem(models.Model) :
 
         FeedManager().update_followers(leaver, leaver_item)
 
-        left_item = left.create_FeedItem(left.get_creator(), type=LEAVE, source=leaver.get_ref(),
+        left_item = left.create_FeedItem(left.get_creator(), type=LEAVE, source=left.get_ref(),
                                          short =  clip('%s has left the group.' % leaver.get_display_name()),
                                          target = leaver.get_ref())
         FeedManager().update_followers(left, left_item)
