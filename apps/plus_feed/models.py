@@ -1,6 +1,7 @@
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from apps.plus_permissions.models import GenericReference
+from apps.plus_permissions.decorators import ignore_permissions_exception
 from apps.plus_lib.redis_lib import redis
 from apps.microblogging.models import Following
 from datetime import datetime
@@ -160,6 +161,7 @@ class FeedItem(models.Model) :
         FeedManager().update_followers(group, group_item)
 
     @classmethod
+    @ignore_permissions_exception
     def post_JOIN(cls, joiner, joined) :
         joiner_item = joiner.create_FeedItem(joiner.get_creator(), type=JOIN, source=joiner.get_ref(),
                                              short = clip('has joined the group %s' % joined.get_display_name()),
@@ -173,6 +175,7 @@ class FeedItem(models.Model) :
         FeedManager().update_followers(joined, joined_item)
 
     @classmethod
+    @ignore_permissions_exception
     def post_LEAVE(cls, leaver, left) :
         leaver_item = leaver.create_FeedItem(leaver.get_creator(), type=LEAVE, source=leaver.get_ref(),
                                              short = clip('has left the group %s' % left.get_display_name()),

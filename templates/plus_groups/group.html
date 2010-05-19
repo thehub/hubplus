@@ -113,14 +113,7 @@
       <!-- img id="group_image" src="/site_media/images/group.jpg" / -->
     </div>
     <ul id="actions" class="link_list">
-      {% if message %}
-      <li class="first"><a href="{% url plus_groups:message_members group.id %}">Message members</a></li>
-      {% endif %}
-      
-      {% if invite %}
-      <li><a href="{% url plus_groups:invite_to_group group.id %}">Invite members</a></li>
-      {% endif %}
-      
+
       {% if can_join %}
       <li><a href="{% url plus_groups:join_group group.id %}">Join {{GROUP_OR_HUB}}</a></li>
       {% endif %}
@@ -130,7 +123,22 @@
       {% if leave %}
       <li><a href="{% url plus_groups:leave_group group.id %}">Leave {{GROUP_OR_HUB}}</a></li>
       {% endif %}
-      <li class="disabled last"><a href="#">Follow {{GROUP_OR_HUB}} ?</a></li>
+
+      {% if request.user.is_authenticated %}
+      <li class="first">
+        <a href="{% url toggle_group group.id %}">{% if is_following %}Unfollow {% else %}Follow {% endif %}{{group.get_display_name}}</a>
+      </li>
+      {% endif %}
+
+      {% if message %}
+      <li class="first"><a href="{% url plus_groups:message_members group.id %}">Message members</a></li>
+      {% endif %}
+      
+      {% if invite %}
+      <li><a href="{% url plus_groups:invite_to_group group.id %}">Invite members</a></li>
+      {% endif %}
+      
+
     </ul>
   </div>
 

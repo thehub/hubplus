@@ -40,6 +40,8 @@ from django.contrib.contenttypes.models import ContentType
 from apps.plus_resources.models import get_permissioned_resources_for
 import itertools
 
+from apps.microblogging.models import Following
+
 
 def subsearch(f) :
     """ decorator for filtered explorations of items in groups """
@@ -127,6 +129,7 @@ def group(request, group, template_name="plus_groups/group.html", current_app='p
     has_accept = False
     can_delete = False
 
+    is_following = Following.objects.is_following(request.user, group.get_inner())
 
     editable_group_type = group.group_type != settings.GROUP_HUB_TYPE
 
@@ -248,6 +251,8 @@ def group(request, group, template_name="plus_groups/group.html", current_app='p
             "can_tag" : can_tag,
             "can_change_avatar" : can_change_avatar,
             "can_delete" : can_delete, 
+
+            "is_following" : is_following,
             #"hosts": hosts,
             "host_group_id":group.get_admin_group().id,
             "host_group_app_label":group.get_admin_group().group_app_label() + ':group',
@@ -330,6 +335,7 @@ def groups(request, site, tag_string='', type='other', template_name='plus_explo
 @login_required
 @secure_resource(TgGroup, required_interfaces=['Join','Viewer'])
 def join(request, group,  template_name="plus_groups/group.html", current_app='plus_groups', **kwargs):
+
     group.join(request.user)
 
     # have to do this here, because models.join is too tied up with group creation 

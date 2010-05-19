@@ -12,7 +12,8 @@ from apps.microblogging.models import Tweet, TweetInstance, Following
 from apps.microblogging.forms import TweetForm
 
 from account.utils import get_default_redirect
-
+from apps.plus_permissions.api import secure_resource
+from apps.plus_groups.models import TgGroup
 
 if "notification" in settings.INSTALLED_APPS:
     from notification import models as notification
@@ -103,6 +104,14 @@ def following(request, username, template_name="microblogging/following.html"):
     follow_list = [u.followed_content_object for u in following]
     return _follow_list(request, other_user, follow_list, template_name)
 
+@login_required
+@secure_resource(TgGroup,required_interfaces=['Viewer'])
+def toggle_group(request, group, current_app='plus_groups', **kwargs) :
+    # may need to add a followable interface for permission, at the moment, depends on Viewer
+    Following.objects.toggle(request.user, group.get_inner())
+    return HttpResponseRedirect(reverse(current_app+":group", args=[group.id]))
+
+
 def toggle_follow(request, username):
     """
     Either follow or unfollow a user.
@@ -126,6 +135,7 @@ def toggle_follow(request, username):
         Following.objects.toggle(request.user,other_user)
 
     return HttpResponseRedirect(reverse("profile_detail", args=[other_user]))
+
 
 
 def ajax_tweet_form(request, sender_class, sender_id) :

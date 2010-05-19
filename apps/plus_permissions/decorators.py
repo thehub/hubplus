@@ -106,3 +106,13 @@ def site_context(f) :
         return f(request, get_site(user), *args, **kwargs)
 
     return g
+
+
+def ignore_permissions_exception(f) :
+    """ Dangerous, but sometimes useful when we don't want to care about a PlusPermissionsNoAccessException"""
+    def g(*args, **kwargs) :
+        try :
+            return f(*args, **kwargs)
+        except PlusPermissionsNoAccessException, e:
+            pass
+    return g
