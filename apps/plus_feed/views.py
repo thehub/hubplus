@@ -15,6 +15,8 @@ from django.utils.feedgenerator import Rss201rev2Feed, Enclosure
 
 from django.utils.html import strip_tags
 
+from apps.plus_permissions.exceptions import PlusPermissionsNoAccessException
+
 # rss for one users
 def rss_of_user(request, username) :
     user = User.objects.plus_get(request.user, username=username)
@@ -25,6 +27,7 @@ def rss_of_user(request, username) :
     
 
     for item in FeedItem.feed_manager.get_from(user) :
+        try :
                 kwargs = {
                           'author_name':user.get_display_name(),
                           'author_copyright':item.source.obj.get_author_copyright(),
@@ -42,6 +45,8 @@ def rss_of_user(request, username) :
 
                 feed.add_item(item.short, link, description, **kwargs)
 
+        except PlusPermissionsNoAccessException, e :
+            pass
 
     feed_string = feed.writeString('utf-8')
     return HttpResponse(feed_string, mimetype="application/xhtml+xml")
