@@ -358,8 +358,27 @@ Click %(link)s to see your account
     # Finished the User Patch
     
     
+# methods over-riding Explorable 
+def get_url(self) :
+   from django.core.urlresolvers import reverse
+   return 'http://%s%s' % (settings.DOMAIN_NAME, reverse('profile_detail',args=(self.username,)))
 
+User.get_url = get_url
 
+def get_description(self) :
+   return self.about
+
+User.get_description = get_description
+
+def get_author_name(self) :
+   return self.get_display_name()
+
+User.get_author_name = get_author_name
+
+def get_author_copyright(self) :
+   return self.get_display_name()
+
+User.get_author_copyright = get_author_copyright
 
 #added from hubspace
 class UserMetaData(models.Model):
