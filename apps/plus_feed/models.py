@@ -198,10 +198,11 @@ class FeedItem(models.Model) :
 
         FeedManager().update_followers(who, who_item)
 
-        target_item = target.create_FeedItem(target.get_creator(), type=ADD_LINK, source=target.get_ref(),
+        if target.__class__.__name__ == 'TgGroup' :
+            target_item = target.create_FeedItem(target.get_creator(), type=ADD_LINK, source=target.get_ref(),
                                              short = clip('%s added a link' % who.get_display_name()),
                                              target = target.get_ref(), external_link=url)
-        FeedManager().update_followers(target, target_item)
+            FeedManager().update_followers(target, target_item)
 
     @classmethod
     def post_UPLOAD(cls, who, upload) :
