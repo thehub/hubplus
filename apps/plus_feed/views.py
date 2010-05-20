@@ -36,7 +36,7 @@ def rss_of_user(request, username) :
 
 
                 else : 
-                    link = item.source.obj.get_url()
+                    link = item.source.obj.get_url() + '#tabview=updates_feed'
 
                 description = '' # XXX what should we put into description?
 
