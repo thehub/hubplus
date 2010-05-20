@@ -5,7 +5,7 @@ from apps.plus_permissions.decorators import ignore_permissions_exception
 from apps.plus_lib.redis_lib import redis
 from apps.microblogging.models import Following
 from datetime import datetime
-
+from django.conf import settings
 
 FEED_TYPES = (
     (0,'status'),
@@ -23,7 +23,7 @@ FEED_TYPES = (
 
  
 def feed_for_key(agent) :
-    return "feed_personal_key:%s" % agent.get_ref().id
+    return "feed_personal_key:%s:%s" % (settings.DOMAIN_NAME, agent.get_ref().id)
 
 def clip(s) :
     if len(s) > 140 :
@@ -61,7 +61,7 @@ class FeedManager(models.Manager) :
         key = feed_for_key(receiver)
         if redis.exists(key) :
             if not start_stop :
-                start,stop=[0,19]
+                start,stop=[0,39]
             else :
                 start,stop = start_stop
             ids = redis.lrange(key,start,stop)
