@@ -7,20 +7,29 @@ from apps.microblogging.models import Following
 from datetime import datetime
 from django.conf import settings
 
+from django.utils.html import strip_tags
+
+
+count = 0
+feed_types=['STATUS', 'CREATE_GROUP', 'JOIN', 'LEAVE', 'COMMENT', 'MESSAGE', 'UPLOAD', 'WIKI_PAGE', 'ADD_LINK']
+for t in feed_types :
+    globals()[t]=count
+    count=count+1
+
+
 FEED_TYPES = (
-    (0,'status'),
-    (1,'xxx'),
-    (2,'join'),
-    (3,'leave'),
-    (4,'comment'),
-    (5,'message'),
-    (6,'upload'),
-    (7,'create_page'),
-    (8,'add link'),
+    (STATUS,'status'),
+    (CREATE_GROUP,'create group'),
+    (JOIN,'join'),
+    (LEAVE,'leave'),
+    (COMMENT,'comment'),
+    (MESSAGE,'message'),
+    (UPLOAD,'upload'),
+    (WIKI_PAGE,'create_page'),
+    (ADD_LINK,'add link'),
 )
 
 # feed items are the only data in the table, but reader feeds are cached in redis
-
  
 def feed_for_key(agent) :
     return "feed_personal_key:%s:%s" % (settings.DOMAIN_NAME, agent.get_ref().id)
@@ -101,15 +110,6 @@ class FeedManager(models.Manager) :
                 redis.lpush(key,item.id)
         return item
 
-STATUS = 0
-#(1,'xxx')
-JOIN = 2
-LEAVE = 3
-COMMENT = 4
-MESSAGE = 5
-UPLOAD = 6
-WIKI_PAGE = 7
-ADD_LINK = 8    
 
 class FeedItem(models.Model) :
     short = models.CharField(_('short'), max_length=140) # 140 character summary 
@@ -132,16 +132,6 @@ class FeedItem(models.Model) :
 
     def has_avatar(self) :
         return (self.source.obj.__class__.__name__ in ['User','TgGroup'])
-
-    STATUS = 0
-    CREATE_GROUP = 1
-    JOIN = 2
-    LEAVE = 3
-    COMMENT = 4
-    MESSAGE = 5
-    UPLOAD = 6
-    WIKI_PAGE = 7
-    ADD_LINK = 8
 
 
     @classmethod
@@ -232,6 +222,12 @@ class FeedItem(models.Model) :
                                                        expanded=page.content)
         FeedManager().update_followers(page.in_agent.obj, group_item)
     
+
+count=0
+for t in feed_types :
+    setattr(FeedItem,t,count)
+    count=count+1
+
 
 class AggregateFeed(models.Model) :
     """ An AggregateFeed object represents the aggregate of feeds for a group.
