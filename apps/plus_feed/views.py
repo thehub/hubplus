@@ -34,8 +34,9 @@ def rss_of_user(request, username) :
                 if item.type in [FeedItem.JOIN, FeedItem.LEAVE, FeedItem.UPLOAD, FeedItem.WIKI_PAGE] :
                     link = item.target.obj.get_url()
 
+
                 else : 
-                    link = ''
+                    link = item.source.obj.get_url()
 
                 description = '' # XXX what should we put into description?
 
