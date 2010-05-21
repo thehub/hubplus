@@ -10,6 +10,14 @@
 {% load listings %}
 {% block body_id %}{% trans "group" %}{% endblock %}
 
+{% block extra_head %}
+
+        <link rel="alternate" type="application/rss+xml"
+              title="{{group.get_display_name}}" href="/groups/{{group.id}}/rss"> 
+
+{% endblock %}
+
+
 {% block body %}
 
 <div id="group_intro" class="block">

@@ -8,6 +8,14 @@
 {% load plus_url %}
 {% load editable_attribute %}
 {% load ajax_select %}
+
+{% block extra_head %} 
+
+        <link rel="alternate" type="application/rss+xml" 
+	      title="{{other_user.get_display_name}}" href="{% url profile_feed other_user.username %}">
+
+{% endblock %}
+
 {% block body %}
 
 <div id="intro" class="block">
