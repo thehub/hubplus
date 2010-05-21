@@ -23,6 +23,8 @@ urlpatterns = patterns('',
                        url(r'^(?P<resource_id>[\d]+)/resources/$', 'plus_groups.views.group_resources', name='group_resources'),
                        url(r'^(?P<resource_id>[\d]+)/members/$', 'plus_groups.views.group_members', name='group_members'),
                        url(r'^(?P<resource_id>[\d]+)/hosts/$', 'plus_groups.views.group_hosts', name='group_hosts'),
+                       
+                       url(r'^(?P<group_id>[\d]+)/rss/$', 'plus_feed.views.rss_of_group', name='group_feed'),
 
 
                        url(r'^(?P<resource_id>[\d]+)/resources/tag/(?P<tag_string>[\w\+\. _-]+)/$', 

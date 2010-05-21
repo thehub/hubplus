@@ -12,6 +12,7 @@ from apps.plus_feed.models import FeedItem
 import apps.plus_feed.models as feed_models
 
 from django.contrib.auth.models import User
+from apps.plus_groups.models import TgGroup
 
 from django.utils.feedgenerator import Rss201rev2Feed, Enclosure
 
@@ -29,19 +30,30 @@ def rss_of_user(request, username) :
                           link='http://'+settings.DOMAIN_NAME+reverse('profile_detail',args=(username,)),
                           description=strip_tags(user.get_profile().about) )
     
+    return rss_of(feed, user)
 
-    for item in FeedItem.feed_manager.get_from(user) :
+
+def rss_of_group(request, group_id, current_app, type) :
+
+    group = TgGroup.objects.plus_get(request.user, id=group_id)
+    feed = Rss201rev2Feed(title=group.get_display_name(),
+                          link = group.get_url(),
+                          description=strip_tags(group.description))
+    return rss_of(feed, group)
+
+    
+
+def rss_of(feed, agent) :
+    for item in FeedItem.feed_manager.get_from(agent) :
         try :
                 kwargs = {
-                          'author_name':user.get_display_name(),
+                          'author_name':agent.get_display_name(),
                           'author_copyright':item.source.obj.get_author_copyright(),
                           'pubdate':item.sent,
                           }
 
                 if item.type in [FeedItem.JOIN, FeedItem.LEAVE, FeedItem.UPLOAD, FeedItem.WIKI_PAGE] :
                     link = item.target.obj.get_url()
-
-
                 else : 
                     link = item.source.obj.get_url() + '#tabview=updates_feed'
 
