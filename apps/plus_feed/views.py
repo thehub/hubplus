@@ -6,6 +6,8 @@ from django.utils.translation import ugettext_lazy as _
 from django.core.urlresolvers import reverse
 from django.conf import settings
 
+from apps.profiles.models import Profile
+
 from apps.plus_feed.models import FeedItem
 import apps.plus_feed.models as feed_models
 
@@ -19,8 +21,10 @@ from apps.plus_permissions.exceptions import PlusPermissionsNoAccessException
 
 # rss for one users
 def rss_of_user(request, username) :
-    user = User.objects.plus_get(request.user, username=username)
- 
+
+    profile = Profile.objects.plus_get(request.user, user__username=username)
+    profile.get_display_name() # test permission
+    user = profile.user
     feed = Rss201rev2Feed(title=user.get_display_name(),
                           link='http://'+settings.DOMAIN_NAME+reverse('profile_detail',args=(username,)),
                           description=strip_tags(user.get_profile().about) )
