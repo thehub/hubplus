@@ -136,7 +136,12 @@ class FeedItem(models.Model) :
 
     @classmethod
     def post_STATUS(cls, sender, short) :
-        new_item = sender.create_FeedItem(sender.get_creator(), type=STATUS, source=sender.get_ref(), short=short) 
+        expanded = short
+        if len(short) > 139 :
+            short = clip(short)
+
+        new_item = sender.create_FeedItem(sender.get_creator(), type=STATUS, source=sender.get_ref(), 
+                                          short=short, expanded=expanded) 
         FeedManager().update_followers(sender, new_item)
 
     @classmethod

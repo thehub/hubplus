@@ -41,13 +41,21 @@ def rss_of_group(request, group_id, current_app, type) :
                           description=strip_tags(group.description))
     return rss_of(feed, group)
 
-    
+
+def rss_of_everyone(request) :
+    feed = Rss201rev2Feed(title='Hub+',
+                          link='http://' + settings.DOMAIN_NAME + reverse('home',args=[]),
+                          description='Hub+ is the network that gives you access to the people, resources and knowledge you need to inspire and make your idea come to life.')
+    return rss_from_item_list(feed, FeedItem.feed_manager.all_permissioned(request.user))
 
 def rss_of(feed, agent) :
-    for item in FeedItem.feed_manager.get_from(agent) :
+    return rss_from_item_list(feed, FeedItem.feed_manager.get_from(agent))
+
+def rss_from_item_list(feed, item_list) :
+    for item in item_list :
         try :
                 kwargs = {
-                          'author_name':agent.get_display_name(),
+                          'author_name': item.source.obj.get_display_name(),
                           'author_copyright':item.source.obj.get_author_copyright(),
                           'pubdate':item.sent,
                           }

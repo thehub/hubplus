@@ -55,7 +55,7 @@
 		</li>
 		{% if upload.download_url %}
 		<li class="download_button">
-			<a class="button" href="{{upload.download_url}}">Download</a>
+			<a class="button" href="{{upload.download_url|urlencode}}">Download</a>
 		</li>
 		{% endif %}
 	</ul>

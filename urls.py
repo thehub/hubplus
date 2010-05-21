@@ -27,6 +27,7 @@ admin.autodiscover()
 
 urlpatterns = patterns('',
     url(r'^$', 'apps.account.views.home', name="home"),
+    url(r'^everyone/rss/$', 'apps.plus_feed.views.rss_of_everyone', name='site_feed'),
     
     (r'^about/', include('about.urls')),
     (r'^account/', include('account.urls')),
