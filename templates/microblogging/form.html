@@ -3,7 +3,7 @@
   <form method="post" action="{% url status_post %}">
 
     <div class="show {% if can_update_status %}click_show{% endif %}">
-      <span class="status_text">{{status_text}}</span>&nbsp;&nbsp;
+      <span class="status_text">{{status_text|urlize}}</span>&nbsp;&nbsp;
       <span class="label_time">{{status_since}} {% if status_since %}{% trans "ago"%}.{% endif %}</span>
     </div>
 
