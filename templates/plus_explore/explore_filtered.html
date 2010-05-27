@@ -49,12 +49,14 @@
     </li>
   </ul>
   <div class="tabbed_content yui-content">
-    <div id="results_all" class="page_content" >
+    <!-- div id="results_all" class="page_content" > -->
+    <div id="results_all">
       {% listing search.All "All" listing_args.order listing_args.search_terms listing_args %}
     </div>
     {% for name, label, typ_items, item_len in search.search_types %}
     {% if item_len %}
-    <div id="results_{{name}}" class="page_content" >
+    <!-- <div id="results_{{name}}" class="page_content" > -->
+    <div id="results_{{name}}" >
       {% listing typ_items label listing_args.order listing_args.search_terms listing_args %}
     </div>
     {% endif %}
@@ -77,16 +79,26 @@
       </select>
     </li>
   </ul>
-<div id="results_all" class="page_content" >
+<div id="results_all" > <!-- class="page_content" > --> 
   {% listing search.All "All" listing_args.order listing_args.search_terms listing_args %}
+
 </div>
+
 {% endif %}
 {% else %}
+
 <p>{% blocktrans %}No results were found.{% endblocktrans %}</p>
+
 {% endif %}
 </form>
+
 {% endblock %}
+
+
 {% block side_bar %}
+
 {% side_search search_args %}
+
 {% include "add.html" %}
 {% endblock %}
+
