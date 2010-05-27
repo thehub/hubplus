@@ -57,7 +57,7 @@
 	{% if item.expanded %}
 	      {% ifequal item.short item.expanded %}{% else %}
 	          <br/>
-		  {{item.expanded|safe|truncatewords_html:20|urlize|linebreaks}}
+		  {{item.expanded|safe|truncatewords_html:10|urlize|linebreaks}}
 	      {% endifequal %}
 	{% endif %}
 
@@ -92,6 +92,7 @@
 
 
 {% paginate %}
+
 
 
 
