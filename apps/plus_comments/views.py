@@ -35,9 +35,16 @@ def our_comment(request, content_type, content_id, target_id, template_name="plu
             parent_id = None
         
         try :
-            return free_comment(request, content_type=content_type, object_id=content_id, parent_id=parent_id, model=ThreadedComment, form_class=ThreadedCommentForm)
+            ret = free_comment(request, content_type=content_type, object_id=content_id, parent_id=parent_id, model=ThreadedComment, form_class=ThreadedCommentForm)
         except Exception, e :
             raise e
+
+        from django.contrib.contenttypes.models import ContentType
+        ct = ContentType.objects.get(id=content_type)
+        obj=ct.get_object_for_this_type(id=content_id)
+        from apps.plus_feed.models import FeedItem
+        FeedItem.post_COMMENT(request.user, obj)
+        return ret
 
     else :
         return render_to_response(template_name, {

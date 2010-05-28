@@ -168,11 +168,15 @@ class FollowingManager(models.Manager):
     def follow(self, follower, followed):
         if follower != followed and not self.is_following(follower, followed):
             Following(follower_content_object=follower, followed_content_object=followed).save()
+            from apps.plus_feed.models import FeedItem
+            FeedItem.post_FOLLOW(follower, followed)
     
     def unfollow(self, follower, followed):
         try:
             following = self.get(follower_object_id=follower.id, followed_object_id=followed.id)
             following.delete()
+            from apps.plus_feed.models import FeedItem
+            FeedItem.post_UNFOLLOW(follower, followed)
         except Following.DoesNotExist:
             pass
 

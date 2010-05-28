@@ -11,11 +11,11 @@ from django.utils.html import strip_tags
 
 
 count = 0
-feed_types=['STATUS', 'CREATE_GROUP', 'JOIN', 'LEAVE', 'COMMENT', 'MESSAGE', 'UPLOAD', 'WIKI_PAGE', 'ADD_LINK']
+feed_types=['STATUS', 'CREATE_GROUP', 'JOIN', 'LEAVE', 'COMMENT', 'MESSAGE', 
+            'UPLOAD', 'WIKI_PAGE', 'ADD_LINK', 'FOLLOW', 'UNFOLLOW' ]
 for t in feed_types :
     globals()[t]=count
     count=count+1
-
 
 FEED_TYPES = (
     (STATUS,'status'),
@@ -27,6 +27,8 @@ FEED_TYPES = (
     (UPLOAD,'upload'),
     (WIKI_PAGE,'create_page'),
     (ADD_LINK,'add link'),
+    (FOLLOW, 'follow'),
+    (UNFOLLOW, 'unfollow'),
 )
 
 # feed items are the only data in the table, but reader feeds are cached in redis
@@ -226,7 +228,46 @@ class FeedItem(models.Model) :
                                                                                              page.title)),
                                                        expanded=page.content)
         FeedManager().update_followers(page.in_agent.obj, group_item)
-    
+
+
+    @classmethod
+    def post_COMMENT(cls, who, target) :
+        who_item = who.create_FeedItem(who.get_creator(), type=COMMENT, source=who.get_ref(),
+                                       short = clip('posted a comment on %s' % target.get_display_name()),
+                                       target = target.get_ref())
+        FeedManager().update_followers(who, who_item)
+
+        target_item = who.create_FeedItem(target.get_creator(), type=COMMENT, source=target.get_ref(),
+                                          short = clip('%s posted a comment' % who.get_display_name()),
+                                          target = who.get_ref() )
+        FeedManager().update_followers(target, target_item)
+
+    @classmethod
+    def post_FOLLOW(cls, follower, followed) :
+        follower_item = follower.create_FeedItem(follower.get_creator(), type=FOLLOW, source=follower.get_ref(),
+                                                 short = clip('started following %s' % followed.get_display_name()),
+                                                 target = followed.get_ref())
+        FeedManager().update_followers(follower, follower_item)
+        
+        followed_item = followed.create_FeedItem(followed.get_creator(), type=FOLLOW, source=followed.get_ref(),
+                                                 short = clip('%s started following me' % follower.get_display_name() ),
+                                                 target = follower.get_ref())
+        FeedManager().update_followers(followed, followed_item)
+
+
+    @classmethod
+    def post_UNFOLLOW(cls, follower, followed) :
+        follower_item = follower.create_FeedItem(follower.get_creator(), type=FOLLOW, source=follower.get_ref(),
+                                                 short = clip('stopped following %s' % followed.get_display_name()),
+                                                 target = followed.get_ref())
+        FeedManager().update_followers(follower, follower_item)
+
+        followed_item = followed.create_FeedItem(followed.get_creator(), type=FOLLOW, source=followed.get_ref(),
+                                                 short = clip('%s stopped following me' % follower.get_display_name() ),
+                                                 target = follower.get_ref())
+        FeedManager().update_followers(followed, followed_item)
+
+
 
 count=0
 for t in feed_types :

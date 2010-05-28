@@ -206,7 +206,7 @@ if not get_interface_map(TgGroup):
                          'ManageMembers': TgGroupManageMembers,
                          'Join': TgGroupJoin,
                          'Leave': TgGroupLeave,
-                         'Comment':TgGroupComment,
+                         'Commentor':TgGroupComment,
                          'Uploader':TgGroupUploader,
                          'Message':TgGroupMessage,
                          'Invite':TgGroupInvite,
@@ -280,6 +280,7 @@ def setup_defaults():
                              'Message':'context_agent',
                              'StatusViewer':'anonymous_group',
                              'GroupTypeEditor':'context_admin',
+                             'Commentor':'context_agent',
                              'Unknown': 'context_admin'
                              },
                         'constraints':
