@@ -14,7 +14,7 @@
     
     <li>
       {% if item.has_avatar %}
-      <div class="thumb tiny">{% avatar item.source.obj 30 %}</div>
+      <div class="thumb small">{% avatar item.source.obj 40 %}</div>
       {% endif %}
       <div class="tweet" id="t{{ item.id }}">
         {% if prefix_sender %}
