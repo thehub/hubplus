@@ -221,10 +221,11 @@ if not get_interface_map(TgGroup):
 # they don't need to be stored in the db
 if not SliderOptions.get(TgGroup, False):
     SetSliderOptions(TgGroup, 
-                     {'InterfaceOrder':['Viewer', 'Editor', 'Join', 'Uploader', 'Commentor', 'Invite', 'ManageMembers', 'Delete', 'ManagePermissions'], 
+                     {'InterfaceOrder':['Viewer', 'Editor', 'Join', 'Uploader', 'Commentor', 'Invite', 'Message', 'ManageMembers', 'Delete', 'ManagePermissions'], 
                       'InterfaceLabels':{'Viewer':'View',
                                          'Editor': 'Edit',
                                          'Commentor': 'Comment',
+                                         'Message' : 'Message Group',
                                          'ManageMembers': 'Manage Membership',
                                          'ManagePermissions':'Change Permissions'}})
 
@@ -372,7 +373,8 @@ def setup_defaults():
                    'FeedItem':
                        {'defaults':
                             {'Viewer' : 'all_members_group',
-                                 'Unknown':'context_agent'},
+                             'Delete' : 'context_agent',
+                             'Unknown':'context_agent'},
                         'constraints': []
                         },
 
