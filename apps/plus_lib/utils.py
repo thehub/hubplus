@@ -14,7 +14,7 @@ class HTMLField(forms.CharField):
         chars = super(HTMLField, self).clean(value)
         #chars = chars.encode('utf-8') # should really find out where we have decoded input to unicode and do it there instead
         p = html5lib.HTMLParser(tokenizer=sanitizer.HTMLSanitizer, tree=treebuilders.getTreeBuilder("dom")) # could use Beautiful Soup here instead
-        s = serializer.htmlserializer.HTMLSerializer(omit_optional_tags=False)
+        s = serializer.htmlserializer.HTMLSerializer(omit_optional_tags=False, quote_attr_values=True)
         dom_tree = p.parseFragment(chars) #encoding="utf-8")  - unicode input seems to work fine
         
         walker = treewalkers.getTreeWalker("dom")
