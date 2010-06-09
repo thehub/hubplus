@@ -3,11 +3,11 @@ from apps.profiles.models import Profile
 
 from django.contrib.auth.models import User
 
-from apps.plus_lib.fixes import ensure_user_has_permission_on_self
+from apps.plus_lib.fixes import setup_default_security
 
 def fix(username) :
     u = User.objects.get(username=username)
-    ensure_user_has_permission_on_self(u)
+    setup_default_security(u,'public')
 
 
 fix('barbara.ruder')
