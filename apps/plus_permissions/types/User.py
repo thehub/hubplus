@@ -50,7 +50,7 @@ def user_post_create(user, permission_prototype='public') :
     get_all_members_group().add_member(user)
     return user
 
-def setup_user_security(user, permission_prototype):
+def setup_user_security(user, permission_prototype, overwrite=False):
     user.to_security_context()
     sec_context = user.get_security_context()
                     
@@ -58,7 +58,7 @@ def setup_user_security(user, permission_prototype):
     sec_context.set_context_admin(get_all_members_group().get_admin_group().get_ref())
     sec_context.save()
         
-    sec_context.set_up(permission_prototype)
+    sec_context.set_up(permission_prototype, overwrite=overwrite)
 
     ref = user.get_ref()
     ref.creator = user
@@ -202,6 +202,7 @@ def setup_defaults():
                           'FeedItem':
                                {'defaults' : 
                                 {'Viewer' : 'all_members_group',
+                                 'Delete' : 'context_agent',
                                  'Unknown':'context_agent'},
                                 'constraints' : []
                                 },
