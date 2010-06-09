@@ -251,7 +251,9 @@ def get_tag_for_interface(self, interface) :
         return None
     return SecurityTag.objects.get(security_context=self.get_security_context(),
                                    interface=interface)
-    
+
+def get_agents_for_interface(self, interface) :
+    return [x.obj for x in self.get_tag_for_interface(interface).agents.all()]
 
 def s_eq(self, other):
     """Secure Equality : compares self and other directly and the _inner of each with each."""
@@ -278,6 +280,7 @@ def security_patch(content_type, type_list):
     content_type.get_security_context = get_security_context
     content_type.acquires_from = acquires_from
     content_type.get_tag_for_interface = get_tag_for_interface
+    content_type.get_agents_for_interface = get_agents_for_interface
     content_type.create_custom_security_context = create_custom_security_context
     content_type.use_acquired_security_context = use_acquired_security_context
     content_type.move_sliders = move_sliders
