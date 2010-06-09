@@ -123,7 +123,7 @@ class SecurityContext(models.Model):
          for typ in types:
              for interface_name in get_interface_map(typ.__name__):
                  interface_str = '%s.%s' %(typ.__name__, interface_name)
-                 self.setup_tag_from_defaults(interface_str, sad, agent_defaults)
+                 self.setup_tag_from_defaults(interface_str, sad, agent_defaults, **kwargs)
 
 
      def switch_permission_prototype(self, permission_prototype) :
@@ -140,21 +140,27 @@ class SecurityContext(models.Model):
 
                  # seems to create missing sliders (if new interfaces are added)
                  self.get_slider_level(interface_str)
-
                  
                  type_name, interface_name = interface_str.split('.')
                  selected_agent = get_selected_agent(sad, agent_defaults, type_name, interface_name)
                  self.move_slider(selected_agent, interface_str, skip_validation=True, no_user=True)
 
 
-     def setup_tag_from_defaults(self, interface_str, sad, agent_defaults):
+     def setup_tag_from_defaults(self, interface_str, sad, agent_defaults, **kwargs):
+
          try:
              st = SecurityTag.objects.get(security_context=self, interface=interface_str)
+             if not kwargs.has_key('overwrite') :
+                 # we're not overwriting the existing slider position, which already exists
+                 # so leave now
+                 return
          except SecurityTag.DoesNotExist:
-             typ, interface_name = interface_str.split('.')
              self.create_security_tag(interface_str)
-             selected_agent = get_selected_agent(sad, agent_defaults, typ, interface_name)
-             self.move_slider(selected_agent, interface_str, skip_validation=True, no_user=True)
+             
+         # we're here, either because of the exception, or the overwrite
+         typ, interface_name = interface_str.split('.')
+         selected_agent = get_selected_agent(sad, agent_defaults, typ, interface_name)
+         self.move_slider(selected_agent, interface_str, skip_validation=True, no_user=True)
          
 
 
