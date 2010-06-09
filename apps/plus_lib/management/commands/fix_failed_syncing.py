@@ -48,3 +48,6 @@ which leads to them not having Profiles or usernames etc."""
                 user = User.objects.get(id=user.id)
                 print user.username
 
+            
+
+

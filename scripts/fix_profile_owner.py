@@ -1,6 +1,14 @@
 
 from apps.profiles.models import Profile
 
-for p in Profile.objects.all() :
-    agents = [x.obj for x in p.get_tag_for_interface('Profile.Viewer').agents.all()]
-    print p,p.user.username, p.get_ref().creator,agents
+from django.contrib.auth.models import User
+
+from apps.plus_lib.fixes import ensure_user_has_permission_on_self
+
+def fix(username) :
+    u = User.objects.get(username=username)
+    ensure_user_has_permission_on_self(u)
+
+
+fix('barbara.ruder')
+fix('binmann')
