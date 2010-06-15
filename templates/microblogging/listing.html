@@ -5,6 +5,7 @@
 {% load avatar_tags %}
 {% load group_tags %}
 {% load profile_tags %}
+{% load feed_tags %}
 
 {% autopaginate feed_items %}
 
@@ -21,7 +22,7 @@
 	<a href="{% simple_url item.source.obj %}"><b>{{ item.source.obj.get_display_name }} :</b></a>
 	{% endif %}
 	
-	{{item.short|safe|urlize}}
+	{{item.short|at_tags|safe|urlize}}
 	
 	<span class="label_time">  &nbsp; {% blocktrans with item.sent|timesince as tweet_age %}{{ tweet_age }} ago{% endblocktrans %}</span>
 	<div>
@@ -57,7 +58,7 @@
 	{% if item.expanded %}
 	      {% ifequal item.short item.expanded %}{% else %}
 	          <br/>
-		  {{item.expanded|safe|truncatewords_html:10|urlize|linebreaks}}
+		  {{item.expanded|at_tags|safe|truncatewords_html:10|urlize|linebreaks}}
 	      {% endifequal %}
 	{% endif %}
 

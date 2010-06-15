@@ -8,7 +8,9 @@ from datetime import datetime
 from django.conf import settings
 
 from django.utils.html import strip_tags
+from django.contrib.auth.models import User
 
+import re
 
 count = 0
 feed_types=['STATUS', 'CREATE_GROUP', 'JOIN', 'LEAVE', 'COMMENT', 'MESSAGE', 
@@ -110,6 +112,19 @@ class FeedManager(models.Manager) :
             if secure_item.has_interface('FeedItem.Viewer') :
                 key = feed_for_key(f)
                 redis.lpush(key,item.id)
+
+        # if we mention someone in tweet ... add it to their queue
+        if '@' in item.short :   
+            rx = re.compile(r"(^\@([A-Za-z0-9_\.\']+))")
+            match = rx.match(item.short)
+
+            if match :
+                replieds = User.objects.filter(username=match.group(2))
+                if replieds :
+                    replied = replieds[0]
+                    key = feed_for_key(replied)
+                    redis.lpush(key,item.id)
+
         return item
 
 
