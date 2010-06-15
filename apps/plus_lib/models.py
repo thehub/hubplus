@@ -75,10 +75,10 @@ def extract(d,key) :
     return v
 
 
-#def make_user(name, password, email_address) :
-#    from django.contrib.auth.models import User
+class Counter(dict) :
+    def inc(self, name) :
+        if not self.has_key(name) :
+            self[name]=0
+        self[name]=self[name]+1
 
-#    u = User(username=name, email_address=email_address)
-#    u.save()
-#    u.set_password(password)
     
