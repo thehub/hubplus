@@ -284,6 +284,13 @@ class FeedItem(models.Model) :
 
 
 
+    def delete(self) :
+        # permissions
+        ref = self.get_ref()    
+        ref.delete()
+        super(FeedItem,self).delete()
+
+
 count=0
 for t in feed_types :
     setattr(FeedItem,t,count)
