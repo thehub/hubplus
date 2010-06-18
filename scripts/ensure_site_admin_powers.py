@@ -8,6 +8,7 @@ site_admin = all_members.get_admin_group()
 
 for g in TgGroup.objects.hubs().all() :
     hosts = g.get_admin_group()
+    print g, [x for x in hosts.get_members()]
     if site_admin not in hosts.get_members() :
-        print g
+        print "BANG"
         
