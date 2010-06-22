@@ -1,5 +1,6 @@
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
+
 from apps.plus_permissions.models import GenericReference
 from apps.plus_permissions.decorators import ignore_permissions_exception
 from apps.plus_lib.redis_lib import redis
@@ -9,6 +10,8 @@ from django.conf import settings
 
 from django.utils.html import strip_tags
 from django.contrib.auth.models import User
+
+from apps.plus_permissions.default_agents import get_all_members_group
 
 import re
 
@@ -31,6 +34,7 @@ FEED_TYPES = (
     (ADD_LINK,'add link'),
     (FOLLOW, 'follow'),
     (UNFOLLOW, 'unfollow'),
+
 )
 
 # feed items are the only data in the table, but reader feeds are cached in redis
@@ -175,6 +179,15 @@ class FeedItem(models.Model) :
     @classmethod
     @ignore_permissions_exception
     def post_JOIN(cls, joiner, joined) :
+        all_members = get_all_members_group()
+        if joined.id == all_members.id :
+            short = u'%s %s' % (_('has joined'), settings.SITE_NAME_SENTENCE)
+            joiner_item = joiner.create_FeedItem(joiner.get_creator(), type=JOIN, source=joiner.get_ref(),
+                                                 short = clip(short)
+                                                 )
+            FeedManager().update_followers(joiner,joiner_item)
+            return
+            
         joiner_item = joiner.create_FeedItem(joiner.get_creator(), type=JOIN, source=joiner.get_ref(),
                                              short = clip('has joined the group %s' % joined.get_display_name()),
                                              target = joined.get_ref())
@@ -189,6 +202,9 @@ class FeedItem(models.Model) :
     @classmethod
     @ignore_permissions_exception
     def post_LEAVE(cls, leaver, left) :
+        all_members = get_all_members_group()
+        if left.id == all_members.id :
+            return
         leaver_item = leaver.create_FeedItem(leaver.get_creator(), type=LEAVE, source=leaver.get_ref(),
                                              short = clip('has left the group %s' % left.get_display_name()),
                                              target = left.get_ref())
@@ -259,6 +275,10 @@ class FeedItem(models.Model) :
 
     @classmethod
     def post_FOLLOW(cls, follower, followed) :
+        all_members = get_all_members_group()
+        if followed == all_members:
+            return
+ 
         follower_item = follower.create_FeedItem(follower.get_creator(), type=FOLLOW, source=follower.get_ref(),
                                                  short = clip('started following %s' % followed.get_display_name()),
                                                  target = followed.get_ref())
@@ -272,6 +292,10 @@ class FeedItem(models.Model) :
 
     @classmethod
     def post_UNFOLLOW(cls, follower, followed) :
+        all_members = get_all_members_group()
+        if followed == all_members :
+            return
+ 
         follower_item = follower.create_FeedItem(follower.get_creator(), type=FOLLOW, source=follower.get_ref(),
                                                  short = clip('stopped following %s' % followed.get_display_name()),
                                                  target = followed.get_ref())
