@@ -19,6 +19,7 @@ SITE_NAME = _("Hub+")
 SITE_NAME_SHORT = _("Hub+")
 SITE_NAME_SENTENCE = _("the Hub+ network")
 
+GOOGLE_ANALYTICS_TOKEN = "UA-9039567-1"
 
 GROUP_TYPES = (
     (u'interest', u'Interest'),
