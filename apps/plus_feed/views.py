@@ -61,7 +61,8 @@ def rss_from_item_list(feed, item_list) :
                           }
 
                 if item.type in [FeedItem.JOIN, FeedItem.LEAVE, FeedItem.UPLOAD, FeedItem.WIKI_PAGE] :
-                    link = item.target.obj.get_url()
+                    if item.target :
+                        link = item.target.obj.get_url()
                 else : 
                     link = item.source.obj.get_url() + '#tabview=updates_feed'
 
