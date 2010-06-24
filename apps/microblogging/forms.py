@@ -43,4 +43,7 @@ class TweetForm(forms.ModelForm):
         return self.cleaned_data
         
     def save(self):
-        FeedItem.post_STATUS(self.sender,self.cleaned_data['text'])
+        if self.cleaned_data['text'] :
+            # only bother if there's something in it
+            FeedItem.post_STATUS(self.sender,self.cleaned_data['text'])
+        

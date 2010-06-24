@@ -3,11 +3,10 @@ import unittest
 import re
 
 sites = {
-    'my_dev' : 'http://pinaxdev.the-hub.net:1999/',
-    'dev' : 'http://pinaxdev.the-hub.net:1955/',
-    'plus_demo' : 'http://plusdemo.the-hub.net/',
-    'psn_demo' : 'http://demo.psychosocialnetwork.net/',
-    'psn_demo2' : 'http://pinaxdev.the-hub.net:1888/',
+    'plus' : 'http://plus.the-hub.net/',
+    'psn' : 'http://psychosocialnetwork.net/',
+    'plus_dev' : 'http://plusdev-app.the-hub.net:8000/',
+    'psn_dev' : 'http://plusdev-app.the-hub.net:1999/',
     }
 
 reg = re.compile("DEBUG_STATUS=OK")

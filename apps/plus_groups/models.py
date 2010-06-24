@@ -224,6 +224,10 @@ try :
                 for prof in ProfileInterfaces:
                     user_or_group.get_security_context().add_arbitrary_agent(admin_group, 'Profile.%s' % prof, admin)
 
+            # start following any group you join
+            from apps.microblogging.models import Following
+            Following.objects.follow(user_or_group,self)
+
 
         @invalidates_membership_cache
         def add_member(self, user_or_group):
@@ -295,6 +299,11 @@ try :
 
             from apps.plus_feed.models import FeedItem
             FeedItem.post_LEAVE(user_or_group, self)
+
+            # stop following any group you leave .. not 100% certain this is what we want but our beest guess
+            from apps.microblogging.models import Following
+            Following.objects.unfollow(user_or_group,self)
+
 
             # if I was the homehome for this user, change
             if user_or_group.homehub == self :
@@ -390,6 +399,12 @@ try :
                 f.delete()
             for f in Following.objects.filter(followed_content_type=content_type,followed_object_id=self.id) :
                 f.delete() 
+            
+            # and new FeedItems
+            from apps.plus_feed.models import FeedItem
+            for x in FeedItem.feed_manager.get_from(self) :
+                x.delete()
+
 
             # remove comments
             from threadedcomments.models import ThreadedComment

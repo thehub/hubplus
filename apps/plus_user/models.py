@@ -303,7 +303,7 @@ def patch_user_class():
        from django.core.urlresolvers import reverse
        from django.utils.translation import ugettext_lazy as _, ugettext
 
-       m = Message(subject=subject, body=body, sender = self, recipient=self)
+       m = Message(subject=subject, body=body, sender = sender, recipient=self)
        m.save()
 
        if self.cc_messages_to_email :

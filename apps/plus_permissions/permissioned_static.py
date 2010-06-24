@@ -141,6 +141,7 @@ def serve(request, path, show_indexes=False):
     response['X-Sendfile'] = lighttpd_path
 
     new_filename=fullpath.split('/')[-1]
+    new_filename=new_filename.replace(' ','_')
     response['Content-Disposition'] = 'attachment;filename=%s'%new_filename
     return response
 

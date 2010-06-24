@@ -71,6 +71,7 @@ def configs(context):
             'GOOGLE_MAP_KEY' : settings.GOOGLE_MAP_KEY,
             'GOOGLE_ANALYTICS_TOKEN' : settings.GOOGLE_ANALYTICS_TOKEN,
 
+            'ANALYTICS_INCLUDE' : 'clients/%s/analytics.html' % settings.PROJECT_THEME,
             }
 
         return SETTINGS
