@@ -32,24 +32,25 @@ from apps.plus_permissions.default_agents import get_all_members_group
 
 
 def various_db() :
-    patch_db('alter table location add hidden bool default 0;')
+    patch_db('alter table location add hidden boolean default false;')
     patch_db('alter table microblogging_following add event_type integer;')
-    patch_db('alter table microblogging_following add cc_to_email bool default 0;')
-    patch_db('alter table microblogging_following add opt_out bool default 0;')
+    patch_db('alter table microblogging_following add cc_to_email boolean default false;')
+    patch_db('alter table microblogging_following add opt_out boolean default false;')
 
 
 
 def unhost(username) :
-    u = User.objects.get(username=username)
-    for group in u.get_enclosures() :
-        if group.id != get_all_members_group().id :
-            group.remove_member(u)
+    if User.objects.filter(username=username) :
+        u = User.objects.get(username=username)
+        for group in u.get_enclosures() :
+            if group.id != get_all_members_group().id :
+                group.remove_member(u)
 
 
 
 various_db()
 
-unhost('manfred.meyer')
-unhost('synnove.fredericks')
+##unhost('manfred.meyer')
+#unhost('synnove.fredericks')
 
 
