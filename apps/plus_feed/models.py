@@ -17,7 +17,8 @@ import re
 
 count = 0
 feed_types=['STATUS', 'CREATE_GROUP', 'JOIN', 'LEAVE', 'COMMENT', 'MESSAGE', 
-            'UPLOAD', 'WIKI_PAGE', 'ADD_LINK', 'FOLLOW', 'UNFOLLOW' ]
+            'UPLOAD', 'WIKI_PAGE', 'ADD_LINK', 'FOLLOW', 'UNFOLLOW', 'JOIN_SITE' ]
+
 for t in feed_types :
     globals()[t]=count
     count=count+1
@@ -34,6 +35,7 @@ FEED_TYPES = (
     (ADD_LINK,'add link'),
     (FOLLOW, 'follow'),
     (UNFOLLOW, 'unfollow'),
+    (JOIN_SITE,'join site'),
 
 )
 
@@ -282,12 +284,15 @@ class FeedItem(models.Model) :
         follower_item = follower.create_FeedItem(follower.get_creator(), type=FOLLOW, source=follower.get_ref(),
                                                  short = clip('started following %s' % followed.get_display_name()),
                                                  target = followed.get_ref())
+
         FeedManager().update_followers(follower, follower_item)
-        
-        followed_item = followed.create_FeedItem(followed.get_creator(), type=FOLLOW, source=followed.get_ref(),
+
+        if followed.get_creator() :
+            creator = followed.get_creator()
+            followed_item = followed.create_FeedItem(followed.get_creator(), type=FOLLOW, source=followed.get_ref(),
                                                  short = clip('%s started following me' % follower.get_display_name() ),
                                                  target = follower.get_ref())
-        FeedManager().update_followers(followed, followed_item)
+            FeedManager().update_followers(followed, followed_item)
 
 
     @classmethod
