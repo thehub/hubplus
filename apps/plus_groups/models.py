@@ -342,7 +342,7 @@ try :
 
 
         def get_permission_agent_name(self) : 
-            return self.display_name
+            return self.display_name.encode('utf-8')
 
 
         def comment(self, comment, commentor) :
@@ -360,7 +360,7 @@ try :
             return self.groupextras
         
         def __str__(self) : 
-            return self.display_name        
+            return self.display_name.encode('utf-8')        
 
         child_groups = models.ManyToManyField('self', symmetrical=False, related_name='parent_groups')
 
