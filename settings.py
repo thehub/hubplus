@@ -308,8 +308,6 @@ HMAC_KEY = "XXXXXXXXX"
 # for profile maps
 GOOGLE_MAP_KEY = "ABQIAAAAiA7tLHdzZr8yhGAEbo5FGxS_srkAJTD0j5T3EF3o06M_52NTAhQM2w0ugG9dZdoyPl3s9RqydGrzpQ"
 
-# for feeds
-FEED_ON = True
 
 # tells Pinax to serve media through django.views.static.serve. 
 SERVE_MEDIA = True # DEBUG 
