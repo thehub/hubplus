@@ -300,7 +300,7 @@ try :
             from apps.plus_feed.models import FeedItem
             FeedItem.post_LEAVE(user_or_group, self)
 
-            # stop following any group you leave .. not 100% certain this is what we want but our beest guess
+            # stop following any group you leave .. not 100% certain this is what we want but our best guess
             from apps.microblogging.models import Following
             Following.objects.unfollow(user_or_group,self)
 
