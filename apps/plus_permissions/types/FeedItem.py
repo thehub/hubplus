@@ -11,6 +11,7 @@ content_type = FeedItem
 child_types = []
 
 class FeedItemViewer :
+    id = InterfaceReadProperty
     short = InterfaceReadProperty
     expanded = InterfaceReadProperty
     external_link = InterfaceReadProperty
@@ -18,6 +19,7 @@ class FeedItemViewer :
     target = InterfaceReadProperty
     source = InterfaceReadProperty
     sent = InterfaceReadProperty
+    has_avatar = InterfaceCallProperty
 
 UserInterfaces = {
     'Viewer' : FeedItemViewer,
