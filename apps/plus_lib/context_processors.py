@@ -72,6 +72,8 @@ def configs(context):
             'GOOGLE_ANALYTICS_TOKEN' : settings.GOOGLE_ANALYTICS_TOKEN,
 
             'ANALYTICS_INCLUDE' : 'clients/%s/analytics.html' % settings.PROJECT_THEME,
+            
+            'ABOUT_INCLUDE' : 'about/clients/%s/about.html' % settings.PROJECT_THEME,
             }
 
         return SETTINGS

@@ -300,7 +300,7 @@ try :
             from apps.plus_feed.models import FeedItem
             FeedItem.post_LEAVE(user_or_group, self)
 
-            # stop following any group you leave .. not 100% certain this is what we want but our beest guess
+            # stop following any group you leave .. not 100% certain this is what we want but our best guess
             from apps.microblogging.models import Following
             Following.objects.unfollow(user_or_group,self)
 
@@ -342,7 +342,7 @@ try :
 
 
         def get_permission_agent_name(self) : 
-            return self.display_name
+            return self.display_name.encode('utf-8')
 
 
         def comment(self, comment, commentor) :
@@ -360,7 +360,7 @@ try :
             return self.groupextras
         
         def __str__(self) : 
-            return self.display_name        
+            return self.display_name.encode('utf-8')        
 
         child_groups = models.ManyToManyField('self', symmetrical=False, related_name='parent_groups')
 

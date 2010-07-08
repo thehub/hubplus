@@ -39,6 +39,14 @@ FEED_TYPES = (
 
 )
 
+FEED_ON = True
+def if_FEED_ON(f) :
+    def g(*args,**kwargs) :
+        if FEED_ON :
+            return f(*args,**kwargs)
+        return None
+    return g
+
 # feed items are the only data in the table, but reader feeds are cached in redis
  
 def feed_for_key(agent) :
@@ -109,8 +117,8 @@ class FeedManager(models.Manager) :
             return feed[0]
         raise FeedItem.DoesNotExist()
 
-
-    def update_followers(self, source, item) :
+    @if_FEED_ON
+    def update_followers(self, source, item) :            
         from apps.plus_permissions.interfaces import secure_wrap
         for f in Following.objects.followers_of(source) :
             # test permission
@@ -158,6 +166,7 @@ class FeedItem(models.Model) :
 
 
     @classmethod
+    @if_FEED_ON
     def post_STATUS(cls, sender, short) :
         expanded = short
         if len(short) > 139 :
@@ -168,6 +177,7 @@ class FeedItem(models.Model) :
         FeedManager().update_followers(sender, new_item)
 
     @classmethod
+    @if_FEED_ON
     def post_CREATE_GROUP(cls, creator, group) :
         creator_item = creator.create_FeedItem(creator.get_creator(), type=1, source=creator.get_ref(),
                                                short = clip('has created a group : %s' % group.get_display_name()),
@@ -179,6 +189,7 @@ class FeedItem(models.Model) :
         FeedManager().update_followers(group, group_item)
 
     @classmethod
+    @if_FEED_ON
     @ignore_permissions_exception
     def post_JOIN(cls, joiner, joined) :
         all_members = get_all_members_group()
@@ -202,6 +213,7 @@ class FeedItem(models.Model) :
         FeedManager().update_followers(joined, joined_item)
 
     @classmethod
+    @if_FEED_ON
     @ignore_permissions_exception
     def post_LEAVE(cls, leaver, left) :
         all_members = get_all_members_group()
@@ -220,6 +232,7 @@ class FeedItem(models.Model) :
 
 
     @classmethod
+    @if_FEED_ON
     def post_ADD_LINK(cls, who, target, url) :
         who_item = who.create_FeedItem(who.get_creator(), type=ADD_LINK, source=who.get_ref(),
                                        short = clip("added a link to %s" % 
@@ -235,6 +248,7 @@ class FeedItem(models.Model) :
             FeedManager().update_followers(target, target_item)
 
     @classmethod
+    @if_FEED_ON
     def post_UPLOAD(cls, who, upload) :
         who_item = who.create_FeedItem(who.get_creator(), type=UPLOAD, source=who.get_ref(),
                                        short = clip('uploaded a file %s to %s' % (upload.title, upload.in_agent.obj.get_display_name())),
@@ -249,6 +263,7 @@ class FeedItem(models.Model) :
         FeedManager().update_followers(upload.in_agent.obj, group_item)
  
     @classmethod
+    @if_FEED_ON
     def post_WIKI_PAGE(cls, who, page) :
         who_item = who.create_FeedItem(who.get_creator(), type=WIKI_PAGE, source=who.get_ref(),
                                        short = clip('edited a wiki page %s in %s' % (page.title, page.in_agent.obj.get_display_name())),
@@ -264,6 +279,7 @@ class FeedItem(models.Model) :
 
 
     @classmethod
+    @if_FEED_ON
     def post_COMMENT(cls, who, target) :
         who_item = who.create_FeedItem(who.get_creator(), type=COMMENT, source=who.get_ref(),
                                        short = clip('posted a comment on %s' % target.get_display_name()),
@@ -276,6 +292,7 @@ class FeedItem(models.Model) :
         FeedManager().update_followers(target, target_item)
 
     @classmethod
+    @if_FEED_ON
     def post_FOLLOW(cls, follower, followed) :
         all_members = get_all_members_group()
         if followed == all_members:
@@ -296,6 +313,7 @@ class FeedItem(models.Model) :
 
 
     @classmethod
+    @if_FEED_ON
     def post_UNFOLLOW(cls, follower, followed) :
         all_members = get_all_members_group()
         if followed == all_members :

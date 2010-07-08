@@ -83,6 +83,8 @@ class Contact(models.Model):
         h.save()
 
         u.is_active = True
+        u.cc_messages_to_email = True
+
         u.save()
         
         self.user = u
@@ -99,7 +101,8 @@ class Contact(models.Model):
             u.homehub = other_groups[0]
         else:
             u.homehub = get_all_members_group()
-        
+        u.save()
+
         return u
 
 

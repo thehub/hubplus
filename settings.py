@@ -308,6 +308,7 @@ HMAC_KEY = "XXXXXXXXX"
 # for profile maps
 GOOGLE_MAP_KEY = "ABQIAAAAiA7tLHdzZr8yhGAEbo5FGxS_srkAJTD0j5T3EF3o06M_52NTAhQM2w0ugG9dZdoyPl3s9RqydGrzpQ"
 
+
 # tells Pinax to serve media through django.views.static.serve. 
 SERVE_MEDIA = True # DEBUG 
 PERMISSION_UPLOADS_THROUGH_X_SENDFILE =False # override on a production server
@@ -315,6 +316,8 @@ WEBSERVER_MEDIA_ROOT = "" # where the webserver that you've sent an x-sendfile t
 
 # serve js src files
 DEVELOPMENT = False
+
+
 
 
 # a local_settings file can over-ride the above
@@ -354,6 +357,8 @@ try:
     from apps.plus_permissions import patch
 except ImportError, e:
     print "importing / setting up permissions system failed :: " + `e`
+
+
 
 
 import logging
