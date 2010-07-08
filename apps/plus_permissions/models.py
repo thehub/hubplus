@@ -368,6 +368,7 @@ class SecurityContext(models.Model):
              tag = SecurityTag.objects.get(interface=interface, security_context=self)
 
          slider_agents.reverse()
+
          for label, agent in slider_agents:
              if agent not in tag.agents.all():
                  break
@@ -598,4 +599,14 @@ def has_access(agent, resource, interface, sec_context=None) :
 
     #print "has_access fails for %s, %s, %s, %s" %(interface, resource, context.context_agent.obj, agent)
     return False
+
+
+
+def permissions_failures_for(viewer, cls=User, interface='User.Viewer') :
+    """ Generates an iteration of users who viewer can't see"""
+    from apps.plus_permissions.interfaces import secure_wrap
+    for x in cls.objects.all().order_by('-id') :
+        sx = secure_wrap(x, viewer)
+        if interface not in sx._interfaces :
+            yield x
 
