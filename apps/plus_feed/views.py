@@ -19,6 +19,19 @@ from django.utils.feedgenerator import Rss201rev2Feed, Enclosure
 from django.utils.html import strip_tags
 
 from apps.plus_permissions.exceptions import PlusPermissionsNoAccessException
+from apps.plus_permissions.api import secure_resource
+
+# one feed item
+
+@secure_resource(FeedItem)
+def feed_item(request, resource) :
+    return render_to_response('plus_feed/one_item.html',
+                              {'item':resource, 'prefix_sender':True}, 
+                              context_instance=RequestContext(request))
+
+
+
+
 
 # rss for one users
 def rss_of_user(request, username) :
