@@ -12,6 +12,7 @@ from django.utils.html import strip_tags
 from django.contrib.auth.models import User
 
 from apps.plus_permissions.default_agents import get_all_members_group
+from django.core.urlresolvers import reverse
 
 import re
 
@@ -83,7 +84,8 @@ class FeedManager(models.Manager) :
     def get_for(self, receiver, start_stop = None) :
         """ Feed items for receiver.
         If we already have a redis list for this receiver, then just pull from it,
-        otherwise, recreate from db"""
+        otherwise, recreate from db
+        receiver is user or group"""
 
         key = feed_for_key(receiver)
         if redis.exists(key) :
@@ -127,7 +129,7 @@ class FeedManager(models.Manager) :
                 key = feed_for_key(f)
                 redis.lpush(key,item.id)
 
-        # if we mention someone in tweet ... add it to their queue
+        # if we mention someone in tweet ... add it to their queue and forward them a mail
         if '@' in item.short :   
             rx = re.compile(r"(^\@([A-Za-z0-9_\.\']+))")
             match = rx.match(item.short)
@@ -138,6 +140,20 @@ class FeedManager(models.Manager) :
                     replied = replieds[0]
                     key = feed_for_key(replied)
                     redis.lpush(key,item.id)
+                    expanded = '\n\n%s'%item.expanded if (item.expanded and item.expanded != item.short) else ''
+                    click = u'%s : %s' % (_('Follow this link to the item'),
+                                          ('http://%s%s'%(settings.DOMAIN_NAME,
+                                                          reverse('feed_item',args=[int(item.id)])
+                                                          )
+                                           )
+                                          )
+                    msg = u"""%s %s %s
+
+%s%s
+
+%s
+"""% (source.get_display_name(), 'has replied to you on', settings.SITE_NAME_SHORT, item.short, expanded, click)
+                    replied.email_user(u'%s %s' %(_('Message from'),source.get_display_name()), msg, settings.SUPPORT_EMAIL)
 
         return item
 

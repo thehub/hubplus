@@ -24,7 +24,10 @@
 	
 	{{item.short|at_tags|safe|urlize}}
 	
-	<span class="label_time">  &nbsp; {% blocktrans with item.sent|timesince as tweet_age %}{{ tweet_age }} ago{% endblocktrans %}</span>
+	<span class="label_time">  
+	    &nbsp; {% blocktrans with item.sent|timesince as tweet_age %}{{ tweet_age }} ago{% endblocktrans %}
+	    (<a href="{% url feed_item item.id %}">link</a>)
+	</span>
 	<div>
 
 	  {% if item.target %}
