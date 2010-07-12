@@ -206,7 +206,11 @@ class Following(models.Model):
     followed_content_type = models.ForeignKey(ContentType, related_name="followers", verbose_name=_('followed'))
     followed_object_id = models.PositiveIntegerField()
     followed_content_object = generic.GenericForeignKey('followed_content_type', 'followed_object_id')
-    
+
+    event_type = models.IntegerField()
+    cc_to_email = models.BooleanField()
+    opt_out = models.BooleanField()
+
     objects = FollowingManager()
 
 
