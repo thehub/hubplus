@@ -62,6 +62,15 @@ def get_anon_user():
     anon_user.is_authenticated = lambda : False
     return anon_user
 
+def get_removed_user() :
+    try :
+        removed_user = User.objects.filter(username='removed')[0]
+    except IndexError:
+        from apps.plus_permissions.types.User import create_user
+        removed_user = create_user('removed','removed@null.com',password='dummy',permission_prototype='inactive')
+        removed_user.save()
+    return removed_user
+
 def set_all_members_group():
     admin_user = get_admin_user()
     return TgGroup.objects.get_or_create(group_name=settings.VIRTUAL_HUB_NAME, display_name=settings.VIRTUAL_HUB_DISPLAY_NAME, place=get_or_create_root_location(), level='member', user=admin_user)

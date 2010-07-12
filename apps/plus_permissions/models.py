@@ -606,7 +606,11 @@ def permissions_failures_for(viewer, cls=User, interface='User.Viewer') :
     """ Generates an iteration of users who viewer can't see"""
     from apps.plus_permissions.interfaces import secure_wrap
     for x in cls.objects.all().order_by('-id') :
-        sx = secure_wrap(x, viewer)
-        if interface not in sx._interfaces :
-            yield x
+        try :
+            sx = secure_wrap(x, viewer)
+            if interface not in sx._interfaces :
+                yield x
+        except Exception, e :
+            print x.id, x, e
+
 

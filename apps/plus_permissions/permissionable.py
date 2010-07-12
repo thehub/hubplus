@@ -88,14 +88,12 @@ class TgGroupPermissionableManager(PermissionableManager) :
         return self.filter(level='member',group_type=settings.GROUP_HUB_TYPE)
 
 
-#    def plus_hub_filter(self, p_user, **kwargs) :
-        # bloody django templating language ... why does it work with comprehensions but not generator expressions?
-        # XXX needs to be fixed when we work out our lazy filter
-#        return [group for group in self.plus_filter(p_user, **kwargs) if group.get_inner().place.name != settings.VIRTUAL_HUB_NAME]
+class ResourceTypePermissionableManager(PermissionableManager) :
+    def created_by(self,creator) :
+        return self.filter(created_by=creator)
 
-#    def plus_virtual_filter(self, p_user, **kwargs) :
-#        kwargs['place__name']=settings.VIRTUAL_HUB_NAME # adding another criteria to query
-#        return self.plus_filter(p_user, **kwargs)
+    def in_group(self,agent) :
+        return self.filter(in_agent=agent.get_ref())
 
 
 
@@ -300,6 +298,8 @@ def security_patch(content_type, type_list):
         content_type.add_to_class('objects', UserPermissionableManager())
     elif content_type.__name__ == 'TgGroup':
         content_type.add_to_class('objects', TgGroupPermissionableManager())
+    elif content_type.__name__ in ['WikiPage','Resource'] :
+        content_type.add_to_class('objects', ResourceTypePermissionableManager())
     else :
          content_type.add_to_class('objects', PermissionableManager())
 
