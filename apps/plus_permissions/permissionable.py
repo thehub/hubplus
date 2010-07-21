@@ -70,7 +70,11 @@ class PermissionableManager(models.Manager):
         return True
 
 class UserPermissionableManager(UserManager, PermissionableManager) :
-    pass
+    def active(self) :
+        return self.filter(is_active=True)
+
+    def inactive(self) :
+        return self.filter(is_active=False)
 
 class TgGroupPermissionableManager(PermissionableManager) :
     """ NB: that this class allows us to search for "virtual" groups (ie. online groups) or 

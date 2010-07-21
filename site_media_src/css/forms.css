@@ -386,6 +386,20 @@ form fieldset .checkboxes select {
 	padding		: 3px 5px 2px;
 }
 
+
+.small_button {
+        background      : #e8e8e8 url('../images/button_bg.gif') 0 0 repeat-x;
+        font-size       : 0.8em;
+        margin-bottom   : 1px;
+        border          : 1px solid #bbb;
+        border-color: #bbb #999 #999 #bbb;
+	color       : #222;
+        cursor          : pointer;
+        padding         : 1px; 1px; 1px;
+	height          : 20px;
+	text-transform  : uppercase;
+}
+
 .button::-moz-focus-inner {
 	border		: none;
 	padding		: 0;

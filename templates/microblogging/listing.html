@@ -14,63 +14,7 @@
     {% for item in feed_items %}
     
     <li>
-      {% if item.has_avatar %}
-      <div class="thumb small">{% avatar item.source.obj 40 %}</div>
-      {% endif %}
-      <div class="tweet" id="t{{ item.id }}">
-        {% if prefix_sender %}
-	<a href="{% simple_url item.source.obj %}"><b>{{ item.source.obj.get_display_name }} :</b></a>
-	{% endif %}
-	
-	{{item.short|at_tags|safe|urlize}}
-	
-	<span class="label_time">  
-	    &nbsp; {% blocktrans with item.sent|timesince as tweet_age %}{{ tweet_age }} ago{% endblocktrans %}
-	    (<a href="{% url feed_item item.id %}">link</a>)
-	</span>
-	<div>
-
-	  {% if item.target %}
-
-	    See : <span><a href="{{ item.target.obj.get_url }}">{{item.target.obj.get_display_name}}</a></span>
-	    <br/>
-	      {% comment %}
-	      <!-- XXX - commenting this out because including the ordinary listing element 
-		 doesn't work, needs design work
-		 <div>
-		   {% ifequal item.target.obj.get_class 'Profile' %}
-		   {  % comment %}
-		   {% show_profile item.target.obj %}
-		   {  % endcomment %}
-		   {% endifequal %}
-		   {% ifequal item.target.obj.get_class 'Resource' %}
-		   {% show_resource item.target.obj %}
-		   {% endifequal %}
-		   {% ifequal item.target.obj.get_class 'WikiPage' %}
-		   {% show_resource item.target.obj %}
-		   {% endifequal %}
-		   {% ifequal item.target.obj.get_class 'TgGroup' %}
-		   {% show_group item.target.obj %}
- 		   {% endifequal %}
-		   
-		 </div>
-		 -->
-	    {% endcomment %}
-	{% endif %}  
-
-	{% if item.expanded %}
-	      {% ifequal item.short item.expanded %}{% else %}
-	          <br/>
-		  {{item.expanded|at_tags|safe|truncatewords_html:10|urlize|linebreaks}}
-	      {% endifequal %}
-	{% endif %}
-
-	{% if item.external_link %}
-	    <br/>
-	      Elsewhere : {{item.external_link|urlize}}
-	{% endif %}
-	</div>
-      </div>
+      {% one_item item.id %}
     </li>
     
     {% endfor %}
@@ -79,8 +23,8 @@
 {% else %}
   {% comment %}
   {% if are_mine %}
-     {% url tweets_you_follow as tweets_url %}
-        <p>{% blocktrans %}You haven't posted any <a href="{{ tweets_url }}">status updates</a> yet.{% endblocktrans %}</p>
+  {% url tweets_you_follow as tweets_url %}
+<p>{% blocktrans %}You haven't posted any <a href="{{ tweets_url }}">status updates</a> yet.{% endblocktrans %}</p>
      {% else %}
         {% if IS_GROUP_TYPE %}
            <p>{% blocktrans %}There is no activity on this{% endblocktrans %} {{GROUP_OR_HUB}}</p>
