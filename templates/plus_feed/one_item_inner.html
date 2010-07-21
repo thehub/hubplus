@@ -1,0 +1,54 @@
+
+{% load oembed_tags %}
+{% load pagination_tags %}
+{% load plus_url %}
+{% load avatar_tags %}
+{% load group_tags %}
+{% load profile_tags %}
+{% load feed_tags %}
+{% load i18n %}
+{% load microblogging_tags %}
+
+
+{% if item.has_avatar %}
+<div class="thumb small">{% avatar item.source.obj 40 %}</div>
+{% endif %}
+<div class="tweet" id="t{{ item.id }}">
+  {% if prefix_sender %}
+  <a href="{% simple_url item.source.obj %}"><b>{{ item.source.obj.get_display_name }} :</b></a>
+  {% endif %}
+  
+  {{item.short|at_tags|safe|urlize}}
+  
+  <span class="label_time">  &nbsp; {% blocktrans with item.sent|timesince as tweet_age %}{{ tweet_age }} ago{% endblocktrans %}</span>
+ {% if stand_alone %}{% else %} (<a href="{% url feed_item item.id %}">{% trans "link" %})</a> {% endif %}
+
+
+  <div>    
+    {% if item.target %}
+    
+    See : <span><a href="{{ item.target.obj.get_url }}">{{item.target.obj.get_display_name}}</a></span>
+    <br/>
+    {% endif %}
+    
+    {% if stand_alone %}
+    {% if item.expanded %}
+    {% ifequal item.short item.expanded %}{% else %}
+    <br/>
+    {{item.expanded|at_tags|safe|urlize|linebreaks}}
+    {% endifequal %}
+    {% endif %}
+    {% endif %}
+    
+    {% if item.external_link %}
+    <br/>
+    Elsewhere : {{item.external_link|urlize}}
+    {% endif %}
+  </div>
+
+  {% if item.source.obj.is_user %}
+  <div class="tweet_reply">
+    {% microblogging_form current_user 'True' 'True' item.source.obj.user_name %}
+    </div>
+  {% endif %}
+</div>
