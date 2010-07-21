@@ -1,6 +1,6 @@
 function status(ele) {
     var manager = jq(ele);
-    manager.change( function() { 
+    manager.change( function() {
 	    var ele_time = manager.find('.label_time');
 	    ele_time.html('Just now'); // XXX i18n in js?
 	} );
@@ -12,10 +12,12 @@ function status_form(ele) {
     var edit = jq(manager.find('.edit'));
     var show = jq(manager.find('.show'));
     var toggle = jq(manager.find('.toggle'));
-    var ta = jq(edit.find('#new_tweet'));
+    var ta = jq(edit.find('.new_tweet'));
+    var reply = jq(edit.find('.reply_to'));
+
     var click_show = jq(manager.find('.click_show'));
-    
-    jq(ta).val('');
+
+    jq(ta).val(jq(reply).val()+" ");
 
     if (edit.find('.starts_hidden').val() == "True") {
         edit.hide();
@@ -34,13 +36,13 @@ function status_form(ele) {
 	    toggle.hide();
 	} );
 
-   
+
     click_show.click(function(e) {
 	toggle_all();
 	toggle.hide();
 	});
 
-    
+
     ta.keypress(function(e) {
 	    var s = jq(this).val();
 	    var free = 140 - s.length;

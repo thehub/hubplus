@@ -32,7 +32,6 @@ def feed_item(request, resource) :
 
 
 
-
 # rss for one users
 def rss_of_user(request, username) :
 

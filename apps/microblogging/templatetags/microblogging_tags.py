@@ -31,8 +31,9 @@ def sent_tweet_listing(context, user, prefix_sender, are_mine):
     return tweet_listing(context, tweets, prefix_sender, are_mine)
 
 @register.inclusion_tag('microblogging/form.html', takes_context=True)
-def microblogging_form(context, sender, starts_hidden=False) :
+def microblogging_form(context, sender, starts_hidden=False, is_reply=False, reply_to='') :
     sender_class = ContentType.objects.get_for_model(sender)
+
     user = context['request'].user
 
     try :
@@ -54,13 +55,17 @@ def microblogging_form(context, sender, starts_hidden=False) :
             sender.get_inner()
             secure = sender
         except :
+
             secure = secure_wrap(sender, user)
         can_update_status = secure.has_interface(secure.get_inner().__class__.__name__ + '.Editor') 
 
 
     return {
         'sender':sender,
+        'current_user':user,
         'path':path,
+        'is_reply':is_reply,
+        'reply_to':reply_to,
         'status_text':status_text,
         'status_since':status_since,
         'sender_class':sender_class,

@@ -15,10 +15,12 @@ from apps.plus_permissions.default_agents import get_all_members_group
 from django.core.urlresolvers import reverse
 
 import re
+reply_rex = re.compile(r"(^\@([A-Za-z0-9_\.\']+))") # used to detect if this is a reply
 
 count = 0
 feed_types=['STATUS', 'CREATE_GROUP', 'JOIN', 'LEAVE', 'COMMENT', 'MESSAGE', 
-            'UPLOAD', 'WIKI_PAGE', 'ADD_LINK', 'FOLLOW', 'UNFOLLOW', 'JOIN_SITE' ]
+            'UPLOAD', 'WIKI_PAGE', 'ADD_LINK', 'FOLLOW', 'UNFOLLOW', 'JOIN_SITE',
+            'REPLY']
 
 for t in feed_types :
     globals()[t]=count
@@ -37,6 +39,7 @@ FEED_TYPES = (
     (FOLLOW, 'follow'),
     (UNFOLLOW, 'unfollow'),
     (JOIN_SITE,'join site'),
+    (REPLY, 'reply')
 
 )
 
@@ -131,8 +134,7 @@ class FeedManager(models.Manager) :
 
         # if we mention someone in tweet ... add it to their queue and forward them a mail
         if '@' in item.short :   
-            rx = re.compile(r"(^\@([A-Za-z0-9_\.\']+))")
-            match = rx.match(item.short)
+            match = reply_rex.match(item.short)
 
             if match :
                 replieds = User.objects.filter(username=match.group(2))
@@ -182,15 +184,25 @@ class FeedItem(models.Model) :
 
 
     @classmethod
-    @if_FEED_ON
-    def post_STATUS(cls, sender, short) :
+    def curtail(cls, short) :
         expanded = short
         if len(short) > 139 :
             short = clip(short)
+        return short, expanded
 
-        new_item = sender.create_FeedItem(sender.get_creator(), type=STATUS, source=sender.get_ref(), 
+    @classmethod
+    @if_FEED_ON
+    def post_STATUS(cls, sender, short) :
+        short, expanded = cls.curtail(short)
+        item_type = STATUS
+        if reply_rex.match(short) :
+            item_type = REPLY # if it's a reply (starts with @username) then make it a REPLY type
+
+        new_item = sender.create_FeedItem(sender.get_creator(), type=item_type, source=sender.get_ref(), 
                                           short=short, expanded=expanded) 
         FeedManager().update_followers(sender, new_item)
+
+
 
     @classmethod
     @if_FEED_ON

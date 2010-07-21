@@ -1,14 +1,17 @@
 {% load i18n %}
 <div class="status_form">
   <form method="post" action="{% url status_post %}">
-
+    {% if is_reply %}{% else %}
     <div class="show {% if can_update_status %}click_show{% endif %}">
       <span class="status_text">{{status_text|urlize}}</span>&nbsp;&nbsp;
       <span class="label_time">{{status_since}} {% if status_since %}{% trans "ago"%}.{% endif %}</span>
     </div>
+    {% endif %}
 
     {% if can_update_status %}
-    <input type="button" class="button toggle" value="{% if status_text %}{% trans "Update" %}{% else %}{% trans "Add Status" %}{% endif %}"></input>
+    <div>
+    <input type="button" class="toggle small_button" value="{% if is_reply %}{% trans 'Reply'%}{% else %}{% if status_text %}{% trans 'Update' %}{% else %}{% trans 'Add Status' %}{% endif %}{% endif %}"></input>
+    </div>
     {% endif %}
 
     <div class="edit">
@@ -16,7 +19,8 @@
       <input type="hidden" name="sender_class" value="{{sender_class}}"/>
       <input type="hidden" name="sender_id" value="{{sender.id}}"/>
       <input type="hidden" name="next" value="{{path}}"/>
-      <textarea id="new_tweet" name="text" cols="50" rows="2"></textarea>
+      <input type="hidden" name="reply_to" class="reply_to" value="{% if is_reply %}@{{reply_to}}{% endif %}"/>
+      <textarea class="new_tweet" name="text" cols="50" rows="2"></textarea>
       <div class="no_chars">140</div>
       
       <div class="buttons">

@@ -18,10 +18,10 @@ var widget_map = {
 	       'address':'text_large'
     },
     'HostInfo':{'find_out':'text_wysiwyg',
-                'project_stage':'text_wysiwyg',
-                'assistence_offered':'text_wysiwyg',
-		'project':'text_wysiwyg',
-                'expected_membership_benefits':'text_wysiwyg'},
+                'project_stage':'text',
+                'assistence_offered':'text',
+		'project':'text',
+                'expected_membership_benefits':'text'},
     'TgGroup':{'description':'text_wysiwyg', 'group_type':'new_select'},
     'Resource':{'description':'text_wysiwyg'}
 };
@@ -306,7 +306,7 @@ var profile_ready = function () {
     setup_tag_lists();
 
     // live updating of controls for listings (eg. adding / removing a tag from the filter / pagination )
-    // XXX why is this in "pofile_ready" ? 
+    // XXX why is this in "pofile_ready" ?
 
     jq('.page_content .add_tag, .page_content .delete_tag, .page_content .clear_tag, .page_content .pagination a').live('click', function () {
 	    // get which
@@ -329,7 +329,7 @@ var profile_ready = function () {
     setup_user_lists();
 
 
-    // set up togglable 
+    // set up togglable
     jq('.togglable').each(function(i, ele) {
             jq(this).toggle();
 
@@ -344,14 +344,14 @@ var profile_ready = function () {
                 shown = true;
                 return false;
             };
-	    
+
             var hide = function() {
                 jq(button).attr('value',old_button_name);
                 jq(panel).toggle();
                 shown = false;
                 return false;
             };
-	    
+
             jq(button).click(function() {
                     if (shown) {
                         hide();
