@@ -309,14 +309,18 @@ def patch_user_class():
        if self.cc_messages_to_email :
           # recipient wants emails cc-ed 
           link = 'http://' + settings.DOMAIN_NAME + reverse('messages_all')
+          settings_link = 'http://' + settings.DOMAIN_NAME + reverse('acct_settings')
           main = _(""" 
 %(sender)s has sent you a new message on %(account_name)s .
 
 %(body)s
 
-Click %(link)s to see your account
+Click %(link)s to see your account.
 
-""") % {'account_name':settings.SITE_NAME, 'body':body, 'link':link, 'sender':sender.get_display_name()}
+If you do not want to receive emails when you receive messages on %(account_name)s, please change your settings here : %(settings_link)s
+
+
+""") % {'account_name':settings.SITE_NAME, 'body':body, 'link':link, 'sender':sender.get_display_name(), 'settings_link':settings_link}
 
           self.email_user(subject, main, settings.SUPPORT_EMAIL)
 
