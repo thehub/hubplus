@@ -26,6 +26,11 @@ def one_item(context, item_id, stand_alone=False) :
     user = request.user
 
     fi = FeedItem.objects.plus_get(user, id=item_id)
+    
+    fi.source.obj # force permission failure if we don't have access to the source of this feed_item
+    # why are we here in this case?
+    
+
     return {"item":fi, 
             "current_user":user,
             "request":request,
