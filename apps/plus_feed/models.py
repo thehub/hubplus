@@ -84,6 +84,25 @@ class FeedManager(models.Manager) :
         "Feed items from source"""
         return self.filter(source=source.get_ref()).order_by('-sent')
 
+    def get_from_permissioned(self, source, user) :
+        from apps.plus_permissions.interfaces import secure_wrap
+
+        rets = []
+        # absurdly inefficient
+        count = 0
+        for fi in self.get_from(source) :
+            sfi = secure_wrap(fi,user) 
+            try :
+                sfi.source
+                rets.append(sfi)
+                count=count+1
+                if count > 50 : 
+                    break
+            except Exception, e:
+                pass
+
+        return rets
+
     def get_for(self, receiver, start_stop = None) :
         """ Feed items for receiver.
         If we already have a redis list for this receiver, then just pull from it,

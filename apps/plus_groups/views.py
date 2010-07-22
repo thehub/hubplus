@@ -195,7 +195,7 @@ def group(request, group, template_name="plus_groups/group.html", current_app='p
         else:
             has_accept = False
     
-    tweets = FeedItem.feed_manager.get_from(group).order_by("-sent")     
+    tweets = FeedItem.feed_manager.get_from_permissioned(group, request.user)
 
     try:
         group.get_all_sliders
