@@ -322,7 +322,7 @@ If you do not want to receive emails when you receive messages on %(account_name
 
 """) % {'account_name':settings.SITE_NAME, 'body':body, 'link':link, 'sender':sender.get_display_name(), 'settings_link':settings_link}
 
-          self.email_user(subject, main, settings.SUPPORT_EMAIL)
+          self.email_user(subject, main, settings.SERVER_EMAIL)
 
        return m
 
