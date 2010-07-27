@@ -12,7 +12,7 @@ from datetime import datetime
 
 from django.utils.translation import ugettext_lazy as _
 from django.db import transaction
-from apps.plus_lib.status import StatusDescriptor
+
 from django.contrib.contenttypes.models import ContentType
 
 from django.template import Template, Context
@@ -25,6 +25,7 @@ class Location(models.Model):
         db_table = u'location'
 
     name = models.CharField(unique=True, max_length=200)
+    hidden = models.BooleanField()
 
 #patch django orm's "create_many_related_manager"
 from django.db.models.fields.related import *
@@ -207,7 +208,6 @@ try :
 
         active = models.BooleanField()
 
-        status = StatusDescriptor() 
 
 
         @invalidates_membership_cache
@@ -277,7 +277,8 @@ try :
 
         def message_members(self, sender, message_header, message_body) :
             for member in self.get_users() :
-                member.message(sender, message_header, message_body)
+                message_extra = "This message was sent to all members of the %s %s" % (self.get_display_name().encode('utf-8'), self.get_group_type_name())
+                member.message(sender, message_header, message_body, message_extra=message_extra)
 
         def is_group(self) : return True
         def is_user(self) : return False
@@ -355,6 +356,12 @@ try :
         def is_hub_type(self) :
             return self.group_type == settings.GROUP_HUB_TYPE
 
+        def get_group_type_name(self) :
+            if not self.is_hub_type() :
+                return 'group'
+            else :
+                return hub_name().lower() 
+
         def get_extras(self) :
             # if there are extras for this class, return them
             return self.groupextras
@@ -386,15 +393,6 @@ try :
             content_type = ContentType.objects.get_for_model(self)
 
             # remove statuses
-            from apps.microblogging.models import TweetInstance, Tweet, Following
-
-            for ti in TweetInstance.objects.tweets_from(self) :
-                ti.delete()
-            for ti in TweetInstance.objects.tweets_for(self) :
-                ti.delete()
-
-            for t in Tweet.objects.filter(sender_type=content_type, sender_id=self.id) :
-                t.delete()
             for f in Following.objects.filter(follower_content_type=content_type,follower_object_id=self.id) :
                 f.delete()
             for f in Following.objects.filter(followed_content_type=content_type,followed_object_id=self.id) :
