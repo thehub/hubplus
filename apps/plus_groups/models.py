@@ -277,7 +277,7 @@ try :
 
         def message_members(self, sender, message_header, message_body) :
             for member in self.get_users() :
-                message_extra = "This message was sent to all members of the %s %s" % (self.get_display_name().encode('utf-8'), self.get_group_type_name())
+                message_extra = "This message was sent to all members of the %s %s by %s" % (self.get_display_name().encode('utf-8'), self.get_group_type_name(), sender.get_display_name().encode('utf-8'))
                 member.message(sender, message_header, message_body, message_extra=message_extra)
 
         def is_group(self) : return True
