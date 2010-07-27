@@ -297,12 +297,16 @@ def patch_user_class():
        return send_tweet(self, msg)
     User.send_tweet = send_tweet
 
-    def message(self, sender, subject, body) :
+    def message(self, sender, subject, body, message_extra="") :
+
+       if not self.active :
+          return # don't send messages to inactive members
+
        from messages.models import Message
        from django.core.mail import send_mail
        from django.core.urlresolvers import reverse
        from django.utils.translation import ugettext_lazy as _, ugettext
-
+       
        m = Message(subject=subject, body=body, sender = sender, recipient=self)
        m.save()
 
@@ -313,14 +317,20 @@ def patch_user_class():
           main = _(""" 
 %(sender)s has sent you a new message on %(account_name)s .
 
+---------------------------------------------------------------
+
 %(body)s
+
+---------------------------------------------------------------
+
 
 Click %(link)s to see your account.
 
 If you do not want to receive emails when you receive messages on %(account_name)s, please change your settings here : %(settings_link)s
 
+%(message_extra)s
 
-""") % {'account_name':settings.SITE_NAME, 'body':body, 'link':link, 'sender':sender.get_display_name(), 'settings_link':settings_link}
+""") % {'account_name':settings.SITE_NAME, 'body':body, 'link':link, 'sender':sender.get_display_name(), 'settings_link':settings_link, "message_extra":message_extra}
 
           self.email_user(subject, main, settings.SERVER_EMAIL)
 

@@ -318,13 +318,14 @@ def autocomplete_user_or_full_name(request):
     q_first = Q(user__first_name__istartswith=q)
     q_last = Q(user__last_name__istartswith=q)
     
+    
     query = q_username | q_first | q_last
     if ' ' in q :
         first,rest = q.split(' ')
         q_full = Q(user__first_name__istartswith=first,user__last_name__istartswith=rest)
         query = query | q_full
 
-    options = ['%s %s (%s)' % (p.user.first_name, p.user.last_name, p.user.username) for p in Profile.objects.filter(query)[:limit]] 
+    options = ['%s %s (%s)' % (p.user.first_name, p.user.last_name, p.user.username) for p in Profile.objects.filter(user__active=1).filter(query)[:limit]] 
 
     # XXX add permissioning on results
 
