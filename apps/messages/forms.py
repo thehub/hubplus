@@ -23,7 +23,7 @@ class ComposeForm(forms.Form):
     recipient = CommaSeparatedUserField(label=_(u"Recipient"))
     subject = forms.CharField(label=_(u"Subject"))
     body = forms.CharField(label=_(u"Body"),
-        widget=forms.Textarea(attrs={'rows': '12', 'cols':'55'}))
+                           widget=forms.Textarea(attrs={'rows': '12', 'cols':'55'}))
     
         
     def save(self, sender, parent_msg=None):
@@ -34,13 +34,9 @@ class ComposeForm(forms.Form):
         message_list = []
         for r in recipients:
             msg = r.message(sender,subject,body)
-            #msg = Message(
-            #    sender = sender,
-            #    recipient = r,
-            
-            #subject = subject,
-            #    body = body,
-            #)
+            if not msg : # r.message returns None if recipient is inactive (and therefore message isn't created)
+                continue 
+
             if parent_msg is not None:
                 msg.parent_msg = parent_msg
                 parent_msg.replied_at = datetime.datetime.now()

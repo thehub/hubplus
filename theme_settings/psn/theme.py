@@ -130,3 +130,7 @@ Unfortunately, we can not accept you to become a member of {{group_name}} at thi
 
 # the following groups are to be hidden from the main group listing page
 HIDDEN_GROUPS = [28, 4, 34, 10, 40, 142]
+
+
+# should be over-ridden in local_settings.py
+GOOGLE_ANALYTICS_TOKEN = 'UA-15037222-1'
