@@ -48,8 +48,10 @@ def microblogging_form(context, sender, starts_hidden=False, is_reply=False, rep
     
     can_update_status = False
     if sender.__class__.__name__ == 'User' :
-        secure = secure_wrap(sender.get_profile(), user)
-        can_update_status = secure.has_interface('Profile.Editor')
+        from apps.plus_permissions.default_agents import get_anon_user
+        if sender.username != get_anon_user().username :
+            secure = secure_wrap(sender.get_profile(), user)
+            can_update_status = secure.has_interface('Profile.Editor')
     else :
         try :
             sender.get_inner()
