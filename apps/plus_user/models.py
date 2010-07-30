@@ -365,6 +365,17 @@ If you do not want to receive emails when you receive messages on %(account_name
 
     User.change_avatar = lambda self : True
 
+    def is_following(self, other_user) :
+       from apps.microblogging.models import Following
+       return Following.objects.is_following(self, other_user)
+
+    User.is_following = is_following
+
+    def is_followed_by(self, other_user) :
+       from apps.microblogging.models import Following
+       return Following.objects.is_following(other_user, self)
+
+    User.is_followed_by = is_followed_by
 
     AnonymousUser.is_member_of = lambda *args, **kwargs : False
     AnonymousUser.is_direct_member_of = lambda *args, **kwarg : False
