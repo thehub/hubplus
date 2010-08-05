@@ -1,4 +1,3 @@
-
 from django.db import models
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes import generic
@@ -212,15 +211,24 @@ class SecurityContext(models.Model):
      def diagnose_interface(self, iface):
          print iface
          for t in self.get_tags_for_interface(iface):
-             print t.security_context.context_agent.obj,
              for a in t.agents.all() :
-                 print a.obj
+                 print a.obj,
+             print
 
      def diagnose(self, interface=None):
          if interface : self.diagnose_interface(interface)
          for i in self.get_interfaces():
              self.diagnose_interface(i)
              
+     def traced_wrap(self, user) :
+         # convenient way to trace an attempted secure_wrap
+         obj = self.get_target()
+         from apps.plus_permissions.interfaces import secure_wrap
+         import ipdb
+         ipdb.set_trace()
+         so = secure_wrap(obj,user)
+         
+
      def get_slider_agents(self, visible_only=False):
          agents = SliderAgents[self.context_agent.obj.__class__](self)
          if visible_only:
@@ -298,6 +306,26 @@ class SecurityContext(models.Model):
              tag.add_agents(adds)
          if not skip_validation:
              self.validate_constraints(type_name)
+
+         if interface == 'Profile.Viewer' :
+             try :
+                 User().public_field
+             except Exception, e :
+                 # doesn't exist (this is not hub+)
+                 # we're finished here
+                 return
+
+             target = self.get_target()
+             if target.__class__.__name__ != 'User' :
+                 return 
+
+             user = target
+             if new_agent.obj == get_anonymous_group() :
+                 user.public_field = 1
+             else :
+                 user.public_field = 0
+             user.save()
+             
 
      def get_acquiring_types(self, my_type, already_seen=None):
          """at some point we may have to check for cycling here
@@ -385,7 +413,8 @@ class SecurityContext(models.Model):
          tag = SecurityTag.objects.get(interface=interface, security_context=self)
          tag.remove_agents([old_agent.get_ref()])
 
-              
+
+
 
 class GenericReference(models.Model):
     class Meta:
@@ -541,10 +570,14 @@ def secure_filter(agent, objects, interface):
     pass
 
 
-def has_access(agent, resource, interface, sec_context=None) :
+def has_access(agent, resource, interface, sec_context=None, diagnose=None) :
     """Does the agent have access to this interface in this resource. All the special casing below will make it hard to refactor this method and for instance make it work for a whole lot of objects
     """
-    
+
+    # if diagnose mode we want to try to find why we failed to get the interface we want
+    if diagnose :
+        diagnostics = {}
+
     # make sure we've stripped agent from any SecureWrappers
     if agent.__class__.__name__ == "SecureWrapper":
         agent = agent.get_inner()
@@ -577,6 +610,10 @@ def has_access(agent, resource, interface, sec_context=None) :
     # probably should redis both allowed agents (per .View interface) and 
     # agents held per user to allow many queries very quickly. 
     allowed_agents = set([a.obj for a in allowed_agents.all()])
+
+    # diagnostic
+    if diagnose :
+        diagnostics['allowed_agents'] = allowed_agents
     
     if agent in allowed_agents : # agent must hold itself. agent.get_enclosures no longer includes agent
         return True
@@ -593,11 +630,30 @@ def has_access(agent, resource, interface, sec_context=None) :
                 return True
 
     agents_held = agent.get_enclosure_set()
+    
+    if diagnose :
+        diagnostics['agents_held'] = agents_held
 
     if allowed_agents.intersection(agents_held):
         return True
 
-    #print "has_access fails for %s, %s, %s, %s" %(interface, resource, context.context_agent.obj, agent)
+
+    if diagnose :
+        print
+        print 'Interface ', interface
+        print "Allowed Agents for ", resource
+        for a in diagnostics['allowed_agents'] :
+            print a
+        print "Agents Held by ", agent
+        for a in diagnostics['agents_held'] :
+            print "%s,"%a,
+
+        print
+        for a in diagnostics['allowed_agents'] :
+            if not a in diagnostics['agents_held'] :
+                print a, " not in agents_held"
+
+
     return False
 
 
