@@ -10,11 +10,11 @@ __all__ = ['secure_wrap', 'PlusPermissionsNoAccessException', 'PlusPermissionsRe
 
 from apps.plus_permissions.exceptions import PlusPermissionsReadOnlyException, PlusPermissionsNoAccessException, NonExistentPermission
 
-def secure_wrap(content_obj, user, interface_names=None):
+def secure_wrap(content_obj, user, interface_names=None, diagnose=None):
     if content_obj.__class__ == SecureWrapper:
         content_obj = content_obj.get_inner()
     access_obj = SecureWrapper(content_obj)
-    access_obj.load_interfaces_for(user, interface_names=interface_names)
+    access_obj.load_interfaces_for(user, interface_names=interface_names,diagnose=diagnose)
     return access_obj
 
 
@@ -159,7 +159,7 @@ class SecureWrapper:
         # string representation of interface e.g. "Profile.Viewer"
         return i_str in self._interfaces
 
-    def load_interfaces_for(self, agent, interface_names=None) :
+    def load_interfaces_for(self, agent, interface_names=None, diagnose=None) :
         """Load interfaces for the wrapped inner content that are available to the agent"""
         resource = self.get_inner()
         cls = resource.__class__
@@ -170,7 +170,7 @@ class SecureWrapper:
             interface = interface_map[iname]
             iface_name = self.get_inner().__class__.__name__ + '.' + iname
             #XXX we certainly shouldn't do an individual has access check for each interface but rather process them all at the same time
-            if has_access(agent=agent, resource=resource, interface=iface_name):
+            if has_access(agent=agent, resource=resource, interface=iface_name, diagnose=diagnose):
                 self._interfaces.add(iface_name)
                 self.add_permissions(interface)
     
@@ -202,6 +202,21 @@ class SecureWrapper:
         for rule in self.__dict__['_exceptions']:
             if rule(name) :
                 return self.get_inner().__getattribute__(name)
+
+        # new notation
+        # we'll test if something has permission on an attribute by testing obj.p_att_name
+        # WHY? Because a) we want something that we can test in a template
+        #              b) when we've received it from a result_set which we haven't had a chance to filter
+        #              
+
+        if name[:2] == 'p_' :
+            try :
+                val = self.__getattr__(name[2:])
+                return True
+            except PlusPermissionsNoAccessException, e :
+                return False
+
+        # OK, if we're here, this isn't a permission test, so try to actually return the value of the attribute
 
         if self.has_permission(name, InterfaceReadProperty) or self.has_permission(name, InterfaceReadWriteProperty):
             return self.get_inner().__getattribute__(name)
