@@ -270,6 +270,9 @@ def s_eq(self, other):
 def get_class(self):
     return self.__class__.__name__
 
+def secure_wrap_for(self, user=User, diagnose=False) :
+    return secure_wrap(self, user, diagnose=diagnose)
+
 from apps.plus_permissions.models import GenericReference, SecurityContext
 from django.db.models.signals import post_save
 
@@ -293,6 +296,7 @@ def security_patch(content_type, type_list):
     content_type.get_creator = get_creator
     content_type.get_class = get_class
     content_type.s_eq = s_eq
+    content_type.secure_wrap_for = secure_wrap_for
 
     for typ in type_list:
         add_create_method(content_type, typ)
