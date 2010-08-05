@@ -35,8 +35,8 @@ def setup_group_security(group, context_agent, context_admin, creator, permissio
     ref.permission_prototype = permission_prototype
     ref.save()
 
-    if group.id != get_all_members_group().id :
-        get_all_members_group().add_member(group)
+    #if group.id != get_all_members_group().id :
+    #    get_all_members_group().add_member(group)
 
 
 
@@ -92,7 +92,10 @@ def group_post_create(group, user, permission_prototype=None) :
 
         from django.conf import settings
         if group.group_name != settings.VIRTUAL_HUB_NAME+'_hosts' :
-            group.add_member(get_all_members_group().get_admin_group())
+            site_admin = get_all_members_group().get_admin_group()
+            group.add_member(site_admin)
+            site_admin.flush_members_cache()
+            
 
 
 def get_admin_group(self) :
