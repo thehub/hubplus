@@ -41,6 +41,8 @@ String.prototype.stripTags = function () {
 };
 
 var widget = {};
+var tiny_attributes = {};
+
 jq.extend(widget, {
     create: function (form, type, label, widget_id, widget_name, widget_class, value, css) {
         if (!type) {
@@ -134,6 +136,50 @@ jq.extend(widget, {
                                                    name: widget_name}).addClass(widget_class).addClass("text").val(value);
         return [ele, null];
     },
+
+    tinymce: function(widget_id, widget_name, widget_class, value, css) {
+      css.height = Math.max(css.height, 50);
+      css.width -= 20;
+      css.width = Math.max(css.width, 100);
+
+      // global dictionary to share info between this callback and the callback from the ajax call
+
+      var setup = function(editor) {
+	editor.onInit.add( function(editor, evt) {
+	  if (tiny_attributes[editor.id]) {
+	    this.setContent(tiny_attributes[editor.id]);
+	  }
+	});
+      };
+
+      var config = {
+	mode : null,
+	editor_selector :"tinymce",
+
+	theme : "advanced",
+	plugins : "emotions,spellchecker,advhr,insertdatetime,preview,table",
+
+	theme_advanced_buttons1 : "newdocument,|,bold,italic,underline,|,sub,sup,|,justifyleft,justifycenter,justifyright,|,formatselect",
+	theme_advanced_buttons2 : "cut,copy,paste,|,undo,redo,|,bullist,numlist,|,outdent,indent,|,link,unlink,anchor,image,",
+	theme_advanced_buttons3 : "insertdate,inserttime,|,table,|,charmap,emotions,advhr,|,spellchecker,removeformat,|,code,preview,",
+	theme_advanced_toolbar_location : "top",
+	theme_advanced_toolbar_align : "left",
+	theme_advanced_statusbar_location : "bottom",
+
+	setup : setup
+
+      };
+
+      var element = jq('<textarea></textarea>').attr({id: widget_id,
+						      name: widget_name
+						     }).addClass('tinymce').addClass(widget_class).val(value).css(css);
+
+
+      tinyMCE.init(config);
+      return [element,null];
+    },
+
+
     time_range_select: function (widget_id, widget_name, widget_class, value) {
         value = value.split('-');
         var start_time = value[0];
@@ -326,24 +372,31 @@ var inplace_editor = function (element_id, url, special_options) {
             options.widget_name = options.widget_id;
         }
 
-
         if (options.loadTextURL) {
             value = "";
         }
         widget_ready = false;
         var widget_and_editField = widget.create(form, options.ui_type, options.label, options.widget_id, options.widget_name, options.ui_type, value, {'height': height, 'width': width});
-        if (widget_and_editField) {
+
+	if (widget_and_editField) {
             js_widget = widget_and_editField[1];
             editField = widget_and_editField[0];
         }
+
         if (options.ui_type === 'text_wysiwyg' || options.ui_type === 'text_wysiwyg_small') {
             js_widget.on('editorContentLoaded', function () {
                 widget_ready = true;
             });
         }
+
+	if (options.ui_type === 'tinymce') {
+
+	}
+
         if (options.loadTextURL) {
             loadExternalText();
         }
+
         var args = {widget_name: options.ui_type, object_type: options.object_type, object_id: options.object_id};
         args = jq.extend(args, options.template_args);
         if (!editField) {
@@ -353,6 +406,7 @@ var inplace_editor = function (element_id, url, special_options) {
         }
 	element.parent().unbind();
     };
+
     var add_submit_button = function () {
         var submit_html = "";
         if (options.textarea) {
@@ -400,6 +454,13 @@ var inplace_editor = function (element_id, url, special_options) {
                    js_widget.setEditorHTML(data);
                });
            }
+	} else if (options.ui_type == 'tinymce') {
+	   var the_id = jq(editField).attr('id');
+	   // note, putting the mceAddControl here rather than earlier to ensure that
+           // it doesn't arrive before the data from the ajax call
+	   tinyMCE.execCommand("mceAddControl", false, the_id);
+	   tiny_attributes[the_id] = data;
+
         } else if (options.ui_type === 'gmap') {
 	   if (data) { // don't try to show if no value
                form.before(js_widget[0].html(data));
@@ -500,7 +561,9 @@ var inplace_editor = function (element_id, url, special_options) {
         if (options.ui_type === 'text_wysiwyg' || options.ui_type === 'text_wysiwyg_small') {
             js_widget.saveHTML();
             value = editField.val();
-        } else {
+        } else if (options.ui_type === 'tinymce') {
+	   value = tinyMCE.activeEditor.getContent();
+	} else {
             value = editField.val();
         }
         var parameters = options.callback(form, value);
@@ -565,7 +628,10 @@ var inplace_editor = function (element_id, url, special_options) {
         if (options.ui_type === 'gmap') {
            js_widget[0].remove();
            js_widget[1].remove();
-        }
+        } else if (options.ui_type === 'tinymce') {
+	   var the_id = jq(editField).attr('id');
+	   tinyMCE.execCommand("mceRemoveControl", false, the_id);
+	}
     	return;
     };
     var dispose = function () {
@@ -727,7 +793,7 @@ var create_map = function (map_ele, callback) {
 	    geocoder.getLatLng(location_str, function (point) {
 				   if (point) {
 				       // ugly ... we get the edit_button, and add a br to push the map out of the way
-				       map_ele.prev().after('<br/>');  
+				       map_ele.prev().after('<br/>');
 				       callback(map, point);
 				   } else {
 				       map_ele.attr("style",""); // get rid of the grey box
@@ -735,7 +801,7 @@ var create_map = function (map_ele, callback) {
 				   }
 			       });
 	} else {
-	    
+
 	    map_ele.html("");
 	}
     }
