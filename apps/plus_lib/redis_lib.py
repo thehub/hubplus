@@ -33,21 +33,20 @@ def invalidates_cache_for(keyword) :
     return inner
 
 
-import ipdb
-def walk_children(obj, f, seen=None, **kwargs) :
+def walk_children(obj, f, seen=None, path='', **kwargs) :
     """ Recurses through all members and calls f on them"""
     if seen == None :
         seen = set([obj])
     else :
         if obj in seen :
             return
-    
+
     f(obj, **kwargs)
     seen.add(obj)
     if getattr(obj,'get_members',False) :
         for child in obj.get_members() :
             if not child in seen :
-                walk_children(child, f, seen, **kwargs)
+                walk_children(child, f, seen, path=path+'/%s'%obj, **kwargs)
 
 ONE_LEVEL_MEMBERSHIP_KEY = "membership_ids"
 MULTI_LEVEL_MEMBERSHIP_KEY = "multi_membership_ids"
@@ -66,3 +65,20 @@ def invalidates_membership_cache(f) :
 
         return f(self,*args,**kwargs)
     return _invalidate_membership_cache_closure
+
+
+def cached_for(obj) :
+    d = {}
+    def add(prefix) :
+        key = cache_key(prefix,obj)
+        if redis.exists(key) :
+            d[prefix]=redis.smembers(key)
+    
+    add(ONE_LEVEL_MEMBERSHIP_KEY)
+    add(MULTI_LEVEL_MEMBERSHIP_KEY)
+
+    return d
+
+    
+
+                        

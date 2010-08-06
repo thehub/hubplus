@@ -17,7 +17,19 @@ def show_profile(context, profile):
         
     #profile = TemplateSecureWrapper(secure_wrap(profile, context['request'].user, interface_names=['Viewer'], required_interfaces=['Viewer']))
     user = profile.user
-    return {"homehub":homehub, "profile":profile, "user": user, "main_hub_name":main_hub_name()}
+
+    is_me, i_follow, follows_me = False, False, False
+    if context['request'].user.username == user.username :
+        is_me = True
+    if context['request'].user :
+        if context['request'].user.is_following(user) :
+            i_follow = True
+        if user.is_following(context['request'].user) :
+            follows_me = True
+
+    return {"homehub":homehub, "profile":profile, "user": user, 
+            "main_hub_name":main_hub_name(), "follows_me":follows_me, "i_follow":i_follow}
+
 register.inclusion_tag("profile_item.html", takes_context=True)(show_profile)
 
 

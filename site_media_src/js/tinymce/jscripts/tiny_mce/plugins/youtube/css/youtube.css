@@ -1,0 +1,12 @@
+.panel_wrapper div.current {
+	height: 60px;
+	padding:15px;
+}
+
+#width, #height {
+	width: 50px;
+}
+
+#file {
+	width: 250px;
+}

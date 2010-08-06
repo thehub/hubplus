@@ -28,7 +28,7 @@
 	<fieldset>
 
 		<div id="content" class="yui-skin-sam">
-			<textarea name="content" rows="30">{% if data.content %}{{data.content}}{% else %}{{page.content}}{% endif %}</textarea>
+			<textarea class="tinymce" id="wiki_content" name="content" rows="30">{% if data.content %}{{data.content}}{% else %}{{page.content}}{% endif %}</textarea>
 			{% if errors.content %}<span class="error">{{errors.content}}</span>{% endif %}
 		</div>
 

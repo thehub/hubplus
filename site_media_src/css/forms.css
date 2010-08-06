@@ -573,3 +573,8 @@ form.full_block .yui-editor-container fieldset {
 	border-top	: 1px solid #ddd !important;
 }
 
+/* tinymce */
+
+.tinymce {
+    visibility:hidden;
+}

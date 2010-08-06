@@ -18,7 +18,8 @@ from django.contrib.contenttypes.models import ContentType
 from django.template import Template, Context
 from django.contrib.contenttypes import generic
 
-from apps.plus_lib.redis_lib import redis, add_to_cached_set, cache_key, invalidates_membership_cache, ONE_LEVEL_MEMBERSHIP_KEY, MULTI_LEVEL_MEMBERSHIP_KEY
+from apps.plus_lib.redis_lib import redis, add_to_cached_set, cache_key, cached_for, invalidates_membership_cache, \
+    ONE_LEVEL_MEMBERSHIP_KEY, MULTI_LEVEL_MEMBERSHIP_KEY
 
 class Location(models.Model):
     class Meta:
@@ -230,6 +231,10 @@ try :
 
 
         @invalidates_membership_cache
+        def flush_members_cache(self) :
+            pass
+
+        @invalidates_membership_cache
         def add_member(self, user_or_group):
             if isinstance(user_or_group, User) and not self.users.filter(id=user_or_group.id):
                 from apps.plus_permissions.types.Profile import ProfileInterfaces
@@ -239,6 +244,7 @@ try :
 
             if isinstance(user_or_group, self.__class__) and not self.child_groups.filter(id=user_or_group.id):
                 self.child_groups.add(user_or_group)
+
 
 
         def join(self, user):

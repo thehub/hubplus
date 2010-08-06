@@ -50,7 +50,7 @@ var wiki_edit = function () {
     });
     if (jq('.wiki_edit').length) {
 	var myEditor;
-	jq('#content').each(function (i, ele){
+	jq('#xcontent').each(function (i, ele){
 	    var target = jq(ele).find('textarea');
 	    var config = {
 		height: target.height(),

@@ -6,12 +6,44 @@
   <div class="thumb medium">{% avatar profile.user 80 %}</div>
   </a>
   <dl>
+
     <dt>{% trans "Name" %}</dt>
     <dd><a href="{% url profile_detail user.username %}">{{user.get_display_name}}</a></dd>
-    <dt>{% trans "Organisation" %}:</dt>	      
+
+    <dt>{% trans "Organisation" %}:</dt>     
     <dd>{{user.organisation}}</dd>
     <dt>{{main_hub_name}}:</dt>
-    <dd><a href="{% url hubs:group homehub.id %}">{{homehub.display_name}}</a></dd>
+    <dd><au href="{% url hubs:group homehub.id %}">{{homehub.display_name}}</a></dd>
+
+
+    {% ifequal user.username 'admin' %}{% else %} 
+    <dt>{% trans "Connections" %}:</dt>
+
+    <dd>
+      {% if follows_me %}
+      <div>
+	<span>{{user.get_display_name}} {% trans "is following you" %}.</span>
+      </div>
+      {% endif %}
+      
+      <div>
+	{% if i_follow %}
+	<span>{% trans "You are following" %} {{user.get_display_name}}. <a href='{% url toggle_follow user.username %}'>{% trans "Stop following"%}</a></span>
+	{% else %}
+	  {% if is_me %}{% else %}
+	  <span>{% trans "You are not following" %} {{user.get_display_name}}. <a href='{% url toggle_follow user.username %}'>{% trans "Follow" %}</a></span>
+	  {% endif %}
+	{% endif %}
+
+      </div>
+      
+      <div>
+	   <a href="{% url messages_all_to user.user_name%}#tabview=compose">{% trans "Send private message to" %}
+{{user.first_name}}</a>
+	</div>
+    </dd>
+    {% endifequal %}
+
     {% view_plus_tag 'Interests' 'interests'  profile  profile.user %}
   </dl>
 

@@ -9,21 +9,22 @@
 }; */
 
 var widget_map = {
-    'Profile':{'about':'text_wysiwyg',
-               'find_out':'text_wysiwyg',
-	       'project_stage':'text_wysiwyg',
+    'Profile':{'about':'tinymce',
+               'find_out':'tinymce',
+	       'project_stage':'tinymce',
 	       'place': 'gmap',
 	       'homehub':'new_select',
 	       'country':'new_select',
 	       'address':'text_large'
     },
-    'HostInfo':{'find_out':'text_wysiwyg',
-                'project_stage':'text',
-                'assistence_offered':'text',
-		'project':'text',
-                'expected_membership_benefits':'text'},
-    'TgGroup':{'description':'text_wysiwyg', 'group_type':'new_select'},
-    'Resource':{'description':'text_wysiwyg'}
+    'HostInfo':{'find_out':'text_large',
+                'project_stage':'text_large',
+                'assistence_offered':'text_large',
+		'project':'text_large',
+                'expected_membership_benefits':'text_large'},
+    'TgGroup':{'description':'tinymce',
+	       'group_type':'new_select'},
+    'Resource':{'description':'tinymce'}
 };
 
 var editing = function () {
