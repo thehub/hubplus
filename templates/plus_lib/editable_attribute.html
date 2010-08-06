@@ -7,7 +7,7 @@
 	<div class="value">
 		<a class="bt_edit icon_button" id="{{obj.edit_key}}{{name}}_trigger" title="edit">Edit</a>
 
-		<div {% if edit %} class='editable' {% endif %} id='{{obj.edit_key}}{{name}}'>{% if no_escape %}{% autoescape off %}{{value}}{% endautoescape %}{% else  %}{{value}}{% endif %}</div>
+		<div {% if edit %} class='editable' {% endif %} id='{{obj.edit_key}}{{name}}'>{% if no_escape %}{% autoescape off %}{{value|urlize|linebreaks}}{% endautoescape %}{% else  %}{{value|safe|urlize|linebreaks}}{% endif %}</div>
 	</div>
 </li>
 {% endif %}
