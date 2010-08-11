@@ -14,7 +14,7 @@
     </div>
     {% endif %}
 
-    <div class="edit">
+    <div class="edit" {% if is_reply %}style="display:none;"{% endif %}>
       <input type="hidden" name="starts_hidden" class="starts_hidden" value="{{starts_hidden}}"/>
       <input type="hidden" name="sender_class" value="{{sender_class}}"/>
       <input type="hidden" name="sender_id" value="{{sender.id}}"/>
