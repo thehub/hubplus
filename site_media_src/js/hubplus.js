@@ -22,7 +22,7 @@ var widget_map = {
                 'assistence_offered':'text_large',
 		'project':'text_large',
                 'expected_membership_benefits':'text_large'},
-    'TgGroup':{'description':'text_large',
+    'TgGroup':{'description':'text_wysiwyg',
 	       'group_type':'new_select'},
     'Resource':{'description':'large_text'}
 };
