@@ -47,6 +47,11 @@
 	{% else %}
 	   <script type="text/javascript" src="{{ MEDIA_URL }}js/hubplus_core{{JS_VERSION_NO}}.js"></script> 
 	{% endif %}
+	 
+	<!-- XXX TinyMCE doesn't seem to work with the compression at the moment -->
+	<script src="{{ MEDIA_URL }}js/tinymce/jscripts/tiny_mce/tiny_mce.js" charset="utf-8"></script>
+	<!-- end of workaround -->
+	
 	{% block extra_head_base %}
 	{% block extra_head %}{% endblock %}
 	{% endblock %}
