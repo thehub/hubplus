@@ -11,7 +11,8 @@
 	<div style="margin-left: {{ comment.depth }}em;" class="comment">
           <div class="thumb small">{% avatar comment.user 40 %}</div>
           <a href="{% url profile_detail comment.user.username%}">{{ comment.user.get_display_name }}</a> said:<br/>
-          {% auto_transform_markup comment %}
+          <!--{  % auto_transform_markup comment %}-->
+	  {{comment.comment|urlize|linebreaks}}
 	</div>
 	{% if can_comment %}<a id="c{{comment.id }}" href="javascript:show_reply_form('c{{ comment.id }}','{% get_comment_url target comment %}','{{ comment.name }}')">Reply</a>{% endif %}
       </li>
