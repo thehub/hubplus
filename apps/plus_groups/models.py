@@ -386,7 +386,8 @@ try :
 
         @transaction.commit_on_success
         def delete(self) :
- 
+            from apps.microblogging.models import Following
+
             sc = self.get_security_context()
             ref = self.get_ref()
 
