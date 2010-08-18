@@ -11,9 +11,17 @@
 
 
 {% if item.has_avatar %}
-<div class="thumb small">{% avatar item.source.obj 40 %}</div>
+
+<!-- XXX temporary table until we hire a css dude -->
+<table style="border-width:0px;">
+<tr>
+<td>
+<div class="thumb small" style="">{% avatar item.source.obj 40 %}</div>
 {% endif %}
-<div class="tweet" id="t{{ item.id }}">
+</td>
+<td>
+
+<div class="tweet"  id="t{{ item.id }}">
   {% if prefix_sender %}
   <a href="{% simple_url item.source.obj %}"><b>{{ item.source.obj.get_display_name }} :</b></a>
   {% endif %}
@@ -52,3 +60,7 @@
   </div>
   {% endif %}
 </div>
+
+
+</td>
+</table>
