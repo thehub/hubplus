@@ -11,17 +11,11 @@
 
 
 {% if item.has_avatar %}
-
-<!-- XXX temporary table until we hire a css dude -->
-<table style="border-width:0px;">
-<tr>
-<td>
 <div class="thumb small" style="">{% avatar item.source.obj 40 %}</div>
 {% endif %}
-</td>
-<td>
 
-<div class="tweet"  id="t{{ item.id }}">
+<!-- need a css dude to look at this -->
+<div class="tweet" style="width:560px; float:right;" id="t{{ item.id }}">
   {% if prefix_sender %}
   <a href="{% simple_url item.source.obj %}"><b>{{ item.source.obj.get_display_name }} :</b></a>
   {% endif %}
@@ -30,7 +24,6 @@
   
   <span class="label_time">  &nbsp; {% blocktrans with item.sent|timesince as tweet_age %}{{ tweet_age }} ago{% endblocktrans %}</span>
  {% if stand_alone %}{% else %} (<a href="{% url feed_item item.id %}">{% trans "link" %})</a> {% endif %}
-
 
   <div>    
     {% if item.target %}
@@ -55,12 +48,8 @@
   </div>
 
   {% if item.source.obj.is_user %}
-  <div class="tweet_reply">
+  <div style="float:left;" class="tweet_reply">
     {% microblogging_form current_user 'True' 'True' item.source.obj.user_name %}
   </div>
   {% endif %}
 </div>
-
-
-</td>
-</table>
