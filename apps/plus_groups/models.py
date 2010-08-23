@@ -366,7 +366,7 @@ try :
             if not self.is_hub_type() :
                 return 'group'
             else :
-                return hub_name().lower() 
+                return settings.HUB_NAME.lower() 
 
         def get_extras(self) :
             # if there are extras for this class, return them
