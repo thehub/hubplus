@@ -8,12 +8,11 @@ from apps.plus_permissions.proxy_hmac import attach_hmac
 #    return url
 
 
-
 for a in Application.objects.all() :
   
     if a.status != 1 : continue
     print
     print '%s, %s, %s, %s, ' % (a.applicant.first_name, a.applicant.last_name, a.applicant.email_address, a.status)
-    print a.applicant.make_link(a.accepted_by,a.id)
+    print a.applicant.make_signup_link(a.accepted_by,a.id)
 
  
