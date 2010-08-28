@@ -79,6 +79,7 @@ class TgGroupForm(forms.Form):
     group_type = forms.ChoiceField(choices=settings.GROUP_TYPES)
     description = HTMLField()
 
+    display_name = forms.CharField()
     address = forms.CharField(required=False)
     location = forms.CharField(required=False)
     permissions_set = forms.ChoiceField(choices=PERMISSION_OPTIONS)
